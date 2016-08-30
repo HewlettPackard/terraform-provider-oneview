@@ -10,11 +10,11 @@ Move terraform-provider-oneview into the directory that Terraform is installed i
 ## Example terraform file 
 ```
 provider "oneview" {
-  username   = "Administrator"
-  password   = "thisisapassword"
-  endpoint   = "https://oneview_instance.com"
-  sslverify  = false
-  apiversion = 200
+  ov_username   = "Administrator"
+  ov_password   = "thisisapassword"
+  ov_endpoint   = "https://oneview_instance.com"
+  ov_sslverify  = false
+  ov_apiversion = 200
 }
 
 resource "oneview_server_profile" "test" {
@@ -24,4 +24,4 @@ resource "oneview_server_profile" "test" {
 ```
 ### License
 
-This project is licensed under the Apache 2.0 license. Please see LICENSE for more info.
+This project is licensed under the Apache 2.0 license.
