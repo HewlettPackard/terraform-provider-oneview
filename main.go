@@ -13,8 +13,8 @@ package main
 
 import (
     "github.com/hashicorp/terraform/plugin"
-    "github.com/hashicorp/terraform/terraform"
     "github.com/HewlettPackard/oneview-golang/ov"
+    "github.com/HewlettPackard/terraform-provider-oneview"
 )
 
 func main() {
