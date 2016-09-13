@@ -13,14 +13,11 @@ package main
 
 import (
     "github.com/hashicorp/terraform/plugin"
-    "github.com/HewlettPackard/oneview-golang/ov"
     "github.com/HewlettPackard/terraform-provider-oneview/oneview"
 )
 
 func main() {
   plugin.Serve(&plugin.ServeOpts{
-    ProviderFunc: func() terraform.ResourceProvider {
-      return ov.Provider()
-    },
+  	ProviderFunc:	oneview.Provider,
   })
 }
