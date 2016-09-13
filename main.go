@@ -20,9 +20,7 @@ import (
 func main() {
   plugin.Serve(&plugin.ServeOpts{
     ProviderFunc: func() terraform.ResourceProvider {
-      return oneview.Provider()
+      return ov.Provider()
     },
   })
 }
- 
-
