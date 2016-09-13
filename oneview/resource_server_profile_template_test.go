@@ -12,83 +12,82 @@
 package oneview
 
 import (
-  "fmt"
-  "testing"
-  
-  "github.com/hashicorp/terraform/helper/resource"
-  "github.com/hashicorp/terraform/terraform"
-  "github.hpe.com/matthew-frahry/oneview-golang/ov" 
+	"fmt"
+	"testing"
+
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccServerProfileTemplate_1(t *testing.T){
-  var serverProfileTemplate ov.ServerProfile
+func TestAccServerProfileTemplate_1(t *testing.T) {
+	var serverProfileTemplate ov.ServerProfile
 
-  resource.Test(t, resource.TestCase{
-    PreCheck: func() { testAccPreCheck(t) },
-    Providers: testAccProviders,
-    CheckDestroy: testAccCheckServerProfileTemplateDestroy,
-    Steps: []resource.TestStep{
-      resource.TestStep{
-        Config: testAccServerProfileTemplate,
-        Check: resource.ComposeTestCheckFunc(
-	        testAccCheckServerProfileTemplateExists(
-            "oneview_server_profile_template.test", &serverProfileTemplate),
-          resource.TestCheckResourceAttr(
- 	            "oneview_server_profile_template.test", "name", "terraform test spt",
-          ),
-        ),
-      },
-    },
-  })
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckServerProfileTemplateDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServerProfileTemplate,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckServerProfileTemplateExists(
+						"oneview_server_profile_template.test", &serverProfileTemplate),
+					resource.TestCheckResourceAttr(
+						"oneview_server_profile_template.test", "name", "terraform test spt",
+					),
+				),
+			},
+		},
+	})
 }
 
 func testAccCheckServerProfileTemplateExists(n string, serverProfileTemplate *ov.ServerProfile) resource.TestCheckFunc {
-  return func(s *terraform.State) error {
-    rs, ok := s.RootModule().Resources[n]
-    if !ok {
-      return fmt.Errorf("Not found :%v", n)
-    }
- 
-    if rs.Primary.ID == "" {
-      return fmt.Errorf("No ID is set")
-    }
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found :%v", n)
+		}
 
-    config, err := testProviderConfig()
-    if err != nil {
-      return err
-    }
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No ID is set")
+		}
 
-    testServerProfileTemplate, err := config.ovClient.GetProfileTemplateByName(rs.Primary.ID)
-    if err != nil{
-      return err
-    }
-    if testServerProfileTemplate.Name != rs.Primary.ID {
-      return fmt.Errorf("Instance not found")
-    }
-    *serverProfileTemplate = testServerProfileTemplate
-    return nil
-  }
+		config, err := testProviderConfig()
+		if err != nil {
+			return err
+		}
+
+		testServerProfileTemplate, err := config.ovClient.GetProfileTemplateByName(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+		if testServerProfileTemplate.Name != rs.Primary.ID {
+			return fmt.Errorf("Instance not found")
+		}
+		*serverProfileTemplate = testServerProfileTemplate
+		return nil
+	}
 }
 
 func testAccCheckServerProfileTemplateDestroy(s *terraform.State) error {
-  config := testAccProvider.Meta().(*Config)
-  for _, rs := range s.RootModule().Resources {
-    if rs.Type != "oneview_server_profile_template" {
-      continue
-    }
-    
-    testServerProfileTemplate, _ := config.ovClient.GetProfileTemplateByName(rs.Primary.ID)
+	config := testAccProvider.Meta().(*Config)
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "oneview_server_profile_template" {
+			continue
+		}
 
-    if testServerProfileTemplate.Name != "" {
-      return fmt.Errorf("ServerProfileTemplate still exists")
-    }
-  }
- 
-  return nil
+		testServerProfileTemplate, _ := config.ovClient.GetProfileTemplateByName(rs.Primary.ID)
+
+		if testServerProfileTemplate.Name != "" {
+			return fmt.Errorf("ServerProfileTemplate still exists")
+		}
+	}
+
+	return nil
 }
 
-var testAccServerProfileTemplate = 
-  `
+var testAccServerProfileTemplate = `
   resource "oneview_server_profile_template" "test" {
     name = "terraform test spt"
     server_hardware_type = "BL465c Gen8 1"

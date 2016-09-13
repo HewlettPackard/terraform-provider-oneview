@@ -9,117 +9,117 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-package oneview 
+package oneview
 
 import (
-  "github.com/hashicorp/terraform/helper/schema"
-  "github.hpe.com/matthew-frahry/oneview-golang/ov"
-  "github.hpe.com/matthew-frahry/oneview-golang/utils"
-  "fmt"
-  "strconv"
+	"fmt"
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/hashicorp/terraform/helper/schema"
+	"strconv"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceServerProfileTemplateCreate,
-		Read: resourceServerProfileTemplateRead,
+		Read:   resourceServerProfileTemplateRead,
 		Update: resourceServerProfileTemplateUpdate,
 		Delete: resourceServerProfileTemplateDelete,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type: schema.TypeString,
+			"name": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"boot_order": &schema.Schema{
-				Type: schema.TypeSet,
+			"boot_order": {
+				Type:     schema.TypeSet,
 				Optional: true,
-				Elem: &schema.Schema{Type: schema.TypeString},
-				Set:  schema.HashString,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
 			},
-			"network": &schema.Schema{
+			"network": {
 				Optional: true,
-				Type: schema.TypeList,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
-							Type: schema.TypeString,
+						"name": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
-						"function_type": &schema.Schema{
-							Type: schema.TypeString,
+						"function_type": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
-						"network_uri": &schema.Schema{
-							Type: schema.TypeString,
+						"network_uri": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
-						"port_id": &schema.Schema{
-							Type: schema.TypeString,
+						"port_id": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Default: "Lom 1:1-a",
+							Default:  "Lom 1:1-a",
 						},
-						"requested_mbps": &schema.Schema{
-							Type: schema.TypeString,
+						"requested_mbps": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Default: "2500",
+							Default:  "2500",
 						},
-						"id": &schema.Schema{
-							Type: schema.TypeInt,
+						"id": {
+							Type:     schema.TypeInt,
 							Computed: true,
 						},
 					},
 				},
 			},
-			"type": &schema.Schema{
-				Type: schema.TypeString,
+			"type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "ServerProfileTemplateV1",
+				Default:  "ServerProfileTemplateV1",
 			},
-			"server_hardware_type": &schema.Schema{
-				Type: schema.TypeString,
+			"server_hardware_type": {
+				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"enclosure_group": &schema.Schema{
-				Type: schema.TypeString,
+			"enclosure_group": {
+				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"affinity": &schema.Schema{
-				Type: schema.TypeString,
+			"affinity": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "Bay",
+				Default:  "Bay",
 			},
-			"hide_unused_flex_nics": &schema.Schema{
-				Type: schema.TypeBool,
+			"hide_unused_flex_nics": {
+				Type:     schema.TypeBool,
 				Optional: true,
-				Default: true,
+				Default:  true,
 			},
-			"uri": &schema.Schema{
-				Type: schema.TypeString,
+			"uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"etag": &schema.Schema{
-				Type: schema.TypeString,
+			"etag": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"serial_number_type": &schema.Schema{
-				Type: schema.TypeString,
+			"serial_number_type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "Virtual",
+				Default:  "Virtual",
 				ForceNew: true,
 			},
-			"wwn_type": &schema.Schema{
-				Type: schema.TypeString,
+			"wwn_type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "Virtual",
+				Default:  "Virtual",
 				ForceNew: true,
 			},
-			"mac_type": &schema.Schema{
-				Type: schema.TypeString,
+			"mac_type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "Virtual",
+				Default:  "Virtual",
 				ForceNew: true,
 			},
 		},
@@ -128,15 +128,15 @@ func resourceServerProfileTemplate() *schema.Resource {
 
 func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	
+
 	serverProfileTemplate := ov.ServerProfile{
-		Name:                  d.Get("name").(string),
-		Type: 				   d.Get("type").(string),
-		Affinity:              d.Get("affinity").(string),
-		SerialNumberType:      d.Get("serial_number_type").(string),
-		WWNType:		       d.Get("wwn_type").(string),
-		MACType: 			   d.Get("mac_type").(string),
-		HideUnusedFlexNics:    d.Get("hide_unused_flex_nics").(bool),
+		Name:               d.Get("name").(string),
+		Type:               d.Get("type").(string),
+		Affinity:           d.Get("affinity").(string),
+		SerialNumberType:   d.Get("serial_number_type").(string),
+		WWNType:            d.Get("wwn_type").(string),
+		MACType:            d.Get("mac_type").(string),
+		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
 	}
 
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("enclosure_group").(string))
@@ -161,7 +161,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			NetworkURI:    utils.NewNstring(d.Get(networkPrefix + ".network_uri").(string)),
 			PortID:        d.Get(networkPrefix + ".port_id").(string),
 			RequestedMbps: d.Get(networkPrefix + ".requested_mbps").(string),
-			ID:            i+1,
+			ID:            i + 1,
 		})
 	}
 	serverProfileTemplate.Connections = networks
@@ -178,11 +178,11 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 	sptError := config.ovClient.CreateProfileTemplate(serverProfileTemplate)
 	d.SetId(d.Get("name").(string))
-	if(sptError != nil){
+	if sptError != nil {
 		d.SetId("")
 		return sptError
 	}
-    return resourceServerProfileTemplateRead(d, meta)
+	return resourceServerProfileTemplateRead(d, meta)
 }
 
 func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{}) error {
@@ -196,7 +196,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 
 	d.Set("name", spt.Name)
 	d.Set("type", spt.Type)
-	
+
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
 	if err != nil {
 		return err
@@ -218,14 +218,14 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 
 	networks := make([]map[string]interface{}, 0, len(spt.Connections))
 	for _, network := range spt.Connections {
-		
+
 		networks = append(networks, map[string]interface{}{
-			"name": network.Name,
-			"function_type": network.FunctionType,
-			"network_uri": network.NetworkURI,
-			"port_id": network.PortID,
+			"name":           network.Name,
+			"function_type":  network.FunctionType,
+			"network_uri":    network.NetworkURI,
+			"port_id":        network.PortID,
 			"requested_mbps": network.RequestedMbps,
-			"id": network.ID,
+			"id":             network.ID,
 		})
 	}
 
@@ -241,7 +241,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		}
 		d.Set("network", networks)
 	}
-	
 
 	if spt.Boot.ManageBoot {
 		bootOrder := make([]interface{}, 0)
@@ -249,28 +248,28 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			rawBootOrder := d.Get("boot_order").(*schema.Set).List()
 			for _, raw := range rawBootOrder {
 				if raw == currBoot {
-					bootOrder = append(bootOrder, currBoot) 
-				}	
-			}		
+					bootOrder = append(bootOrder, currBoot)
+				}
+			}
 		}
 		d.Set("boot_order", bootOrder)
 	}
-    return nil
+	return nil
 }
 
 func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	serverProfileTemplate := ov.ServerProfile{
-		Name:                  d.Get("name").(string),
-		Type: 				   d.Get("type").(string),
-		Affinity:              d.Get("affinity").(string),
-		URI:                   utils.NewNstring(d.Get("uri").(string)),
-		ETAG:                  d.Get("etag").(string),
-		SerialNumberType:      d.Get("serial_number_type").(string),
-		WWNType:		       d.Get("wwn_type").(string),
-		MACType: 			   d.Get("mac_type").(string),
-		HideUnusedFlexNics:    d.Get("hide_unused_flex_nics").(bool),
+		Name:               d.Get("name").(string),
+		Type:               d.Get("type").(string),
+		Affinity:           d.Get("affinity").(string),
+		URI:                utils.NewNstring(d.Get("uri").(string)),
+		ETAG:               d.Get("etag").(string),
+		SerialNumberType:   d.Get("serial_number_type").(string),
+		WWNType:            d.Get("wwn_type").(string),
+		MACType:            d.Get("mac_type").(string),
+		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
 	}
 
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("enclosure_group").(string))
@@ -316,16 +315,16 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 	d.SetId(d.Get("name").(string))
 
-    return resourceServerProfileTemplateRead(d, meta)
-    return nil
+	return resourceServerProfileTemplateRead(d, meta)
+	return nil
 }
 
 func resourceServerProfileTemplateDelete(d *schema.ResourceData, meta interface{}) error {
-    config := meta.(*Config)
-    
-    error := config.ovClient.DeleteProfileTemplate(d.Get("name").(string))
-    if error != nil {
-      return error
-    }
-    return nil
+	config := meta.(*Config)
+
+	error := config.ovClient.DeleteProfileTemplate(d.Get("name").(string))
+	if error != nil {
+		return error
+	}
+	return nil
 }

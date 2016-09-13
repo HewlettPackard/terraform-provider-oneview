@@ -12,118 +12,118 @@
 package oneview
 
 import (
-  "github.com/hashicorp/terraform/helper/schema"
-  "github.com/hashicorp/terraform/terraform"
-  "github.com/hashicorp/terraform/helper/mutexkv"
+	"github.com/hashicorp/terraform/helper/mutexkv"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
 )
 
 var ovMutexKV = mutexkv.NewMutexKV()
 var serverHardwareURIs map[string]bool = make(map[string]bool)
 
 func Provider() terraform.ResourceProvider {
-  return &schema.Provider{
-    Schema: map[string]*schema.Schema{
-      "ov_domain": &schema.Schema{
-   	    Type:     schema.TypeString,
-	      Optional: true,
-	      DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_OV_DOMAIN", ""),
-      },
-      "ov_username": &schema.Schema{
- 	      Type:     schema.TypeString,
-	      Optional: true,
-	      DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_OV_USER", ""),
-      },
-      "ov_password": &schema.Schema{
-	      Type:     schema.TypeString,
-	      Optional: true,
-	      DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_OV_PASSWORD", nil),
-      },
-      "ov_endpoint": &schema.Schema{
-        Type:     schema.TypeString,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_OV_ENDPOINT", nil),
-      },
-      "ov_sslverify": &schema.Schema{
-        Type:     schema.TypeBool,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_OV_SSLVERIFY", true),
-      },
-      "ov_apiversion": &schema.Schema{
-        Type:     schema.TypeInt,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_OV_API_VERSION", 200),
-      },
-      "icsp_domain": &schema.Schema{
-        Type:     schema.TypeString,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_ICSP_DOMAIN", ""),
-      },
-      "icsp_username": &schema.Schema{
-        Type:     schema.TypeString,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_ICSP_USER", ""),
-      },
-      "icsp_password": &schema.Schema{
-        Type:     schema.TypeString,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_ICSP_PASSWORD", nil),
-      },
-      "icsp_endpoint": &schema.Schema{
-        Type:     schema.TypeString,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_ICSP_ENDPOINT", ""),
-      },
-      "icsp_sslverify": &schema.Schema{
-        Type:     schema.TypeBool,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_ICSP_SSLVERIFY", true),
-      },
-      "icsp_apiversion": &schema.Schema{
-        Type:     schema.TypeInt,
-        Optional: true,
-        DefaultFunc:  schema.EnvDefaultFunc("ONEVIEW_ICSP_API_VERSION", 200),
-      },
-    },
-    ResourcesMap: map[string]*schema.Resource{
-      "oneview_server_profile": resourceServerProfile(),
-      "oneview_ethernet_network": resourceEthernetNetwork(),
-      "oneview_network_set": resourceNetworkSet(),
-      "oneview_fcoe_network": resourceFCoENetwork(),
-      "oneview_fc_network": resourceFCoENetwork(),
-      "oneview_server_profile_template": resourceFCoENetwork(),
-      "oneview_logical_interconnect_group": resourceFCoENetwork(),
-      "oneview_logical_switch_group": resourceLogicalSwitchGroup(),
-    },
-    ConfigureFunc: providerConfigure,
-  }
+	return &schema.Provider{
+		Schema: map[string]*schema.Schema{
+			"ov_domain": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_DOMAIN", ""),
+			},
+			"ov_username": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_USER", ""),
+			},
+			"ov_password": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_PASSWORD", nil),
+			},
+			"ov_endpoint": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_ENDPOINT", nil),
+			},
+			"ov_sslverify": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_SSLVERIFY", true),
+			},
+			"ov_apiversion": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_API_VERSION", 200),
+			},
+			"icsp_domain": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_DOMAIN", ""),
+			},
+			"icsp_username": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_USER", ""),
+			},
+			"icsp_password": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_PASSWORD", nil),
+			},
+			"icsp_endpoint": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_ENDPOINT", ""),
+			},
+			"icsp_sslverify": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_SSLVERIFY", true),
+			},
+			"icsp_apiversion": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_API_VERSION", 200),
+			},
+		},
+		ResourcesMap: map[string]*schema.Resource{
+			"oneview_server_profile":             resourceServerProfile(),
+			"oneview_ethernet_network":           resourceEthernetNetwork(),
+			"oneview_network_set":                resourceNetworkSet(),
+			"oneview_fcoe_network":               resourceFCoENetwork(),
+			"oneview_fc_network":                 resourceFCoENetwork(),
+			"oneview_server_profile_template":    resourceFCoENetwork(),
+			"oneview_logical_interconnect_group": resourceFCoENetwork(),
+			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
+		},
+		ConfigureFunc: providerConfigure,
+	}
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error){
-  config := Config{
-    OVDomain:     d.Get("ov_domain").(string),
-    OVUsername:   d.Get("ov_username").(string),
-    OVPassword:   d.Get("ov_password").(string),
-    OVEndpoint:   d.Get("ov_endpoint").(string),
-    OVSSLVerify:  d.Get("ov_sslverify").(bool),
-    OVAPIVersion: d.Get("ov_apiversion").(int),
-  }
+func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+	config := Config{
+		OVDomain:     d.Get("ov_domain").(string),
+		OVUsername:   d.Get("ov_username").(string),
+		OVPassword:   d.Get("ov_password").(string),
+		OVEndpoint:   d.Get("ov_endpoint").(string),
+		OVSSLVerify:  d.Get("ov_sslverify").(bool),
+		OVAPIVersion: d.Get("ov_apiversion").(int),
+	}
 
-  if err := config.loadAndValidate(); err != nil {
-    return nil, err
-  }
+	if err := config.loadAndValidate(); err != nil {
+		return nil, err
+	}
 
-  if _, ok := d.GetOk("icsp_endpoint"); ok {
-    config.ICSPDomain = d.Get("icsp_domain").(string)
-    config.ICSPUsername = d.Get("icsp_username").(string)
-    config.ICSPPassword = d.Get("icsp_password").(string)
-    config.ICSPEndpoint = d.Get("icsp_endpoint").(string)
-    config.ICSPSSLVerify = d.Get("icsp_sslverify").(bool)
-    config.ICSPAPIVersion = d.Get("icsp_apiversion").(int)
+	if _, ok := d.GetOk("icsp_endpoint"); ok {
+		config.ICSPDomain = d.Get("icsp_domain").(string)
+		config.ICSPUsername = d.Get("icsp_username").(string)
+		config.ICSPPassword = d.Get("icsp_password").(string)
+		config.ICSPEndpoint = d.Get("icsp_endpoint").(string)
+		config.ICSPSSLVerify = d.Get("icsp_sslverify").(bool)
+		config.ICSPAPIVersion = d.Get("icsp_apiversion").(int)
 
-    if err := config.loadAndValidateICSP(); err != nil {
-      return nil, err
-    }
-  }
-  
-  return &config, nil
+		if err := config.loadAndValidateICSP(); err != nil {
+			return nil, err
+		}
+	}
+
+	return &config, nil
 }

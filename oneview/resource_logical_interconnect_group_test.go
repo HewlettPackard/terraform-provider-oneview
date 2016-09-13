@@ -12,85 +12,82 @@
 package oneview
 
 import (
-  "fmt"
-  "testing"
-  
-  "github.com/hashicorp/terraform/helper/resource"
-  "github.com/hashicorp/terraform/terraform"
-  "github.hpe.com/matthew-frahry/oneview-golang/ov" 
+	"fmt"
+	"testing"
+
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccLogicalInterconnectGroup_1(t *testing.T){
-  var logicalInterconnectGroup ov.LogicalInterconnectGroup
+func TestAccLogicalInterconnectGroup_1(t *testing.T) {
+	var logicalInterconnectGroup ov.LogicalInterconnectGroup
 
-  resource.Test(t, resource.TestCase{
-    PreCheck: func() { testAccPreCheck(t) },
-    Providers: testAccProviders,
-    CheckDestroy: testAccCheckLogicalInterconnectGroupDestroy,
-    Steps: []resource.TestStep{
-      resource.TestStep{
-        Config: testAccLogicalInterconnectGroup,
-        Check: resource.ComposeTestCheckFunc(
-	        testAccCheckLogicalInterconnectGroupExists(
-            "oneview_logical_interconnect_group.test", &logicalInterconnectGroup),
-          resource.TestCheckResourceAttr(
- 	            "oneview_logical_interconnect_group.test", "name", "terraform lig",
-          ),
-        ),
-      },
-    },
-  })
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckLogicalInterconnectGroupDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccLogicalInterconnectGroup,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckLogicalInterconnectGroupExists(
+						"oneview_logical_interconnect_group.test", &logicalInterconnectGroup),
+					resource.TestCheckResourceAttr(
+						"oneview_logical_interconnect_group.test", "name", "terraform lig",
+					),
+				),
+			},
+		},
+	})
 }
 
 func testAccCheckLogicalInterconnectGroupExists(n string, logicalInterconnectGroup *ov.LogicalInterconnectGroup) resource.TestCheckFunc {
-  return func(s *terraform.State) error {
-    rs, ok := s.RootModule().Resources[n]
-    if !ok {
-      return fmt.Errorf("Not found :%v", n)
-    }
- 
-    if rs.Primary.ID == "" {
-      return fmt.Errorf("No ID is set")
-    }
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found :%v", n)
+		}
 
-    config, err := testProviderConfig()
-    if err != nil {
-      return err
-    }
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No ID is set")
+		}
 
-    testLogicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(rs.Primary.ID)
-    if err != nil{
-      return err
-    }
-    if testLogicalInterconnectGroup.Name != rs.Primary.ID {
-      return fmt.Errorf("Instance not found")
-    }
-    *logicalInterconnectGroup = testLogicalInterconnectGroup
-    return nil
-  }
+		config, err := testProviderConfig()
+		if err != nil {
+			return err
+		}
+
+		testLogicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+		if testLogicalInterconnectGroup.Name != rs.Primary.ID {
+			return fmt.Errorf("Instance not found")
+		}
+		*logicalInterconnectGroup = testLogicalInterconnectGroup
+		return nil
+	}
 }
-
 
 func testAccCheckLogicalInterconnectGroupDestroy(s *terraform.State) error {
-  config := testAccProvider.Meta().(*Config)
-  for _, rs := range s.RootModule().Resources {
-    if rs.Type != "oneview_logical_interconnect_group" {
-      continue
-    }
-    
-    testLig, _ := config.ovClient.GetLogicalInterconnectGroupByName(rs.Primary.ID)
+	config := testAccProvider.Meta().(*Config)
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "oneview_logical_interconnect_group" {
+			continue
+		}
 
-    if testLig.Name != "" {
-      return fmt.Errorf("LogicalInterconenctGroup still exists")
-    }
-  }
- 
-  return nil
+		testLig, _ := config.ovClient.GetLogicalInterconnectGroupByName(rs.Primary.ID)
+
+		if testLig.Name != "" {
+			return fmt.Errorf("LogicalInterconenctGroup still exists")
+		}
+	}
+
+	return nil
 }
 
-
-var testAccLogicalInterconnectGroup = 
-  `resource "oneview_logical_interconnect_group" "test" {
+var testAccLogicalInterconnectGroup = `resource "oneview_logical_interconnect_group" "test" {
     count = 1
     name = "terraform lig"
     interconnect_settings {}

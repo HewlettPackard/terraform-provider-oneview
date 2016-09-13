@@ -15,9 +15,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.hpe.com/matthew-frahry/oneview-golang/ov"
 )
 
 func TestAccFCNetwork_1(t *testing.T) {
@@ -28,7 +28,7 @@ func TestAccFCNetwork_1(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckFCNetworkDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccFCNetwork,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckFCNetworkExists(

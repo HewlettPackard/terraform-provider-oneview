@@ -9,15 +9,15 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-package oneview 
+package oneview
 
 import (
-  "github.com/hashicorp/terraform/helper/schema"
-  "github.hpe.com/matthew-frahry/oneview-golang/ov"
-  "github.hpe.com/matthew-frahry/oneview-golang/utils"
-  "fmt"
-  "reflect"
-  "strconv"
+	"fmt"
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/hashicorp/terraform/helper/schema"
+	"reflect"
+	"strconv"
 )
 
 func resourceLogicalInterconnectGroup() *schema.Resource {
@@ -28,356 +28,356 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 		Delete: resourceLogicalInterconnectGroupDelete,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type: schema.TypeString,
+			"name": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"type": &schema.Schema{
-				Type: schema.TypeString,
+			"type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "logical-interconnect-groupV3",
+				Default:  "logical-interconnect-groupV3",
 			},
-			"interconnect_map_entry_template": &schema.Schema{
+			"interconnect_map_entry_template": {
 				Optional: true,
-				Type: schema.TypeList,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"bay_number": &schema.Schema{
-							Type: schema.TypeInt,
+						"bay_number": {
+							Type:     schema.TypeInt,
 							Required: true,
 						},
-						"interconnect_type_name": &schema.Schema{
-							Type: schema.TypeString,
+						"interconnect_type_name": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
-						"enclosure_index": &schema.Schema{
-							Type: schema.TypeInt,
-							Optional:true,
-							Default: 1,
+						"enclosure_index": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  1,
 						},
 					},
 				},
 			},
-			"uplink_set": &schema.Schema{
+			"uplink_set": {
 				Optional: true,
-				Type: schema.TypeList,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"network_type": &schema.Schema{
-							Type: schema.TypeString,
+						"network_type": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Default: "Ethernet",
+							Default:  "Ethernet",
 						},
-						"ethernet_network_type": &schema.Schema{
-							Type: schema.TypeString,
+						"ethernet_network_type": {
+							Type:     schema.TypeString,
 							Optional: true,
 							Computed: true,
 						},
-						"name": &schema.Schema{
-							Type: schema.TypeString,
+						"name": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
-						"logical_port_config": &schema.Schema{
-							Type: schema.TypeList,
+						"logical_port_config": {
+							Type:     schema.TypeList,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"desired_speed": &schema.Schema{
-										Type: schema.TypeString,
+									"desired_speed": {
+										Type:     schema.TypeString,
 										Optional: true,
-										Default: "Auto",
+										Default:  "Auto",
 									},
-									"port_num": &schema.Schema{
-										Type: schema.TypeSet,
+									"port_num": {
+										Type:     schema.TypeSet,
 										Required: true,
-										Elem: &schema.Schema{Type: schema.TypeInt},
+										Elem:     &schema.Schema{Type: schema.TypeInt},
 										Set: func(a interface{}) int {
 											return a.(int)
 										},
 									},
-									"bay_num": &schema.Schema{
-										Type: schema.TypeInt,
+									"bay_num": {
+										Type:     schema.TypeInt,
 										Required: true,
 									},
-									"enclosure_num": &schema.Schema{
-										Type: schema.TypeInt,
+									"enclosure_num": {
+										Type:     schema.TypeInt,
 										Optional: true,
-										Default: 1,
+										Default:  1,
 									},
-									"primary_port": &schema.Schema{
-										Type: schema.TypeBool,
+									"primary_port": {
+										Type:     schema.TypeBool,
 										Optional: true,
-										Default: false,
+										Default:  false,
 									},
-								},								
+								},
 							},
 						},
-						"mode": &schema.Schema{
-							Type: schema.TypeString,
+						"mode": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Default: "Auto",
+							Default:  "Auto",
 						},
-						"network_uris": &schema.Schema{
-							Type: schema.TypeSet,
+						"network_uris": {
+							Type:     schema.TypeSet,
 							Optional: true,
-							Elem: &schema.Schema{Type: schema.TypeString},
+							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
-						"lacp_timer": &schema.Schema{
-							Type: schema.TypeString,
+						"lacp_timer": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Default: "Short",
+							Default:  "Short",
 						},
-						"native_network_uri": &schema.Schema{
-							Type: schema.TypeString,
+						"native_network_uri": {
+							Type:     schema.TypeString,
 							Optional: true,
 						},
 					},
 				},
 			},
-			"internal_network_uris": &schema.Schema{
-				Type: schema.TypeSet,
+			"internal_network_uris": {
+				Type:     schema.TypeSet,
 				Optional: true,
-				Elem: &schema.Schema{Type: schema.TypeString},
+				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
-			"telemetry_configuration": &schema.Schema{
-				Type: schema.TypeList,
-				Optional: true,
-				Computed: true,
-				Elem: &schema.Resource{
-				    Schema: map[string]*schema.Schema{
-					    "type": &schema.Schema{
-					    	Type:     schema.TypeString,
-					    	Optional: true,
-					    	Default: "telemetry-configuration",
-					    },
-					    "enabled": &schema.Schema{
-					    	Type: schema.TypeBool,
-					    	Optional: true,
-					    	Default: true,
-					    },
-					    "sample_count": &schema.Schema{
-					    	Type: schema.TypeInt,
-					    	Optional: true,
-					    	Default: 12,
-					    },
-					    "sample_interval": &schema.Schema{
-					    	Type: schema.TypeInt,
-					    	Optional: true,
-					    	Default: 300,
-					    },
-					},
-				},
-			},
-			"snmp_configuration": &schema.Schema{
-				Type: schema.TypeList,
+			"telemetry_configuration": {
+				Type:     schema.TypeList,
 				Optional: true,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"enabled": &schema.Schema{
-					    	Type: schema.TypeBool,
-					    	Optional: true,
-					    	Default: true,
-					    },
-					    "type": &schema.Schema{
-					    	Type:     schema.TypeString,
-					    	Optional: true,
-					    	Default: "snmp-configuration",
-					    },
-					    "read_community": &schema.Schema{
-					    	Type: schema.TypeString,
-					    	Optional: true,
-					    	Default: "public",
-					    },
-					    "system_contact": &schema.Schema{
-					    	Type: schema.TypeString,
-					    	Optional: true,
-					    },
-					    "snmp_access": &schema.Schema{
-					    	Type: schema.TypeSet,
+						"type": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Elem: &schema.Schema{Type: schema.TypeString},
+							Default:  "telemetry-configuration",
+						},
+						"enabled": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"sample_count": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  12,
+						},
+						"sample_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  300,
+						},
+					},
+				},
+			},
+			"snmp_configuration": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"enabled": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "snmp-configuration",
+						},
+						"read_community": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "public",
+						},
+						"system_contact": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"snmp_access": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
-					    },
-					    "trap_destination": &schema.Schema{
-					    	Type: schema.TypeList,
-					    	Optional: true,
-					    	Elem: &schema.Resource{
-					    		Schema: map[string]*schema.Schema{
-					    			"community_string": &schema.Schema{
-					    				Type: schema.TypeString,
-					    				Optional:true,
-					    			},
-					    			"enet_trap_categories": &schema.Schema{
-					    				Type: schema.TypeSet,
-					    				Optional: true,
-					    				Elem: &schema.Schema{Type: schema.TypeString},
-										Set:      schema.HashString,
-					    			},
-					    			"fc_trap_categories": &schema.Schema{
-					    				Type: schema.TypeSet,
-										Optional: true,
-										Elem: &schema.Schema{Type: schema.TypeString},
-										Set:      schema.HashString,
-					    			},
-					    			"vcm_trap_categories": &schema.Schema{
-					    				Type: schema.TypeSet,
-					    				Optional: true,
-					    				Elem: &schema.Schema{Type: schema.TypeString},
-										Set:      schema.HashString,
-									},
-									"trap_destination": &schema.Schema{
-										Type: schema.TypeString,
-										Required: true, 
-									},
-									"trap_format": &schema.Schema{
-										Type: schema.TypeString,
-										Optional: true,
-										Default: "SNMPv1",
-									},
-									"trap_severities": &schema.Schema{
-										Type: schema.TypeSet,
-										Optional: true,
-										Elem: &schema.Schema{Type: schema.TypeString},
-										Set:      schema.HashString,
-									},
-					    		},
-					    	},
-					    },
-					},
-				},
-			},
-			"interconnect_settings": &schema.Schema{
-				Type: schema.TypeList,
-				Optional: true,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"type": &schema.Schema{
-					    	Type:     schema.TypeString,
-					    	Optional: true,
-					    	Default: "EthernetInterconnectSettingsV3",
-					    },
-						"fast_mac_cache_failover": &schema.Schema{
-							Type: schema.TypeBool,
-							Optional: true,
-							Default: true,
 						},
-						"igmp_snooping": &schema.Schema{
-							Type: schema.TypeBool,
-							Optional: true,
-							Default: false,
-						},
-						"network_loop_protection": &schema.Schema{
-							Type: schema.TypeBool,
-							Optional: true,
-							Default: true,
-						},
-						"pause_flood_protection": &schema.Schema{
-							Type: schema.TypeBool,
-							Optional: true,
-							Default: true,
-						},
-						"rich_tlv": &schema.Schema{
-							Type: schema.TypeBool,
-							Optional: true,
-							Default: false,
-						},
-						"igmp_timeout_interval": &schema.Schema{
-							Type: schema.TypeInt,
-							Optional: true,
-							Default: 260,
-						},
-						"mac_refresh_interval": &schema.Schema{
-							Type: schema.TypeInt,
-							Optional: true,
-							Default: 5,
-						},
-					},
-				},
-			},
-			"quality_of_service": &schema.Schema{
-				Type: schema.TypeList,
-				Optional: true, 
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"type": &schema.Schema{
-							Type: schema.TypeString,
-							Optional: true,
-							Default: "qos-aggregated-configuration",
-						},
-						"active_qos_config_type": &schema.Schema{
-							Type: schema.TypeString,
-							Optional: true,
-							Default: "QosConfiguration",
-						},
-						"config_type": &schema.Schema{
-							Type: schema.TypeString,
-							Optional: true,
-							Default: "Passthrough",
-						},
-						"uplink_classification_type": &schema.Schema{
-							Type: schema.TypeString,
-							Optional: true,
-						},
-						"downlink_classification_type": &schema.Schema{
-							Type: schema.TypeString,
-							Optional: true,
-						},
-						"qos_traffic_class": &schema.Schema{
-							Type: schema.TypeList,
+						"trap_destination": {
+							Type:     schema.TypeList,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"name": &schema.Schema{
-										Type: schema.TypeString,
-										Required: true,
-									},
-									"enabled": &schema.Schema{
-										Type: schema.TypeBool,
+									"community_string": {
+										Type:     schema.TypeString,
 										Optional: true,
-										Default: true,
 									},
-									"egress_dot1p_value": &schema.Schema{
-										Type: schema.TypeInt,
-										Required: true, 
-									},
-									"real_time": &schema.Schema{
-										Type: schema.TypeBool,
+									"enet_trap_categories": {
+										Type:     schema.TypeSet,
 										Optional: true,
-										Default: false,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
 									},
-									"bandwidth_share": &schema.Schema{
-										Type: schema.TypeString,
+									"fc_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+									"vcm_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+									"trap_destination": {
+										Type:     schema.TypeString,
 										Required: true,
 									},
-									"max_bandwidth": &schema.Schema{
-										Type: schema.TypeInt,
+									"trap_format": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "SNMPv1",
+									},
+									"trap_severities": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			"interconnect_settings": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "EthernetInterconnectSettingsV3",
+						},
+						"fast_mac_cache_failover": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"igmp_snooping": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
+						},
+						"network_loop_protection": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"pause_flood_protection": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"rich_tlv": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
+						},
+						"igmp_timeout_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  260,
+						},
+						"mac_refresh_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  5,
+						},
+					},
+				},
+			},
+			"quality_of_service": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "qos-aggregated-configuration",
+						},
+						"active_qos_config_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "QosConfiguration",
+						},
+						"config_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "Passthrough",
+						},
+						"uplink_classification_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"downlink_classification_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"qos_traffic_class": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
 										Required: true,
 									},
-									"qos_classification_map": &schema.Schema{
-										Type: schema.TypeList,
+									"enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Default:  true,
+									},
+									"egress_dot1p_value": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+									"real_time": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Default:  false,
+									},
+									"bandwidth_share": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"max_bandwidth": {
+										Type:     schema.TypeInt,
+										Required: true,
+									},
+									"qos_classification_map": {
+										Type:     schema.TypeList,
 										Required: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"dot1p_class_map": &schema.Schema{
-													Type: schema.TypeSet,
+												"dot1p_class_map": {
+													Type:     schema.TypeSet,
 													Optional: true,
-													Elem: &schema.Schema{Type: schema.TypeInt},
+													Elem:     &schema.Schema{Type: schema.TypeInt},
 													Set: func(a interface{}) int {
 														return a.(int)
 													},
 												},
-												"dscp_class_map": &schema.Schema{
-													Type: schema.TypeSet,
+												"dscp_class_map": {
+													Type:     schema.TypeSet,
 													Optional: true,
-													Elem: &schema.Schema{Type: schema.TypeString},
+													Elem:     &schema.Schema{Type: schema.TypeString},
 													Set:      schema.HashString,
 												},
-											},											
+											},
 										},
 									},
 								},
@@ -386,40 +386,40 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 					},
 				},
 			},
-			"created": &schema.Schema{
-				Type: schema.TypeString,
+			"created": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified": &schema.Schema{
-				Type: schema.TypeString,
-				Computed:true,
+			"modified": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
-			"description": &schema.Schema{
-				Type: schema.TypeString,
+			"description": {
+				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"uri": &schema.Schema{
-				Type: schema.TypeString,
+			"uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"status": &schema.Schema{
-				Type: schema.TypeString,
+			"status": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"category": &schema.Schema{
-				Type: schema.TypeString,
+			"category": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"state": &schema.Schema{
-				Type: schema.TypeString,
+			"state": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"fabric_uri": &schema.Schema{
-				Type: schema.TypeString,
+			"fabric_uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": &schema.Schema{
-				Type: schema.TypeString,
+			"eTag": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 		},
@@ -430,7 +430,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	config := meta.(*Config)
 
 	lig := ov.LogicalInterconnectGroup{
-		Name:                d.Get("name").(string),
+		Name: d.Get("name").(string),
 		Type: d.Get("type").(string),
 	}
 
@@ -440,39 +440,38 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		interconnectMapEntryTemplatePrefix := fmt.Sprintf("interconnect_map_entry_template.%d", i)
 		interconnectTypeName := d.Get(interconnectMapEntryTemplatePrefix + ".interconnect_type_name").(string)
 		interconnectType, err := config.ovClient.GetInterconnectTypeByName(interconnectTypeName)
-		if(err != nil){
+		if err != nil {
 			return err
 		}
-		if(interconnectType.URI == ""){
+		if interconnectType.URI == "" {
 			return fmt.Errorf("Could not find Interconnect Type from name: %s", interconnectTypeName)
 		}
 
-		enclosureLocation := ov.LocationEntry {
+		enclosureLocation := ov.LocationEntry{
 			RelativeValue: d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
-			Type: "Enclosure",
+			Type:          "Enclosure",
 		}
 		locationEntries := make([]ov.LocationEntry, 0)
 		locationEntries = append(locationEntries, enclosureLocation)
 
-		bayLocation := ov.LocationEntry {
+		bayLocation := ov.LocationEntry{
 			RelativeValue: d.Get(interconnectMapEntryTemplatePrefix + ".bay_number").(int),
-			Type: "Bay",
+			Type:          "Bay",
 		}
 		locationEntries = append(locationEntries, bayLocation)
-		logicalLocation := ov.LogicalLocation {
+		logicalLocation := ov.LogicalLocation{
 			LocationEntries: locationEntries,
 		}
 		interconnectMapEntryTemplates = append(interconnectMapEntryTemplates, ov.InterconnectMapEntryTemplate{
-			LogicalLocation: logicalLocation,
-			EnclosureIndex: d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
+			LogicalLocation:              logicalLocation,
+			EnclosureIndex:               d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
 			PermittedInterconnectTypeUri: interconnectType.URI,
 		})
 	}
-	interconnectMapTemplate := ov.InterconnectMapTemplate {
+	interconnectMapTemplate := ov.InterconnectMapTemplate{
 		InterconnectMapEntryTemplates: interconnectMapEntryTemplates,
 	}
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
-
 
 	uplinkSetCount := d.Get("uplink_set.#").(int)
 	uplinkSets := make([]ov.UplinkSet, 0)
@@ -495,14 +494,13 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 			uplinkSet.LacpTimer = val.(string)
 		}
 		if val, ok := d.GetOk(uplinkSetPrefix + ".native_network_uri"); ok {
-	    	uplinkSet.NativeNetworkUri = utils.NewNstring(val.(string))
+			uplinkSet.NativeNetworkUri = utils.NewNstring(val.(string))
 		}
-
 
 		logicalPortCount := d.Get(uplinkSetPrefix + ".logical_port_config.#").(int)
 		logicalPorts := make([]ov.LogicalPortConfigInfo, 0)
 		for i := 0; i < logicalPortCount; i++ {
-			logicalPortPrefix := fmt.Sprintf(uplinkSetPrefix + ".logical_port_config.%d", i)
+			logicalPortPrefix := fmt.Sprintf(uplinkSetPrefix+".logical_port_config.%d", i)
 			rawPortLocations := d.Get(logicalPortPrefix + ".port_num").(*schema.Set).List()
 			for _, raw := range rawPortLocations {
 				logicalPort := ov.LogicalPortConfigInfo{}
@@ -512,30 +510,30 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 				}
 
 				locationEntries := make([]ov.LocationEntry, 0)
-				enclosureLocation := ov.LocationEntry {
+				enclosureLocation := ov.LocationEntry{
 					RelativeValue: d.Get(logicalPortPrefix + ".enclosure_num").(int),
-					Type: "Enclosure",
+					Type:          "Enclosure",
 				}
 				locationEntries = append(locationEntries, enclosureLocation)
 
-				bayLocation := ov.LocationEntry {
+				bayLocation := ov.LocationEntry{
 					RelativeValue: d.Get(logicalPortPrefix + ".bay_num").(int),
-					Type: "Bay",
+					Type:          "Bay",
 				}
 				locationEntries = append(locationEntries, bayLocation)
 
-				portLocation := ov.LocationEntry {
+				portLocation := ov.LocationEntry{
 					RelativeValue: raw.(int),
-					Type: "Port",
+					Type:          "Port",
 				}
 				locationEntries = append(locationEntries, portLocation)
 
-				logicalLocation := ov.LogicalLocation {
+				logicalLocation := ov.LogicalLocation{
 					LocationEntries: locationEntries,
 				}
 
 				logicalPort.LogicalLocation = logicalLocation
-				if _, ok := d.GetOk(logicalPortPrefix + ".primary_port"); ok{
+				if _, ok := d.GetOk(logicalPortPrefix + ".primary_port"); ok {
 					if uplinkSet.PrimaryPort == nil {
 						uplinkSet.PrimaryPort = &logicalLocation
 					}
@@ -543,7 +541,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 				logicalPorts = append(logicalPorts, logicalPort)
 			}
-			
+
 		}
 		uplinkSet.LogicalPortConfigInfos = logicalPorts
 
@@ -553,13 +551,12 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 			netUris = append(netUris, utils.NewNstring(raw.(string)))
 		}
 		uplinkSet.NetworkUris = netUris
-		
+
 		uplinkSets = append(uplinkSets, uplinkSet)
 	}
 
 	lig.UplinkSets = uplinkSets
 
-	
 	rawInternalNetUris := d.Get("internal_network_uris").(*schema.Set).List()
 	internalNetUris := make([]utils.Nstring, len(rawInternalNetUris))
 	for i, raw := range rawInternalNetUris {
@@ -568,7 +565,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	lig.InternalNetworkUris = internalNetUris
 
 	telemetryConfigPrefix := fmt.Sprintf("telemetry_configuration.0")
-	telemetryConfiguration := ov.TelemetryConfiguration{}	
+	telemetryConfiguration := ov.TelemetryConfiguration{}
 	if val, ok := d.GetOk(telemetryConfigPrefix + ".sample_count"); ok {
 		telemetryConfiguration.SampleCount = val.(int)
 	}
@@ -585,7 +582,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	}
 
 	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
-	snmpConfiguration := ov.SnmpConfiguration{}	
+	snmpConfiguration := ov.SnmpConfiguration{}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
 		enabled := val.(bool)
 		snmpConfiguration.Enabled = &enabled
@@ -595,7 +592,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".system_contact"); ok {
 		snmpConfiguration.SystemContact = val.(string)
-	}	
+	}
 	rawSnmpAccess := d.Get(snmpConfigPrefix + ".snmp_access").(*schema.Set).List()
 	snmpAccess := make([]string, len(rawSnmpAccess))
 	for i, raw := range rawSnmpAccess {
@@ -606,8 +603,8 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	trapDestinationCount := d.Get(snmpConfigPrefix + ".trap_destination.#").(int)
 	trapDestinations := make([]ov.TrapDestination, 0, trapDestinationCount)
 	for i := 0; i < trapDestinationCount; i++ {
-		trapDestinationPrefix := fmt.Sprintf(snmpConfigPrefix + ".trap_destination.%d", i)
-		
+		trapDestinationPrefix := fmt.Sprintf(snmpConfigPrefix+".trap_destination.%d", i)
+
 		rawEnetTrapCategories := d.Get(trapDestinationPrefix + ".enet_trap_categories").(*schema.Set).List()
 		enetTrapCategories := make([]string, len(rawEnetTrapCategories))
 		for i, raw := range rawEnetTrapCategories {
@@ -633,13 +630,13 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		}
 
 		trapDestination := ov.TrapDestination{
-			TrapDestination: d.Get(trapDestinationPrefix + ".trap_destination").(string),
-			CommunityString: d.Get(trapDestinationPrefix + ".community_string").(string),
-			TrapFormat: d.Get(trapDestinationPrefix + ".trap_format").(string),	
+			TrapDestination:    d.Get(trapDestinationPrefix + ".trap_destination").(string),
+			CommunityString:    d.Get(trapDestinationPrefix + ".community_string").(string),
+			TrapFormat:         d.Get(trapDestinationPrefix + ".trap_format").(string),
 			EnetTrapCategories: enetTrapCategories,
-			FcTrapCategories: fcTrapCategories,
-			VcmTrapCategories: vcmTrapCategories,
-			TrapSeverities: trapSeverities,
+			FcTrapCategories:   fcTrapCategories,
+			VcmTrapCategories:  vcmTrapCategories,
+			TrapSeverities:     trapSeverities,
 		}
 		trapDestinations = append(trapDestinations, trapDestination)
 	}
@@ -654,13 +651,13 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 	interconnectSettingsPrefix := fmt.Sprintf("interconnect_settings.0")
 	if val, ok := d.GetOk(interconnectSettingsPrefix + ".type"); ok {
-		interconnectSettings := ov.EthernetSettings{}	
-	
+		interconnectSettings := ov.EthernetSettings{}
+
 		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".fast_mac_cache_failover").(bool)
-		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled 
+		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
 
 		networkLoopProtectionEnabled := d.Get(interconnectSettingsPrefix + ".network_loop_protection").(bool)
-		interconnectSettings.EnableNetworkLoopProtection = &networkLoopProtectionEnabled 
+		interconnectSettings.EnableNetworkLoopProtection = &networkLoopProtectionEnabled
 
 		pauseFloodProtectionEnabled := d.Get(interconnectSettingsPrefix + ".pause_flood_protection").(bool)
 		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
@@ -668,7 +665,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
 			enabled := val1.(bool)
 			interconnectSettings.EnableRichTLV = &enabled
-		} 
+		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_snooping"); ok {
 			enabled := val1.(bool)
@@ -679,16 +676,16 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 			interconnectSettings.IgmpIdleTimeoutInterval = val1.(int)
 		}
 
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok{
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
 			interconnectSettings.MacRefreshInterval = val1.(int)
 		}
 
 		interconnectSettings.Type = val.(string)
 		lig.EthernetSettings = &interconnectSettings
 	}
-	
+
 	qualityOfServicePrefix := fmt.Sprintf("quality_of_service.0")
-	activeQosConfig := ov.ActiveQosConfig{}	
+	activeQosConfig := ov.ActiveQosConfig{}
 
 	if val, ok := d.GetOk(qualityOfServicePrefix + ".config_type"); ok {
 		activeQosConfig.ConfigType = val.(string)
@@ -705,7 +702,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	qosTrafficClassCount := d.Get(qualityOfServicePrefix + ".qos_traffic_class.#").(int)
 	qosTrafficClassifiers := make([]ov.QosTrafficClassifier, 0, 1)
 	for i := 0; i < qosTrafficClassCount; i++ {
-		qosTrafficClassPrefix := fmt.Sprintf(qualityOfServicePrefix + ".qos_traffic_class.%d", i)
+		qosTrafficClassPrefix := fmt.Sprintf(qualityOfServicePrefix+".qos_traffic_class.%d", i)
 		qosTrafficClassifier := ov.QosTrafficClassifier{}
 		qosClassMap := ov.QosClassificationMap{}
 		qosTrafficClass := ov.QosTrafficClass{}
@@ -761,28 +758,27 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		activeQosConfig.Type = val.(string)
 
 		qualityOfService := ov.QosConfiguration{
-			Type: d.Get(qualityOfServicePrefix + ".type").(string),
+			Type:            d.Get(qualityOfServicePrefix + ".type").(string),
 			ActiveQosConfig: activeQosConfig,
 		}
-
 
 		lig.QosConfiguration = &qualityOfService
 	}
 
 	ligError := config.ovClient.CreateLogicalInterconnectGroup(lig)
 	d.SetId(d.Get("name").(string))
-	if(ligError != nil){
+	if ligError != nil {
 		d.SetId("")
 		return ligError
 	}
-    return resourceLogicalInterconnectGroupRead(d, meta)
+	return resourceLogicalInterconnectGroupRead(d, meta)
 }
 
 func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
-	if err != nil || logicalInterconnectGroup.URI.IsNil(){
+	if err != nil || logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
@@ -806,8 +802,8 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		if err != nil {
 			return err
 		}
-		if(interconnectType.Name == ""){
-			return fmt.Errorf("Could not find interconnectType with URI %s", interconnectMapEntryTemplate.PermittedInterconnectTypeUri.String() )
+		if interconnectType.Name == "" {
+			return fmt.Errorf("Could not find interconnectType with URI %s", interconnectMapEntryTemplate.PermittedInterconnectTypeUri.String())
 		}
 		var bayNum int
 		var enclosureIndex int
@@ -821,8 +817,8 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 		interconnectMapEntryTemplates = append(interconnectMapEntryTemplates, map[string]interface{}{
 			"interconnect_type_name": interconnectType.Name,
-			"bay_number": bayNum,
-			"enclosure_index": enclosureIndex,
+			"bay_number":             bayNum,
+			"enclosure_index":        enclosureIndex,
 		})
 	}
 
@@ -875,7 +871,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 					portPort = portLocation.RelativeValue
 				}
 			}
-			if primaryPortEnclosure == portEnclosure && primaryPortBay == portBay && primaryPortPort == portPort{
+			if primaryPortEnclosure == portEnclosure && primaryPortBay == portBay && primaryPortPort == portPort {
 				primaryPort = true
 			}
 
@@ -894,9 +890,9 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 			if included == false {
 				logicalPortConfigs = append(logicalPortConfigs, map[string]interface{}{
 					"desired_speed": logicalPortConfigInfo.DesiredSpeed,
-					"primary_port": primaryPort,
-					"port_num": schema.NewSet(func(a interface{}) int {return a.(int)}, portPorts),
-					"bay_num": portBay,
+					"primary_port":  primaryPort,
+					"port_num":      schema.NewSet(func(a interface{}) int { return a.(int) }, portPorts),
+					"bay_num":       portBay,
 					"enclosure_num": portEnclosure,
 				})
 			}
@@ -908,7 +904,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		for j := 0; j < logicalPortCount; j++ {
 			currBay := d.Get("uplink_set." + strconv.Itoa(i) + ".logical_port_config." + strconv.Itoa(j) + ".bay_num").(int)
 			for k := 0; k < oneviewLogicalPortCount; k++ {
-				if currBay == logicalPortConfigs[k]["bay_num"]  && j <= k {
+				if currBay == logicalPortConfigs[k]["bay_num"] && j <= k {
 					logicalPortConfigs[j], logicalPortConfigs[k] = logicalPortConfigs[k], logicalPortConfigs[j]
 				}
 			}
@@ -917,17 +913,17 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		networkUris := make([]interface{}, len(uplinkSet.NetworkUris))
 		for i, networkUri := range uplinkSet.NetworkUris {
 			networkUris[i] = networkUri.String()
- 		}
+		}
 
 		uplinkSets = append(uplinkSets, map[string]interface{}{
-			"network_type": uplinkSet.NetworkType,
+			"network_type":          uplinkSet.NetworkType,
 			"ethernet_network_type": uplinkSet.EthernetNetworkType,
-			"name": uplinkSet.Name,
-			"mode": uplinkSet.Mode,
-			"lacp_timer": uplinkSet.LacpTimer,
-			"native_network_uri": uplinkSet.NativeNetworkUri,
-			"logical_port_config": logicalPortConfigs,
-			"network_uris": schema.NewSet(schema.HashString, networkUris),
+			"name":                  uplinkSet.Name,
+			"mode":                  uplinkSet.Mode,
+			"lacp_timer":            uplinkSet.LacpTimer,
+			"native_network_uri":    uplinkSet.NativeNetworkUri,
+			"logical_port_config":   logicalPortConfigs,
+			"network_uris":          schema.NewSet(schema.HashString, networkUris),
 		})
 	}
 	uplinkCount := d.Get("uplink_set.#").(int)
@@ -935,7 +931,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	for i := 0; i < uplinkCount; i++ {
 		currUplinkName := d.Get("uplink_set." + strconv.Itoa(i) + ".name").(string)
 		for j := 0; j < oneviewUplinkCount; j++ {
-			if currUplinkName == uplinkSets[j]["name"]  && i <= j {
+			if currUplinkName == uplinkSets[j]["name"] && i <= j {
 				uplinkSets[i], uplinkSets[j] = uplinkSets[j], uplinkSets[i]
 			}
 		}
@@ -945,19 +941,17 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	internalNetworkUris := make([]interface{}, len(logicalInterconnectGroup.InternalNetworkUris))
 	for i, internalNetworkUri := range logicalInterconnectGroup.InternalNetworkUris {
 		internalNetworkUris[i] = internalNetworkUri
- 	} 
- 	d.Set("internal_network_uris", internalNetworkUris)
+	}
+	d.Set("internal_network_uris", internalNetworkUris)
 
-
- 	telemetryConfigurations := make([]map[string]interface{}, 0, 1)
- 	telemetryConfigurations =  append(telemetryConfigurations, map[string]interface{}{
- 		"enabled": *logicalInterconnectGroup.TelemetryConfiguration.EnableTelemetry,
- 		"sample_count": logicalInterconnectGroup.TelemetryConfiguration.SampleCount,
- 		"sample_interval": logicalInterconnectGroup.TelemetryConfiguration.SampleInterval,
- 		"type": logicalInterconnectGroup.TelemetryConfiguration.Type,
- 	})
- 	d.Set("telemetry_configuration", telemetryConfigurations)
-
+	telemetryConfigurations := make([]map[string]interface{}, 0, 1)
+	telemetryConfigurations = append(telemetryConfigurations, map[string]interface{}{
+		"enabled":         *logicalInterconnectGroup.TelemetryConfiguration.EnableTelemetry,
+		"sample_count":    logicalInterconnectGroup.TelemetryConfiguration.SampleCount,
+		"sample_interval": logicalInterconnectGroup.TelemetryConfiguration.SampleInterval,
+		"type":            logicalInterconnectGroup.TelemetryConfiguration.Type,
+	})
+	d.Set("telemetry_configuration", telemetryConfigurations)
 
 	trapDestinations := make([]map[string]interface{}, 0, 1)
 	for _, trapDestination := range logicalInterconnectGroup.SnmpConfiguration.TrapDestinations {
@@ -965,31 +959,31 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		enetTrapCategories := make([]interface{}, len(trapDestination.EnetTrapCategories))
 		for i, enetTrapCategory := range trapDestination.EnetTrapCategories {
 			enetTrapCategories[i] = enetTrapCategory
- 		}
+		}
 
- 		fcTrapCategories := make([]interface{}, len(trapDestination.FcTrapCategories))
+		fcTrapCategories := make([]interface{}, len(trapDestination.FcTrapCategories))
 		for i, fcTrapCategory := range trapDestination.FcTrapCategories {
 			fcTrapCategories[i] = fcTrapCategory
- 		}
+		}
 
- 		vcmTrapCategories := make([]interface{}, len(trapDestination.VcmTrapCategories))
+		vcmTrapCategories := make([]interface{}, len(trapDestination.VcmTrapCategories))
 		for i, vcmTrapCategory := range trapDestination.VcmTrapCategories {
 			vcmTrapCategories[i] = vcmTrapCategory
- 		}
+		}
 
- 		trapSeverities := make([]interface{}, len(trapDestination.TrapSeverities))
+		trapSeverities := make([]interface{}, len(trapDestination.TrapSeverities))
 		for i, trapSeverity := range trapDestination.TrapSeverities {
 			trapSeverities[i] = trapSeverity
- 		}
+		}
 
 		trapDestinations = append(trapDestinations, map[string]interface{}{
-			"trap_destination": trapDestination.TrapDestination,
-			"community_string": trapDestination.CommunityString,
-			"trap_format": trapDestination.TrapFormat,
+			"trap_destination":     trapDestination.TrapDestination,
+			"community_string":     trapDestination.CommunityString,
+			"trap_format":          trapDestination.TrapFormat,
 			"enet_trap_categories": schema.NewSet(schema.HashString, enetTrapCategories),
-			"fc_trap_categories": schema.NewSet(schema.HashString, fcTrapCategories),
-			"vcm_trap_categories": schema.NewSet(schema.HashString, vcmTrapCategories),
-			"trap_severities": schema.NewSet(schema.HashString, trapSeverities),
+			"fc_trap_categories":   schema.NewSet(schema.HashString, fcTrapCategories),
+			"vcm_trap_categories":  schema.NewSet(schema.HashString, vcmTrapCategories),
+			"trap_severities":      schema.NewSet(schema.HashString, trapSeverities),
 		})
 	}
 
@@ -999,114 +993,112 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	for i := 0; i < trapDestinationCount; i++ {
 		currDest := d.Get("snmp_configuration.0.trap_destination." + strconv.Itoa(i) + ".trap_destination").(string)
 		for j := 0; j < oneviewTrapDestinationCount; j++ {
-			if currDest == trapDestinations[j]["trap_destination"] && i <= j{
+			if currDest == trapDestinations[j]["trap_destination"] && i <= j {
 				trapDestinations[i], trapDestinations[j] = trapDestinations[j], trapDestinations[i]
 			}
 		}
 	}
 
- 	snmpAccess := make([]interface{}, len(logicalInterconnectGroup.SnmpConfiguration.SnmpAccess))
- 	for i, snmpAccessIP := range logicalInterconnectGroup.SnmpConfiguration.SnmpAccess {
- 		snmpAccess[i] = snmpAccessIP
- 	}
+	snmpAccess := make([]interface{}, len(logicalInterconnectGroup.SnmpConfiguration.SnmpAccess))
+	for i, snmpAccessIP := range logicalInterconnectGroup.SnmpConfiguration.SnmpAccess {
+		snmpAccess[i] = snmpAccessIP
+	}
 
- 	snmpConfiguration := make([]map[string]interface{}, 0, 1)
- 	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
- 		"enabled": *logicalInterconnectGroup.SnmpConfiguration.Enabled,
- 		"read_community": logicalInterconnectGroup.SnmpConfiguration.ReadCommunity,
- 		"snmp_access": schema.NewSet(schema.HashString, snmpAccess),
- 		"system_contact": logicalInterconnectGroup.SnmpConfiguration.SystemContact,
- 		"type": logicalInterconnectGroup.SnmpConfiguration.Type,
- 		"trap_destination": trapDestinations,
- 	})
- 	d.Set("snmp_configuration", snmpConfiguration)
+	snmpConfiguration := make([]map[string]interface{}, 0, 1)
+	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
+		"enabled":          *logicalInterconnectGroup.SnmpConfiguration.Enabled,
+		"read_community":   logicalInterconnectGroup.SnmpConfiguration.ReadCommunity,
+		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
+		"system_contact":   logicalInterconnectGroup.SnmpConfiguration.SystemContact,
+		"type":             logicalInterconnectGroup.SnmpConfiguration.Type,
+		"trap_destination": trapDestinations,
+	})
+	d.Set("snmp_configuration", snmpConfiguration)
 
+	interconnectSettings := make([]map[string]interface{}, 0, 1)
+	interconnectSettings = append(interconnectSettings, map[string]interface{}{
+		"type": logicalInterconnectGroup.EthernetSettings.Type,
+		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
+		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
+		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
+		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
+		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
+		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
+		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
+	})
+	d.Set("interconnect_settings", interconnectSettings)
 
- 	interconnectSettings := make([]map[string]interface{}, 0, 1)
- 	interconnectSettings = append(interconnectSettings, map[string]interface{}{
- 		"type": logicalInterconnectGroup.EthernetSettings.Type,
- 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
- 		"igmp_snooping": *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
- 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
- 		"pause_flood_protection": *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
- 		"rich_tlv": *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
- 		"igmp_timeout_interval": logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
- 		"mac_refresh_interval": logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
- 	})
- 	d.Set("interconnect_settings", interconnectSettings)
+	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
+	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
 
- 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
- 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
-
- 		dscpClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.DscpClassMapping))
+		dscpClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.DscpClassMapping))
 		for i, dscpValue := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
 			dscpClassMap[i] = dscpValue
- 		} 
+		}
 
- 		dot1pClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.Dot1pClassMapping))
+		dot1pClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.Dot1pClassMapping))
 		for i, dot1pValue := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
 			dot1pClassMap[i] = dot1pValue
- 		} 
- 		qosClassificationMap := make([]map[string]interface{}, 0, 1)
- 		qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
- 			"dot1p_class_map": schema.NewSet(func(a interface{}) int {return a.(int)}, dot1pClassMap),
- 			"dscp_class_map": schema.NewSet(schema.HashString, dscpClassMap),
- 		})
+		}
+		qosClassificationMap := make([]map[string]interface{}, 0, 1)
+		qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
+			"dot1p_class_map": schema.NewSet(func(a interface{}) int { return a.(int) }, dot1pClassMap),
+			"dscp_class_map":  schema.NewSet(schema.HashString, dscpClassMap),
+		})
 
- 		qosTrafficClasses = append(qosTrafficClasses, map[string]interface{}{
- 			"name": qosTrafficClass.QosTrafficClass.ClassName,
- 			"enabled": *qosTrafficClass.QosTrafficClass.Enabled,
- 			"egress_dot1p_value": qosTrafficClass.QosTrafficClass.EgressDot1pValue,
- 			"real_time": *qosTrafficClass.QosTrafficClass.RealTime,
- 			"bandwidth_share": qosTrafficClass.QosTrafficClass.BandwidthShare,
- 			"max_bandwidth": qosTrafficClass.QosTrafficClass.MaxBandwidth,
- 			"qos_classification_map": qosClassificationMap,
- 		})
- 	}
- 	qosTrafficClassCount := d.Get("quality_of_service.0.qos_traffic_class.#").(int)
+		qosTrafficClasses = append(qosTrafficClasses, map[string]interface{}{
+			"name":                   qosTrafficClass.QosTrafficClass.ClassName,
+			"enabled":                *qosTrafficClass.QosTrafficClass.Enabled,
+			"egress_dot1p_value":     qosTrafficClass.QosTrafficClass.EgressDot1pValue,
+			"real_time":              *qosTrafficClass.QosTrafficClass.RealTime,
+			"bandwidth_share":        qosTrafficClass.QosTrafficClass.BandwidthShare,
+			"max_bandwidth":          qosTrafficClass.QosTrafficClass.MaxBandwidth,
+			"qos_classification_map": qosClassificationMap,
+		})
+	}
+	qosTrafficClassCount := d.Get("quality_of_service.0.qos_traffic_class.#").(int)
 	oneviewTrafficClassCount := len(qosTrafficClasses)
 	for i := 0; i < qosTrafficClassCount; i++ {
 		currName := d.Get("quality_of_service.0.qos_traffic_class." + strconv.Itoa(i) + ".name").(string)
 		for j := 0; j < oneviewTrafficClassCount; j++ {
-			if currName == qosTrafficClasses[j]["name"]  && i <= j {
+			if currName == qosTrafficClasses[j]["name"] && i <= j {
 				qosTrafficClasses[i], qosTrafficClasses[j] = qosTrafficClasses[j], qosTrafficClasses[i]
 			}
 		}
 	}
 
+	qualityOfService := make([]map[string]interface{}, 0, 1)
+	qualityOfService = append(qualityOfService, map[string]interface{}{
+		"type": logicalInterconnectGroup.QosConfiguration.Type,
+		"active_qos_config_type":       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
+		"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
+		"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
+		"downlink_classification_type": logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.DownlinkClassificationType,
+		"qos_traffic_class":            qosTrafficClasses,
+	})
 
- 	qualityOfService := make([]map[string]interface{}, 0, 1)
- 	qualityOfService = append(qualityOfService, map[string]interface{}{
- 		"type": logicalInterconnectGroup.QosConfiguration.Type,
- 		"active_qos_config_type": logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
- 		"config_type": logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
- 		"uplink_classification_type": logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
- 		"downlink_classification_type": logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.DownlinkClassificationType,
- 		"qos_traffic_class": qosTrafficClasses,
- 	})
+	d.Set("quality_of_service", qualityOfService)
 
- 	d.Set("quality_of_service", qualityOfService)
-
-    return nil
+	return nil
 }
 
 func resourceLogicalInterconnectGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-    
-    error := config.ovClient.DeleteLogicalInterconnectGroup(d.Get("name").(string))
-    if error != nil {
-      return error
-    }
-    return nil
+
+	error := config.ovClient.DeleteLogicalInterconnectGroup(d.Get("name").(string))
+	if error != nil {
+		return error
+	}
+	return nil
 }
 
 func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)	
+	config := meta.(*Config)
 
 	lig := ov.LogicalInterconnectGroup{
-		Name:                d.Get("name").(string),
+		Name: d.Get("name").(string),
 		Type: d.Get("type").(string),
-		URI: utils.NewNstring(d.Get("uri").(string)),
+		URI:  utils.NewNstring(d.Get("uri").(string)),
 	}
 
 	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
@@ -1115,36 +1107,36 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		interconnectMapEntryTemplatePrefix := fmt.Sprintf("interconnect_map_entry_template.%d", i)
 		interconnectTypeName := d.Get(interconnectMapEntryTemplatePrefix + ".interconnect_type_name").(string)
 		interconnectType, err := config.ovClient.GetInterconnectTypeByName(interconnectTypeName)
-		if(err != nil){
+		if err != nil {
 			return err
 		}
-		if(interconnectType.URI == ""){
+		if interconnectType.URI == "" {
 			return fmt.Errorf("Could not find Interconnect Type from name: %s", interconnectTypeName)
 		}
 
-		enclosureLocation := ov.LocationEntry {
+		enclosureLocation := ov.LocationEntry{
 			RelativeValue: d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
-			Type: "Enclosure",
+			Type:          "Enclosure",
 		}
 		locationEntries := make([]ov.LocationEntry, 0)
 		locationEntries = append(locationEntries, enclosureLocation)
 
-		bayLocation := ov.LocationEntry {
+		bayLocation := ov.LocationEntry{
 			RelativeValue: d.Get(interconnectMapEntryTemplatePrefix + ".bay_number").(int),
-			Type: "Bay",
-		}			
+			Type:          "Bay",
+		}
 		locationEntries = append(locationEntries, bayLocation)
-		logicalLocation := ov.LogicalLocation {
+		logicalLocation := ov.LogicalLocation{
 			LocationEntries: locationEntries,
 		}
 		interconnectMapEntryTemplates = append(interconnectMapEntryTemplates, ov.InterconnectMapEntryTemplate{
-			LogicalLocation: logicalLocation,
-			EnclosureIndex: d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
+			LogicalLocation:              logicalLocation,
+			EnclosureIndex:               d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
 			PermittedInterconnectTypeUri: interconnectType.URI,
 		})
 	}
 
-	interconnectMapTemplate := ov.InterconnectMapTemplate {
+	interconnectMapTemplate := ov.InterconnectMapTemplate{
 		InterconnectMapEntryTemplates: interconnectMapEntryTemplates,
 	}
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
@@ -1170,14 +1162,13 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			uplinkSet.LacpTimer = val.(string)
 		}
 		if val, ok := d.GetOk(uplinkSetPrefix + ".native_network_uri"); ok {
-	    	uplinkSet.NativeNetworkUri = utils.NewNstring(val.(string))
+			uplinkSet.NativeNetworkUri = utils.NewNstring(val.(string))
 		}
-
 
 		logicalPortCount := d.Get(uplinkSetPrefix + ".logical_port_config.#").(int)
 		logicalPorts := make([]ov.LogicalPortConfigInfo, 0)
 		for i := 0; i < logicalPortCount; i++ {
-			logicalPortPrefix := fmt.Sprintf(uplinkSetPrefix + ".logical_port_config.%d", i)
+			logicalPortPrefix := fmt.Sprintf(uplinkSetPrefix+".logical_port_config.%d", i)
 			rawPortLocations := d.Get(logicalPortPrefix + ".port_num").(*schema.Set).List()
 			for _, raw := range rawPortLocations {
 				logicalPort := ov.LogicalPortConfigInfo{}
@@ -1187,30 +1178,30 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 				}
 
 				locationEntries := make([]ov.LocationEntry, 0)
-				enclosureLocation := ov.LocationEntry {
+				enclosureLocation := ov.LocationEntry{
 					RelativeValue: d.Get(logicalPortPrefix + ".enclosure_num").(int),
-					Type: "Enclosure",
+					Type:          "Enclosure",
 				}
 				locationEntries = append(locationEntries, enclosureLocation)
 
-				bayLocation := ov.LocationEntry {
+				bayLocation := ov.LocationEntry{
 					RelativeValue: d.Get(logicalPortPrefix + ".bay_num").(int),
-					Type: "Bay",
+					Type:          "Bay",
 				}
 				locationEntries = append(locationEntries, bayLocation)
 
-				portLocation := ov.LocationEntry {
+				portLocation := ov.LocationEntry{
 					RelativeValue: raw.(int),
-					Type: "Port",
+					Type:          "Port",
 				}
 				locationEntries = append(locationEntries, portLocation)
 
-				logicalLocation := ov.LogicalLocation {
+				logicalLocation := ov.LogicalLocation{
 					LocationEntries: locationEntries,
 				}
 
 				logicalPort.LogicalLocation = logicalLocation
-				if _, ok := d.GetOk(logicalPortPrefix + ".primary_port"); ok{
+				if _, ok := d.GetOk(logicalPortPrefix + ".primary_port"); ok {
 					if uplinkSet.PrimaryPort == nil {
 						uplinkSet.PrimaryPort = &logicalLocation
 					}
@@ -1218,7 +1209,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 
 				logicalPorts = append(logicalPorts, logicalPort)
 			}
-			
+
 		}
 		uplinkSet.LogicalPortConfigInfos = logicalPorts
 
@@ -1228,11 +1219,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			netUris = append(netUris, utils.NewNstring(raw.(string)))
 		}
 		uplinkSet.NetworkUris = netUris
-		
+
 		uplinkSets = append(uplinkSets, uplinkSet)
 	}
 	lig.UplinkSets = uplinkSets
-
 
 	rawInternalNetUris := d.Get("internal_network_uris").(*schema.Set).List()
 	internalNetUris := make([]utils.Nstring, len(rawInternalNetUris))
@@ -1242,7 +1232,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	lig.InternalNetworkUris = internalNetUris
 
 	telemetryConfigPrefix := fmt.Sprintf("telemetry_configuration.0")
-	telemetryConfiguration := ov.TelemetryConfiguration{}	
+	telemetryConfiguration := ov.TelemetryConfiguration{}
 	if val, ok := d.GetOk(telemetryConfigPrefix + ".sample_count"); ok {
 		telemetryConfiguration.SampleCount = val.(int)
 	}
@@ -1259,7 +1249,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
-	snmpConfiguration := ov.SnmpConfiguration{}	
+	snmpConfiguration := ov.SnmpConfiguration{}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
 		enabled := val.(bool)
 		snmpConfiguration.Enabled = &enabled
@@ -1269,7 +1259,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".system_contact"); ok {
 		snmpConfiguration.SystemContact = val.(string)
-	}	
+	}
 	rawSnmpAccess := d.Get(snmpConfigPrefix + ".snmp_access").(*schema.Set).List()
 	snmpAccess := make([]string, len(rawSnmpAccess))
 	for i, raw := range rawSnmpAccess {
@@ -1279,8 +1269,8 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	trapDestinationCount := d.Get(snmpConfigPrefix + ".trap_destination.#").(int)
 	trapDestinations := make([]ov.TrapDestination, 0, trapDestinationCount)
 	for i := 0; i < trapDestinationCount; i++ {
-		trapDestinationPrefix := fmt.Sprintf(snmpConfigPrefix + ".trap_destination.%d", i)
-		
+		trapDestinationPrefix := fmt.Sprintf(snmpConfigPrefix+".trap_destination.%d", i)
+
 		rawEnetTrapCategories := d.Get(trapDestinationPrefix + ".enet_trap_categories").(*schema.Set).List()
 		enetTrapCategories := make([]string, len(rawEnetTrapCategories))
 		for i, raw := range rawEnetTrapCategories {
@@ -1306,20 +1296,19 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		}
 
 		trapDestination := ov.TrapDestination{
-			TrapDestination: d.Get(trapDestinationPrefix + ".trap_destination").(string),
-			CommunityString: d.Get(trapDestinationPrefix + ".community_string").(string),
-			TrapFormat: d.Get(trapDestinationPrefix + ".trap_format").(string),	
+			TrapDestination:    d.Get(trapDestinationPrefix + ".trap_destination").(string),
+			CommunityString:    d.Get(trapDestinationPrefix + ".community_string").(string),
+			TrapFormat:         d.Get(trapDestinationPrefix + ".trap_format").(string),
 			EnetTrapCategories: enetTrapCategories,
-			FcTrapCategories: fcTrapCategories,
-			VcmTrapCategories: vcmTrapCategories,
-			TrapSeverities: trapSeverities,
+			FcTrapCategories:   fcTrapCategories,
+			VcmTrapCategories:  vcmTrapCategories,
+			TrapSeverities:     trapSeverities,
 		}
 		trapDestinations = append(trapDestinations, trapDestination)
 	}
 	if trapDestinationCount > 0 {
 		snmpConfiguration.TrapDestinations = trapDestinations
 	}
-
 
 	snmpConfiguration.SnmpAccess = snmpAccess
 	if val, ok := d.GetOk(snmpConfigPrefix + ".type"); ok {
@@ -1329,13 +1318,13 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 
 	interconnectSettingsPrefix := fmt.Sprintf("interconnect_settings.0")
 	if val, ok := d.GetOk(interconnectSettingsPrefix + ".type"); ok {
-		interconnectSettings := ov.EthernetSettings{}	
-	
+		interconnectSettings := ov.EthernetSettings{}
+
 		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".fast_mac_cache_failover").(bool)
-		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled 
+		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
 
 		networkLoopProtectionEnabled := d.Get(interconnectSettingsPrefix + ".network_loop_protection").(bool)
-		interconnectSettings.EnableNetworkLoopProtection = &networkLoopProtectionEnabled 
+		interconnectSettings.EnableNetworkLoopProtection = &networkLoopProtectionEnabled
 
 		pauseFloodProtectionEnabled := d.Get(interconnectSettingsPrefix + ".pause_flood_protection").(bool)
 		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
@@ -1343,7 +1332,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
 			enabled := val1.(bool)
 			interconnectSettings.EnableRichTLV = &enabled
-		} 
+		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_snooping"); ok {
 			enabled := val1.(bool)
@@ -1354,16 +1343,16 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			interconnectSettings.IgmpIdleTimeoutInterval = val1.(int)
 		}
 
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok{
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
 			interconnectSettings.MacRefreshInterval = val1.(int)
 		}
-	
+
 		interconnectSettings.Type = val.(string)
 		lig.EthernetSettings = &interconnectSettings
 	}
 
 	qualityOfServicePrefix := fmt.Sprintf("quality_of_service.0")
-	activeQosConfig := ov.ActiveQosConfig{}	
+	activeQosConfig := ov.ActiveQosConfig{}
 
 	if val, ok := d.GetOk(qualityOfServicePrefix + ".config_type"); ok {
 		activeQosConfig.ConfigType = val.(string)
@@ -1380,7 +1369,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	qosTrafficClassCount := d.Get(qualityOfServicePrefix + ".qos_traffic_class.#").(int)
 	qosTrafficClassifiers := make([]ov.QosTrafficClassifier, 0, 1)
 	for i := 0; i < qosTrafficClassCount; i++ {
-		qosTrafficClassPrefix := fmt.Sprintf(qualityOfServicePrefix + ".qos_traffic_class.%d", i)
+		qosTrafficClassPrefix := fmt.Sprintf(qualityOfServicePrefix+".qos_traffic_class.%d", i)
 		qosTrafficClassifier := ov.QosTrafficClassifier{}
 		qosClassMap := ov.QosClassificationMap{}
 		qosTrafficClass := ov.QosTrafficClass{}
@@ -1436,10 +1425,9 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		activeQosConfig.Type = d.Get(qualityOfServicePrefix + ".active_qos_config_type").(string)
 
 		qualityOfService := ov.QosConfiguration{
-			Type: d.Get(qualityOfServicePrefix + ".type").(string),
+			Type:            d.Get(qualityOfServicePrefix + ".type").(string),
 			ActiveQosConfig: activeQosConfig,
 		}
-
 
 		lig.QosConfiguration = &qualityOfService
 	}

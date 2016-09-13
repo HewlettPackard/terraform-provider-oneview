@@ -12,80 +12,80 @@
 package oneview
 
 import (
-  "github.com/hashicorp/terraform/helper/schema"
-  "github.hpe.com/matthew-frahry/oneview-golang/ov"
-  "github.hpe.com/matthew-frahry/oneview-golang/utils"
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceFCNetwork() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceFCNetworkCreate,
-		Read: resourceFCNetworkRead,
+		Read:   resourceFCNetworkRead,
 		Update: resourceFCNetworkUpdate,
 		Delete: resourceFCNetworkDelete,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type: schema.TypeString,
+			"name": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"fabric_type": &schema.Schema{
-				Type: schema.TypeString,
+			"fabric_type": {
+				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Default: "FabricAttach",
+				Default:  "FabricAttach",
 			},
-			"link_stability_time": &schema.Schema{
-				Type: schema.TypeInt,
+			"link_stability_time": {
+				Type:     schema.TypeInt,
 				Optional: true,
-				Default: 30,
+				Default:  30,
 			},
-			"auto_login_redistribution": &schema.Schema{
-				Type: schema.TypeBool,
+			"auto_login_redistribution": {
+				Type:     schema.TypeBool,
 				Optional: true,
-				Default: false,
+				Default:  false,
 			},
-			"connection_template_uri": &schema.Schema{
-				Type: schema.TypeString,
+			"connection_template_uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"type": &schema.Schema{
-				Type: schema.TypeString,
+			"type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "fc-networkV2",
+				Default:  "fc-networkV2",
 			},
-    	    "description": &schema.Schema{
-      	  	  Type: schema.TypeString,
-      	 	  Optional: true,
-      		},
-      		"uri": &schema.Schema{
-				Type: schema.TypeString,
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"status": &schema.Schema{
-				Type: schema.TypeString,
+			"status": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"category": &schema.Schema{
-				Type: schema.TypeString,
+			"category": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"state": &schema.Schema{
-				Type: schema.TypeString,
+			"state": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-      		"eTag": &schema.Schema{
-        		Type: schema.TypeString,
-        		Computed: true,
-     		 },
-      		"created": &schema.Schema{
-       			Type: schema.TypeString,
-       			Computed: true,
-      		},
-      		"modified": &schema.Schema{
-        		Type: schema.TypeString,
-        		Computed:true,
-      		},
+			"eTag": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"created": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"modified": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -93,83 +93,80 @@ func resourceFCNetwork() *schema.Resource {
 func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-
-
-
 	fcNet := ov.FCNetwork{
-		Name:                       d.Get("name").(string),
-		FabricType:                 d.Get("fabric_type").(string),
-		LinkStabilityTime:          d.Get("link_stability_time").(int),
-		AutoLoginRedistribution:    d.Get("auto_login_redistribution").(bool),
-		Type:                       d.Get("type").(string),
-    	Description:                d.Get("description").(string),
+		Name:                    d.Get("name").(string),
+		FabricType:              d.Get("fabric_type").(string),
+		LinkStabilityTime:       d.Get("link_stability_time").(int),
+		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
+		Type:        d.Get("type").(string),
+		Description: d.Get("description").(string),
 	}
 
 	fcNetError := config.ovClient.CreateFCNetwork(fcNet)
 	d.SetId(d.Get("name").(string))
-	if(fcNetError != nil){
+	if fcNetError != nil {
 		d.SetId("")
 		return fcNetError
 	}
-    return resourceFCNetworkRead(d, meta)
+	return resourceFCNetworkRead(d, meta)
 }
 
 func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
-  config := meta.(*Config)
+	config := meta.(*Config)
 
-    fcNet, error := config.ovClient.GetFCNetworkByName(d.Get("name").(string))
-    if error != nil || fcNet.URI.IsNil() {
- 	  d.SetId("")
-      return nil
-    }
-    d.Set("name", fcNet.Name)
-    d.Set("fabric_type", fcNet.FabricType)
-    d.Set("link_stability_time", fcNet.LinkStabilityTime)
-    d.Set("auto_login_redistribution", fcNet.AutoLoginRedistribution)
-    d.Set("description", fcNet.Description)
-    d.Set("type", fcNet.Type)
-    d.Set("uri", fcNet.URI.String())
-    d.Set("connection_template_uri", fcNet.ConnectionTemplateUri.String())
-    d.Set("status", fcNet.Status)
-    d.Set("category", fcNet.Category)
-    d.Set("state", fcNet.State)
-    d.Set("fabric_uri", fcNet.FabricUri.String())
-    d.Set("created", fcNet.Created)
-  	d.Set("modified", fcNet.Modified)
-    d.Set("eTag", fcNet.ETAG)
-    return nil
+	fcNet, error := config.ovClient.GetFCNetworkByName(d.Get("name").(string))
+	if error != nil || fcNet.URI.IsNil() {
+		d.SetId("")
+		return nil
+	}
+	d.Set("name", fcNet.Name)
+	d.Set("fabric_type", fcNet.FabricType)
+	d.Set("link_stability_time", fcNet.LinkStabilityTime)
+	d.Set("auto_login_redistribution", fcNet.AutoLoginRedistribution)
+	d.Set("description", fcNet.Description)
+	d.Set("type", fcNet.Type)
+	d.Set("uri", fcNet.URI.String())
+	d.Set("connection_template_uri", fcNet.ConnectionTemplateUri.String())
+	d.Set("status", fcNet.Status)
+	d.Set("category", fcNet.Category)
+	d.Set("state", fcNet.State)
+	d.Set("fabric_uri", fcNet.FabricUri.String())
+	d.Set("created", fcNet.Created)
+	d.Set("modified", fcNet.Modified)
+	d.Set("eTag", fcNet.ETAG)
+	return nil
 }
 
 func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	fcNet := ov.FCNetwork{
-    	ETAG:     	                d.Get("eTag").(string),
-		URI:  	  			        utils.NewNstring(d.Get("uri").(string)),
-    	Name:                       d.Get("name").(string),
-		FabricType:                 d.Get("fabric_type").(string),
-		LinkStabilityTime:          d.Get("link_stability_time").(int),
-		AutoLoginRedistribution:    d.Get("auto_login_redistribution").(bool),
-		Type:                       d.Get("type").(string),
-		ConnectionTemplateUri:      utils.NewNstring(d.Get("connection_template_uri").(string)),
-    	Description:                d.Get("description").(string),
-    }
+		ETAG:                    d.Get("eTag").(string),
+		URI:                     utils.NewNstring(d.Get("uri").(string)),
+		Name:                    d.Get("name").(string),
+		FabricType:              d.Get("fabric_type").(string),
+		LinkStabilityTime:       d.Get("link_stability_time").(int),
+		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
+		Type: d.Get("type").(string),
+		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
+		Description:           d.Get("description").(string),
+	}
 
-    err := config.ovClient.UpdateFcNetwork(fcNet)
-    if err != nil {
-      return err
-    }
-    d.SetId(d.Get("name").(string))
+	err := config.ovClient.UpdateFcNetwork(fcNet)
+	if err != nil {
+		return err
+	}
+	d.SetId(d.Get("name").(string))
 
-    return resourceFCNetworkRead(d, meta)
+	return resourceFCNetworkRead(d, meta)
 }
 
 func resourceFCNetworkDelete(d *schema.ResourceData, meta interface{}) error {
-    config := meta.(*Config)
+	config := meta.(*Config)
 
-    error := config.ovClient.DeleteFCNetwork(d.Get("name").(string))
-    if error != nil {
-      return error
-    }
-    return nil
+	error := config.ovClient.DeleteFCNetwork(d.Get("name").(string))
+	if error != nil {
+		return error
+	}
+	return nil
 }
