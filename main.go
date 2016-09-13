@@ -14,7 +14,7 @@ package main
 import (
     "github.com/hashicorp/terraform/plugin"
     "github.com/hashicorp/terraform/terraform"
-    "github.com/HewlettPackard/oneview-golang/oneview"
+    "github.com/HewlettPackard/oneview-golang/ov"
 )
 
 func main() {
