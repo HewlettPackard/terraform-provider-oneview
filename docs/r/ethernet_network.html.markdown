@@ -26,6 +26,7 @@ The following arguments are supported:
 * `name` - (Required) A unique name for the resource.
 
 * `vlanId` - (Required) The Virtual LAN (VLAN) identification number (integer) assigned to the network. 
+Changing this forces a new resource.
 
 - - -
 

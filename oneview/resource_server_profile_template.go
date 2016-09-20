@@ -49,6 +49,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"function_type": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
 						},
 						"network_uri": {
 							Type:     schema.TypeString,
