@@ -91,5 +91,5 @@ var testAccFCoENetwork =
   `
   resource "oneview_fcoe_network" "test" {
     name = "Terraform FCoE Network 1"
-    vlanId = "${157}"
+    vlanId = 157
   }`

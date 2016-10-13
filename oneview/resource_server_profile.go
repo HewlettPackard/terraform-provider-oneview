@@ -29,7 +29,7 @@ func resourceServerProfile() *schema.Resource {
         Required: true,
       }, 
       "server_template": &schema.Schema{
-        Type:	schema.TypeString,
+        Type: schema.TypeString,
         Required: true,
       },
       "ilo_ip": &schema.Schema{
@@ -43,6 +43,10 @@ func resourceServerProfile() *schema.Resource {
       "serial_number": &schema.Schema{
         Type: schema.TypeString,
         Computed: true,
+      },
+      "public_connection": &schema.Schema{
+        Type: schema.TypeString,
+        Optional: true,
       },
       "public_mac": &schema.Schema{
         Type: schema.TypeString,
@@ -100,12 +104,15 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error{
   d.Set("ilo_ip", serverHardware.GetIloIPAddress())
   d.Set("serial_number", serverProfile.SerialNumber.String())
 
-  publicConnection, err := serverProfile.GetConnectionByName("Public_v172")
-  if err != nil {
-    return err
+  if val, ok := d.GetOk("public_connection"); ok {
+    publicConnection, err := serverProfile.GetConnectionByName(val.(string))
+    if err != nil {
+      return err
+    }
+    d.Set("public_mac", publicConnection.MAC)
+    d.Set("public_slot_id", publicConnection.ID)
   }
-  d.Set("public_mac", publicConnection.MAC)
-  d.Set("public_slot_id", publicConnection.ID)
+  
 
   return nil
 }
