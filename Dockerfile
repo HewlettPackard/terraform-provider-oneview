@@ -12,4 +12,5 @@ RUN mkdir -p /go/src/HewlettPackard/ && \
     cd /go/src/HewlettPackard && \
     git clone https://github.com/HewlettPackard/terraform-provider-oneview.git && \
     cd terraform-provider-oneview && \
+    git config --global http.sslVerify false && \
     go get
