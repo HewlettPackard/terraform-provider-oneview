@@ -17,5 +17,5 @@ RUN mkdir -p /go/src/HewlettPackard/ && \
     CGO_ENABLED=0 go build -a -installsuffix cgo -o terraform-provider-oneview && \
     mv terraform-provider-oneview /usr/local/terraform/
     cd /go && \
-    rm -rf *
-    
+    rm -rf * && \
+    git config --global http.sslVerify true
