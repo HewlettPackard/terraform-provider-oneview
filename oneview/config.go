@@ -14,6 +14,7 @@ package oneview
 import (
   "github.com/HewlettPackard/oneview-golang/ov"
   "github.com/HewlettPackard/oneview-golang/icsp"
+  "github.com/HewlettPackard/oneview-golang/i3s"
 )
 
 type Config struct {
@@ -31,8 +32,11 @@ type Config struct {
   ICSPSSLVerify  bool
   ICSPAPIVersion int
 
-  ovClient *ov.OVClient
+  I3SEndpoint    string
+
+  ovClient   *ov.OVClient
   icspClient *icsp.ICSPClient
+  i3sClient  *i3s.I3SClient
 }
 
 func (c *Config) loadAndValidate() error {
@@ -43,6 +47,7 @@ func (c *Config) loadAndValidate() error {
   c.ovClient = client
 
   session, error := c.ovClient.SessionLogin()
+  c.ovClient.APIKey = session.ID
   session = session
   if error != nil {
     return error
@@ -65,5 +70,16 @@ func (c *Config) loadAndValidateICSP() error{
     return error
   }
   
+  return nil
+}
+
+func (c *Config) loadAndValidateI3S() error{
+  
+  var client3 *i3s.I3SClient 
+ 
+  client := client3.NewI3SClient(c.I3SEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.ovClient.APIKey)
+ 
+  c.i3sClient = client
+ 
   return nil
 }
