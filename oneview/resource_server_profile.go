@@ -42,7 +42,7 @@ func resourceServerProfile() *schema.Resource {
         Type: schema.TypeString,
         Computed: true,
       },
-      "blade_bay": &schema.Schema{
+      "frame_bay": &schema.Schema{
         Type: schema.TypeString,
         Optional: true,
       },
@@ -99,7 +99,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
       return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("server_template").(string))
     }
     var serverHardware ov.ServerHardware
-    if val, ok := d.GetOk("blade_bay"); ok {
+    if val, ok := d.GetOk("frame_bay"); ok {
       serverHardware, error = config.ovClient.GetServerHardwareByName(val.(string))
       if(error != nil){
         return error
