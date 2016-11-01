@@ -114,7 +114,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
     if val, ok := d.GetOk("os_deployment_plan"); ok {
 
       deploymentAttributes := make(map[string]string)
-      osDeploymentPlan, error := config.i3sClient.GetDeploymentPlanByName(val.(string))
+      osDeploymentPlan, error := config.ovClient.GetOSDeploymentPlanByName(val.(string))
       if error != nil || osDeploymentPlan.URI.IsNil() {
         return fmt.Errorf("Count not find osDeploymentPlan: %s", val.(string))
       }
