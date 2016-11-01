@@ -12,6 +12,7 @@
 package oneview 
 
 import (
+  "fmt"
   "github.com/hashicorp/terraform/helper/schema"
   "github.com/HewlettPackard/oneview-golang/ov"
 )
@@ -28,6 +29,11 @@ func resourceServerProfile() *schema.Resource {
         Type:     schema.TypeString,
         Required: true,
       }, 
+      "type": &schema.Schema{
+        Type: schema.TypeString,
+        Optional: true,
+        Default: "ServerProfileV5",
+      },
       "server_template": &schema.Schema{
         Type: schema.TypeString,
         Required: true,
@@ -35,6 +41,30 @@ func resourceServerProfile() *schema.Resource {
       "ilo_ip": &schema.Schema{
         Type: schema.TypeString,
         Computed: true,
+      },
+      "blade_bay": &schema.Schema{
+        Type: schema.TypeString,
+        Optional: true,
+      },
+      "os_deployment_plan": &schema.Schema { 
+        Type: schema.TypeString,
+        Optional: true,
+      },
+      "deployment_attribute": &schema.Schema{
+        Optional: true,
+        Type: schema.TypeList,
+        Elem: &schema.Resource{
+          Schema: map[string]*schema.Schema{
+            "key": &schema.Schema{
+              Type: schema.TypeString,
+              Required: true,
+            },
+            "value": &schema.Schema{
+              Type: schema.TypeString,
+              Required: true,
+            },
+          },
+        },
       },
       "server_hardware_uri": &schema.Schema{
         Type: schema.TypeString,
@@ -65,22 +95,53 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
     config := meta.(*Config)
 
     serverProfileTemplate, error := config.ovClient.GetProfileTemplateByName(d.Get("server_template").(string))
-
-    if error != nil {
-      return error 
+    if error != nil || serverProfileTemplate.URI.IsNil() {
+      return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("server_template").(string))
+    }
+    var serverHardware ov.ServerHardware
+    if val, ok := d.GetOk("blade_bay"); ok {
+      serverHardware, error = config.ovClient.GetServerHardwareByName(val.(string))
+      if(error != nil){
+        return error
+      }
+    } else {
+      serverHardware, error = getServerHardware(config, serverProfileTemplate)
+      if(error != nil){
+        return error
+      }
     }
 
-    serverHardware, err := getServerHardware(config, serverProfileTemplate)
-    if(err != nil){
-      return err
-    }
+    if val, ok := d.GetOk("os_deployment_plan"); ok {
 
-    SPerror := config.ovClient.CreateProfileFromTemplate(d.Get("name").(string), serverProfileTemplate, serverHardware)
-    d.SetId(d.Get("name").(string))
-    
-    if SPerror != nil {
-      d.SetId("")
-      return SPerror
+      deploymentAttributes := make(map[string]string)
+      osDeploymentPlan, error := config.ovClient.GetOSDeploymentPlanByName(val.(string))
+      if error != nil || osDeploymentPlan.URI.IsNil() {
+        return fmt.Errorf("Count not find osDeploymentPlan: %s", val.(string))
+      }
+
+      if _, ok := d.GetOk("deployment_attribute"); ok {
+        deploymentAttributeCount := d.Get("deployment_attribute.#").(int)
+        for i := 0; i < deploymentAttributeCount; i++ {
+          deploymentAttributePrefix := fmt.Sprintf("deployment_attribute.%d", i)
+          deploymentAttributes[d.Get(deploymentAttributePrefix + ".key").(string)] = d.Get(deploymentAttributePrefix + ".value").(string)
+        }
+      }
+
+      SPerror := config.ovClient.CreateProfileFromTemplateWithI3S(d.Get("name").(string), serverProfileTemplate, serverHardware, osDeploymentPlan, deploymentAttributes)
+      d.SetId(d.Get("name").(string))
+
+      if SPerror != nil {
+        d.SetId("")
+        return SPerror
+      }
+    } else {
+      SPerror := config.ovClient.CreateProfileFromTemplate(d.Get("name").(string), serverProfileTemplate, serverHardware)
+      d.SetId(d.Get("name").(string))
+
+      if SPerror != nil {
+        d.SetId("")
+        return SPerror
+      }
     }
 
     return resourceServerProfileRead(d, meta)
@@ -112,7 +173,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error{
     d.Set("public_mac", publicConnection.MAC)
     d.Set("public_slot_id", publicConnection.ID)
   }
-  
 
   return nil
 }

@@ -83,6 +83,11 @@ func Provider() terraform.ResourceProvider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_API_VERSION", 200),
 			},
+			"i3s_endpoint": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_I3S_ENDPOINT", ""),
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"oneview_server_profile":             resourceServerProfile(),
@@ -122,6 +127,13 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		config.ICSPAPIVersion = d.Get("icsp_apiversion").(int)
 
 		if err := config.loadAndValidateICSP(); err != nil {
+			return nil, err
+		}
+	}
+
+	if val, ok := d.GetOk("i3s_endpoint"); ok {
+		config.I3SEndpoint = val.(string)
+		if err := config.loadAndValidateI3S(); err != nil {
 			return nil, err
 		}
 	}
