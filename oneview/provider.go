@@ -99,6 +99,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_logical_interconnect_group": resourceLogicalInterconnectGroup(),
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
 			"oneview_icsp_server":                resourceIcspServer(),
+			"oneview_i3s_plan":                   resourceI3SPlan(),
 		},
 		ConfigureFunc: providerConfigure,
 	}

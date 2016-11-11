@@ -279,16 +279,12 @@ func resourceIcspServerRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 	}
-	
-	
-
     return nil
 }
 
 func resourceIcspServerUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	
     csa := icsp.CustomServerAttributes{}
     initCsa := csa.New()
 

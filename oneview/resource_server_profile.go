@@ -28,7 +28,7 @@ func resourceServerProfile() *schema.Resource {
       "name": &schema.Schema{
         Type:     schema.TypeString,
         Required: true,
-      }, 
+      },
       "type": &schema.Schema{
         Type: schema.TypeString,
         Optional: true,
@@ -45,26 +45,6 @@ func resourceServerProfile() *schema.Resource {
       "frame_bay": &schema.Schema{
         Type: schema.TypeString,
         Optional: true,
-      },
-      "os_deployment_plan": &schema.Schema { 
-        Type: schema.TypeString,
-        Optional: true,
-      },
-      "deployment_attribute": &schema.Schema{
-        Optional: true,
-        Type: schema.TypeList,
-        Elem: &schema.Resource{
-          Schema: map[string]*schema.Schema{
-            "key": &schema.Schema{
-              Type: schema.TypeString,
-              Required: true,
-            },
-            "value": &schema.Schema{
-              Type: schema.TypeString,
-              Required: true,
-            },
-          },
-        },
       },
       "server_hardware_uri": &schema.Schema{
         Type: schema.TypeString,
@@ -111,24 +91,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
       }
     }
 
-    if val, ok := d.GetOk("os_deployment_plan"); ok {
-
-      deploymentAttributes := make(map[string]string)
-      osDeploymentPlan, error := config.ovClient.GetOSDeploymentPlanByName(val.(string))
-      if error != nil || osDeploymentPlan.URI.IsNil() {
-        return fmt.Errorf("Count not find osDeploymentPlan: %s", val.(string))
-      }
-
-      if _, ok := d.GetOk("deployment_attribute"); ok {
-        deploymentAttributeCount := d.Get("deployment_attribute.#").(int)
-        for i := 0; i < deploymentAttributeCount; i++ {
-          deploymentAttributePrefix := fmt.Sprintf("deployment_attribute.%d", i)
-          deploymentAttributes[d.Get(deploymentAttributePrefix + ".key").(string)] = d.Get(deploymentAttributePrefix + ".value").(string)
-        }
-      }
-
-      SPerror := config.ovClient.CreateProfileFromTemplateWithI3S(d.Get("name").(string), serverProfileTemplate, serverHardware, osDeploymentPlan, deploymentAttributes)
-      d.SetId(d.Get("name").(string))
+    profileType := d.Get("type")
+    if profileType == "ServerProfileV6" {
+        SPerror := config.ovClient.CreateProfileFromTemplateWithI3S(d.Get("name").(string), serverProfileTemplate, serverHardware)
+        d.SetId(d.Get("name").(string))
 
       if SPerror != nil {
         d.SetId("")
@@ -177,8 +143,16 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error{
   return nil
 }
 
-func resourceServerProfileUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error {
+  config := meta.(*Config)
+  serverProfile, err := config.ovClient.GetProfileByName(d.Id())
+  if err != nil || serverProfile.URI.IsNil(){
+    d.SetId("")
     return nil
+  }
+
+
+  return resourceServerProfileRead(d, meta)
 }
 
 func resourceServerProfileDelete(d *schema.ResourceData, meta interface{}) error {

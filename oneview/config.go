@@ -41,14 +41,17 @@ type Config struct {
 
 func (c *Config) loadAndValidate() error {
   var client2 *ov.OVClient 
-
-  client:= client2.NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion)
-
+  
+  
+  client := client2.NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion)
+  
   c.ovClient = client
+
+  
 
   session, error := c.ovClient.SessionLogin()
   c.ovClient.APIKey = session.ID
-  session = session
+
   if error != nil {
     return error
   }
