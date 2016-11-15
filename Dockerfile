@@ -8,14 +8,13 @@ RUN wget --no-check-certificate https://releases.hashicorp.com/terraform/0.6.16/
     rm /usr/local/terraform/terraform-provider-* && \
     rm /usr/local/terraform/terraform-provisioner-chef
 
-RUN mkdir -p /go/src/HewlettPackard/ && \
-    cd /go/src/HewlettPackard && \
+RUN mkdir -p /go/src/github.com/HewlettPackard/ && \
+    cd /go/src/github.com/HewlettPackard && \
     git clone https://github.com/HewlettPackard/terraform-provider-oneview.git && \
     cd terraform-provider-oneview && \
     git config --global http.sslVerify false && \
     go get && \
     CGO_ENABLED=0 go build -a -installsuffix cgo -o terraform-provider-oneview && \
-    mv terraform-provider-oneview /usr/local/terraform/ && \
+    mv terraform-provider-oneview /usr/local/terraform/
     cd /go && \
-    rm -rf * && \
-    git config --global http.sslVerify true
+    rm -rf *
