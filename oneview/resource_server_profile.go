@@ -34,7 +34,7 @@ func resourceServerProfile() *schema.Resource {
         Optional: true,
         Default: "ServerProfileV5",
       },
-      "server_template": &schema.Schema{
+      "template": &schema.Schema{
         Type: schema.TypeString,
         Required: true,
       },
@@ -42,11 +42,11 @@ func resourceServerProfile() *schema.Resource {
         Type: schema.TypeString,
         Computed: true,
       },
-      "frame_bay": &schema.Schema{
+      "hardware_name": &schema.Schema{
         Type: schema.TypeString,
         Optional: true,
       },
-      "server_hardware_uri": &schema.Schema{
+      "hardware_uri": &schema.Schema{
         Type: schema.TypeString,
         Computed: true,
       },
@@ -74,12 +74,12 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
     config := meta.(*Config)
 
-    serverProfileTemplate, error := config.ovClient.GetProfileTemplateByName(d.Get("server_template").(string))
+    serverProfileTemplate, error := config.ovClient.GetProfileTemplateByName(d.Get("template").(string))
     if error != nil || serverProfileTemplate.URI.IsNil() {
-      return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("server_template").(string))
+      return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("template").(string))
     }
     var serverHardware ov.ServerHardware
-    if val, ok := d.GetOk("frame_bay"); ok {
+    if val, ok := d.GetOk("hardware_name"); ok {
       serverHardware, error = config.ovClient.GetServerHardwareByName(val.(string))
       if(error != nil){
         return error
