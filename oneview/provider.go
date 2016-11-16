@@ -66,7 +66,7 @@ func Provider() terraform.ResourceProvider {
 			"icsp_password": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_PASSWORD", nil),
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_PASSWORD", ""),
 			},
 			"icsp_endpoint": {
 				Type:        schema.TypeString,
