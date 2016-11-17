@@ -6,16 +6,16 @@ A Terraform provider for oneview
 * Install golang 1.6 or better
 * Install Terraform 0.7.0 or better
 * Create a file structure similar to ~/workspace/go/src/github.com/HewlettPackard/
-* Set GOPATH=~/workspace/go
 
 ```
+  export GOPATH = ~/worspace/go
   cd ~/workspace/go/src/github.com/HewlettPackard/
   git clone https://github.com/HewlettPackard/terraform-provider-oneview.git
   cd terraform-provider-oneview
   go get
   go build -o terraform-provider-oneview
+  mv terraform-provider-oneview /usr/local/bin/terraform
 ```
-Move terraform-provider-oneview into the directory that Terraform is installed in
 
 ## Example terraform file to provision a server
 ```
@@ -45,6 +45,8 @@ resource "oneview_server_profile" "default" {
 ```
 
 ####[ICSP Server](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/icsp_server.html.markdown)
+This block takes an already provsioned server and through ICSP lays down an operating system or 
+whatever is specified in the build plans.
 
 ```js
 resource "icsp_server" "default" {
@@ -57,6 +59,7 @@ resource "icsp_server" "default" {
 ```
 
 ####[Image Streamer Deployment Plan](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/i3s_plan.html.markdown)
+This block takes an already provisioned server and through Image Streamer lays down an Operating System. 
 
 ```js
 resource "oneview_i3s_plan" "default" {
