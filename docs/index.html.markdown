@@ -59,7 +59,7 @@ The following keys can be used to configure the provider.
 * `icsp_password` - (Optional) This is the password to connect to an ICSP instance
   It can be provided or sourced from ONEVIEW_ICSP_PASSWORD environment variable.
   
- * `icsp_endpoint` - (Optional) This is the url to connect to an ICSP instance
+* `icsp_endpoint` - (Optional) This is the url to connect to an ICSP instance
   It can be provided or sourced from ONEVIEW_ICSP_ENDPOINT environment variable.
  
 * `icsp_sslverify` - (Optional) This is a boolean value for whether ssl is enabled to an ICSP instance
