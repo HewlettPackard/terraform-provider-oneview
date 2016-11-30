@@ -13,10 +13,11 @@ package oneview
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	"strconv"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
@@ -317,7 +318,6 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	d.SetId(d.Get("name").(string))
 
 	return resourceServerProfileTemplateRead(d, meta)
-	return nil
 }
 
 func resourceServerProfileTemplateDelete(d *schema.ResourceData, meta interface{}) error {

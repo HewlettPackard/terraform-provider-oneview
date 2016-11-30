@@ -15,34 +15,30 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/icsp"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccEthernetNetwork_1(t *testing.T) {
-	var ethernetNetwork ov.EthernetNetwork
+func TestAccICSP_Server_1(t *testing.T) {
+	var icspServer icsp.Server
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckEthernetNetworkDestroy,
+		CheckDestroy: testAccCheckICSPServerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccEthernetNetwork,
+				Config: testAccICSPServer,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckEthernetNetworkExists(
-						"oneview_ethernet_network.test", &ethernetNetwork),
-					resource.TestCheckResourceAttr(
-						"oneview_ethernet_network.test", "name", "Terraform Ethernet Network 1",
-					),
-				),
+					testAccCheckICSPServerExists(
+						"oneview_icsp_server.test", &icspServer)),
 			},
 		},
 	})
 }
 
-func testAccCheckEthernetNetworkExists(n string, ethernetNetwork *ov.EthernetNetwork) resource.TestCheckFunc {
+func testAccCheckICSPServerExists(n string, icspServer *icsp.Server) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -58,37 +54,46 @@ func testAccCheckEthernetNetworkExists(n string, ethernetNetwork *ov.EthernetNet
 			return err
 		}
 
-		testEthernetNetwork, err := config.ovClient.GetEthernetNetworkByName(rs.Primary.ID)
+		testICSPServer, err := config.icspClient.GetServerByIP(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
-		if testEthernetNetwork.Name != rs.Primary.ID {
+		if testICSPServer.ILO.IPAddress != rs.Primary.ID {
 			return fmt.Errorf("Instance not found")
 		}
-		*ethernetNetwork = testEthernetNetwork
+		*icspServer = testICSPServer
 		return nil
 	}
 }
 
-func testAccCheckEthernetNetworkDestroy(s *terraform.State) error {
+func testAccCheckICSPServerDestroy(s *terraform.State) error {
 	config := testAccProvider.Meta().(*Config)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "oneview_ethernet_network" {
+		if rs.Type != "oneview_icsp_server" {
 			continue
 		}
 
-		testNet, _ := config.ovClient.GetEthernetNetworkByName(rs.Primary.ID)
+		testICSPServer, _ := config.icspClient.GetServerByIP(rs.Primary.ID)
 
-		if testNet.Name != "" {
-			return fmt.Errorf("EthernetNetwork still exists")
+		if testICSPServer.Name != "" {
+			return fmt.Errorf("ICSP server still exists")
 		}
 	}
 
 	return nil
 }
 
-var testAccEthernetNetwork = `
-  resource "oneview_ethernet_network" "test" {
-    name = "Terraform Ethernet Network 1"
-    vlanId = "${117}"
-  }`
+var testAccICSPServer = `resource "oneview_server_profile" "test" {
+     count           = 1
+     name            = "terraform-test-${count.index}"
+     template = "UCP Template iSCSI"
+   }
+
+   resource "oneview_icsp_server" "test" {
+     count = 1
+     ilo_ip = "${element(oneview_server_profile.test.*.ilo_ip, count.index)}"
+     user_name = "ICspUser"
+     password = "@utoPr0vi$ion"
+     serial_number = "${element(oneview_server_profile.test.*.serial_number, count.index)}"
+   }
+  `

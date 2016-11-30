@@ -12,83 +12,82 @@
 package oneview
 
 import (
-  "fmt"
-  "testing"
+	"fmt"
+	"testing"
 
-  "github.com/hashicorp/terraform/helper/resource"
-  "github.com/hashicorp/terraform/terraform"
-  "github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccFCoENetwork_1(t *testing.T){
-  var fcoeNetwork ov.FCoENetwork
+func TestAccFCoENetwork_1(t *testing.T) {
+	var fcoeNetwork ov.FCoENetwork
 
-  resource.Test(t, resource.TestCase{
-    PreCheck: func() { testAccPreCheck(t) },
-    Providers: testAccProviders,
-    CheckDestroy: testAccCheckFCoENetworkDestroy,
-    Steps: []resource.TestStep{
-      resource.TestStep{
-        Config: testAccFCoENetwork,
-        Check: resource.ComposeTestCheckFunc(
-	        testAccCheckFCoENetworkExists(
-            "oneview_fcoe_network.test", &fcoeNetwork),
-          resource.TestCheckResourceAttr(
- 	            "oneview_fcoe_network.test", "name", "Terraform FCoE Network 1",
-          ),
-        ),
-      },
-    },
-  })
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckFCoENetworkDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccFCoENetwork,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckFCoENetworkExists(
+						"oneview_fcoe_network.test", &fcoeNetwork),
+					resource.TestCheckResourceAttr(
+						"oneview_fcoe_network.test", "name", "Terraform FCoE Network 1",
+					),
+				),
+			},
+		},
+	})
 }
 
 func testAccCheckFCoENetworkExists(n string, fcoeNetwork *ov.FCoENetwork) resource.TestCheckFunc {
-  return func(s *terraform.State) error {
-    rs, ok := s.RootModule().Resources[n]
-    if !ok {
-      return fmt.Errorf("Not found :%v", n)
-    }
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found :%v", n)
+		}
 
-    if rs.Primary.ID == "" {
-      return fmt.Errorf("No ID is set")
-    }
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No ID is set")
+		}
 
-    config, err := testProviderConfig()
-    if err != nil {
-      return err
-    }
+		config, err := testProviderConfig()
+		if err != nil {
+			return err
+		}
 
-    testFCoENetwork, err := config.ovClient.GetFCoENetworkByName(rs.Primary.ID)
-    if err != nil{
-      return err
-    }
-    if testFCoENetwork.Name != rs.Primary.ID {
-      return fmt.Errorf("Instance not found")
-    }
-    *fcoeNetwork = testFCoENetwork
-    return nil
-  }
+		testFCoENetwork, err := config.ovClient.GetFCoENetworkByName(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+		if testFCoENetwork.Name != rs.Primary.ID {
+			return fmt.Errorf("Instance not found")
+		}
+		*fcoeNetwork = testFCoENetwork
+		return nil
+	}
 }
 
 func testAccCheckFCoENetworkDestroy(s *terraform.State) error {
-  config := testAccProvider.Meta().(*Config)
-  for _, rs := range s.RootModule().Resources {
-    if rs.Type != "oneview_fcoe_network" {
-      continue
-    }
+	config := testAccProvider.Meta().(*Config)
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "oneview_fcoe_network" {
+			continue
+		}
 
-    testFCoENet, _ := config.ovClient.GetFCoENetworkByName(rs.Primary.ID)
+		testFCoENet, _ := config.ovClient.GetFCoENetworkByName(rs.Primary.ID)
 
-    if testFCoENet.Name != "" {
-      return fmt.Errorf("FCoENetwork still exists")
-    }
-  }
+		if testFCoENet.Name != "" {
+			return fmt.Errorf("FCoENetwork still exists")
+		}
+	}
 
-  return nil
+	return nil
 }
 
-var testAccFCoENetwork =
-  `
+var testAccFCoENetwork = `
   resource "oneview_fcoe_network" "test" {
     name = "Terraform FCoE Network 1"
     vlanId = 157

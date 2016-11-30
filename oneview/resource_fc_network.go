@@ -43,7 +43,7 @@ func resourceFCNetwork() *schema.Resource {
 			"auto_login_redistribution": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
+				Default:  true,
 			},
 			"connection_template_uri": {
 				Type:     schema.TypeString,

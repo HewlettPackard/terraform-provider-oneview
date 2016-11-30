@@ -12,88 +12,88 @@
 package oneview
 
 import (
-  "github.com/hashicorp/terraform/helper/schema"
-  "fmt"
-  "github.com/HewlettPackard/oneview-golang/icsp"
+	"fmt"
+	"github.com/HewlettPackard/oneview-golang/icsp"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceIcspServer() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceIcspServerCreate,
-		Read: resourceIcspServerRead,
+		Read:   resourceIcspServerRead,
 		Update: resourceIcspServerUpdate,
 		Delete: resourceIcspServerDelete,
 
 		Schema: map[string]*schema.Schema{
-			"type": &schema.Schema{
-				Type: schema.TypeString,
+			"type": {
+				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"ilo_ip": &schema.Schema{
-				Type: schema.TypeString,
+			"ilo_ip": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"port": &schema.Schema{
-				Type: schema.TypeInt,
+			"port": {
+				Type:     schema.TypeInt,
 				Optional: true,
-				Default: 443,
+				Default:  443,
 			},
-			"user_name": &schema.Schema{
-				Type: schema.TypeString,
+			"user_name": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"password": &schema.Schema{
-				Type: schema.TypeString,
+			"password": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"mid": &schema.Schema{
-				Type: schema.TypeString,
+			"mid": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"serial_number": &schema.Schema{
-				Type: schema.TypeString,
+			"serial_number": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"build_plans": &schema.Schema{
-				Type: schema.TypeList,
+			"build_plans": {
+				Type:     schema.TypeList,
 				Optional: true,
-				Elem: &schema.Schema{Type: schema.TypeString},
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"public_mac": &schema.Schema{
-				Type: schema.TypeString,
-			 	Optional: true,
-			},
-			"public_slot_id": &schema.Schema{
-				Type: schema.TypeInt,
+			"public_mac": {
+				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"host_name": &schema.Schema{
-				Type: schema.TypeString,
+			"public_slot_id": {
+				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"custom_attribute": &schema.Schema{
+			"host_name": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Type: schema.TypeList,
+			},
+			"custom_attribute": {
+				Optional: true,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"scope": &schema.Schema{
-							Type: schema.TypeString,
+						"scope": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Default: "server",
+							Default:  "server",
 						},
-						"key": &schema.Schema{
-							Type: schema.TypeString,
+						"key": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
-						"value": &schema.Schema{
-							Type: schema.TypeString,
+						"value": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
 					},
 				},
 			},
-			"public_ipv4": &schema.Schema{
-				Type: schema.TypeString,
+			"public_ipv4": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 		},
@@ -104,69 +104,16 @@ func resourceIcspServerCreate(d *schema.ResourceData, meta interface{}) error {
 
 	config := meta.(*Config)
 
-	
-    csa := icsp.CustomServerAttributes{}
-    initCsa := csa.New()
-
-    customizeServer := icsp.CustomizeServer{
-            SerialNumber: d.Get("serial_number").(string),
-            ILoUser: d.Get("user_name").(string),
-            IloIPAddress: d.Get("ilo_ip").(string),
-            IloPort: d.Get("port").(int),
-            IloPassword: d.Get("password").(string),
-            ServerProperties: initCsa,
-    }
-
-    if _, ok := d.GetOk("build_plans"); ok {
-            rawBuildPlans := d.Get("build_plans").([]interface{})
-            buildPlans := make([]string, len(rawBuildPlans))
-            for i, raw := range rawBuildPlans {
-                    buildPlans[i] = raw.(string)
-            }
-            customizeServer.OSBuildPlans = buildPlans
-    }
-
-    if _, ok := d.GetOk("custom_attribute"); ok{
-            customAttributeCount := d.Get("custom_attribute.#").(int)
-            for i := 0; i < customAttributeCount; i++ {
-                customAttributePrefix := fmt.Sprintf("custom_attribute.%d", i)
-                initCsa.Set(d.Get(customAttributePrefix + ".key").(string), d.Get(customAttributePrefix + ".value").(string))
-            }
-
-    }
-
-    if val, ok := d.GetOk("host_name"); ok {
-            customizeServer.HostName = val.(string)
-    }
-
-    if val, ok := d.GetOk("public_slot_id"); ok {
-            customizeServer.PublicSlotID = val.(int)
-    }
-
-    if val, ok := d.GetOk("public_mac"); ok {
-            customizeServer.PublicMAC = val.(string)
-    }
-
-    err := config.icspClient.CustomizeServer(customizeServer)
-    d.SetId(d.Get("ilo_ip").(string))
-    if err != nil {
-            return err
-    }
-       
-	return resourceIcspServerRead(d, meta)
-	/*
-	config := meta.(*Config)
-	
-
-        csa := icsp.CustomServerAttributes{}
+	csa := icsp.CustomServerAttributes{}
+	initCsa := csa.New()
 
 	customizeServer := icsp.CustomizeServer{
-		SerialNumber: d.Get("serial_number").(string),
-		ILoUser: d.Get("user_name").(string),
-		IloIPAddress: d.Get("ilo_ip").(string),
-		IloPort: d.Get("port").(int),
-		IloPassword: d.Get("password").(string),
-                ServerProperties: csa.New(),
+		SerialNumber:     d.Get("serial_number").(string),
+		ILoUser:          d.Get("user_name").(string),
+		IloIPAddress:     d.Get("ilo_ip").(string),
+		IloPort:          d.Get("port").(int),
+		IloPassword:      d.Get("password").(string),
+		ServerProperties: initCsa,
 	}
 
 	if _, ok := d.GetOk("build_plans"); ok {
@@ -176,10 +123,15 @@ func resourceIcspServerCreate(d *schema.ResourceData, meta interface{}) error {
 			buildPlans[i] = raw.(string)
 		}
 		customizeServer.OSBuildPlans = buildPlans
-		/*_, err = config.icspClient.ApplyDeploymentJobsWithUri(buildPlans, nil, server)
-		if err != nil {
-			return err
+	}
+
+	if _, ok := d.GetOk("custom_attribute"); ok {
+		customAttributeCount := d.Get("custom_attribute.#").(int)
+		for i := 0; i < customAttributeCount; i++ {
+			customAttributePrefix := fmt.Sprintf("custom_attribute.%d", i)
+			initCsa.Set(d.Get(customAttributePrefix+".key").(string), d.Get(customAttributePrefix+".value").(string))
 		}
+
 	}
 
 	if val, ok := d.GetOk("host_name"); ok {
@@ -196,72 +148,18 @@ func resourceIcspServerCreate(d *schema.ResourceData, meta interface{}) error {
 
 	err := config.icspClient.CustomizeServer(customizeServer)
 	d.SetId(d.Get("ilo_ip").(string))
-        if err != nil {
-		return err
-	}
-	/*
-	serverError := config.icspClient.CreateServer(d.Get("user_name").(string),d.Get("password").(string),d.Get("ilo_ip").(string),d.Get("port").(int))
-
-        	
-	if(serverError != nil){
-		d.SetId("")
-		return serverError
-	}
-
-	server, err := config.icspClient.GetServerBySerialNumber(d.Get("serial_number").(string))
-	if err != nil {
-		return err
-	}
-    
-	if _, ok := d.GetOk("custom_attribute"); ok{
-
-		customAttributeCount := d.Get("custom_attribute.#").(int)
-		for i := 0; i < customAttributeCount; i++ {
-			customAttributePrefix := fmt.Sprintf("custom_attribute.%d", i)
-			
-			values := make([]icsp.ValueItem, 0)
-			values = append(values, icsp.ValueItem {
-				Scope: d.Get(customAttributePrefix + ".scope").(string),
-				Value: d.Get(customAttributePrefix + ".value").(string),
-			})
-
-			customAttribute := icsp.CustomAttribute{
-				Key: d.Get(customAttributePrefix + ".key").(string),
-				Values: values,
-			}
-			
-			server.CustomAttributes = append(server.CustomAttributes, customAttribute)
-		}
-		
-	}
-	
-	server, err = config.icspClient.SaveServer(server)
-	
 	if err != nil {
 		return err
 	}
 
-	if _, ok := d.GetOk("build_plans"); ok {
-		rawBuildPlans := d.Get("build_plans").([]interface{})
-		buildPlans := make([]utils.Nstring, len(rawBuildPlans))
-		for i, raw := range rawBuildPlans {
-			buildPlans[i] = utils.NewNstring(raw.(string))
-		}
-		_, err = config.icspClient.ApplyDeploymentJobsWithUri(buildPlans, nil, server)
-		if err != nil {
-			return err
-		}
-	}
+	return resourceIcspServerRead(d, meta)
 
-	d.SetId(d.Get("ilo_ip").(string))
-
-    return resourceIcspServerRead(d, meta)*/
 }
 
 func resourceIcspServerRead(d *schema.ResourceData, meta interface{}) error {
 
-    config := meta.(*Config)
-  
+	config := meta.(*Config)
+
 	server, err := config.icspClient.GetServerByIP(d.Id())
 	if err != nil {
 		d.SetId("")
@@ -279,72 +177,72 @@ func resourceIcspServerRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 	}
-    return nil
+	return nil
 }
 
 func resourceIcspServerUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-    csa := icsp.CustomServerAttributes{}
-    initCsa := csa.New()
+	csa := icsp.CustomServerAttributes{}
+	initCsa := csa.New()
 
-    customizeServer := icsp.CustomizeServer{
-            SerialNumber: d.Get("serial_number").(string),
-            ILoUser: d.Get("user_name").(string),
-            IloIPAddress: d.Get("ilo_ip").(string),
-            IloPort: d.Get("port").(int),
-            IloPassword: d.Get("password").(string),
-            ServerProperties: initCsa,
-    }
+	customizeServer := icsp.CustomizeServer{
+		SerialNumber:     d.Get("serial_number").(string),
+		ILoUser:          d.Get("user_name").(string),
+		IloIPAddress:     d.Get("ilo_ip").(string),
+		IloPort:          d.Get("port").(int),
+		IloPassword:      d.Get("password").(string),
+		ServerProperties: initCsa,
+	}
 
-    if _, ok := d.GetOk("build_plans"); ok {
-            rawBuildPlans := d.Get("build_plans").([]interface{})
-            buildPlans := make([]string, len(rawBuildPlans))
-            for i, raw := range rawBuildPlans {
-                    buildPlans[i] = raw.(string)
-            }
-            customizeServer.OSBuildPlans = buildPlans
-    }
+	if _, ok := d.GetOk("build_plans"); ok {
+		rawBuildPlans := d.Get("build_plans").([]interface{})
+		buildPlans := make([]string, len(rawBuildPlans))
+		for i, raw := range rawBuildPlans {
+			buildPlans[i] = raw.(string)
+		}
+		customizeServer.OSBuildPlans = buildPlans
+	}
 
-    if _, ok := d.GetOk("custom_attribute"); ok{
-            customAttributeCount := d.Get("custom_attribute.#").(int)
-            for i := 0; i < customAttributeCount; i++ {
-                customAttributePrefix := fmt.Sprintf("custom_attribute.%d", i)
-                initCsa.Set(d.Get(customAttributePrefix + ".key").(string), d.Get(customAttributePrefix + ".value").(string))
-            }
+	if _, ok := d.GetOk("custom_attribute"); ok {
+		customAttributeCount := d.Get("custom_attribute.#").(int)
+		for i := 0; i < customAttributeCount; i++ {
+			customAttributePrefix := fmt.Sprintf("custom_attribute.%d", i)
+			initCsa.Set(d.Get(customAttributePrefix+".key").(string), d.Get(customAttributePrefix+".value").(string))
+		}
 
-    }
+	}
 
-    if val, ok := d.GetOk("host_name"); ok {
-            customizeServer.HostName = val.(string)
-    }
+	if val, ok := d.GetOk("host_name"); ok {
+		customizeServer.HostName = val.(string)
+	}
 
-    if val, ok := d.GetOk("public_slot_id"); ok {
-            customizeServer.PublicSlotID = val.(int)
-    }
+	if val, ok := d.GetOk("public_slot_id"); ok {
+		customizeServer.PublicSlotID = val.(int)
+	}
 
-    if val, ok := d.GetOk("public_mac"); ok {
-            customizeServer.PublicMAC = val.(string)
-    }
+	if val, ok := d.GetOk("public_mac"); ok {
+		customizeServer.PublicMAC = val.(string)
+	}
 
-    err := config.icspClient.CustomizeServer(customizeServer)
-    d.SetId(d.Get("ilo_ip").(string))
-    if err != nil {
-            return err
-    }
-       
+	err := config.icspClient.CustomizeServer(customizeServer)
+	d.SetId(d.Get("ilo_ip").(string))
+	if err != nil {
+		return err
+	}
+
 	return resourceIcspServerRead(d, meta)
 }
 
 func resourceIcspServerDelete(d *schema.ResourceData, meta interface{}) error {
-    config := meta.(*Config)
-    
-    isDel, error := config.icspClient.DeleteServer(d.Get("mid").(string))
-    if error != nil {
-      return error
-    }
-    if !isDel {
-      return fmt.Errorf("Could not delete server")
-    }
-    return nil
+	config := meta.(*Config)
+
+	isDel, error := config.icspClient.DeleteServer(d.Get("mid").(string))
+	if error != nil {
+		return error
+	}
+	if !isDel {
+		return fmt.Errorf("Could not delete server")
+	}
+	return nil
 }

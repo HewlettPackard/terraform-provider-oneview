@@ -12,83 +12,82 @@
 package oneview
 
 import (
-  "fmt"
-  "testing"
-  
-  "github.com/hashicorp/terraform/helper/resource"
-  "github.com/hashicorp/terraform/terraform"
-  "github.com/HewlettPackard/oneview-golang/ov" 
+	"fmt"
+	"testing"
+
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccNetworkSet_1(t *testing.T){
-  var networkSet ov.NetworkSet
+func TestAccNetworkSet_1(t *testing.T) {
+	var networkSet ov.NetworkSet
 
-  resource.Test(t, resource.TestCase{
-    PreCheck: func() { testAccPreCheck(t) },
-    Providers: testAccProviders,
-    CheckDestroy: testAccCheckNetworkSetDestroy,
-    Steps: []resource.TestStep{
-      resource.TestStep{
-        Config: testAccNetworkSet,
-        Check: resource.ComposeTestCheckFunc(
-	        testAccCheckNetworkSetExists(
-            "oneview_network_set.test", &networkSet),
-          resource.TestCheckResourceAttr(
- 	            "oneview_network_set.test", "name", "Terraform Network Set 1",
-          ),
-        ),
-      },
-    },
-  })
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckNetworkSetDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccNetworkSet,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckNetworkSetExists(
+						"oneview_network_set.test", &networkSet),
+					resource.TestCheckResourceAttr(
+						"oneview_network_set.test", "name", "Terraform Network Set 1",
+					),
+				),
+			},
+		},
+	})
 }
 
 func testAccCheckNetworkSetExists(n string, networkSet *ov.NetworkSet) resource.TestCheckFunc {
-  return func(s *terraform.State) error {
-    rs, ok := s.RootModule().Resources[n]
-    if !ok {
-      return fmt.Errorf("Not found :%v", n)
-    }
- 
-    if rs.Primary.ID == "" {
-      return fmt.Errorf("No ID is set")
-    }
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found :%v", n)
+		}
 
-    config, err := testProviderConfig()
-    if err != nil {
-      return err
-    }
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No ID is set")
+		}
 
-    testNetworkSet, err := config.ovClient.GetNetworkSetByName(rs.Primary.ID)
-    if err != nil{
-      return err
-    }
-    if testNetworkSet.Name != rs.Primary.ID {
-      return fmt.Errorf("Instance not found")
-    }
-    *networkSet = testNetworkSet
-    return nil
-  }
+		config, err := testProviderConfig()
+		if err != nil {
+			return err
+		}
+
+		testNetworkSet, err := config.ovClient.GetNetworkSetByName(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+		if testNetworkSet.Name != rs.Primary.ID {
+			return fmt.Errorf("Instance not found")
+		}
+		*networkSet = testNetworkSet
+		return nil
+	}
 }
 
 func testAccCheckNetworkSetDestroy(s *terraform.State) error {
-  config := testAccProvider.Meta().(*Config)
-  for _, rs := range s.RootModule().Resources {
-    if rs.Type != "oneview_network_set" {
-      continue
-    }
-    
-    testNet, _ := config.ovClient.GetNetworkSetByName(rs.Primary.ID)
+	config := testAccProvider.Meta().(*Config)
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "oneview_network_set" {
+			continue
+		}
 
-    if testNet.Name != "" {
-      return fmt.Errorf("NetworkSet still exists")
-    }
-  }
- 
-  return nil
+		testNet, _ := config.ovClient.GetNetworkSetByName(rs.Primary.ID)
+
+		if testNet.Name != "" {
+			return fmt.Errorf("NetworkSet still exists")
+		}
+	}
+
+	return nil
 }
 
-var testAccNetworkSet = 
-  `
+var testAccNetworkSet = `
   resource "oneview_network_set" "test" {
     name = "Terraform Network Set 1"
   }`

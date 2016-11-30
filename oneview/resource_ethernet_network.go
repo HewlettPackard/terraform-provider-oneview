@@ -9,94 +9,94 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-package oneview 
+package oneview
 
 import (
-  "github.com/hashicorp/terraform/helper/schema"
-  "github.com/HewlettPackard/oneview-golang/ov"
-  "github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceEthernetNetwork() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceEthernetNetworkCreate,
-		Read: resourceEthernetNetworkRead,
+		Read:   resourceEthernetNetworkRead,
 		Update: resourceEthernetNetworkUpdate,
 		Delete: resourceEthernetNetworkDelete,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type: schema.TypeString,
+			"name": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"vlanId": &schema.Schema{
-				Type: schema.TypeInt,
+			"vlanId": {
+				Type:     schema.TypeInt,
 				Required: true,
 				ForceNew: true,
 			},
-			"purpose": &schema.Schema{
-				Type: schema.TypeString,
+			"purpose": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "General",
-			},			
-			"private_network": &schema.Schema{
-				Type: schema.TypeBool,
+				Default:  "General",
+			},
+			"private_network": {
+				Type:     schema.TypeBool,
 				Optional: true,
-				Default: false,
+				Default:  false,
 			},
-			"smart_link": &schema.Schema{
-				Type: schema.TypeBool,
+			"smart_link": {
+				Type:     schema.TypeBool,
 				Optional: true,
-				Default: false,
+				Default:  false,
 			},
-			"ethernet_network_type": &schema.Schema{
-				Type: schema.TypeString,
+			"ethernet_network_type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "Tagged",
+				Default:  "Tagged",
 			},
-			"type": &schema.Schema{
-				Type: schema.TypeString,
+			"type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "ethernet-networkV3",
+				Default:  "ethernet-networkV3",
 			},
-			"connection_template_uri": &schema.Schema{
-				Type: schema.TypeString,
+			"connection_template_uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"created": &schema.Schema{
-				Type: schema.TypeString,
+			"created": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified": &schema.Schema{
-				Type: schema.TypeString,
-				Computed:true,
+			"modified": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
-			"description": &schema.Schema{
-				Type: schema.TypeString,
+			"description": {
+				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"uri": &schema.Schema{
-				Type: schema.TypeString,
+			"uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"status": &schema.Schema{
-				Type: schema.TypeString,
+			"status": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"category": &schema.Schema{
-				Type: schema.TypeString,
+			"category": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"state": &schema.Schema{
-				Type: schema.TypeString,
+			"state": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"fabric_uri": &schema.Schema{
-				Type: schema.TypeString,
+			"fabric_uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": &schema.Schema{
-				Type: schema.TypeString,
+			"eTag": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 		},
@@ -105,7 +105,7 @@ func resourceEthernetNetwork() *schema.Resource {
 
 func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	
+
 	eNet := ov.EthernetNetwork{
 		Name:                d.Get("name").(string),
 		VlanId:              d.Get("vlanId").(int),
@@ -114,16 +114,16 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 		PrivateNetwork:      d.Get("private_network").(bool),
 		EthernetNetworkType: d.Get("ethernet_network_type").(string),
 		Type:                d.Get("type").(string),
-		Description:		 utils.NewNstring(d.Get("description").(string)),
+		Description:         utils.NewNstring(d.Get("description").(string)),
 	}
 
 	eNetError := config.ovClient.CreateEthernetNetwork(eNet)
 	d.SetId(d.Get("name").(string))
-	if(eNetError != nil){
+	if eNetError != nil {
 		d.SetId("")
 		return eNetError
 	}
-    return resourceEthernetNetworkRead(d, meta)
+	return resourceEthernetNetworkRead(d, meta)
 }
 
 func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error {
@@ -150,40 +150,39 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("state", eNet.State)
 	d.Set("fabric_uri", eNet.FabricUri.String())
 	d.Set("eTag", eNet.ETAG)
-    return nil
+	return nil
 }
 
 func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	newENet := ov.EthernetNetwork{
-		ETAG: 				   d.Get("eTag").(string),
-		URI:  	  			   utils.NewNstring(d.Get("uri").(string)),
-		VlanId: 			   d.Get("vlanId").(int),
-		Purpose: 			   d.Get("purpose").(string),
-		Name:	 			   d.Get("name").(string),
-		PrivateNetwork: 	   d.Get("private_network").(bool),
-		SmartLink:			   d.Get("smart_link").(bool),
+		ETAG:                  d.Get("eTag").(string),
+		URI:                   utils.NewNstring(d.Get("uri").(string)),
+		VlanId:                d.Get("vlanId").(int),
+		Purpose:               d.Get("purpose").(string),
+		Name:                  d.Get("name").(string),
+		PrivateNetwork:        d.Get("private_network").(bool),
+		SmartLink:             d.Get("smart_link").(bool),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type: 				   d.Get("type").(string),
+		Type: d.Get("type").(string),
 	}
 
-	
 	err := config.ovClient.UpdateEthernetNetwork(newENet)
 	if err != nil {
 		return err
 	}
 	d.SetId(d.Get("name").(string))
 
-    return resourceEthernetNetworkRead(d, meta)
+	return resourceEthernetNetworkRead(d, meta)
 }
 
 func resourceEthernetNetworkDelete(d *schema.ResourceData, meta interface{}) error {
-    config := meta.(*Config)
-    
-    error := config.ovClient.DeleteEthernetNetwork(d.Get("name").(string))
-    if error != nil {
-      return error
-    }
-    return nil
+	config := meta.(*Config)
+
+	error := config.ovClient.DeleteEthernetNetwork(d.Get("name").(string))
+	if error != nil {
+		return error
+	}
+	return nil
 }

@@ -20,21 +20,21 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccEthernetNetwork_1(t *testing.T) {
-	var ethernetNetwork ov.EthernetNetwork
+func TestAccI3SPlan_1(t *testing.T) {
+	var server ov.ServerProfile
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckEthernetNetworkDestroy,
+		CheckDestroy: testAccCheckI3SPlanDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccEthernetNetwork,
+				Config: testAccI3SPlan,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckEthernetNetworkExists(
-						"oneview_ethernet_network.test", &ethernetNetwork),
+					testAccCheckI3SPlanExists(
+						"oneview_i3s_plan.test", &server),
 					resource.TestCheckResourceAttr(
-						"oneview_ethernet_network.test", "name", "Terraform Ethernet Network 1",
+						"oneview_i3s_plan.test", "name", "Terraform Server 1",
 					),
 				),
 			},
@@ -42,7 +42,7 @@ func TestAccEthernetNetwork_1(t *testing.T) {
 	})
 }
 
-func testAccCheckEthernetNetworkExists(n string, ethernetNetwork *ov.EthernetNetwork) resource.TestCheckFunc {
+func testAccCheckI3SPlanExists(n string, server *ov.ServerProfile) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -58,37 +58,47 @@ func testAccCheckEthernetNetworkExists(n string, ethernetNetwork *ov.EthernetNet
 			return err
 		}
 
-		testEthernetNetwork, err := config.ovClient.GetEthernetNetworkByName(rs.Primary.ID)
+		testServer, err := config.ovClient.GetProfileByName(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
-		if testEthernetNetwork.Name != rs.Primary.ID {
+		if testServer.Name != rs.Primary.ID {
 			return fmt.Errorf("Instance not found")
 		}
-		*ethernetNetwork = testEthernetNetwork
+		*server = testServer
 		return nil
 	}
 }
 
-func testAccCheckEthernetNetworkDestroy(s *terraform.State) error {
+func testAccCheckI3SPlanDestroy(s *terraform.State) error {
 	config := testAccProvider.Meta().(*Config)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "oneview_ethernet_network" {
+		if rs.Type != "oneview_i3s_plan" {
 			continue
 		}
 
-		testNet, _ := config.ovClient.GetEthernetNetworkByName(rs.Primary.ID)
+		testServer, _ := config.ovClient.GetProfileByName(rs.Primary.ID)
 
-		if testNet.Name != "" {
-			return fmt.Errorf("EthernetNetwork still exists")
+		if !testServer.OSDeploymentSettings.OSDeploymentPlanUri.IsNil() {
+			return fmt.Errorf("Deployment Plan still exists")
 		}
 	}
 
 	return nil
 }
 
-var testAccEthernetNetwork = `
-  resource "oneview_ethernet_network" "test" {
-    name = "Terraform Ethernet Network 1"
-    vlanId = "${117}"
-  }`
+var testAccI3SPlan = `resource "oneview_server_profile" "test" {
+     count           = 1
+     name            = "terraform-test-${count.index}"
+     template = "Matthew-No-I3S"
+     hardware_name        = "Frame 0, bay 7"
+     type = "ServerProfileV6"
+   }
+
+   resource "oneview_i3s_plan" "test" {
+     count = 1
+     server_name = "${oneview_server_profile.test.name}"
+     os_deployment_plan = "dennis_dp_empty_volume"
+   }
+
+  `

@@ -10,87 +10,90 @@
 // specific language governing permissions and limitations under the License.
 
 package oneview
-/*
+
 import (
-  "fmt"
-  "testing"
-  
-  "github.com/hashicorp/terraform/helper/resource"
-  "github.com/hashicorp/terraform/terraform"
-  "github.com/HewlettPackard/oneview-golang/ov" 
+	"fmt"
+	"testing"
+
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccServerProfile_1(t *testing.T){
-  var serverProfile ov.ServerProfile 
+func TestAccServerProfile_1(t *testing.T) {
+	var serverProfile ov.ServerProfile
 
-  resource.Test(t, resource.TestCase{
-    PreCheck: func() { testAccPreCheck(t) },
-    Providers: testAccProviders,
-    CheckDestroy: testAccCheckServerProfileDestroy,
-    Steps: []resource.TestStep{
-      resource.TestStep{
-        Config: testAccServerProfile,
-        Check: resource.ComposeTestCheckFunc(
-	  testAccCheckServerProfileExists(
-     "oneview_machine.test", &serverProfile),
-          resource.TestCheckResourceAttr(
- 	    "oneview_machine.test", "name", "test"),
-        ),
-      },
-    },
-  })
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckServerProfileDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccServerProfile,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckServerProfileExists(
+						"oneview_server_profile.test", &serverProfile),
+					resource.TestCheckResourceAttr(
+						"oneview_server_profile.test", "name", "test"),
+				),
+			},
+		},
+	})
 }
 
 func testAccCheckServerProfileExists(n string, serverProfile *ov.ServerProfile) resource.TestCheckFunc {
-  return func(s *terraform.State) error {
-    rs, ok := s.RootModule().Resources[n]
-    if !ok {
-      return fmt.Errorf("Not found :%v", n)
-    }
- 
-    if rs.Primary.ID == "" {
-      return fmt.Errorf("No ID is set")
-    }
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[n]
+		if !ok {
+			return fmt.Errorf("Not found :%v", n)
+		}
 
-    config, err := testProviderConfig()
-    if err != nil {
-      return err
-    }
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No ID is set")
+		}
 
-    testServerProfile, err := config.ovClient.GetProfileByName(rs.Primary.ID)
-    if err != nil{
-      return err
-    }
-    if testServerProfile.Name != rs.Primary.ID {
-      return fmt.Errorf("Instance not found")
-    }
-    *serverProfile = testServerProfile
-    return nil
-  }
+		config, err := testProviderConfig()
+		if err != nil {
+			return err
+		}
+
+		testServerProfile, err := config.ovClient.GetProfileByName(rs.Primary.ID)
+		if err != nil {
+			return err
+		}
+		if testServerProfile.Name != rs.Primary.ID {
+			return fmt.Errorf("Instance not found")
+		}
+		*serverProfile = testServerProfile
+		return nil
+	}
 }
 
 func testAccCheckServerProfileDestroy(s *terraform.State) error {
-  config := testAccProvider.Meta().(*Config)
-  for _, rs := range s.RootModule().Resources {
-    if rs.Type != "oneview_machine" {
-      continue
-    }
-    
-    _, err := config.ovClient.GetProfileByName(rs.Primary.ID)
+	config := testAccProvider.Meta().(*Config)
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "oneview_machine" {
+			continue
+		}
 
-    if err == nil {
-      return fmt.Errorf("Instance still exists")
-    }
-  }
- 
-  return nil
+		_, err := config.ovClient.GetProfileByName(rs.Primary.ID)
+
+		if err == nil {
+			return fmt.Errorf("Instance still exists")
+		}
+	}
+
+	return nil
 }
 
-var testAccServerProfile = 
-  `
-  resource "oneview_machine" "test" {
-    name             = "test"
-    server_template  = "Web Server Template"
-  }`
+var testAccServerProfile = `
+  resource "oneview_server_profile_template" "test" {
+    name = "terraform test spt"
+    server_hardware_type = "BL460c Gen9 1"
+    enclosure_group = "Houston"
+  }
 
-*/
+  resource "oneview_server_profile" "test" {
+    name             = "test"
+    template  = "${oneview_server_profile_template.test.id}"
+  }`
