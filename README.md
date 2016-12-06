@@ -1,5 +1,5 @@
 # terraform-provider-oneview
-A Terraform provider for oneview
+A Terraform provider for oneview. 
 
 ## Installation 
 
@@ -30,6 +30,7 @@ resource "oneview_server_profile" "test" {
   template         = "Web Server Template"
 }
 ```
+
 ### License
 
 This project is licensed under the Apache 2.0 license.
