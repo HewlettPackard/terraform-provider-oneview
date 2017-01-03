@@ -29,7 +29,7 @@ func resourceEthernetNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"vlanId": {
+			"vlan_id": {
 				Type:     schema.TypeInt,
 				Required: true,
 				ForceNew: true,
