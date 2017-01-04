@@ -108,7 +108,7 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 
 	eNet := ov.EthernetNetwork{
 		Name:                d.Get("name").(string),
-		VlanId:              d.Get("vlanId").(int),
+		VlanId:              d.Get("vlan_id").(int),
 		Purpose:             d.Get("purpose").(string),
 		SmartLink:           d.Get("smart_link").(bool),
 		PrivateNetwork:      d.Get("private_network").(bool),
