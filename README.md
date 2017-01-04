@@ -144,7 +144,7 @@ resource "oneview_logical_interconnect_group" "default" {
 ```js
 resource "oneview_enclosure_group" "default" {
   name = "default-enclosure-group"
-  logical_interconnect_broups = ["${oneview_logical_interconnect_group.primary.name}", 
+  logical_interconnect_groups = ["${oneview_logical_interconnect_group.primary.name}", 
                                  "${oneview_logical_interconnect_group.secondary.name}"]
 }
 ```
@@ -152,10 +152,10 @@ resource "oneview_enclosure_group" "default" {
 ####[Logical Switch](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/logical_switch.html.markdown)
 
 ```js
-resource "oneview_enclosure_group" "default" {
-  name = "default-enclosure-group"
-  logical_interconnect_broups = ["${oneview_logical_interconnect_group.primary.name}", 
-                                 "${oneview_logical_interconnect_group.secondary.name}"]
+resource "oneview_logical_switch" "default" {
+  name = "test-logical-switch"
+  switch_type_name = "Cisco Nexus 6xxx"
+  switch_count = 1
 }
 ```
 
