@@ -90,6 +90,6 @@ func testAccCheckServerProfileTemplateDestroy(s *terraform.State) error {
 var testAccServerProfileTemplate = `
   resource "oneview_server_profile_template" "test" {
     name = "terraform test spt"
-    server_hardware_type = "BL465c Gen8 1"
-    enclosure_group = "Enclosure Group 1"
+    server_hardware_type = "BL460c Gen9 1"
+    enclosure_group = "Houston"
   }`

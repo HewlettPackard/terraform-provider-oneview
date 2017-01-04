@@ -11,61 +11,61 @@
 
 package oneview
 
-import(
-  "os"
-  "fmt"
-  "testing"
-  "github.com/hashicorp/terraform/helper/schema"
-  "github.com/hashicorp/terraform/terraform"
+import (
+	"fmt"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
+	"os"
+	"testing"
 )
 
-var testAccProviders map[string] terraform.ResourceProvider
+var testAccProviders map[string]terraform.ResourceProvider
 var testAccProvider *schema.Provider
 
 func init() {
-  testAccProvider = Provider().(*schema.Provider)
-  testAccProviders = map[string]terraform.ResourceProvider{
-    "oneview": testAccProvider,
-  }
+	testAccProvider = Provider().(*schema.Provider)
+	testAccProviders = map[string]terraform.ResourceProvider{
+		"oneview": testAccProvider,
+	}
 }
 
-func TestProvider(t *testing.T){
-  if err := Provider().(*schema.Provider).InternalValidate(); err != nil {
-    t.Fatalf("err: %s", err)
-  }
+func TestProvider(t *testing.T) {
+	if err := Provider().(*schema.Provider).InternalValidate(); err != nil {
+		t.Fatalf("err: %s", err)
+	}
 }
 
 func TestProvider_impl(t *testing.T) {
-    var _ terraform.ResourceProvider = Provider()
+	var _ terraform.ResourceProvider = Provider()
 }
 
 func testAccPreCheck(t *testing.T) {
-  v := os.Getenv("ONEVIEW_OV_ENDPOINT")
-  if v == "" {
-    t.Fatal("ONEVIEW_OV_ENDPOINT must be set for acceptance tests")
-  }
+	v := os.Getenv("ONEVIEW_OV_ENDPOINT")
+	if v == "" {
+		t.Fatal("ONEVIEW_OV_ENDPOINT must be set for acceptance tests")
+	}
 
-  v = os.Getenv("ONEVIEW_OV_USER")
-  if v == "" {
-    t.Fatal("ONEVIEW_OV_USER must be set for acceptance test")
-  }
-  
-  v = os.Getenv("ONEVIEW_OV_PASSWORD")
-  if v == "" {
-    t.Fatal("ONEVIEW_OV_PASSWORD must be set for acceptance test")
-  }
- 
-  v = os.Getenv("ONEVIEW_SSLVERIFY")
-  if v == "" {
-    t.Fatal("ONEVIEW_OV_SSLVERIFY must be set for acceptance test")
-  }
+	v = os.Getenv("ONEVIEW_OV_USER")
+	if v == "" {
+		t.Fatal("ONEVIEW_OV_USER must be set for acceptance test")
+	}
+
+	v = os.Getenv("ONEVIEW_OV_PASSWORD")
+	if v == "" {
+		t.Fatal("ONEVIEW_OV_PASSWORD must be set for acceptance test")
+	}
+
+	v = os.Getenv("ONEVIEW_SSLVERIFY")
+	if v == "" {
+		t.Fatal("ONEVIEW_OV_SSLVERIFY must be set for acceptance test")
+	}
 
 }
 
-func testProviderConfig() (*Config, error){
-  config := testAccProvider.Meta().(*Config)
-  if config == nil {
-    return nil, fmt.Errorf("Unable to obtain provider config\n")
-  }
-  return config, nil
+func testProviderConfig() (*Config, error) {
+	config := testAccProvider.Meta().(*Config)
+	if config == nil {
+		return nil, fmt.Errorf("Unable to obtain provider config\n")
+	}
+	return config, nil
 }

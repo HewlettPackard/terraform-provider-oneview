@@ -9,80 +9,76 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-package oneview 
+package oneview
 
 import (
-  "github.com/HewlettPackard/oneview-golang/ov"
-  "github.com/HewlettPackard/oneview-golang/icsp"
-  "github.com/HewlettPackard/oneview-golang/i3s"
+	"github.com/HewlettPackard/oneview-golang/i3s"
+	"github.com/HewlettPackard/oneview-golang/icsp"
+	"github.com/HewlettPackard/oneview-golang/ov"
 )
 
 type Config struct {
-  OVDomain     string
-  OVUsername   string
-  OVPassword   string
-  OVEndpoint   string
-  OVSSLVerify  bool
-  OVAPIVersion int
+	OVDomain     string
+	OVUsername   string
+	OVPassword   string
+	OVEndpoint   string
+	OVSSLVerify  bool
+	OVAPIVersion int
 
-  ICSPDomain     string
-  ICSPUsername   string
-  ICSPPassword   string
-  ICSPEndpoint   string
-  ICSPSSLVerify  bool
-  ICSPAPIVersion int
+	ICSPDomain     string
+	ICSPUsername   string
+	ICSPPassword   string
+	ICSPEndpoint   string
+	ICSPSSLVerify  bool
+	ICSPAPIVersion int
 
-  I3SEndpoint    string
+	I3SEndpoint string
 
-  ovClient   *ov.OVClient
-  icspClient *icsp.ICSPClient
-  i3sClient  *i3s.I3SClient
+	ovClient   *ov.OVClient
+	icspClient *icsp.ICSPClient
+	i3sClient  *i3s.I3SClient
 }
 
 func (c *Config) loadAndValidate() error {
-  var client2 *ov.OVClient 
-  
-  
-  client := client2.NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion)
-  
-  c.ovClient = client
+	var client2 *ov.OVClient
 
-  
+	client := client2.NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion)
 
-  session, error := c.ovClient.SessionLogin()
-  c.ovClient.APIKey = session.ID
+	c.ovClient = client
 
-  if error != nil {
-    return error
-  }
+	session, error := c.ovClient.SessionLogin()
+	c.ovClient.APIKey = session.ID
 
-  return nil
+	if error != nil {
+		return error
+	}
+
+	return nil
 }
 
-func (c *Config) loadAndValidateICSP() error{
-  
-  var client2 *icsp.ICSPClient 
- 
-  client := client2.NewICSPClient(c.ICSPUsername, c.ICSPPassword, c.ICSPDomain, c.ICSPEndpoint, c.ICSPSSLVerify, c.ICSPAPIVersion)
- 
-  c.icspClient = client
- 
-  session, error := c.icspClient.SessionLogin()
-  session = session
-  if error != nil {
-    return error
-  }
-  
-  return nil
+func (c *Config) loadAndValidateICSP() error {
+
+	var client2 *icsp.ICSPClient
+
+	client := client2.NewICSPClient(c.ICSPUsername, c.ICSPPassword, c.ICSPDomain, c.ICSPEndpoint, c.ICSPSSLVerify, c.ICSPAPIVersion)
+
+	c.icspClient = client
+
+	_, error := c.icspClient.SessionLogin()
+	if error != nil {
+		return error
+	}
+
+	return nil
 }
 
-func (c *Config) loadAndValidateI3S() error{
-  
-  var client3 *i3s.I3SClient 
- 
-  client := client3.NewI3SClient(c.I3SEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.ovClient.APIKey)
- 
-  c.i3sClient = client
- 
-  return nil
+func (c *Config) loadAndValidateI3S() error {
+
+	var client3 *i3s.I3SClient
+
+	client := client3.NewI3SClient(c.I3SEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.ovClient.APIKey)
+
+	c.i3sClient = client
+
+	return nil
 }

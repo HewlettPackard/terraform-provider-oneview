@@ -9,13 +9,13 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-package oneview 
+package oneview
 
 import (
-  "github.com/hashicorp/terraform/helper/schema"
-  "github.com/HewlettPackard/oneview-golang/ov"
-  "github.com/HewlettPackard/oneview-golang/utils"
-  "fmt"
+	"fmt"
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceLogicalSwitchGroup() *schema.Resource {
@@ -26,67 +26,67 @@ func resourceLogicalSwitchGroup() *schema.Resource {
 		Delete: resourceLogicalSwitchGroupDelete,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type: schema.TypeString,
+			"name": {
+				Type:     schema.TypeString,
 				Required: true,
 			},
-			"type": &schema.Schema{
-				Type: schema.TypeString,
+			"type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "logical-switch-group",
+				Default:  "logical-switch-group",
 			},
-			"switch_type_name": &schema.Schema{
-				Type: schema.TypeString,
+			"switch_type_name": {
+				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"switch_count": &schema.Schema{
-				Type: schema.TypeInt,
+			"switch_count": {
+				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"location_entry_type": &schema.Schema{
-				Type: schema.TypeString,
+			"location_entry_type": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Default: "StackingMemberId",
+				Default:  "StackingMemberId",
 			},
-			"created": &schema.Schema{
-				Type: schema.TypeString,
+			"created": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified": &schema.Schema{
-				Type: schema.TypeString,
-				Computed:true,
+			"modified": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
-			"description": &schema.Schema{
-				Type: schema.TypeString,
+			"description": {
+				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"uri": &schema.Schema{
-				Type: schema.TypeString,
+			"uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"status": &schema.Schema{
-				Type: schema.TypeString,
+			"status": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"category": &schema.Schema{
-				Type: schema.TypeString,
+			"category": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"state": &schema.Schema{
-				Type: schema.TypeString,
+			"state": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"fabric_uri": &schema.Schema{
-				Type: schema.TypeString,
+			"fabric_uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": &schema.Schema{
-				Type: schema.TypeString,
+			"eTag": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"switch_type_uri": &schema.Schema{
-				Type: schema.TypeString,
+			"switch_type_uri": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 		},
@@ -97,12 +97,12 @@ func resourceLogicalSwitchGroupCreate(d *schema.ResourceData, meta interface{}) 
 	config := meta.(*Config)
 
 	switchType, err := config.ovClient.GetSwitchTypeByName(d.Get("switch_type_name").(string))
-	if(err != nil){
+	if err != nil {
 		return err
-	}	
+	}
 	d.Set("switch_type_uri", switchType.URI)
 
-	if (switchType.Name == ""){
+	if switchType.Name == "" {
 		return fmt.Errorf("Can't find %s switchType", d.Get("switch_type_name").(string))
 	}
 
@@ -110,37 +110,37 @@ func resourceLogicalSwitchGroupCreate(d *schema.ResourceData, meta interface{}) 
 	for i := 0; i < d.Get("switch_count").(int); i++ {
 		locationEntries := make([]ov.LocationEntry, 1)
 		locationEntry := ov.LocationEntry{
-			RelativeValue: i+1,
-			Type:	d.Get("location_entry_type").(string),
-		} 
-		locationEntries[0] = locationEntry		
+			RelativeValue: i + 1,
+			Type:          d.Get("location_entry_type").(string),
+		}
+		locationEntries[0] = locationEntry
 		logicalLocation := ov.LogicalLocation{
 			LocationEntries: locationEntries,
 		}
 		switchMapEntry := ov.SwitchMapEntry{
-			LogicalLocation: logicalLocation,
+			LogicalLocation:        logicalLocation,
 			PermittedSwitchTypeUri: switchType.URI,
 		}
 		switchMapEntryTemplates[i] = switchMapEntry
-	} 	
+	}
 
 	switchMapTemplate := ov.SwitchMapTemplate{
 		SwitchMapEntryTemplates: switchMapEntryTemplates,
 	}
 
 	logicalSwitchGroup := ov.LogicalSwitchGroup{
-		Name:                d.Get("name").(string),
-		Type:                d.Get("type").(string),
-		SwitchMapTemplate:   switchMapTemplate,
+		Name:              d.Get("name").(string),
+		Type:              d.Get("type").(string),
+		SwitchMapTemplate: switchMapTemplate,
 	}
 
 	logicalSwitchGroupError := config.ovClient.CreateLogicalSwitchGroup(logicalSwitchGroup)
 	d.SetId(d.Get("name").(string))
-	if(logicalSwitchGroupError != nil){
+	if logicalSwitchGroupError != nil {
 		d.SetId("")
 		return logicalSwitchGroupError
 	}
-    return resourceLogicalSwitchGroupRead(d, meta)
+	return resourceLogicalSwitchGroupRead(d, meta)
 }
 
 func resourceLogicalSwitchGroupRead(d *schema.ResourceData, meta interface{}) error {
@@ -164,27 +164,27 @@ func resourceLogicalSwitchGroupRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("fabric_uri", logicalSwitchGroup.FabricUri.String())
 	d.Set("eTag", logicalSwitchGroup.ETAG)
 	d.Set("description", logicalSwitchGroup.Description)
-    return nil
+	return nil
 }
 
 func resourceLogicalSwitchGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-    
-    error := config.ovClient.DeleteLogicalSwitchGroup(d.Get("name").(string))
-    if error != nil {
-      return error
-    }
-    return nil
+
+	error := config.ovClient.DeleteLogicalSwitchGroup(d.Get("name").(string))
+	if error != nil {
+		return error
+	}
+	return nil
 }
 
 func resourceLogicalSwitchGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	switchType, err := config.ovClient.GetSwitchTypeByName(d.Get("switch_type_name").(string))
-	if(err != nil){
+	if err != nil {
 		return err
-	}	
-	if (switchType.Name == ""){
+	}
+	if switchType.Name == "" {
 		return fmt.Errorf("Can't find %s switchType", d.Get("switch_type_name").(string))
 	}
 
@@ -192,30 +192,30 @@ func resourceLogicalSwitchGroupUpdate(d *schema.ResourceData, meta interface{}) 
 	for i := 0; i < d.Get("switch_count").(int); i++ {
 		locationEntries := make([]ov.LocationEntry, 1)
 		locationEntry := ov.LocationEntry{
-			RelativeValue: i+1,
-			Type:	d.Get("location_entry_type").(string),
-		} 
-		locationEntries[0] = locationEntry		
+			RelativeValue: i + 1,
+			Type:          d.Get("location_entry_type").(string),
+		}
+		locationEntries[0] = locationEntry
 		logicalLocation := ov.LogicalLocation{
 			LocationEntries: locationEntries,
 		}
 		switchMapEntry := ov.SwitchMapEntry{
-			LogicalLocation: logicalLocation,
+			LogicalLocation:        logicalLocation,
 			PermittedSwitchTypeUri: switchType.URI,
 		}
 		switchMapEntryTemplates[i] = switchMapEntry
-	} 	
+	}
 
 	switchMapTemplate := ov.SwitchMapTemplate{
 		SwitchMapEntryTemplates: switchMapEntryTemplates,
 	}
 
 	newLogicalSwitchGroup := ov.LogicalSwitchGroup{
-		ETAG: 				   d.Get("eTag").(string),
-		URI:  	  			   utils.NewNstring(d.Get("uri").(string)),
-		Name:                d.Get("name").(string),
-		Type:                d.Get("type").(string),
-		SwitchMapTemplate:   switchMapTemplate,
+		ETAG:              d.Get("eTag").(string),
+		URI:               utils.NewNstring(d.Get("uri").(string)),
+		Name:              d.Get("name").(string),
+		Type:              d.Get("type").(string),
+		SwitchMapTemplate: switchMapTemplate,
 	}
 	err = config.ovClient.UpdateLogicalSwitchGroup(newLogicalSwitchGroup)
 	if err != nil {
