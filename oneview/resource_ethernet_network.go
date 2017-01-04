@@ -135,7 +135,7 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 		return nil
 	}
 	d.Set("name", eNet.Name)
-	d.Set("vlanId", eNet.VlanId)
+	d.Set("vlan_id", eNet.VlanId)
 	d.Set("purpose", eNet.Purpose)
 	d.Set("smart_link", eNet.SmartLink)
 	d.Set("private_network", eNet.PrivateNetwork)
@@ -159,7 +159,7 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 	newENet := ov.EthernetNetwork{
 		ETAG:                  d.Get("eTag").(string),
 		URI:                   utils.NewNstring(d.Get("uri").(string)),
-		VlanId:                d.Get("vlanId").(int),
+		VlanId:                d.Get("vlan_id").(int),
 		Purpose:               d.Get("purpose").(string),
 		Name:                  d.Get("name").(string),
 		PrivateNetwork:        d.Get("private_network").(bool),
