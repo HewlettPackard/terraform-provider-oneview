@@ -3,8 +3,8 @@ A Terraform provider for oneview
 
 ## Installation 
 
-* Install golang 1.6 or better
-* Install Terraform 0.7.0 or better
+* Install golang 1.7 or better
+* Install Terraform 0.8.0 or better
 * Create a file structure similar to ~/workspace/go/src/github.com/HewlettPackard/
 
 ```
