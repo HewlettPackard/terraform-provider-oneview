@@ -13,7 +13,7 @@ A Terraform provider for oneview
   git clone https://github.com/HewlettPackard/terraform-provider-oneview.git
   cd terraform-provider-oneview
   go get
-  go build -o terraform-provider-oneview
+  go build
   mv terraform-provider-oneview /usr/local/bin/terraform
 ```
 
