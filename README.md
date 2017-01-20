@@ -17,7 +17,7 @@ A Terraform provider for oneview
   mv terraform-provider-oneview /usr/local/bin/terraform
 ```
 
-## Example terraform file to provision a server
+## Example terraform file to provision a server with an operating system
 ```
 provider "oneview" {
   ov_username   = "Administrator"
@@ -25,9 +25,23 @@ provider "oneview" {
   ov_endpoint   = "https://oneview_instance.com"
 }
 
-resource "oneview_server_profile" "test" {
-  name             = "test"
-  template         = "Web Server Template"
+resource "oneview_server_profile" "default" {
+  name              = "test"
+  template          = "Web Server Template"
+  
+  //specify this value so icsp can find the public ip address. 
+  public_connection = "pub_conn_1"
+}
+
+resource "icsp_server" "default" {
+  ilo_ip = "15.x.x.x"
+  user_name = "ilo_user"
+  password = "ilo_password"
+  serial_number = "${oneview_server_profile.default.serial_number}"
+  build_plans = ["/rest/os-deployment-build-plans/1570001"]
+  
+  //this attribute gets you the public ip address
+  public_mac = "${oneview_server_profile.default.public_mac}"
 }
 ```
 More information about how to configure the provider can be found [here](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/index.html.markdown)
