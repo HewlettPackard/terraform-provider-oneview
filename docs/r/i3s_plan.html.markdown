@@ -16,26 +16,27 @@ Adds a deployment plan to a server.
 resource "oneview_i3s_plan" "default" {
   server_name = "${oneview_server_profile.default.name}"
   os_deployment_plan = "Ubuntu 16.04"
+  deploy_net_name = "I3S-Deploy-v301"
 }
 ```
 
 ## Argument Reference
 
-The following arguments are supported: 
+The following arguments are supported:
 
 * `server_name` - (Required) The name of the server that the deployment plan will be run on.
 
-* `os_deployment_plan` - (Required) The name of the deployment plan that will run on the server. 
+* `os_deployment_plan` - (Required) The name of the deployment plan that will run on the server.
+
+* `deploy_net_name` - (Required) The name of ethernet network for deployment network.
 
 - - -
 
 * `deployment_attribute` - (Optional) A key/value pair that modifies the default values provided by the os deployment plan
   This can be specified multiple times. Deployment Attribute is described below.
-  
+
 Deployment Attribute supports the following:
 
 * `key` - (Required) - The unique name of the attribute.
 
 * `value` - (Required) - The value of the attribute.
-
-

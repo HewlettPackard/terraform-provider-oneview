@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -30,6 +31,10 @@ func resourceI3SPlan() *schema.Resource {
 				Required: true,
 			},
 			"os_deployment_plan": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"deploy_net_name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -60,6 +65,7 @@ func resourceI3SPlanCreate(d *schema.ResourceData, meta interface{}) error {
 	customizeServer := ov.CustomizeServer{
 		ProfileName:           d.Get("server_name").(string),
 		OSDeploymentBuildPlan: d.Get("os_deployment_plan").(string),
+		EthernetNetworkName:   d.Get("deploy_net_name").(string),
 	}
 
 	if _, ok := d.GetOk("deployment_attribute"); ok {
