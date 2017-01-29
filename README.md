@@ -1,7 +1,7 @@
 # terraform-provider-oneview
 A Terraform provider for oneview
 
-## Installation 
+## Installation
 
 * Install golang 1.7 or better
 * Install Terraform 0.8.0 or better
@@ -28,8 +28,8 @@ provider "oneview" {
 resource "oneview_server_profile" "default" {
   name              = "test"
   template          = "Web Server Template"
-  
-  //specify this value so icsp can find the public ip address. 
+
+  //specify this value so icsp can find the public ip address.
   public_connection = "pub_conn_1"
 }
 
@@ -39,7 +39,7 @@ resource "icsp_server" "default" {
   password = "ilo_password"
   serial_number = "${oneview_server_profile.default.serial_number}"
   build_plans = ["/rest/os-deployment-build-plans/1570001"]
-  
+
   //this attribute gets you the public ip address
   public_mac = "${oneview_server_profile.default.public_mac}"
 }
@@ -47,7 +47,7 @@ resource "icsp_server" "default" {
 More information about how to configure the provider can be found [here](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/index.html.markdown)
 
 ## Resources
-Any resource that OneView can manage is on the roadmap for Terraform to also manage. Below is the current list of resources that Terraform can manage. Open an issue if there is a resource that needs to be developed as soon as possible. 
+Any resource that OneView can manage is on the roadmap for Terraform to also manage. Below is the current list of resources that Terraform can manage. Open an issue if there is a resource that needs to be developed as soon as possible.
 
 ####[Server Profile](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/server_profile.html.markdown)
 
@@ -59,7 +59,7 @@ resource "oneview_server_profile" "default" {
 ```
 
 ####[ICSP Server](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/icsp_server.html.markdown)
-This block takes an already provsioned server and through ICSP lays down an operating system or 
+This block takes an already provsioned server and through ICSP lays down an operating system or
 whatever is specified in the build plans.
 
 ```js
@@ -73,12 +73,13 @@ resource "icsp_server" "default" {
 ```
 
 ####[Image Streamer Deployment Plan](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/i3s_plan.html.markdown)
-This block takes an already provisioned server and through Image Streamer lays down an Operating System. 
+This block takes an already provisioned server and through Image Streamer lays down an Operating System.
 
 ```js
 resource "oneview_i3s_plan" "default" {
   server_name = "${oneview_server_profile.default.name}"
   os_deployment_plan = "Ubuntu 16.04"
+  deploy_net_name = "I3S-Deploy-v301"
 }
 ```
 
@@ -134,14 +135,14 @@ resource "oneview_network_set" "default" {
 ```js
 resource "oneview_logical_interconnect_group" "default" {
   name = "test-logical-interconnect-group"
-  
+
   internal_network_uris = ["${oneview_ethernet_network.default.0.uri}"]
-  
+
   interconnect_map_entry_template {
     interconnect_type_name = "HP VC FlexFabric-20/40 F8 Module"
     bay_number = 1
   }
-  
+
   uplink_set {
     name = "uplink-default"
     network_uris = ["${oneview_ethernet_network.test.1.uri}"]
@@ -158,7 +159,7 @@ resource "oneview_logical_interconnect_group" "default" {
 ```js
 resource "oneview_enclosure_group" "default" {
   name = "default-enclosure-group"
-  logical_interconnect_groups = ["${oneview_logical_interconnect_group.primary.name}", 
+  logical_interconnect_groups = ["${oneview_logical_interconnect_group.primary.name}",
                                  "${oneview_logical_interconnect_group.secondary.name}"]
 }
 ```
