@@ -1,0 +1,17 @@
+package: .
+ignore:
+  - github.com/maximilien/softlayer-go
+  - github.com/docker/machine
+  - github.com/HewlettPackard/terraform-provider-oneview
+import:
+- package: github.com/HewlettPackard/oneview-golang
+  version: =0.8.2
+  subpackages:
+  - i3s
+  - icsp
+  - ov
+  - utils
+- package: github.com/hashicorp/terraform
+  version: =0.8.8
+  subpackages:
+  - plugin
