@@ -5,13 +5,13 @@ ignore:
   - github.com/HewlettPackard/terraform-provider-oneview
 import:
 - package: github.com/HewlettPackard/oneview-golang
-  version: =0.8.2
+  version: ^0.8.2
   subpackages:
   - i3s
   - icsp
   - ov
   - utils
 - package: github.com/hashicorp/terraform
-  version: =0.8.8
+  version: ^0.8.8
   subpackages:
   - plugin
