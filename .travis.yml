@@ -10,9 +10,9 @@ go:
 
 env:
   global:
-    - COMMIT=${TRAVIS_COMMIT::8}
+    - COMMIT="commit-${TRAVIS_COMMIT::8}"
     - REPO=dciacoe/terraform-provider-oneview
-    - TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "travis-build-${TRAVIS_BRANCH}"; fi`
+    - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "travis-build-${TRAVIS_BRANCH}"; fi)
 
 script:
   - docker build -f Dockerfile -t $REPO:$COMMIT .
