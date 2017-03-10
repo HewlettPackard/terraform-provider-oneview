@@ -21,9 +21,9 @@ script:
   - if ! [ -z "$UNFORMATTED" ]; then
       echo -e "Go files must be formatted with gofmt. Please run:";
       for fn in $UNFORMATTED; do
-        echo -e "  gofmt -w $PWD/$fn"
-      done
-      exit 1
+        echo -e "  gofmt -w $PWD/$fn";
+      done;
+      exit 1;
     fi
   - go vet $(go list ./... | grep -v '/vendor/')
   - go test -v $(go list ./... | grep -v '/vendor/')
