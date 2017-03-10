@@ -10,16 +10,25 @@ go:
 
 env:
   global:
-    - secure: "JJBNOjRJ11XyeuGd+IyVSG+UBn4gvM4j20pG7WVc49FkqJAwkbOEOHKxeqvDQMMPqdnJ4nn0PR+DDHMCifVmBnghiMF6mMlsbxfR8kRjBP7kOjgBkglW4iU4GDAmuxWIWREo3lYI/pc2Ub7mDpCA+nS2ExEpiwzeFhY9skXVDpJxf0uKcQDKHGkV6APdFLalwtcEKeSeZCZvJGMR48cJ725vZ3pW3JgH7a0fKFR2LnmIDKhWU5OL45dewoSu4HGmrC6mxIABf3MLTqItbbSoRhb1voz2iDd7QqXsCIQ9gc2uYYyQybSYi7ohVEh78fmF/zpFfQkN2UPEbidb0SgrJvGmrnX6MN+AT1hhbI6LFuPfCHVbYog6iwkkjo4Ys+uVTx8+LiOTdS+ufVS4Hi8daihuRXI9+3+DBkdF5ZvHDBgxe44oHiK6C52brcVL5/YcG0Q3QnRRpGlaItBttcgTBbZbX7UaJ/Rv2soJxTcrB5pHn7FxWL/zr4B7+XQRbGPWah4WHcEnaIexwcheYeUHVW5pcz6YMgLzOH7btPCiS98240o/0vrxOxv60rDLmWakkZ06stHd9sLYYKDNMsqhTWSNmbzC6n3dmICwRWXlFmywK9eAKpAIN67JgE2E5l/gUgccwh59nvSSj2BNyfG6uvJNGXuxncPJda/4NrV2x5Q="
-    - secure: "NGR5vzS4T1dJ/0kbVqFYwW6oThE7JH4UBFBAzEc7vT6h6NANmY1O+6ojRdmSvnTIjN4vxXZzWfhQTLW9T3pMAeEhyjfn2p2T5fFAf381Ch5fu2fuAbCMOm+gCgSg/FAkQ3qCCAzniPv0cHl7c76NvG6wcC+geVDZw6YmwZ6m3DZ8vT1hQLWZggSeFvNmCsYh6NTulKXxjYOmGGkAkfkzSZxHcFOaMhVYEnQrig4tT6DN0Cjeq089R2pyATSFen5eGzo6Othy/lWkZrd0WWBIj9cX49CL7vvzFtodRALdAC7+GxcNYgmJZWfbMFU6ud01VZ/C8BvBqsELkdxqGdlGr/GUXy9wLQfCp2PyfV9qOa6y8qBCVlbcHzO1WNFAORnJpoD9w5r+/50zQ3o2G/lsHv4+WytHjz1CdiGLUxEXDrjp1uGBWoFb+xR9yqfzH2c4wCoGQSBZkbDa8ESABsrNOc9ewsmStFeq4txmfCR/WmkW+Tr7Ylq5h1XXbzn6PnLvzvQ/dDkk9HdInfpfa4wuNm4k6/7/+gp4NxtHHNy6IudFNFG6Yzmap1Z0q00Mzi3DGFqgHupFB/Rv2Cw+40fcchtCF0KXSRD6eAXHH3pNGscY1hekEd7IbC4w9BkLUxb2q/g6fzP/is1ylBovsnoK5zMuADEPkp+AJHBvyM8tuVk="
-    - secure: "vb8LigJ62OtLmgkCDsPXrPKdIxpwu4pvTYWjhvHO1gTr2PHEg5cNkXbrcileY8uzsfc1qoIYX9xbteM4Gcu8UO160R4V47dXxSYs8i1FGPQnW1UmXpkEmfPPHLJUB0WesYXfveCypuWk9ydNVoveLEVdm5S57t29xUEx2taANBktuTSEro4cXD49n4uy/EVnZqPOuXc1qzng1RoEX6O2q3x/C+Sa+jaBo/2UtrwloHS25xOoHh4Lwq6bYQIZZfJaitQnbYxm6trcWcTlJH06qRAoRCvFrZkTvaAUvjO/Y2BNlgfbFTfD9mB7DNGK28T5U5Jd7dX7nq3SVVQfdS32xJAaUDG6gt9QvO2gDxe+xnp1745NS/PrBwrDeRiSrv2bubNua+h1bJz6K5D9horkWuL+S9MI4IV4dBADrG4gFqzXQZESO5Zo8SGIkvwz7xzEr1cXRj3Tt73gU0LEvitXHjDuXtmsZYhRfCQqnWf4QQbieQGnUn0lkPtz4pfv17pxvGQ/fiHFq5bBHiKyn8dKMD2Wce8Xbt7pGucQRmUhoPbvET8h/CyiT3QDiQu9qZbiO+vzNbC5yh8FAwx69ehgzRiJ/uWZ5Thoc0gtrWq7lJgVlB6BP7m9zpTN46a2ug4v0oZ7oPJFNgfjwRqnIkILhuGdaP4CyedH344djywe+0c="
-    - COMMIT=${TRAVIS_COMMIT::8}
+    - REPO=dciacoe/terraform-provider-oneview
+    - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
+    - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
+
+install:
+  - # an empty install saves the hassle of pseudo-getting deps (they're vendored, so no need!)
+
+script:
+  - if ! [ -z "$UNFORMATTED" ]; then
+      echo -e "Go files must be formatted with gofmt. Please run:";
+      for fn in $UNFORMATTED; do
+        echo -e "  gofmt -w $PWD/$fn";
+      done;
+      exit 1;
+    fi
+  - go vet $(go list ./... | grep -v '/vendor/')
+  - go test -v $(go list ./... | grep -v '/vendor/')
+  - docker build -f Dockerfile -t $REPO:$TAG .
 
 after_success:
-  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-  - export REPO=mbfrahry/terraform-provider-oneview
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - docker build -f Dockerfile -t $REPO:$COMMIT .
-  - docker tag $REPO:$COMMIT $REPO:$TAG
-  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   - docker push $REPO

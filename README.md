@@ -1,5 +1,7 @@
 # terraform-provider-oneview
 
+[![Build Status](https://travis-ci.org/HewlettPackard/terraform-provider-oneview.svg?branch=master)](https://travis-ci.org/HewlettPackard/terraform-provider-oneview)
+
 A Terraform provider for oneview
 
 ## Installation
