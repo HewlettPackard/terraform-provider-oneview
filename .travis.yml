@@ -4,13 +4,9 @@ services:
   - docker
 
 language: go
+
 go:
 - 1.8
-install:
-- go get github.com/mattn/goveralls
-- go get -u github.com/golang/lint/golint
-- go get -u github.com/HewlettPackard/oneview-golang
-- go get -u github.com/hashicorp/terraform/plugin
 
 env:
   global:
