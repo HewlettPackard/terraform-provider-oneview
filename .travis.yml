@@ -17,6 +17,7 @@ install:
   - # an empty install saves the hassle of pseudo-getting deps (they're vendored, so no need!)
 
 script:
+  - go test -v ./...
   - docker build -f Dockerfile -t $REPO:$TAG .
 
 after_success:
