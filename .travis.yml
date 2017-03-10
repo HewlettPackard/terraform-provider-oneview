@@ -12,7 +12,7 @@ env:
   global:
     - REPO=dciacoe/terraform-provider-oneview
     - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
-    - UNFORMATTED=$(gofmt -l $(find . -type f -name '*.go' -not -path "./vendor/*"))
+    - UNFORMATTED=`gofmt -l $(find . -type f -name "*.go" -not -path "./vendor/*")`
 
 install:
   - # an empty install saves the hassle of pseudo-getting deps (they're vendored, so no need!)
