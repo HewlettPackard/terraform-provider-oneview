@@ -12,12 +12,21 @@ env:
   global:
     - REPO=dciacoe/terraform-provider-oneview
     - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
+    - UNFORMATTED=$(gofmt -l $(find . -type f -name '*.go' -not -path "./vendor/*"))
 
 install:
   - # an empty install saves the hassle of pseudo-getting deps (they're vendored, so no need!)
 
 script:
-  - go test -v ./...
+  - if ! [ -z "$UNFORMATTED" ]; then
+      echo -e "Go files must be formatted with gofmt. Please run:";
+      for fn in $UNFORMATTED; do
+        echo -e "  gofmt -w $PWD/$fn"
+      done
+      exit 1
+    fi
+  - go vet $(go list ./... | grep -v '/vendor/')
+  - go test -v $(go list ./... | grep -v '/vendor/')
   - docker build -f Dockerfile -t $REPO:$TAG .
 
 after_success:
