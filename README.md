@@ -1,20 +1,20 @@
 # terraform-provider-oneview
+
 A Terraform provider for oneview
 
 ## Installation
 
-* Install golang 1.7 or better
-* Install Terraform 0.8.0 or better
-* Create a file structure similar to ~/workspace/go/src/github.com/HewlettPackard/
+* Install Go 1.8, for previous versions, you must set your `$GOPATH` manually
+* Install Terraform 0.8.0 or above [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists)
+* Download the code by issuing a `go get` command.
 
-```
-  export GOPATH = ~/worspace/go
-  cd ~/workspace/go/src/github.com/HewlettPackard/
-  git clone https://github.com/HewlettPackard/terraform-provider-oneview.git
-  cd terraform-provider-oneview
-  go get
-  go build
-  mv terraform-provider-oneview /usr/local/bin/terraform
+```bash
+# Download the source code for terraform-provider-oneview
+# and build the needed binary, by saving it inside $GOPATH/bin
+go get -u github.com/HewlettPackard/terraform-provider-oneview
+
+# Copy the binary to have it along the terraform binary
+mv $GOPATH/bin/terraform-provider-oneview /usr/local/bin/terraform
 ```
 
 ## Example terraform file to provision a server with an operating system
@@ -44,6 +44,7 @@ resource "icsp_server" "default" {
   public_mac = "${oneview_server_profile.default.public_mac}"
 }
 ```
+
 More information about how to configure the provider can be found [here](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/index.html.markdown)
 
 ## Resources
