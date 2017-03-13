@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"errors"
+
 	"github.com/HewlettPackard/oneview-golang/i3s"
 	"github.com/HewlettPackard/oneview-golang/icsp"
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -39,44 +41,49 @@ type Config struct {
 	i3sClient  *i3s.I3SClient
 }
 
-func (c *Config) loadAndValidate() error {
-	var client2 *ov.OVClient
+var ErrConfigNotInitialized = errors.New("config not initialized!")
 
-	client := client2.NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion)
+func (c *Config) loadAndValidate() error {
+	if c == nil {
+		return ErrConfigNotInitialized
+	}
+
+	client := (&ov.OVClient{}).NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion)
 
 	c.ovClient = client
 
-	session, error := c.ovClient.SessionLogin()
-	c.ovClient.APIKey = session.ID
-
-	if error != nil {
-		return error
+	session, err := c.ovClient.SessionLogin()
+	if err != nil {
+		return err
 	}
+
+	c.ovClient.APIKey = session.ID
 
 	return nil
 }
 
 func (c *Config) loadAndValidateICSP() error {
+	if c == nil {
+		return ErrConfigNotInitialized
+	}
 
-	var client2 *icsp.ICSPClient
-
-	client := client2.NewICSPClient(c.ICSPUsername, c.ICSPPassword, c.ICSPDomain, c.ICSPEndpoint, c.ICSPSSLVerify, c.ICSPAPIVersion)
+	client := (&icsp.ICSPClient{}).NewICSPClient(c.ICSPUsername, c.ICSPPassword, c.ICSPDomain, c.ICSPEndpoint, c.ICSPSSLVerify, c.ICSPAPIVersion)
 
 	c.icspClient = client
 
-	_, error := c.icspClient.SessionLogin()
-	if error != nil {
-		return error
+	if _, err := c.icspClient.SessionLogin(); err != nil {
+		return err
 	}
 
 	return nil
 }
 
 func (c *Config) loadAndValidateI3S() error {
+	if c == nil {
+		return ErrConfigNotInitialized
+	}
 
-	var client3 *i3s.I3SClient
-
-	client := client3.NewI3SClient(c.I3SEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.ovClient.APIKey)
+	client := (&i3s.I3SClient{}).NewI3SClient(c.I3SEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.ovClient.APIKey)
 
 	c.i3sClient = client
 
