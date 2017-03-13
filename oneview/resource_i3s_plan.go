@@ -126,9 +126,9 @@ func resourceI3SPlanRead(d *schema.ResourceData, meta interface{}) error {
 func resourceI3SPlanUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	error := config.ovClient.DeleteOSBuildPlanFromServer(d.Get("server_name").(string))
-	if error != nil {
-		return error
+	err := config.ovClient.DeleteOSBuildPlanFromServer(d.Get("server_name").(string))
+	if err != nil {
+		return err
 	}
 
 	customizeServer := ov.CustomizeServer{
@@ -147,7 +147,7 @@ func resourceI3SPlanUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.SetId(d.Get("server_name").(string))
-	err := config.ovClient.CustomizeServer(customizeServer)
+	err = config.ovClient.CustomizeServer(customizeServer)
 	if err != nil {
 		d.SetId("")
 		return err
@@ -159,9 +159,9 @@ func resourceI3SPlanUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceI3SPlanDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	error := config.ovClient.DeleteOSBuildPlanFromServer(d.Get("server_name").(string))
-	if error != nil {
-		return error
+	err := config.ovClient.DeleteOSBuildPlanFromServer(d.Get("server_name").(string))
+	if err != nil {
+		return err
 	}
 	return nil
 }

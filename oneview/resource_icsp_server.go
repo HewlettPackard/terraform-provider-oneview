@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/icsp"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -237,9 +238,9 @@ func resourceIcspServerUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceIcspServerDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	isDel, error := config.icspClient.DeleteServer(d.Get("mid").(string))
-	if error != nil {
-		return error
+	isDel, err := config.icspClient.DeleteServer(d.Get("mid").(string))
+	if err != nil {
+		return err
 	}
 	if !isDel {
 		return fmt.Errorf("Could not delete server")

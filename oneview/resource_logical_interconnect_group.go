@@ -13,11 +13,12 @@ package oneview
 
 import (
 	"fmt"
+	"reflect"
+	"strconv"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	"reflect"
-	"strconv"
 )
 
 func resourceLogicalInterconnectGroup() *schema.Resource {
@@ -1085,9 +1086,9 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 func resourceLogicalInterconnectGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	error := config.ovClient.DeleteLogicalInterconnectGroup(d.Get("name").(string))
-	if error != nil {
-		return error
+	err := config.ovClient.DeleteLogicalInterconnectGroup(d.Get("name").(string))
+	if err != nil {
+		return err
 	}
 	return nil
 }

@@ -17,8 +17,10 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-var ovMutexKV = mutexkv.NewMutexKV()
-var serverHardwareURIs map[string]bool = make(map[string]bool)
+var (
+	ovMutexKV          = mutexkv.NewMutexKV()
+	serverHardwareURIs = make(map[string]bool)
+)
 
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{

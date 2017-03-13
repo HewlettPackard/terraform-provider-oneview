@@ -323,9 +323,9 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 func resourceServerProfileTemplateDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	error := config.ovClient.DeleteProfileTemplate(d.Get("name").(string))
-	if error != nil {
-		return error
+	err := config.ovClient.DeleteProfileTemplate(d.Get("name").(string))
+	if err != nil {
+		return err
 	}
 	return nil
 }
