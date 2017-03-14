@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -74,39 +75,39 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 	config := meta.(*Config)
 
-	serverProfileTemplate, error := config.ovClient.GetProfileTemplateByName(d.Get("template").(string))
-	if error != nil || serverProfileTemplate.URI.IsNil() {
+	serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(d.Get("template").(string))
+	if err != nil || serverProfileTemplate.URI.IsNil() {
 		return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("template").(string))
 	}
 	var serverHardware ov.ServerHardware
 	if val, ok := d.GetOk("hardware_name"); ok {
-		serverHardware, error = config.ovClient.GetServerHardwareByName(val.(string))
-		if error != nil {
-			return error
+		serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
+		if err != nil {
+			return err
 		}
 	} else {
-		serverHardware, error = getServerHardware(config, serverProfileTemplate)
-		if error != nil {
-			return error
+		serverHardware, err = getServerHardware(config, serverProfileTemplate)
+		if err != nil {
+			return err
 		}
 	}
 
 	profileType := d.Get("type")
 	if profileType == "ServerProfileV6" {
-		SPerror := config.ovClient.CreateProfileFromTemplateWithI3S(d.Get("name").(string), serverProfileTemplate, serverHardware)
+		err = config.ovClient.CreateProfileFromTemplateWithI3S(d.Get("name").(string), serverProfileTemplate, serverHardware)
 		d.SetId(d.Get("name").(string))
 
-		if SPerror != nil {
+		if err != nil {
 			d.SetId("")
-			return SPerror
+			return err
 		}
 	} else {
-		SPerror := config.ovClient.CreateProfileFromTemplate(d.Get("name").(string), serverProfileTemplate, serverHardware)
+		err = config.ovClient.CreateProfileFromTemplate(d.Get("name").(string), serverProfileTemplate, serverHardware)
 		d.SetId(d.Get("name").(string))
 
-		if SPerror != nil {
+		if err != nil {
 			d.SetId("")
-			return SPerror
+			return err
 		}
 	}
 
@@ -157,9 +158,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 func resourceServerProfileDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	error := config.ovClient.DeleteProfile(d.Get("name").(string))
-	if error != nil {
-		return error
+	err := config.ovClient.DeleteProfile(d.Get("name").(string))
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -171,9 +172,9 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile) (
 	defer ovMutexKV.Unlock(serverProfileTemplate.EnclosureGroupURI.String())
 
 	for availableHardware.Created == "" {
-		serverHardware, error := config.ovClient.GetAvailableHardware(serverProfileTemplate.ServerHardwareTypeURI, serverProfileTemplate.EnclosureGroupURI)
-		if error != nil {
-			return availableHardware, error
+		serverHardware, err := config.ovClient.GetAvailableHardware(serverProfileTemplate.ServerHardwareTypeURI, serverProfileTemplate.EnclosureGroupURI)
+		if err != nil {
+			return availableHardware, err
 		}
 		if !serverHardwareURIs[serverHardware.URI.String()] {
 			availableHardware = serverHardware

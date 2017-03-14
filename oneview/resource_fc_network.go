@@ -114,8 +114,8 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	fcNet, error := config.ovClient.GetFCNetworkByName(d.Get("name").(string))
-	if error != nil || fcNet.URI.IsNil() {
+	fcNet, err := config.ovClient.GetFCNetworkByName(d.Get("name").(string))
+	if err != nil || fcNet.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
@@ -164,9 +164,9 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceFCNetworkDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	error := config.ovClient.DeleteFCNetwork(d.Get("name").(string))
-	if error != nil {
-		return error
+	err := config.ovClient.DeleteFCNetwork(d.Get("name").(string))
+	if err != nil {
+		return err
 	}
 	return nil
 }

@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -170,9 +171,9 @@ func resourceLogicalSwitchGroupRead(d *schema.ResourceData, meta interface{}) er
 func resourceLogicalSwitchGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	error := config.ovClient.DeleteLogicalSwitchGroup(d.Get("name").(string))
-	if error != nil {
-		return error
+	err := config.ovClient.DeleteLogicalSwitchGroup(d.Get("name").(string))
+	if err != nil {
+		return err
 	}
 	return nil
 }

@@ -179,9 +179,9 @@ func resourceNetworkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceNetworkSetDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	error := config.ovClient.DeleteNetworkSet(d.Get("name").(string))
-	if error != nil {
-		return error
+	err := config.ovClient.DeleteNetworkSet(d.Get("name").(string))
+	if err != nil {
+		return err
 	}
 	return nil
 }
