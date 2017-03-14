@@ -31,11 +31,10 @@ script:
     fi
   - go vet $(go list ./... | grep -v '/vendor/')
   - go test -v $(go list ./... | grep -v '/vendor/')
-  - mkdir build
   - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o build/$BUILDNAME.exe
   - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o build/$BUILDNAME
   - docker build -f Dockerfile -t $REPO:$TAG .
-  - ls build/
+  - file build/$BUILDNAME.exe && file build/$BUILDNAME
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
