@@ -10,6 +10,9 @@ go:
 
 env:
   global:
+    - BUILDNAME=terraform-provider-oneview
+    - CGO_ENABLED=0
+    - GOARCH=amd64
     - REPO=dciacoe/terraform-provider-oneview
     - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
     - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
@@ -27,7 +30,11 @@ script:
     fi
   - go vet $(go list ./... | grep -v '/vendor/')
   - go test -v $(go list ./... | grep -v '/vendor/')
+  - mkdir build
+  - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o build/$BUILDNAME.exe
+  - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o build/$BUILDNAME
   - docker build -f Dockerfile -t $REPO:$TAG .
+  - ls build/
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
