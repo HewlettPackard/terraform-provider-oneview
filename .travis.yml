@@ -23,6 +23,7 @@ install:
   - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O terraform-linux.zip
   - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_windows_amd64.zip -O terraform-windows.zip
   - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_darwin_amd64.zip -O terraform-mac.zip
+  - mkdir -p terraform
   - unzip terraform-linux.zip -d terraform/linux
   - unzip terraform-mac.zip -d terraform/mac
   - unzip terraform-windows.zip -d terraform/windows
