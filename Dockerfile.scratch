@@ -1,0 +1,8 @@
+# Starts from centurylink/ca-certs since it's the scratch image
+# with the generic CA certs in a chain
+FROM centurylink/ca-certs
+
+ADD bins/linux/terraform /usr/local/terraform/
+ADD bins/linux/terraform-provider-oneview /usr/local/terraform/
+
+ENTRYPOINT [ "/usr/local/terraform/terraform" ]
