@@ -12,6 +12,7 @@ go:
 env:
   global:
     - BUILDNAME=terraform-provider-oneview
+    - BINS_DEST=./bins
     - CGO_ENABLED=0
     - GOARCH=amd64
     - REPO=dciacoe/terraform-provider-oneview
@@ -19,7 +20,7 @@ env:
     - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
 
 install:
-  - bash download_hashicorp_bins.sh
+  - bash download_hashicorp_bins.sh $BINS_DEST
 
 script:
   - if ! [ -z "$UNFORMATTED" ]; then
@@ -31,8 +32,9 @@ script:
     fi
   - go vet $(go list ./... | grep -v '/vendor/')
   - go test -v $(go list ./... | grep -v '/vendor/')
-  - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o build/$BUILDNAME.exe
-  - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o build/$BUILDNAME
+  - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe
+  - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
+  - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
   - docker build -f Dockerfile -t $REPO:$TAG .
 
 after_success:
