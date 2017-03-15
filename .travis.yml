@@ -17,16 +17,9 @@ env:
     - REPO=dciacoe/terraform-provider-oneview
     - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
     - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
-    - TERRAFORM_VERSION=0.8.8
 
 install:
-  - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O terraform-linux.zip
-  - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_windows_amd64.zip -O terraform-windows.zip
-  - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_darwin_amd64.zip -O terraform-mac.zip
-  - mkdir -p terraform
-  - unzip terraform-linux.zip -d terraform/linux
-  - unzip terraform-mac.zip -d terraform/mac
-  - unzip terraform-windows.zip -d terraform/windows
+  - bash download_hashicorp_bins.sh
 
 script:
   - if ! [ -z "$UNFORMATTED" ]; then
@@ -41,7 +34,6 @@ script:
   - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o build/$BUILDNAME.exe
   - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o build/$BUILDNAME
   - docker build -f Dockerfile -t $REPO:$TAG .
-  - file build/$BUILDNAME.exe && file build/$BUILDNAME
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
