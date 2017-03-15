@@ -38,7 +38,7 @@ script:
   - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
   - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
   - docker build -f Dockerfile -t $REPO:$TAG .
-  - docker build -f Dockerfile.scratch -t $REPO:scratch-$TAG
+  - docker build -f Dockerfile.scratch -t $REPO:scratch-$TAG .
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
