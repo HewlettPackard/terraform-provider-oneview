@@ -15,7 +15,7 @@ env:
     - BINS_DEST=./bins
     - CGO_ENABLED=0
     - GOARCH=amd64
-    - REPO=dciacoe/terraform-provider-oneview
+    - REPO=$DOCKER_USERNAME/terraform-provider-oneview
     - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
     - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
 
@@ -36,6 +36,7 @@ script:
   - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
   - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
   - docker build -f Dockerfile -t $REPO:$TAG .
+  - tree $BIN_DEST
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";

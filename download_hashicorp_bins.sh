@@ -5,6 +5,8 @@ set -o pipefail
 TERRAFORM_VERSION=0.8.8
 REQUIRED_APPS=("curl" "unzip")
 
+# This checks if we do have or not the required apps to run
+# this bash script, like dependencies
 function check_installed_apps() {
     # Define a list of apps as requirements, that we can later check, if they're
     # not installed, we can install them
@@ -77,8 +79,12 @@ function download_terraform_binary() {
     echo -e ""
 }
 
-# - file $(find terraform/ -type f -name "*" | sed "s/^\.\///")
+# Startup function so we avoid adding more global variables to the global namespace
 function start() {
+    # Let's first do a preckec
+    check_installed_apps
+
+    # Define some variables
     local platforms=("windows" "darwin" "linux")
     local outputdir="$1"
 
