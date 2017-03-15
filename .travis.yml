@@ -22,7 +22,7 @@ env:
 install:
   - bash download_hashicorp_bins.sh $BINS_DEST
 
-script:
+before_script:
   - if ! [ -z "$UNFORMATTED" ]; then
       echo -e "Go files must be formatted with gofmt. Please run:";
       for fn in $UNFORMATTED; do
@@ -30,13 +30,15 @@ script:
       done;
       exit 1;
     fi
+
+script:
   - go vet $(go list ./... | grep -v '/vendor/')
   - go test -v $(go list ./... | grep -v '/vendor/')
   - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe
   - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
   - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
   - docker build -f Dockerfile -t $REPO:$TAG .
-  - tree $BIN_DEST
+  - docker build -f Dockerfile.scratch -t $REPO:scratch-$TAG
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
