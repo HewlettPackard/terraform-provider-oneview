@@ -19,3 +19,7 @@ RUN unzip /tmp/terraform.zip -d /usr/local/terraform && \
 RUN cd /go/src/github.com/HewlettPackard/terraform-provider-oneview && \
     CGO_ENABLED=0 go build -a -tags netgo -ldflags '-s -w' -o /usr/local/terraform/terraform-provider-oneview && \
     cd /go && rm -rf *
+
+# Add some tests
+ADD tests.tf /tmp/
+RUN /usr/local/terraform/terraform plan /tmp

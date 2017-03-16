@@ -1,2 +1,4 @@
 FROM alpine
+ADD tests.tf /tmp/
 ADD bins/linux/ /usr/local/terraform/
+RUN /usr/local/terraform/terraform plan /tmp
