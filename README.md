@@ -47,12 +47,12 @@ resource "icsp_server" "default" {
 }
 ```
 
-More information about how to configure the provider can be found [here](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/index.html.markdown)
+More information about how to configure the provider can be found [here](docs/index.html.markdown)
 
 ## Resources
 Any resource that OneView can manage is on the roadmap for Terraform to also manage. Below is the current list of resources that Terraform can manage. Open an issue if there is a resource that needs to be developed as soon as possible.
 
-#### [Server Profile](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/server_profile.html.markdown)
+#### [Server Profile](docs/r/server_profile.html.markdown)
 
 ```js
 resource "oneview_server_profile" "default" {
@@ -61,7 +61,7 @@ resource "oneview_server_profile" "default" {
 }
 ```
 
-#### [ICSP Server](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/icsp_server.html.markdown)
+#### [ICSP Server](docs/r/icsp_server.html.markdown)
 This block takes an already provsioned server and through ICSP lays down an operating system or
 whatever is specified in the build plans.
 
@@ -75,7 +75,7 @@ resource "icsp_server" "default" {
 }
 ```
 
-#### [Image Streamer Deployment Plan](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/i3s_plan.html.markdown)
+#### [Image Streamer Deployment Plan](docs/r/i3s_plan.html.markdown)
 This block takes an already provisioned server and through Image Streamer lays down an Operating System.
 
 ```js
@@ -86,7 +86,7 @@ resource "oneview_i3s_plan" "default" {
 }
 ```
 
-#### [Server Profile Template](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/server_profile_template.html.markdown)
+#### [Server Profile Template](docs/r/server_profile_template.html.markdown)
 
 ```js
 resource "oneview_server_profile_template" "default" {
@@ -96,7 +96,7 @@ resource "oneview_server_profile_template" "default" {
 }
 ```
 
-#### [Ethernet Network](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/ethernet_network.html.markdown)
+#### [Ethernet Network](docs/r/ethernet_network.html.markdown)
 
 ```js
 resource "oneview_ethernet_network" "default" {
@@ -105,7 +105,7 @@ resource "oneview_ethernet_network" "default" {
 }
 ```
 
-#### [Fibre Channel Network](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/fc_network.html.markdown)
+#### [Fibre Channel Network](docs/r/fc_network.html.markdown)
 
 ```js
 resource "oneview_fc_network" "default" {
@@ -113,7 +113,7 @@ resource "oneview_fc_network" "default" {
 }
 ```
 
-#### [Fibre Channel over Ethernet Network](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/fcoe_network.html.markdown)
+#### [Fibre Channel over Ethernet Network](docs/r/fcoe_network.html.markdown)
 
 ```js
 resource "oneview_fcoe_network" "default" {
@@ -122,7 +122,7 @@ resource "oneview_fcoe_network" "default" {
 }
 ```
 
-#### [Network Set](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/network_set.html.markdown)
+#### [Network Set](docs/r/network_set.html.markdown)
 
 ```js
 resource "oneview_network_set" "default" {
@@ -132,7 +132,7 @@ resource "oneview_network_set" "default" {
 }
 ```
 
-#### [Logical Interconnect Group](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/logical_interconnect_group.html.markdown)
+#### [Logical Interconnect Group](docs/r/logical_interconnect_group.html.markdown)
 
 
 ```js
@@ -157,7 +157,7 @@ resource "oneview_logical_interconnect_group" "default" {
 }
 ```
 
-#### [Enclosure Group](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/enclosure_group.html.markdown)
+#### [Enclosure Group](docs/r/enclosure_group.html.markdown)
 
 ```js
 resource "oneview_enclosure_group" "default" {
@@ -167,7 +167,7 @@ resource "oneview_enclosure_group" "default" {
 }
 ```
 
-#### [Logical Switch](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/logical_switch.html.markdown)
+#### [Logical Switch](docs/r/logical_switch.html.markdown)
 
 ```js
 resource "oneview_logical_switch" "default" {
