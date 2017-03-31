@@ -7,7 +7,7 @@ A Terraform provider for oneview
 ## Installation
 
 * Install Go 1.8. For previous versions, you may have to set your `$GOPATH` manually, if you haven't done it yet.
-* Install Terraform 0.8.0 or above [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists)
+* Install Terraform 0.9.x or above [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists)
 * Download the code by issuing a `go get` command.
 
 ```bash
@@ -87,7 +87,6 @@ resource "oneview_i3s_plan" "default" {
 ```
 
 #### [Server Profile Template](docs/r/server_profile_template.html.markdown)
-
 ```js
 resource "oneview_server_profile_template" "default" {
   name = "test-server-profile-template"
@@ -97,7 +96,6 @@ resource "oneview_server_profile_template" "default" {
 ```
 
 #### [Ethernet Network](docs/r/ethernet_network.html.markdown)
-
 ```js
 resource "oneview_ethernet_network" "default" {
   name = "test-ethernet-network"
@@ -106,7 +104,6 @@ resource "oneview_ethernet_network" "default" {
 ```
 
 #### [Fibre Channel Network](docs/r/fc_network.html.markdown)
-
 ```js
 resource "oneview_fc_network" "default" {
   name = "test-fc-network"
@@ -114,7 +111,6 @@ resource "oneview_fc_network" "default" {
 ```
 
 #### [Fibre Channel over Ethernet Network](docs/r/fcoe_network.html.markdown)
-
 ```js
 resource "oneview_fcoe_network" "default" {
   name = "test-fcoe-network"
@@ -123,7 +119,6 @@ resource "oneview_fcoe_network" "default" {
 ```
 
 #### [Network Set](docs/r/network_set.html.markdown)
-
 ```js
 resource "oneview_network_set" "default" {
   name = "test-network-set"
@@ -133,8 +128,6 @@ resource "oneview_network_set" "default" {
 ```
 
 #### [Logical Interconnect Group](docs/r/logical_interconnect_group.html.markdown)
-
-
 ```js
 resource "oneview_logical_interconnect_group" "default" {
   name = "test-logical-interconnect-group"
@@ -158,7 +151,6 @@ resource "oneview_logical_interconnect_group" "default" {
 ```
 
 #### [Enclosure Group](docs/r/enclosure_group.html.markdown)
-
 ```js
 resource "oneview_enclosure_group" "default" {
   name = "default-enclosure-group"
@@ -168,7 +160,6 @@ resource "oneview_enclosure_group" "default" {
 ```
 
 #### [Logical Switch](docs/r/logical_switch.html.markdown)
-
 ```js
 resource "oneview_logical_switch" "default" {
   name = "test-logical-switch"
