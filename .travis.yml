@@ -4,6 +4,7 @@ services:
   - docker
 
 language: go
+go_import_path: github.com/HewlettPackard/terraform-provider-oneview
 
 go:
 - 1.8
