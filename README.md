@@ -7,7 +7,7 @@ A Terraform provider for oneview
 ## Installation
 
 * Install Go 1.8. For previous versions, you may have to set your `$GOPATH` manually, if you haven't done it yet.
-* Install Terraform 0.8.0 or above [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists)
+* Install Terraform 0.9.x or above [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists)
 * Download the code by issuing a `go get` command.
 
 ```bash
