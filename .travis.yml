@@ -42,6 +42,7 @@ script:
   - docker build -f Dockerfile.scratch -t $REPO:scratch-$TAG .
   - docker build -f Dockerfile.alpine -t $REPO:alpine-$TAG .
   - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
+  - docker run -it --rm=true $REPO:alpine-$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";

@@ -5,7 +5,7 @@ RUN apk add --no-cache --update unzip
 ADD . /go/src/github.com/HewlettPackard/terraform-provider-oneview
 
 # Define terraform version to download
-ENV TERRAFORM_VERSION 0.9.2
+ENV TERRAFORM_VERSION 0.9.3
 ENV TERRAFORM_DOWNLOAD_URL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
 # Add terraform binary without using wget so we can pass the
@@ -19,7 +19,3 @@ RUN unzip /tmp/terraform.zip -d /usr/local/terraform && \
 RUN cd /go/src/github.com/HewlettPackard/terraform-provider-oneview && \
     CGO_ENABLED=0 go build -a -tags netgo -ldflags '-s -w' -o /usr/local/terraform/terraform-provider-oneview && \
     cd /go && rm -rf *
-
-# Add some tests
-ADD tests.tf /tmp/
-RUN /usr/local/terraform/terraform plan /tmp

@@ -1,4 +1,4 @@
 FROM alpine
-ADD tests.tf /tmp/
+
+# Add the recently compiled Go binaries
 ADD bins/linux/ /usr/local/terraform/
-RUN /usr/local/terraform/terraform plan /tmp
