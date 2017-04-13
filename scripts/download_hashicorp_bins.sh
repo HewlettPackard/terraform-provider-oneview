@@ -2,7 +2,8 @@
 set -e
 set -o pipefail
 
-TERRAFORM_VERSION=$(bash ./check_latest_version.sh)
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
+TERRAFORM_VERSION=$(bash ${DIR}/check_latest_version.sh)
 REQUIRED_APPS=("curl" "unzip")
 
 # This checks if we do have or not the required apps to run
