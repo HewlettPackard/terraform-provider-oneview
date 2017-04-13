@@ -21,7 +21,7 @@ env:
     - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
 
 install:
-  - bash download_hashicorp_bins.sh $BINS_DEST
+  - bash scripts/download_hashicorp_bins.sh $BINS_DEST
 
 before_script:
   - if ! [ -z "$UNFORMATTED" ]; then
