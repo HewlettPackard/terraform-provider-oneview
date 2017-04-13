@@ -2,49 +2,58 @@ dist: trusty
 sudo: required
 
 notifications:
-  email: false
+    email: false
 
 language: go
 go_import_path: github.com/HewlettPackard/terraform-provider-oneview
 
 go:
-- 1.8
+    - 1.8
 
 env:
-  global:
-    - BUILDNAME=terraform-provider-oneview
-    - BINS_DEST=./bins
-    - CGO_ENABLED=0
-    - GOARCH=amd64
-    - REPO=$DOCKER_USERNAME/terraform-provider-oneview
-    - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
-    - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
-    - TERRAFORM_BINS=$(bash scripts/check_latest_version.sh)
+    global:
+        - BUILDNAME=terraform-provider-oneview
+        - BINS_DEST=./bins
+        - CGO_ENABLED=0
+        - GOARCH=amd64
+        - REPO=$DOCKER_USERNAME/terraform-provider-oneview
+        - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
+        - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
+        - TERRAFORM_BINS=$(bash scripts/check_latest_version.sh)
 
 install:
-  - bash scripts/download_hashicorp_bins.sh $BINS_DEST
+    - bash scripts/download_hashicorp_bins.sh $BINS_DEST
 
 before_script:
-  - if ! [ -z "$UNFORMATTED" ]; then
-      echo -e "Go files must be formatted with gofmt. Please run:";
-      for fn in $UNFORMATTED; do
+    - if ! [ -z "$UNFORMATTED" ]; then
+        echo -e "Go files must be formatted with gofmt. Please run:";
+        for fn in $UNFORMATTED; do
         echo -e "  gofmt -w $PWD/$fn";
-      done;
-      exit 1;
-    fi
+        done;
+        exit 1;
+      fi
 
 script:
-  - go vet $(go list ./... | grep -v '/vendor/')
-  - go test -v $(go list ./... | grep -v '/vendor/')
-  - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe
-  - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
-  - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
-  - docker build --build-arg TERRAFORM_VERSION=$TERRAFORM_BINS -f Dockerfile -t $REPO:$TAG .
-  - docker build -f Dockerfile.scratch -t $REPO:scratch-$TAG .
-  - docker build -f Dockerfile.alpine -t $REPO:alpine-$TAG .
-  - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
-  - docker run -it --rm=true $REPO:alpine-$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
+    # Standard Go testing avoiding the testing of the vendor folder.
+    - go vet $(go list ./... | grep -v '/vendor/')
+    - go test -v $(go list ./... | grep -v '/vendor/')
+
+    # Build for Windows, Mac and Linux disabling CGO and getting a statically
+    # linked binary.
+    - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe
+    - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
+    - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
+
+    # Create the docker images from the Dockerfiles.
+    - docker build --build-arg TERRAFORM_VERSION=$TERRAFORM_BINS -f Dockerfile -t $REPO:$TAG .
+    - docker build -f Dockerfile.scratch -t $REPO:scratch-$TAG .
+    - docker build -f Dockerfile.alpine -t $REPO:alpine-$TAG .
+
+    # Run a Sanity Check against an empty terraform file. When
+    # ran, it should fail if the compilation was unsuccessful.
+    - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
+    - docker run -it --rm=true $REPO:alpine-$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
 
 after_success:
-  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  - docker push $REPO
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    - docker push $REPO
