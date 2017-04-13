@@ -19,6 +19,7 @@ env:
     - REPO=$DOCKER_USERNAME/terraform-provider-oneview
     - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
     - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
+    - TERRAFORM_BINS=$(bash scripts/check_latest_version.sh)
 
 install:
   - bash scripts/download_hashicorp_bins.sh $BINS_DEST
@@ -38,7 +39,7 @@ script:
   - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe
   - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
   - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
-  - docker build -f Dockerfile -t $REPO:$TAG .
+  - docker build --build-arg TERRAFORM_VERSION=$TERRAFORM_BINS -f Dockerfile -t $REPO:$TAG .
   - docker build -f Dockerfile.scratch -t $REPO:scratch-$TAG .
   - docker build -f Dockerfile.alpine -t $REPO:alpine-$TAG .
   - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
