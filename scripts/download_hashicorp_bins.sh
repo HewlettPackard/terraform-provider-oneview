@@ -2,7 +2,7 @@
 set -e
 set -o pipefail
 
-TERRAFORM_VERSION=0.8.8
+TERRAFORM_VERSION=0.9.3
 REQUIRED_APPS=("curl" "unzip")
 
 # This checks if we do have or not the required apps to run
