@@ -1,6 +1,0 @@
-# Starts from centurylink/ca-certs since it's the scratch image
-# with the generic CA certs in a chain
-FROM centurylink/ca-certs
-
-# Add the binary files
-ADD bins/linux/ /usr/local/terraform/

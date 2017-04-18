@@ -44,15 +44,12 @@ script:
     - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
     - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
 
-    # Create the docker images from the Dockerfiles.
-    - docker build --build-arg TERRAFORM_VERSION=$TERRAFORM_BINS -f Dockerfile -t $REPO:$TAG .
-    - docker build -f Dockerfile.scratch -t $REPO:scratch-$TAG .
-    - docker build -f Dockerfile.alpine -t $REPO:alpine-$TAG .
+    # Create the docker image from the Dockerfile.
+    - docker build -f Dockerfile -t $REPO:alpine-$TAG .
 
     # Run a Sanity Check against an empty terraform file. When
     # ran, it should fail if the compilation was unsuccessful.
     - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
-    - docker run -it --rm=true $REPO:alpine-$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
 
 after_success:
     - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
