@@ -6,12 +6,12 @@ description: |-
   The Oneview provider is used to interact with your on premise OneView system. The provider needs to be configured with the proper credentials before it can be used. 
 ---
 
-#Oneview Provider 
+# Oneview Provider 
 
  The Oneview provider is used to interact with [OneView](https://www.hpe.com/us/en/integrated-systems/software.html). 
  The provider needs to be configured with the proper credentials before it can be used. 
 
-##Example Usage
+## Example Usage
 ```js
 //Configure the Oneview Provider
 provider "oneview" {
@@ -31,7 +31,7 @@ resource "oneview_ethernet_network" {
 
 The Oneview provider supports static credentials and environment variables.
 
-##Configuration Reference
+## Configuration Reference
 
 The following keys can be used to configure the provider.
 
