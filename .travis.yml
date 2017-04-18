@@ -1,36 +1,58 @@
+dist: trusty
 sudo: required
 
-services:
-  - docker
+notifications:
+    email: false
 
 language: go
 go_import_path: github.com/HewlettPackard/terraform-provider-oneview
 
 go:
-- 1.8
+    - 1.8
 
 env:
-  global:
-    - REPO=dciacoe/terraform-provider-oneview
-    - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
-    - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
+    global:
+        - BUILDNAME=terraform-provider-oneview
+        - BINS_DEST=./bins
+        - CGO_ENABLED=0
+        - GOARCH=amd64
+        - REPO=$DOCKER_USERNAME/terraform-provider-oneview
+        - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
+        - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
+        - TERRAFORM_BINS=$(bash scripts/check_latest_version.sh)
 
 install:
-  - # an empty install saves the hassle of pseudo-getting deps (they're vendored, so no need!)
+    - bash scripts/download_hashicorp_bins.sh $BINS_DEST
+
+before_script:
+    - if ! [ -z "$UNFORMATTED" ]; then
+        echo -e "Go files must be formatted with gofmt. Please run:";
+        for fn in $UNFORMATTED; do
+        echo -e "  gofmt -w $PWD/$fn";
+        done;
+        exit 1;
+      fi
 
 script:
-  - if ! [ -z "$UNFORMATTED" ]; then
-      echo -e "Go files must be formatted with gofmt. Please run:";
-      for fn in $UNFORMATTED; do
-        echo -e "  gofmt -w $PWD/$fn";
-      done;
-      exit 1;
-    fi
-  - go vet $(go list ./... | grep -v '/vendor/')
-  - go test -v $(go list ./... | grep -v '/vendor/')
-  - docker build -f Dockerfile -t $REPO:$TAG .
-  - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
+    # Standard Go testing avoiding the testing of the vendor folder.
+    - go vet $(go list ./... | grep -v '/vendor/')
+    - go test -v $(go list ./... | grep -v '/vendor/')
+
+    # Build for Windows, Mac and Linux disabling CGO and getting a statically
+    # linked binary.
+    - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
+    # - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe  # disabled until next iteration
+    # - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME         # disabled until next iteration
+
+    # Create the docker image from the Dockerfile.
+    - docker build -f Dockerfile -t $REPO:$TAG .
+
+    # Run a Sanity Check against an empty terraform file. When
+    # ran, it should fail if the compilation was unsuccessful.
+    - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
 
 after_success:
-  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  - docker push $REPO
+    - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker push $REPO;
+      fi
