@@ -4,7 +4,7 @@
 
 A Terraform provider for oneview
 
-## Installation
+## Installing `terraform-provider-oneview` with Go
 
 * Install Go 1.8. For previous versions, you may have to set your `$GOPATH` manually, if you haven't done it yet.
 * Install Terraform 0.9.x or above [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists)
@@ -13,10 +13,26 @@ A Terraform provider for oneview
 ```bash
 # Download the source code for terraform-provider-oneview
 # and build the needed binary, by saving it inside $GOPATH/bin
-go get -u github.com/HewlettPackard/terraform-provider-oneview
+$ go get -u github.com/HewlettPackard/terraform-provider-oneview
 
 # Copy the binary to have it along the terraform binary
-mv $GOPATH/bin/terraform-provider-oneview /usr/local/bin/terraform
+$ mv $GOPATH/bin/terraform-provider-oneview /usr/local/bin/terraform
+```
+
+## Using `terraform-provider-oneview` with Docker
+
+We also provide a lightweight and easy way to test and execute `terraform-provider-oneview`. The `dciacoe/terraform-provider-oneview` docker image contains
+an installation of Terraform and our provider you can use by just pulling down the Docker Image:
+
+```bash
+# Download and store a local copy of terraform-provider-oneview and
+# use it as a Docker image.
+$ docker pull dciacoe/terraform-provider-oneview
+
+# Run docker commands using the "ash" shell from Alpine, this will create
+# a sh session where you can create files, issue commands and execute both
+# terraform and the provider with ease.
+$ docker run -it dciacoe/terraform-provider-oneview /bin/sh
 ```
 
 ## Example terraform file to provision a server with an operating system
