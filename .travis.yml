@@ -40,9 +40,9 @@ script:
 
     # Build for Windows, Mac and Linux disabling CGO and getting a statically
     # linked binary.
-    - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe
     - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
-    - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME
+    # - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe  # disabled until next iteration
+    # - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME         # disabled until next iteration
 
     # Create the docker image from the Dockerfile.
     - docker build -f Dockerfile -t $REPO:$TAG .
