@@ -52,5 +52,7 @@ script:
     - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
 
 after_success:
-    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    - docker push $REPO
+    - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+        docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        docker push $REPO;
+      fi
