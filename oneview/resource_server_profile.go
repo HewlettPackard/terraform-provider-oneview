@@ -91,11 +91,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			return err
 		}
 	} else {
-		var hw_filters = []string{}
+		var hwFilters = []string{}
 		for _, filter := range d.Get("hw_filter").([]interface{}) {
-			hw_filters = append(hw_filters, filter.(string))
+			hwFilters = append(hwFilters, filter.(string))
 		}
-		serverHardware, err = getServerHardware(config, serverProfileTemplate, hw_filters)
+		serverHardware, err = getServerHardware(config, serverProfileTemplate, hwFilters)
 		if err != nil {
 			return err
 		}
