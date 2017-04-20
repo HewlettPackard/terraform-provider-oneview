@@ -12,8 +12,9 @@
 package oneview
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
-
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -38,6 +39,11 @@ func resourceServerProfile() *schema.Resource {
 			"template": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"hw_filter": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"ilo_ip": {
 				Type:     schema.TypeString,
@@ -72,7 +78,6 @@ func resourceServerProfile() *schema.Resource {
 }
 
 func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error {
-
 	config := meta.(*Config)
 
 	serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(d.Get("template").(string))
@@ -86,7 +91,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			return err
 		}
 	} else {
-		serverHardware, err = getServerHardware(config, serverProfileTemplate)
+		var hw_filters = []string{}
+		for _, filter := range d.Get("hw_filter").([]interface{}) {
+			hw_filters = append(hw_filters, filter.(string))
+		}
+		serverHardware, err = getServerHardware(config, serverProfileTemplate, hw_filters)
 		if err != nil {
 			return err
 		}
@@ -115,7 +124,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
-
 	config := meta.(*Config)
 
 	serverProfile, err := config.ovClient.GetProfileByName(d.Id())
@@ -129,6 +137,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	d.Set("hardware_uri", serverHardware.URI.String())
 	d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	d.Set("serial_number", serverProfile.SerialNumber.String())
 
@@ -165,21 +174,31 @@ func resourceServerProfileDelete(d *schema.ResourceData, meta interface{}) error
 	return nil
 }
 
-func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile) (hw ov.ServerHardware, err error) {
-
-	var availableHardware ov.ServerHardware
+func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, filters []string) (hw ov.ServerHardware, err error) {
 	ovMutexKV.Lock(serverProfileTemplate.EnclosureGroupURI.String())
 	defer ovMutexKV.Unlock(serverProfileTemplate.EnclosureGroupURI.String())
 
-	for availableHardware.Created == "" {
-		serverHardware, err := config.ovClient.GetAvailableHardware(serverProfileTemplate.ServerHardwareTypeURI, serverProfileTemplate.EnclosureGroupURI)
-		if err != nil {
-			return availableHardware, err
+	var (
+		hwlist ov.ServerHardwareList
+		f      = []string{"serverHardwareTypeUri='" + serverProfileTemplate.ServerHardwareTypeURI.String() + "'",
+			"serverGroupUri='" + serverProfileTemplate.EnclosureGroupURI.String() + "'",
+			"state='NoProfileApplied'"}
+	)
+
+	f = append(f, filters...)
+
+	if hwlist, err = config.ovClient.GetServerHardwareList(f, "name:desc"); err != nil {
+		if _, ok := err.(*json.SyntaxError); ok && len(filters) > 0 {
+			return hw, fmt.Errorf("%s. It's likely your hw_filter(s) are incorrectly formatted", err)
 		}
-		if !serverHardwareURIs[serverHardware.URI.String()] {
-			availableHardware = serverHardware
-			serverHardwareURIs[serverHardware.URI.String()] = true
+		return hw, err
+	}
+	for _, h := range hwlist.Members {
+		if _, reserved := serverHardwareURIs[h.URI.String()]; !reserved {
+			serverHardwareURIs[h.URI.String()] = true // Mark as reserved
+			return h, nil
 		}
 	}
-	return availableHardware, nil
+
+	return hw, errors.New("No blades that are compatible with the template are available!")
 }
