@@ -32,7 +32,9 @@ The following arguments are supported:
 * `public_connection` - (Optional) The name of the network that is going out to the public.
 
 * `hardware_name` - (Optional) The name of the Server Hardware the server will be provisioned on.
-  If this isn't used, a server hardware will be picked based on what hardware to use from the server profile template.
+  If this isn't used, a server hardware will be picked based on compatibility with the server profile template and any hw_filter(s) (see below).
+
+* `hw_filter` - (Optional) List of filters to apply to the search for HW. See the OneView API docs pertaining to common filter query params, but the basic format is `[not] {attribute} {operator} '{value}'`. For example, `hw_filter = ["memoryMb >= 4096", "processorCoreCount = 4", "processorSpeedMhz >= 2400", "processorType regex '^Intel.*'"]`
 
 * `type` - (Optional) The server profile version to be provisioned. Defaults to ServerProfileV5.
   Use ServerProfileV6 to use Image Streamer.
@@ -53,4 +55,4 @@ In addition to the arguments listed above, the following computed attributes are
   
 * `ilo_ip` - The ILO ip address that is managing the server.
 
-* `hardware_uri` - The address of the hardware the server is provisioned on.
+* `hardware_uri` - The URI of the hardware the server is provisioned on.
