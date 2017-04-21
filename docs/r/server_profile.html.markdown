@@ -36,6 +36,8 @@ The following arguments are supported:
 
 * `hw_filter` - (Optional) List of filters to apply to the search for HW. See the OneView API docs pertaining to common filter query params, but the basic format is `[not] {attribute} {operator} '{value}'`. For example, `hw_filter = ["memoryMb >= 4096", "processorCoreCount = 4", "processorSpeedMhz >= 2400", "processorType regex '^Intel.*'"]`
 
+* `power_state` - (Optional) Power state to enforce; `"on"` or `"off"`
+
 * `type` - (Optional) The server profile version to be provisioned. Defaults to ServerProfileV5.
   Use ServerProfileV6 to use Image Streamer.
 
