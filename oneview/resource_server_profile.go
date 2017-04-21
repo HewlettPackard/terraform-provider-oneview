@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/schema"
+	"strings"
 )
 
 func resourceServerProfile() *schema.Resource {
@@ -31,27 +32,42 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"template": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "ServerProfileV5",
-			},
-			"template": {
-				Type:     schema.TypeString,
-				Required: true,
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"ilo_ip": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"hardware_name": {
 				Type:     schema.TypeString,
 				Optional: true,
+			},
+			"power_state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: func(v interface{}, k string) (warning []string, errors []error) {
+					val := v.(string)
+					if val != "on" && val != "off" {
+						errors = append(errors, fmt.Errorf("%q must be 'on' or 'off'", k))
+					}
+					return
+				},
+			},
+			"public_connection": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"ilo_ip": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"hardware_uri": {
 				Type:     schema.TypeString,
@@ -60,10 +76,6 @@ func resourceServerProfile() *schema.Resource {
 			"serial_number": {
 				Type:     schema.TypeString,
 				Computed: true,
-			},
-			"public_connection": {
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 			"public_mac": {
 				Type:     schema.TypeString,
@@ -119,6 +131,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			return err
 		}
 	}
+	if d.Get("power_state").(string) == "on" {
+		if err = serverHardware.PowerOn(); err != nil {
+			return err
+		}
+	}
 
 	return resourceServerProfileRead(d, meta)
 }
@@ -140,6 +157,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("hardware_uri", serverHardware.URI.String())
 	d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	d.Set("serial_number", serverProfile.SerialNumber.String())
+	d.Set("power_state", strings.ToLower(serverHardware.PowerState))
 
 	if val, ok := d.GetOk("public_connection"); ok {
 		publicConnection, err := serverProfile.GetConnectionByName(val.(string))
@@ -196,6 +214,8 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, f
 	for _, h := range hwlist.Members {
 		if _, reserved := serverHardwareURIs[h.URI.String()]; !reserved {
 			serverHardwareURIs[h.URI.String()] = true // Mark as reserved
+			h.Client = config.ovClient                // The SDK GetServerHardwareList method doesn't set the
+			// client, so we need to do it here. See https://github.com/HewlettPackard/oneview-golang/issues/103
 			return h, nil
 		}
 	}
