@@ -210,9 +210,11 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, f
 
 	var (
 		hwlist ov.ServerHardwareList
-		f      = []string{"serverHardwareTypeUri='" + serverProfileTemplate.ServerHardwareTypeURI.String() + "'",
-			"serverGroupUri='" + serverProfileTemplate.EnclosureGroupURI.String() + "'",
-			"state='NoProfileApplied'"}
+		f = []string{
+			fmt.Sprintf("serverHardwareTypeUri=%q", serverProfileTemplate.ServerHardwareTypeURI),
+			fmt.Sprintf("serverGroupUri=%q", serverProfileTemplate.EnclosureGroupURI),
+			`state="NoProfileApplied",`
+		}
 	)
 
 	f = append(f, filters...)
@@ -223,6 +225,7 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, f
 		}
 		return hw, err
 	}
+
 	for _, h := range hwlist.Members {
 		if _, reserved := serverHardwareURIs[h.URI.String()]; !reserved {
 			serverHardwareURIs[h.URI.String()] = true // Mark as reserved
