@@ -15,9 +15,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/schema"
-	"strings"
 )
 
 func resourceServerProfile() *schema.Resource {
@@ -177,6 +178,17 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 	if err != nil || serverProfile.URI.IsNil() {
 		d.SetId("")
 		return nil
+	}
+
+	serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(d.Get("template").(string))
+	if err != nil || serverProfileTemplate.URI.IsNil() {
+		return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("template").(string))
+	}
+
+	serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
+
+	if err := config.ovClient.UpdateServerProfile(serverProfile); err != nil {
+		return err
 	}
 
 	return resourceServerProfileRead(d, meta)
