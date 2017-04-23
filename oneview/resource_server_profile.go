@@ -187,6 +187,31 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 	serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 
+	// ----------------------------------------------------------------------------------
+	// var serverHardware ov.ServerHardware
+	// if val, ok := d.GetOk("hardware_name"); ok {
+	//     serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
+	//     if err != nil {
+	//         return err
+	//     }
+	// } else {
+	//     var hwFilters = []string{}
+	//     for _, filter := range d.Get("hw_filter").([]interface{}) {
+	//         hwFilters = append(hwFilters, filter.(string))
+	//     }
+	//     serverHardware, err = getServerHardware(config, serverProfileTemplate, hwFilters)
+	//     if err != nil {
+	//         return err
+	//     }
+	// }
+	//
+	// if d.Get("power_state").(string) == "on" {
+	//     if err = serverHardware.PowerOn(); err != nil {
+	//         return err
+	//     }
+	// }
+	// ----------------------------------------------------------------------------------
+
 	if err := config.ovClient.UpdateServerProfile(serverProfile); err != nil {
 		return err
 	}
@@ -210,10 +235,10 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, f
 
 	var (
 		hwlist ov.ServerHardwareList
-		f = []string{
+		f      = []string{
 			fmt.Sprintf("serverHardwareTypeUri=%q", serverProfileTemplate.ServerHardwareTypeURI),
 			fmt.Sprintf("serverGroupUri=%q", serverProfileTemplate.EnclosureGroupURI),
-			`state="NoProfileApplied",`
+			`state="NoProfileApplied"`,
 		}
 	)
 
