@@ -115,7 +115,7 @@ resource "oneview_server_profile_template" "default" {
 ```js
 resource "oneview_ethernet_network" "default" {
   name = "test-ethernet-network"
-  vlanId = 71
+  vlan_id = 71
 }
 ```
 

@@ -90,5 +90,5 @@ func testAccCheckEthernetNetworkDestroy(s *terraform.State) error {
 var testAccEthernetNetwork = `
   resource "oneview_ethernet_network" "test" {
     name = "Terraform Ethernet Network 1"
-    vlanId = "${117}"
+    vlan_id = "${117}"
   }`
