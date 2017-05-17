@@ -15,31 +15,31 @@ Creates an ethernet network.
 ```js
 resource "oneview_ethernet_network" "default" {
   name = "test-ethernet-network"
-  vlanId = 71
+  vlan_id = 71
 }
 ```
 
 ## Argument Reference
 
-The following arguments are supported: 
+The following arguments are supported:
 
 * `name` - (Required) A unique name for the resource.
 
-* `vlanId` - (Required) The Virtual LAN (VLAN) identification number (integer) assigned to the network. 
+* `vlan_id` - (Required) The Virtual LAN (VLAN) identification number (integer) assigned to the network.
 Changing this forces a new resource.
 
 - - -
 
-* `purpose` - (Optional) A description of the network's role within the logical interconnect. 
+* `purpose` - (Optional) A description of the network's role within the logical interconnect.
   This defaults to General.
-  
-* `private_network` - (Optional) When enabled, the network is configured so that all downlink (server) ports 
+
+* `private_network` - (Optional) When enabled, the network is configured so that all downlink (server) ports
   connected to the network are prevented from communicating with each other within the logical interconnect.
   This defaults to false.
 
-* `smart_link` - (Optional) When enabled, the network is configured so that, within a logical interconnect, 
+* `smart_link` - (Optional) When enabled, the network is configured so that, within a logical interconnect,
   all uplinks that carry the network are monitored. This defaults to false.
-  
+
 * `ethernet_network_type` - (Optional) The type of Ethernet network. This defaults to Tagged.
 
 ## Attributes Reference
