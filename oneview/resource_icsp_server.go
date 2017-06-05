@@ -266,11 +266,11 @@ func resourceIcspServerDelete(d *schema.ResourceData, meta interface{}) error {
 
 func checkICSPInitialized(c *Config) error {
 	if c == nil {
-		return fmt.Errorf("initial configuration not performed!")
+		return fmt.Errorf("initial configuration not performed")
 	}
 
 	if c.icspClient == nil {
-		return fmt.Errorf("ICSP configuration not set in terraform provider configuration, maybe you forgot \"icsp_endpoint\"?")
+		return fmt.Errorf("ICSP configuration not set in terraform provider configuration, maybe you forgot the ICSP configuration, such as \"icsp_endpoint\"")
 	}
 
 	return nil
