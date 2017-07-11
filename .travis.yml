@@ -13,7 +13,8 @@ go:
 env:
     global:
         - BUILDNAME=terraform-provider-oneview
-        - BINS_DEST=./bins
+        - TF_DOWNLOAD_PATH=./bins
+        - TF_PLATFORMS="linux"
         - CGO_ENABLED=0
         - GOARCH=amd64
         - REPO=$DOCKER_USERNAME/terraform-provider-oneview
@@ -22,7 +23,7 @@ env:
         - TERRAFORM_BINS=$(bash scripts/check_latest_version.sh)
 
 install:
-    - bash scripts/download_hashicorp_bins.sh $BINS_DEST
+    - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
 
 before_script:
     - if ! [ -z "$UNFORMATTED" ]; then
@@ -38,11 +39,8 @@ script:
     - go vet $(go list ./... | grep -v '/vendor/')
     - go test -v $(go list ./... | grep -v '/vendor/')
 
-    # Build for Windows, Mac and Linux disabling CGO and getting a statically
-    # linked binary.
-    - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/linux/$BUILDNAME
-    # - GOOS=windows go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/windows/$BUILDNAME.exe  # disabled until next iteration
-    # - GOOS=darwin go build -a -tags netgo -ldflags '-s -w' -o $BINS_DEST/macos/$BUILDNAME         # disabled until next iteration
+    # Build disabling CGO and getting a statically linked binary.
+    - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $TF_DOWNLOAD_PATH/linux/$BUILDNAME
 
     # Create the docker image from the Dockerfile.
     - docker build -f Dockerfile -t $REPO:$TAG .
