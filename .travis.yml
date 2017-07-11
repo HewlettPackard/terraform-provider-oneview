@@ -23,10 +23,10 @@ env:
         - TERRAFORM_BINS=$(bash scripts/check_latest_version.sh)
 
 install:
+    - mkdir -p $TF_DOWNLOAD_PATH
     - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
 
 before_script:
-    - mkdir -p $TF_DOWNLOAD_PATH
     - if ! [ -z "$UNFORMATTED" ]; then
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
