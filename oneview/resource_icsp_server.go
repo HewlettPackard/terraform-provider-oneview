@@ -105,6 +105,10 @@ func resourceIcspServerCreate(d *schema.ResourceData, meta interface{}) error {
 
 	config := meta.(*Config)
 
+	if e := checkICSPInitialized(config); e != nil {
+		return e
+	}
+
 	csa := icsp.CustomServerAttributes{}
 	initCsa := csa.New()
 
@@ -161,6 +165,10 @@ func resourceIcspServerRead(d *schema.ResourceData, meta interface{}) error {
 
 	config := meta.(*Config)
 
+	if e := checkICSPInitialized(config); e != nil {
+		return e
+	}
+
 	server, err := config.icspClient.GetServerByIP(d.Id())
 	if err != nil {
 		d.SetId("")
@@ -183,6 +191,10 @@ func resourceIcspServerRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceIcspServerUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+
+	if e := checkICSPInitialized(config); e != nil {
+		return e
+	}
 
 	csa := icsp.CustomServerAttributes{}
 	initCsa := csa.New()
@@ -238,6 +250,10 @@ func resourceIcspServerUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceIcspServerDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	if e := checkICSPInitialized(config); e != nil {
+		return e
+	}
+
 	isDel, err := config.icspClient.DeleteServer(d.Get("mid").(string))
 	if err != nil {
 		return err
@@ -245,5 +261,17 @@ func resourceIcspServerDelete(d *schema.ResourceData, meta interface{}) error {
 	if !isDel {
 		return fmt.Errorf("Could not delete server")
 	}
+	return nil
+}
+
+func checkICSPInitialized(c *Config) error {
+	if c == nil {
+		return fmt.Errorf("initial configuration not performed")
+	}
+
+	if c.icspClient == nil {
+		return fmt.Errorf("ICSP configuration not set in terraform provider configuration, maybe you forgot the ICSP configuration, such as \"icsp_endpoint\"")
+	}
+
 	return nil
 }
