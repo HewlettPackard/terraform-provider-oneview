@@ -1,18 +1,6 @@
 # Hacking on `terraform-provider-oneview`
 
-We welcome your contributions to the OneView provider for Terraform! Just send a Pull Request
-with the code and one of the members of the @HewlettPackard organization will check it out.
-
-## Signing commits
-
-All commits are required to be signed-off, which means, the commit message must contain the text:
-
-```text
-Signed-off-by: Your Name <your.email@example.com>
-```
-
-To achieve this message, when commiting, add the `-s` flag (lowercase S), or use the long version,
-`--signoff` to automatically append this message based on your `.gitconfig` file.
+We welcome your contributions to the OneView provider for Terraform! See CONTRIBUTING.md for more details.
 
 ## Go get
 
