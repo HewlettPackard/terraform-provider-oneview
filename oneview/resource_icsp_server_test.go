@@ -34,6 +34,11 @@ func TestAccICSP_Server_1(t *testing.T) {
 					testAccCheckICSPServerExists(
 						"oneview_icsp_server.test", &icspServer)),
 			},
+			{
+				ResourceName:      testAccICSPServer,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

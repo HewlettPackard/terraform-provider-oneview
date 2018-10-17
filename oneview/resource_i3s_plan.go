@@ -24,6 +24,9 @@ func resourceI3SPlan() *schema.Resource {
 		Read:   resourceI3SPlanRead,
 		Update: resourceI3SPlanUpdate,
 		Delete: resourceI3SPlanDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"server_name": {

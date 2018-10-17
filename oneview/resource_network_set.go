@@ -23,6 +23,9 @@ func resourceNetworkSet() *schema.Resource {
 		Read:   resourceNetworkSetRead,
 		Update: resourceNetworkSetUpdate,
 		Delete: resourceNetworkSetDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {

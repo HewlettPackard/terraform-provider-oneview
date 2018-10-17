@@ -38,6 +38,11 @@ func TestAccLogicalSwitchGroup_1(t *testing.T) {
 					),
 				),
 			},
+			{
+				ResourceName:      testAccLogicalSwitchGroup,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

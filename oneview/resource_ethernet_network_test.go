@@ -38,6 +38,11 @@ func TestAccEthernetNetwork_1(t *testing.T) {
 					),
 				),
 			},
+			{
+				ResourceName:      testAccEthernetNetwork,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
