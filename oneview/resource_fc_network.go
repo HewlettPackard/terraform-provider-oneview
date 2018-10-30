@@ -24,8 +24,8 @@ func resourceFCNetwork() *schema.Resource {
 		Update: resourceFCNetworkUpdate,
 		Delete: resourceFCNetworkDelete,
 		Importer: &schema.ResourceImporter{
-                        State: schema.ImportStatePassthrough,
-                },
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {

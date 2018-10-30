@@ -28,8 +28,8 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 		Update: resourceLogicalInterconnectGroupUpdate,
 		Delete: resourceLogicalInterconnectGroupDelete,
 		Importer: &schema.ResourceImporter{
-                        State: schema.ImportStatePassthrough,
-                },
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {

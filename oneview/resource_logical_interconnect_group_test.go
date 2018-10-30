@@ -39,10 +39,10 @@ func TestAccLogicalInterconnectGroup_1(t *testing.T) {
 				),
 			},
 			{
-                                ResourceName:      testAccLogicalInterconnectGroup,
-                                ImportState:       true,
-                                ImportStateVerify: true,
-                        },
+				ResourceName:      testAccLogicalInterconnectGroup,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
