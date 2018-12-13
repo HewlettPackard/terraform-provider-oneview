@@ -12,6 +12,9 @@
 package oneview
 
 import (
+	//	"strconv"
+	//	"fmt"
+	//	"io/ioutil"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -86,6 +89,26 @@ func resourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"scopesUri": {
+				Optional: true,
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			/*"initialScopeUris": {
+				Optional: true,
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type:	schema.TypeString,
+				},
+			},*/
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 		},
 	}
 }
@@ -98,10 +121,16 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type:        d.Get("type").(string),
-		Description: d.Get("description").(string),
+		Type:                    d.Get("type").(string),
+		Description:             d.Get("description").(string),
 	}
 
+	rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
+	initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+	for i, raw := range rawInitialScopeUris {
+		initialScopeUris[i] = utils.Nstring(raw.(string))
+	}
+	fcNet.InitialScopeUris = initialScopeUris
 	fcNetError := config.ovClient.CreateFCNetwork(fcNet)
 	d.SetId(d.Get("name").(string))
 	if fcNetError != nil {
@@ -134,6 +163,8 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("created", fcNet.Created)
 	d.Set("modified", fcNet.Modified)
 	d.Set("eTag", fcNet.ETAG)
+	d.Set("scopesUri", fcNet.ScopesUri.String())
+	d.Set("initial_scope_uris", fcNet.InitialScopeUris)
 	return nil
 }
 
@@ -147,9 +178,9 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type: d.Get("type").(string),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Description:           d.Get("description").(string),
+		Type:                    d.Get("type").(string),
+		ConnectionTemplateUri:   utils.NewNstring(d.Get("connection_template_uri").(string)),
+		Description:             d.Get("description").(string),
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)

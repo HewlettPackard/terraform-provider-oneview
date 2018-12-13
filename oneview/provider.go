@@ -55,6 +55,11 @@ func Provider() terraform.ResourceProvider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_API_VERSION", 200),
 			},
+			"ov_ifmatch": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_IF_MATCH", "*"),
+			},
 			"icsp_domain": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -115,6 +120,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		OVEndpoint:   d.Get("ov_endpoint").(string),
 		OVSSLVerify:  d.Get("ov_sslverify").(bool),
 		OVAPIVersion: d.Get("ov_apiversion").(int),
+		OVIfMatch:    d.Get("ov_ifmatch").(string),
 	}
 
 	if err := config.loadAndValidate(); err != nil {

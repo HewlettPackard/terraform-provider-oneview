@@ -31,6 +31,7 @@ type AuthHeader struct {
 	ContentType string `json:"Content-Type,omitempty"`
 	XAPIVersion int    `json:"X-API-Version,omitempty"`
 	Auth        string `json:"auth,omitempty"`
+	IfMatch     string `json:"If-Match,omitempty`
 }
 
 // GetAuthHeaderMap Generate an auth Header map
@@ -39,6 +40,7 @@ func (c *OVClient) GetAuthHeaderMap() map[string]string {
 		"Content-Type":  "application/json; charset=utf-8",
 		"X-API-Version": strconv.Itoa(c.APIVersion),
 		"auth":          c.APIKey,
+		"If-Match":      c.IfMatch,
 	}
 }
 

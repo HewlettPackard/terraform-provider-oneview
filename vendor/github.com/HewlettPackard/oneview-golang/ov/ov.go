@@ -31,7 +31,7 @@ type OVClient struct {
 }
 
 // new Client
-func (c *OVClient) NewOVClient(user string, password string, domain string, endpoint string, sslverify bool, apiversion int) *OVClient {
+func (c *OVClient) NewOVClient(user string, password string, domain string, endpoint string, sslverify bool, apiversion int, ifmatch string) *OVClient {
 	return &OVClient{
 		rest.Client{
 			User:       user,
@@ -41,6 +41,7 @@ func (c *OVClient) NewOVClient(user string, password string, domain string, endp
 			SSLVerify:  sslverify,
 			APIVersion: apiversion,
 			APIKey:     "none",
+			IfMatch:    ifmatch,
 		},
 	}
 }

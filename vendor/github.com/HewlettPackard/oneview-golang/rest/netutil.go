@@ -51,6 +51,7 @@ type Client struct {
 	APIVersion int
 	SSLVerify  bool
 	Endpoint   string
+	IfMatch    string
 	Option     Options
 }
 
@@ -173,7 +174,6 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}) ([
 	// DEBUGGING WHILE WE WORK
 
 	data, err := ioutil.ReadAll(resp.Body)
-
 	if !c.isOkStatus(resp.StatusCode) {
 		type apiErr struct {
 			Err string `json:"details"`
@@ -187,5 +187,10 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}) ([
 		return nil, err
 	}
 
+	// Added the condition to accomodate the response where only the response header is returned.
+	if len(data) == 0 {
+		data2 := []byte(`{"URI":"` + resp.Header["Location"][0] + `"}`)
+		return data2, nil
+	}
 	return data, nil
 }
