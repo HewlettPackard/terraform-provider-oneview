@@ -24,10 +24,10 @@ env:
 install:
     - mkdir -p $TF_DOWNLOAD_PATH
     - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
-      echo -e "End of install"
+    - echo -e "End of install"
 
 before_script:
-        echo -e "Entered before script"
+    - echo -e "Entered before script"
     - if ! [ -z "$UNFORMATTED" ]; then
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
@@ -35,21 +35,21 @@ before_script:
         done;
         exit 1;
       fi
-      echo -e "End of before_script"
+     - echo -e "End of before_script"
 
 script:
     # Standard Go testing avoiding the testing of the vendor folder.
-    echo -e "go vet start"
+    - echo -e "go vet start"
     - go vet $(go list ./... | grep -v '/vendor/')
-      echo -e "After go vet"
+    - echo -e "After go vet"
     - go test -v $(go list ./... | grep -v '/vendor/')
 
     # Build disabling CGO and getting a statically linked binary.
-    echo -e "Disabling CGO"
+    - echo -e "Disabling CGO"
     - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $TF_DOWNLOAD_PATH/linux/$BUILDNAME
 
     # Create the docker image from the Dockerfile.
-    echo -e "Before docker build"
+    - echo -e "Before docker build"
     - docker build -f Dockerfile -t $REPO:$TAG .
 
     # Run a Sanity Check against an empty terraform file. When
