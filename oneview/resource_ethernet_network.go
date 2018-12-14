@@ -165,7 +165,7 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 		PrivateNetwork:        d.Get("private_network").(bool),
 		SmartLink:             d.Get("smart_link").(bool),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type: d.Get("type").(string),
+		Type:                  d.Get("type").(string),
 	}
 
 	err := config.ovClient.UpdateEthernetNetwork(newENet)

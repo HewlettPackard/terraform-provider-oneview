@@ -132,12 +132,12 @@ func resourceFCoENetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	newFCoENet := ov.FCoENetwork{
-		ETAG:   d.Get("eTag").(string),
-		URI:    utils.NewNstring(d.Get("uri").(string)),
-		VlanId: d.Get("vlanId").(int),
-		Name:   d.Get("name").(string),
+		ETAG:                  d.Get("eTag").(string),
+		URI:                   utils.NewNstring(d.Get("uri").(string)),
+		VlanId:                d.Get("vlanId").(int),
+		Name:                  d.Get("name").(string),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connectionTemplateUri").(string)),
-		Type: d.Get("type").(string),
+		Type:                  d.Get("type").(string),
 	}
 
 	err := config.ovClient.UpdateFCoENetwork(newFCoENet)
