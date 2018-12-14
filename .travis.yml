@@ -28,6 +28,7 @@ install:
 
 before_script:
     - echo -e "Entered before script"
+    - echo -e $UNFORMATTED
     - if ! [ -z "$UNFORMATTED" ]; then
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
