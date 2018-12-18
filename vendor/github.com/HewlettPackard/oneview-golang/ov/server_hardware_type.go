@@ -6,6 +6,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
+	"strconv"
 )
 
 type ServerHardwareType struct {
@@ -33,7 +34,7 @@ func (c *OVClient) GetServerHardwareTypeByName(name string) (ServerHardwareType,
 	var (
 		serverHardwareType ServerHardwareType
 	)
-	serverHardwareTypes, err := c.GetServerHardwareTypes(fmt.Sprintf("name matches '%s'", name), "name:asc")
+	serverHardwareTypes, err := c.GetServerHardwareTypes(0, 0, fmt.Sprintf("name matches '%s'", name), "name:asc")
 	if serverHardwareTypes.Total > 0 {
 		return serverHardwareTypes.Members[0], err
 	} else {
@@ -59,13 +60,21 @@ func (c *OVClient) GetServerHardwareTypeByUri(uri utils.Nstring) (ServerHardware
 	return serverHardwareType, nil
 }
 
-func (c *OVClient) GetServerHardwareTypes(filter string, sort string) (ServerHardwareTypeList, error) {
+func (c *OVClient) GetServerHardwareTypes(start int, count int, filter string, sort string) (ServerHardwareTypeList, error) {
 	var (
 		uri                 = "/rest/server-hardware-types"
 		q                   map[string]interface{}
 		serverHardwareTypes ServerHardwareTypeList
 	)
 	q = make(map[string]interface{})
+	if start > 0 {
+		q["start"] = strconv.Itoa(start)
+	}
+
+	if count > 0 {
+		q["count"] = strconv.Itoa(count)
+	}
+
 	if len(filter) > 0 {
 		q["filter"] = filter
 	}
