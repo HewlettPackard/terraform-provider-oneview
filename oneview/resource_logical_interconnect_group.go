@@ -38,6 +38,10 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				Optional: true,
 				Default:  "logical-interconnect-groupV3",
 			},
+			"interconnect_bay_set": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 			"interconnect_map_entry_template": {
 				Optional: true,
 				Type:     schema.TypeList,
@@ -435,6 +439,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		Type: d.Get("type").(string),
 	}
 
+	if val, ok := d.GetOk("interconnect_bay_set"); ok {
+		lig.InterconnectBaySet = val.(int)
+	}
+
 	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
 	for i := 0; i < interconnectMapEntryTemplateCount; i++ {
@@ -796,6 +804,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("eTag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
 	d.Set("interconnect_settings.0.igmp_snooping", logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping)
+	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
 
 	interconnectMapEntryTemplates := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates))
 	for _, interconnectMapEntryTemplate := range logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates {
@@ -1018,7 +1027,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSettings = append(interconnectSettings, map[string]interface{}{
-		"type": logicalInterconnectGroup.EthernetSettings.Type,
+		"type":                    logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
 		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
@@ -1070,7 +1079,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	qualityOfService := make([]map[string]interface{}, 0, 1)
 	qualityOfService = append(qualityOfService, map[string]interface{}{
-		"type": logicalInterconnectGroup.QosConfiguration.Type,
+		"type":                         logicalInterconnectGroup.QosConfiguration.Type,
 		"active_qos_config_type":       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
 		"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
 		"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
@@ -1100,6 +1109,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		Name: d.Get("name").(string),
 		Type: d.Get("type").(string),
 		URI:  utils.NewNstring(d.Get("uri").(string)),
+	}
+
+	if val, ok := d.GetOk("interconnect_bay_set"); ok {
+		lig.InterconnectBaySet = val.(int)
 	}
 
 	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
