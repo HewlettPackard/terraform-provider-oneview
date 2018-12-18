@@ -70,9 +70,13 @@ The following arguments are supported:
 * `snmp_configuration` - (Optional) The SNMP configuration for the logical interconnect group. 
   If not supplied a default will be used. Snmp Configuration is documented below.
 
-* `interconnect_bay_set` - (Optional) This is only used by Synergy hardware so the argument is optional,
-  but it may be required on that hardware. The Interconnect bay set associated with the logical interconnect
-  group. Supported interconnect bay set is 1 (bays 1&4), 2 (bays 2&5), or 3 (bays 3&6).
+* `interconnect_bay_set` - (Optional) This option is required on Synergy hardware, but not needed for C7000.
+  The Interconnect bay set associated with the logical interconnect group. Supported interconnect bay set is
+  1 (bays 1&4), 2 (bays 2&5), or 3 (bays 3&6).
+
+* `redundancy_type` - (Optional) This option is required on Synergy hardware, but not needed for C7000.
+  The type of enclosure redundancy. Supported enclosure redundancy types are HighlyAvailable,
+  NonRedundantASide, NonRedundantBSide, and Redundant.
 
 * `interconnect_map_entry_template` - (Optional) Interconnect map associated with the logical interconnect group.
   This can be specified multiple times. Interconnect Map Entry Template is documented below. 
