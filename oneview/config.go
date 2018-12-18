@@ -26,6 +26,7 @@ type Config struct {
 	OVEndpoint   string
 	OVSSLVerify  bool
 	OVAPIVersion int
+	OVIfMatch    string
 
 	ICSPDomain     string
 	ICSPUsername   string
@@ -48,7 +49,7 @@ func (c *Config) loadAndValidate() error {
 		return ErrConfigNotInitialized
 	}
 
-	client := (&ov.OVClient{}).NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion)
+	client := (&ov.OVClient{}).NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.OVIfMatch)
 
 	c.ovClient = client
 
