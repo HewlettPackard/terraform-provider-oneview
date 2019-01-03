@@ -121,8 +121,8 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type:                    d.Get("type").(string),
-		Description:             d.Get("description").(string),
+		Type:        d.Get("type").(string),
+		Description: d.Get("description").(string),
 	}
 
 	rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
@@ -178,9 +178,9 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type:                    d.Get("type").(string),
-		ConnectionTemplateUri:   utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Description:             d.Get("description").(string),
+		Type: d.Get("type").(string),
+		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
+		Description:           d.Get("description").(string),
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)
