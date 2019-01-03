@@ -12,9 +12,6 @@
 package oneview
 
 import (
-	//	"strconv"
-	//	"fmt"
-	//	"io/ioutil"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
