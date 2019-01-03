@@ -160,7 +160,7 @@ func resourceNetworkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 	newNetSet := ov.NetworkSet{
 		ETAG: d.Get("eTag").(string),
 		URI:  utils.NewNstring(d.Get("uri").(string)),
-		Name:d.Get("name").(string),
+		Name: d.Get("name").(string),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
 		Type:             d.Get("type").(string),
 		NativeNetworkUri: utils.NewNstring(d.Get("native_network_uri").(string)),
