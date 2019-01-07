@@ -91,13 +91,6 @@ func resourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			/*"initialScopeUris": {
-				Optional: true,
-				Type: schema.TypeList,
-				Elem: &schema.Schema{
-					Type:	schema.TypeString,
-				},
-			},*/
 			"initial_scope_uris": {
 				Optional: true,
 				Type:     schema.TypeSet,

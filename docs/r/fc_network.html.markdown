@@ -38,6 +38,8 @@ This defaults to 30.
 evenly distributed over the Fibre Channel links,such as when an uplink that was previously down becomes available. 
 This defaults to false.
 
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned. It is only meaningful at resource creation time and is not included on resource retrieval.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
