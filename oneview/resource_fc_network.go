@@ -123,11 +123,6 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 		fcNet.InitialScopeUris = initialScopeUris
 	}
-	/*rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
-	initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-	for i, raw := range rawInitialScopeUris {
-		initialScopeUris[i] = utils.Nstring(raw.(string))
-	}
 	fcNet.InitialScopeUris = initialScopeUris*/
 	fcNetError := config.ovClient.CreateFCNetwork(fcNet)
 	d.SetId(d.Get("name").(string))
