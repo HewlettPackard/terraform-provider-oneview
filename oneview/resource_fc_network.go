@@ -111,17 +111,17 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type:        d.Get("type").(string),
-		Description: d.Get("description").(string),
+		Type:                    d.Get("type").(string),
+		Description:             d.Get("description").(string),
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawInitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-	        for i, raw := range rawInitialScopeUris {
+		for i, raw := range rawInitialScopeUris {
 			initialScopeUris[i] = utils.Nstring(raw.(string))
 		}
-	        fcNet.InitialScopeUris = initialScopeUris
+		fcNet.InitialScopeUris = initialScopeUris
 	}
 	/*rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
 	initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
@@ -176,9 +176,9 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type: d.Get("type").(string),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Description:           d.Get("description").(string),
+		Type:                    d.Get("type").(string),
+		ConnectionTemplateUri:   utils.NewNstring(d.Get("connection_template_uri").(string)),
+		Description:             d.Get("description").(string),
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)
