@@ -3,6 +3,7 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -17,6 +18,7 @@ type LogicalInterconnectGroup struct {
 	EnclosureType           string                   `json:"enclosureType,omitempty"`          // "enclosureType": "C7000",
 	EthernetSettings        *EthernetSettings        `json:"ethernetSettings,omitempty"`       // "ethernetSettings": {...},
 	FabricUri               utils.Nstring            `json:"fabricUri,omitempty"`              // "fabricUri": "/rest/fabrics/9b8f7ec0-52b3-475e-84f4-c4eac51c2c20",
+	InterconnectBaySet      int                      `json:"interconnectBaySet,omitempty"`     // "interconnectBaySet": 1,
 	InterconnectMapTemplate *InterconnectMapTemplate `json:"interconnectMapTemplate"`          // "interconnectMapTemplate": {...},
 	InternalNetworkUris     []utils.Nstring          `json:"internalNetworkUris,omitempty"`    // "internalNetworkUris": []
 	Modified                string                   `json:"modified,omitempty"`               // "modified": "20150831T154835.250Z",

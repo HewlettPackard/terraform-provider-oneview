@@ -85,38 +85,38 @@
 		{
 			"checksumSHA1": "kasshieWdVIntOY0Vrz1OXNv7IA=",
 			"path": "github.com/HewlettPackard/oneview-golang/i3s",
-			"revision": "d0f1e963f924e073ba88820e4229d79db1e78504",
-			"revisionTime": "2017-01-29T06:53:58Z"
+			"revision": "e12ba8ba9b2ae861a36b397c1518b3a2ea8f9ae3",
+			"revisionTime": "2018-12-14T09:34:54Z"
 		},
 		{
 			"checksumSHA1": "yrIv4kgbuYsHS05EqD5Va+sATQM=",
 			"path": "github.com/HewlettPackard/oneview-golang/icsp",
-			"revision": "d0f1e963f924e073ba88820e4229d79db1e78504",
-			"revisionTime": "2017-01-29T06:53:58Z"
+			"revision": "e12ba8ba9b2ae861a36b397c1518b3a2ea8f9ae3",
+			"revisionTime": "2018-12-14T09:34:54Z"
 		},
 		{
 			"checksumSHA1": "T7C6uoGuuhXZ0UNMJr/7IyhF5ls=",
 			"path": "github.com/HewlettPackard/oneview-golang/liboneview",
-			"revision": "d0f1e963f924e073ba88820e4229d79db1e78504",
-			"revisionTime": "2017-01-29T06:53:58Z"
+			"revision": "e12ba8ba9b2ae861a36b397c1518b3a2ea8f9ae3",
+			"revisionTime": "2018-12-14T09:34:54Z"
 		},
 		{
-			"checksumSHA1": "LpOjNVI1bQMj+q42Hey4xjAoZQ4=",
+			"checksumSHA1": "xu3yFPcC2TgAOdI7UgQtC3A1UZ4=",
 			"path": "github.com/HewlettPackard/oneview-golang/ov",
-			"revision": "d0f1e963f924e073ba88820e4229d79db1e78504",
-			"revisionTime": "2017-01-29T06:53:58Z"
+			"revision": "e12ba8ba9b2ae861a36b397c1518b3a2ea8f9ae3",
+			"revisionTime": "2018-12-14T09:34:54Z"
 		},
 		{
-			"checksumSHA1": "eNWJDvccBbdZzReOqEu2djfVsxA=",
+			"checksumSHA1": "7Q3w9aVaZp71xhvjFFWUhRgkqT0=",
 			"path": "github.com/HewlettPackard/oneview-golang/rest",
-			"revision": "d0f1e963f924e073ba88820e4229d79db1e78504",
-			"revisionTime": "2017-01-29T06:53:58Z"
+			"revision": "e12ba8ba9b2ae861a36b397c1518b3a2ea8f9ae3",
+			"revisionTime": "2018-12-14T09:34:54Z"
 		},
 		{
 			"checksumSHA1": "tSDhcm+zX/nRBHeXiQN2KqaRKu0=",
 			"path": "github.com/HewlettPackard/oneview-golang/utils",
-			"revision": "d0f1e963f924e073ba88820e4229d79db1e78504",
-			"revisionTime": "2017-01-29T06:53:58Z"
+			"revision": "e12ba8ba9b2ae861a36b397c1518b3a2ea8f9ae3",
+			"revisionTime": "2018-12-14T09:34:54Z"
 		},
 		{
 			"path": "github.com/Unknwon/com",

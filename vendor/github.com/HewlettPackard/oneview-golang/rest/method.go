@@ -8,6 +8,7 @@ const (
 	POST
 	PUT
 	DELETE
+	PATCH
 )
 
 var method = [...]string{
@@ -15,6 +16,7 @@ var method = [...]string{
 	"POST",
 	"PUT",
 	"DELETE",
+	"PATCH",
 }
 
 func (m Method) String() string { return method[m-1] }

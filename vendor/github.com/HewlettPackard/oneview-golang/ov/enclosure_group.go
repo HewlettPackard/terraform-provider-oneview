@@ -16,6 +16,7 @@ type EnclosureGroup struct {
 	ETAG                                string               `json:"eTag,omitempty"`                         // "eTag": "1441036118675/8",
 	EnclosureCount                      int                  `json:"enclosureCount,omitempty"`               // "enclosureCount": 1,
 	EnclosureTypeUri                    utils.Nstring        `json:"enclosureTypeUri,omitempty"`             // "enclosureTypeUri": "/rest/enclosures/e2f0031b-52bd-4223-9ac1-d91cb5219d548"
+	InitialScopeUris                    []utils.Nstring      `json:"initialScopeUris,omitempty"`             // "initialScopeUris":[]
 	InterconnectBayMappingCount         int                  `json:"interconnectBayMappingCount,omitempty"`  // "interconnectBayMappingCount": 8,
 	InterconnectBayMappings             []InterconnectBayMap `json:"interconnectBayMappings"`                // "interconnectBayMappings": [],
 	IpRangeUris                         []utils.Nstring      `json:"ipRangeUris,omitempty"`
@@ -55,7 +56,7 @@ func (c *OVClient) GetEnclosureGroupByName(name string) (EnclosureGroup, error) 
 	var (
 		enclosureGroup EnclosureGroup
 	)
-	enclosureGroups, err := c.GetEnclosureGroups(fmt.Sprintf("name matches '%s'", name), "name:asc")
+	enclosureGroups, err := c.GetEnclosureGroups("", "", fmt.Sprintf("name matches '%s'", name), "name:asc", "")
 	if enclosureGroups.Total > 0 {
 		return enclosureGroups.Members[0], err
 	} else {
@@ -81,7 +82,7 @@ func (c *OVClient) GetEnclosureGroupByUri(uri utils.Nstring) (EnclosureGroup, er
 	return enclosureGroup, nil
 }
 
-func (c *OVClient) GetEnclosureGroups(filter string, sort string) (EnclosureGroupList, error) {
+func (c *OVClient) GetEnclosureGroups(start string, count string, filter string, sort string, scopeUris string) (EnclosureGroupList, error) {
 	var (
 		uri             = "/rest/enclosure-groups"
 		q               map[string]interface{}
@@ -94,6 +95,18 @@ func (c *OVClient) GetEnclosureGroups(filter string, sort string) (EnclosureGrou
 
 	if sort != "" {
 		q["sort"] = sort
+	}
+
+	if start != "" {
+		q["start"] = start
+	}
+
+	if count != "" {
+		q["count"] = count
+	}
+
+	if scopeUris != "" {
+		q["scopeUris"] = scopeUris
 	}
 
 	// refresh login
@@ -211,4 +224,41 @@ func (c *OVClient) UpdateEnclosureGroup(enclosureGroup EnclosureGroup) error {
 	}
 
 	return nil
+}
+
+func (c *OVClient) GetConfigurationScript(uri utils.Nstring) (string, error) {
+	var (
+		configuration_script string
+		main_uri             = uri.String()
+	)
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	main_uri = main_uri + "/script"
+	script, err := c.RestAPICall(rest.GET, main_uri, nil)
+	if err != nil {
+		log.Errorf("Error in getting the configuration script: %s", err)
+		return "", err
+	}
+	configuration_script = string(script)
+	log.Debugf("ConfigurationScript %s", configuration_script)
+	return configuration_script, nil
+}
+
+func (c *OVClient) UpdateConfigurationScript(uri utils.Nstring, body string) (string, error) {
+	var (
+		main_uri = uri.String()
+	)
+
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	main_uri = main_uri + "/script"
+	log.Debugf("REST : %s \n %s\n", main_uri, body)
+	data, err := c.RestAPICall(rest.PUT, main_uri, body)
+	if err != nil {
+		log.Errorf("Error submitting update enclosure group configure script request: %s", err)
+		return "", err
+	}
+
+	log.Debugf("Response update Configuration Script %s", data)
+	return string(data), nil
 }
