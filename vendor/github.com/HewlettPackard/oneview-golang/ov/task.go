@@ -162,6 +162,16 @@ type TaskData struct {
 	TaskCategory string `json:"task-category,omitempty"`
 }
 
+type TasksList struct {
+	Total       int           `json:"total,omitempty"`       // "total": 1,
+	Count       int           `json:"count,omitempty"`       // "count": 1,
+	Start       int           `json:"start,omitempty"`       // "start": 0,
+	PrevPageURI utils.Nstring `json:"prevPageUri,omitempty"` // "prevPageUri": null,
+	NextPageURI utils.Nstring `json:"nextPageUri,omitempty"` // "nextPageUri": null,
+	URI         utils.Nstring `json:"uri,omitempty"`         // "uri": "/rest/tasks/7769cae0-b680-435b-9b87-9b864c81657"
+	Members     []Task        `json:"members,omitempty"`     // "members":[]
+}
+
 // NewProfileTask - Create New Task
 func (t *Task) NewProfileTask(c *OVClient) *Task {
 	return &Task{TaskIsDone: false,
@@ -270,4 +280,47 @@ func (t *Task) Wait() error {
 		log.Infof("Task, %s, completed", t.Name)
 	}
 	return nil
+}
+
+func (c *OVClient) GetTasks(filter string, sort string, count string, view string) (TasksList, error) {
+	var (
+		uri   = "/rest/tasks"
+		q     map[string]interface{}
+		tasks TasksList
+	)
+	q = make(map[string]interface{})
+	if len(filter) > 0 {
+		q["filter"] = filter
+	}
+
+	if sort != "" {
+		q["sort"] = sort
+	}
+
+	if view != "" {
+		q["view"] = view
+	}
+
+	if count != "" {
+		q["count"] = count
+	}
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	// Setup query
+	if len(q) > 0 {
+		c.SetQueryString(q)
+	}
+
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return tasks, err
+	}
+
+	log.Debugf("Get Tasks %s", data)
+	if err := json.Unmarshal([]byte(data), &tasks); err != nil {
+		return tasks, err
+	}
+	return tasks, nil
 }
