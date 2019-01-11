@@ -38,6 +38,22 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				Optional: true,
 				Default:  "logical-interconnect-groupV3",
 			},
+			"interconnect_bay_set": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"redundancy_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"enclosure_indexes": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+				Set: func(a interface{}) int {
+					return a.(int)
+				},
+			},
 			"interconnect_map_entry_template": {
 				Optional: true,
 				Type:     schema.TypeList,
@@ -435,6 +451,23 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		Type: d.Get("type").(string),
 	}
 
+	if val, ok := d.GetOk("interconnect_bay_set"); ok {
+		lig.InterconnectBaySet = val.(int)
+	}
+
+	if val, ok := d.GetOk("redundancy_type"); ok {
+		lig.RedundancyType = val.(string)
+	}
+
+	if val, ok := d.GetOk("enclosure_indexes"); ok {
+		rawEnclosureIndexes := val.(*schema.Set).List()
+		enclosureIndexes := make([]int, len(rawEnclosureIndexes))
+		for i, raw := range rawEnclosureIndexes {
+			enclosureIndexes[i] = raw.(int)
+		}
+		lig.EnclosureIndexes = enclosureIndexes
+	}
+
 	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
 	for i := 0; i < interconnectMapEntryTemplateCount; i++ {
@@ -796,6 +829,14 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("eTag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
 	d.Set("interconnect_settings.0.igmp_snooping", logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping)
+	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
+	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
+
+	enclosureIndexes := make([]interface{}, len(logicalInterconnectGroup.EnclosureIndexes))
+	for i, enclosureIndexVal := range logicalInterconnectGroup.EnclosureIndexes {
+		enclosureIndexes[i] = enclosureIndexVal
+	}
+	d.Set("enclosure_indexes", schema.NewSet(func(a interface{}) int { return a.(int) }, enclosureIndexes))
 
 	interconnectMapEntryTemplates := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates))
 	for _, interconnectMapEntryTemplate := range logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates {
@@ -1100,6 +1141,23 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		Name: d.Get("name").(string),
 		Type: d.Get("type").(string),
 		URI:  utils.NewNstring(d.Get("uri").(string)),
+	}
+
+	if val, ok := d.GetOk("interconnect_bay_set"); ok {
+		lig.InterconnectBaySet = val.(int)
+	}
+
+	if val, ok := d.GetOk("redundancy_type"); ok {
+		lig.RedundancyType = val.(string)
+	}
+
+	if val, ok := d.GetOk("enclosure_indexes"); ok {
+		rawEnclosureIndexes := val.(*schema.Set).List()
+		enclosureIndexes := make([]int, len(rawEnclosureIndexes))
+		for i, raw := range rawEnclosureIndexes {
+			enclosureIndexes[i] = raw.(int)
+		}
+		lig.EnclosureIndexes = enclosureIndexes
 	}
 
 	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)

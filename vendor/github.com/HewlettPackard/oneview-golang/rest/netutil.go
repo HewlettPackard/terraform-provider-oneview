@@ -189,8 +189,7 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}) ([
 
 	// Added the condition to accomodate the response where only the response header is returned.
 	if len(data) == 0 {
-		data2 := []byte(`{"URI":"` + resp.Header["Location"][0] + `"}`)
-		return data2, nil
+		data = []byte(`{"URI":"` + resp.Header["Location"][0] + `"}`)
 	}
 	return data, nil
 }
