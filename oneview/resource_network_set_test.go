@@ -38,6 +38,11 @@ func TestAccNetworkSet_1(t *testing.T) {
 					),
 				),
 			},
+			{
+				ResourceName:      testAccNetworkSet,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

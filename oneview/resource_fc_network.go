@@ -23,6 +23,9 @@ func resourceFCNetwork() *schema.Resource {
 		Read:   resourceFCNetworkRead,
 		Update: resourceFCNetworkUpdate,
 		Delete: resourceFCNetworkDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -114,7 +117,7 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	fcNet, err := config.ovClient.GetFCNetworkByName(d.Get("name").(string))
+	fcNet, err := config.ovClient.GetFCNetworkByName(d.Id())
 	if err != nil || fcNet.URI.IsNil() {
 		d.SetId("")
 		return nil

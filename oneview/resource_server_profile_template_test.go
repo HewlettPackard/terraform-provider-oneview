@@ -38,6 +38,11 @@ func TestAccServerProfileTemplate_1(t *testing.T) {
 					),
 				),
 			},
+			{
+				ResourceName:      testAccServerProfileTemplate,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

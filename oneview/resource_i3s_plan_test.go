@@ -38,6 +38,11 @@ func TestAccI3SPlan_1(t *testing.T) {
 					),
 				),
 			},
+			{
+				ResourceName:      testAccI3SPlan,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

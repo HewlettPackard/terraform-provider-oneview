@@ -25,6 +25,9 @@ func resourceLogicalSwitchGroup() *schema.Resource {
 		Read:   resourceLogicalSwitchGroupRead,
 		Update: resourceLogicalSwitchGroupUpdate,
 		Delete: resourceLogicalSwitchGroupDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {

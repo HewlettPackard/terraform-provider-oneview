@@ -37,6 +37,11 @@ func TestAccServerProfile_1(t *testing.T) {
 						"oneview_server_profile.test", "name", "test"),
 				),
 			},
+			{
+				ResourceName:      testAccServerProfile,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
