@@ -8,7 +8,7 @@ language: go
 go_import_path: github.com/HewlettPackard/terraform-provider-oneview
 
 go:
-    - 1.11
+    - 1.8
 
 env:
     global:
@@ -31,7 +31,8 @@ before_script:
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
         echo -e "  gofmt -w $PWD/$fn";
-        go fmt -w $PWD/$fn;
+        done;
+        exit 1;
       fi
 
 script:
