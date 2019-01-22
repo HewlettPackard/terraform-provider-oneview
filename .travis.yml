@@ -32,8 +32,6 @@ before_script:
         for fn in $UNFORMATTED; do
         echo -e "  gofmt -w $PWD/$fn";
         gofmt -w $PWD/$fn;
-        # done;
-        # exit 1;
       fi
 
 script:
