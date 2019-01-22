@@ -15,7 +15,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-//	"encoding/json"
+	//	"encoding/json"
 	"io/ioutil"
 )
 
@@ -61,64 +61,64 @@ func resourceEnclosure() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"available_for_full_height_profile": {
-							Type	: schema.TypeBool,
-							Computed:	true,
+							Type:     schema.TypeBool,
+							Computed: true,
 						},
 						"available_for_half_height_profile": {
-							Type	: schema.TypeBool,
-							Computed:	true,
+							Type:     schema.TypeBool,
+							Computed: true,
 						},
 						"bay_number": {
-							Type	: schema.TypeInt,
-							Computed:	true,
+							Type:     schema.TypeInt,
+							Computed: true,
 						},
 						"category": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"covered_by_device": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"covered_by_profile": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"created": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"device_presence": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"device_uri": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"enclosure_uri": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"etag": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"model": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"modified": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"profile_uri": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"type": {
-							Type	: schema.TypeString,
-							Computed:	true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
@@ -251,17 +251,17 @@ func resourceEnclosure() *schema.Resource {
 							Computed: true,
 						},
 						"ipv6-addresses": {
-							Computed:  true,
-							Type:	schema.TypeSet,
+							Computed: true,
+							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"address": {
-										Type:	schema.TypeString,
-										Computed:	true,
+										Type:     schema.TypeString,
+										Computed: true,
 									},
 									"type": {
-										Type:	schema.TypeString,
-										Computed:	true,
+										Type:     schema.TypeString,
+										Computed: true,
 									},
 								},
 							},
@@ -368,26 +368,26 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 
 	//jsonobj,_ := json.Marshal(d)
 	by := []byte(d.Get("user_name").(string))
-	ioutil.WriteFile("enclosureMap.json", by/*jsonobj*/, 0644)
+	ioutil.WriteFile("enclosureMap.json", by /*jsonobj*/, 0644)
 	enclosureCreateMap := ov.EnclosureCreateMap{
-		EnclosureGroupUri:	utils.NewNstring(d.Get("enclosure_group_uri").(string)),
-		Hostname:                    d.Get("host_name").(string),
-		Username:              d.Get("user_name").(string),
-		Password:              d.Get("password").(string),
-		LicensingIntent:              d.Get("licensing_intent").(string),
+		EnclosureGroupUri:    utils.NewNstring(d.Get("enclosure_group_uri").(string)),
+		Hostname:             d.Get("host_name").(string),
+		Username:             d.Get("user_name").(string),
+		Password:             d.Get("password").(string),
+		LicensingIntent:      d.Get("licensing_intent").(string),
 		ForceInstallFirmware: d.Get("force_install_firmware").(bool),
-		FirmwareBaselineUri:           d.Get("firmware_baseline_uri").(string),
-		Force: 	d.Get("force").(bool),
-		UpdateFirmwareOn:       d.Get("update_firmware_on").(string),
+		FirmwareBaselineUri:  d.Get("firmware_baseline_uri").(string),
+		Force:                d.Get("force").(bool),
+		UpdateFirmwareOn:     d.Get("update_firmware_on").(string),
 	}
 
 	rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
 	initialScopeUris := make([]string, len(rawInitialScopeUris))
 	for i, raw := range rawInitialScopeUris {
-		initialScopeUris[i] = raw.(string)//utils.Nstring(raw.(string))
+		initialScopeUris[i] = raw.(string) //utils.Nstring(raw.(string))
 	}
 	enclosureCreateMap.InitialScopeUris = initialScopeUris
-	
+
 	enclosureError := config.ovClient.CreateEnclosure(enclosureCreateMap)
 	d.SetId(d.Get("name").(string))
 	if enclosureError != nil {
@@ -400,7 +400,7 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	enclosure, err := config.ovClient.GetEnclosureByName(d.Id())//Get("id").(string))
+	enclosure, err := config.ovClient.GetEnclosureByName(d.Id()) //Get("id").(string))
 	if err != nil || enclosure.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -447,7 +447,7 @@ func resourceEnclosureUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	enclosure := ov.Enclosure{
-		URI:                    utils.NewNstring(d.Get("uri").(string)),
+		URI: utils.NewNstring(d.Get("uri").(string)),
 	}
 
 	err := config.ovClient.UpdateEnclosure(d.Get("op").(string), d.Get("path").(string), d.Get("value").(string), enclosure)
