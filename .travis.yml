@@ -31,8 +31,9 @@ before_script:
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
         echo -e "  gofmt -w $PWD/$fn";
-        done;
-        exit 1;
+        gofmt -w $PWD/$fn
+        # done;
+        # exit 1;
       fi
 
 script:
