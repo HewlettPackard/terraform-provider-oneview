@@ -181,7 +181,8 @@ type SnmpConfiguration struct {
 	SystemContact    string            `json:"systemContact,omitempty"`    // "systemContact": "",
 	TrapDestinations []TrapDestination `json:"trapDestinations,omitempty"` // "trapDestinations": {...}
 	Type             string            `json:"type,omitempty"`             // "type": "snmp-configuration",
-	URI              utils.Nstring     `json:"uri,omitempty"`              // "uri": null
+	URI              utils.Nstring     `json:"uri,omitempty"`              // "uri": null,
+	V3Enabled        *bool             `json:"v3Enabled,omitempty"`        // "v3Enabled": true
 }
 
 type TrapDestination struct {
