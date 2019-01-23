@@ -176,11 +176,12 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}) ([
 	data, err := ioutil.ReadAll(resp.Body)
 	if !c.isOkStatus(resp.StatusCode) {
 		type apiErr struct {
-			Err string `json:"details"`
+			Message string `json:"message"`
+			Details string `json:"details"`
 		}
 		var outErr apiErr
 		json.Unmarshal(data, &outErr)
-		return nil, fmt.Errorf("Error in response: %s\n Response Status: %s", outErr.Err, resp.Status)
+		return nil, fmt.Errorf("Error in response: %s\n Response Status: %s\n Response Details: %s", outErr.Message, resp.Status, outErr.Details)
 	}
 
 	if err != nil {
