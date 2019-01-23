@@ -516,10 +516,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
 	uplinkSetCount := d.Get("uplink_set.#").(int)
-	uplinkSets := make([]ov.UplinkSet, 0)
+	uplinkSets := make([]ov.UplinkSets, 0)
 	for i := 0; i < uplinkSetCount; i++ {
 		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
-		uplinkSet := ov.UplinkSet{}
+		uplinkSet := ov.UplinkSets{}
 		if val, ok := d.GetOk(uplinkSetPrefix + ".name"); ok {
 			uplinkSet.Name = val.(string)
 		}
@@ -1214,10 +1214,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
 	uplinkSetCount := d.Get("uplink_set.#").(int)
-	uplinkSets := make([]ov.UplinkSet, 0)
+	uplinkSets := make([]ov.UplinkSets, 0)
 	for i := 0; i < uplinkSetCount; i++ {
 		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
-		uplinkSet := ov.UplinkSet{}
+		uplinkSet := ov.UplinkSets{}
 		if val, ok := d.GetOk(uplinkSetPrefix + ".name"); ok {
 			uplinkSet.Name = val.(string)
 		}
