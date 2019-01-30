@@ -136,7 +136,6 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 	return resourceFCNetworkRead(d, meta)
 }
 
-
 func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
