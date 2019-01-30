@@ -31,7 +31,7 @@ before_script:
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
         echo -e "  gofmt -w $PWD/$fn";
-        gofmt -d oneview/resource_fc_network.go;
+        gofmt -d /home/travis/gopath/src/github.com/HewlettPackard/terraform-provider-oneview/oneview/resource_fc_network.go;
         done;
         exit 1;
       fi
