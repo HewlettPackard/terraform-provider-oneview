@@ -30,8 +30,7 @@ before_script:
     - if ! [ -z "$UNFORMATTED" ]; then
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
-        echo -e "  gofmt -w $PWD/$fn";
-        gofmt -d "$PWD/$fn";
+        echo -e "gofmt -w $PWD/$fn";
         done;
         exit 1;
       fi
