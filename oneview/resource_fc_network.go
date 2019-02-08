@@ -94,13 +94,6 @@ func resourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			/*"initialScopeUris": {
-				Optional: true,
-				Type: schema.TypeList,
-				Elem: &schema.Schema{
-					Type:	schema.TypeString,
-				},
-			},*/
 			"initial_scope_uris": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -125,12 +118,14 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		Description: d.Get("description").(string),
 	}
 
-	rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
-	initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-	for i, raw := range rawInitialScopeUris {
-		initialScopeUris[i] = utils.Nstring(raw.(string))
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		rawInitialScopeUris := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		for i, raw := range rawInitialScopeUris {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		fcNet.InitialScopeUris = initialScopeUris
 	}
-	fcNet.InitialScopeUris = initialScopeUris
 	fcNetError := config.ovClient.CreateFCNetwork(fcNet)
 	d.SetId(d.Get("name").(string))
 	if fcNetError != nil {
