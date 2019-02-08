@@ -110,7 +110,7 @@ func (pt *PowerTask) GetCurrentPowerState() error {
 	}
 
 	// get the latest state based on current blade uri
-	b, err := pt.Blade.Client.GetServerHardware(pt.Blade.URI)
+	b, err := pt.Blade.Client.GetServerHardwareByUri(pt.Blade.URI)
 	if err != nil {
 		return err
 	}

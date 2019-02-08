@@ -21,12 +21,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
-	"strings"
-
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
+	"strings"
 )
 
 // HardwareState
@@ -182,7 +180,7 @@ func (s ServerHardware) GetPowerState() (PowerState, error) {
 }
 
 // get a server hardware with uri
-func (c *OVClient) GetServerHardware(uri utils.Nstring) (ServerHardware, error) {
+func (c *OVClient) GetServerHardwareByUri(uri utils.Nstring) (ServerHardware, error) {
 
 	var hardware ServerHardware
 	// refresh login
@@ -245,17 +243,12 @@ func (c *OVClient) GetServerHardwareList(filters []string, sort string) (ServerH
 		c.SetQueryString(q)
 	}
 	data, err := c.RestAPICall(rest.GET, uri, nil)
-
-	// parse the url and setup any query strings
-	var Url *url.URL
-	Url, err = url.Parse(utils.Sanatize(c.Endpoint))
 	if err != nil {
 		return serverlist, err
 	}
-	Url.Path += uri
-	c.GetQueryString(Url)
 
 	log.Debugf("GetServerHardwareList %s", data)
+
 	if err := json.Unmarshal([]byte(data), &serverlist); err != nil {
 		return serverlist, err
 	}
