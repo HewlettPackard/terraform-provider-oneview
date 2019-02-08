@@ -26,6 +26,9 @@ func resourceServerProfileTemplate() *schema.Resource {
 		Read:   resourceServerProfileTemplateRead,
 		Update: resourceServerProfileTemplateUpdate,
 		Delete: resourceServerProfileTemplateDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {

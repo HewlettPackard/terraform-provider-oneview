@@ -23,6 +23,9 @@ func resourceFCoENetwork() *schema.Resource {
 		Read:   resourceFCoENetworkRead,
 		Update: resourceFCoENetworkUpdate,
 		Delete: resourceFCoENetworkDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {

@@ -38,6 +38,11 @@ func TestAccFCNetwork_1(t *testing.T) {
 					),
 				),
 			},
+			{
+				ResourceName:      testAccFCNetwork,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

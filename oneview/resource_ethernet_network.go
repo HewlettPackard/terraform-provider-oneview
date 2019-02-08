@@ -23,6 +23,9 @@ func resourceEthernetNetwork() *schema.Resource {
 		Read:   resourceEthernetNetworkRead,
 		Update: resourceEthernetNetworkUpdate,
 		Delete: resourceEthernetNetworkDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {

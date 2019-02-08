@@ -70,6 +70,21 @@ The following arguments are supported:
 * `snmp_configuration` - (Optional) The SNMP configuration for the logical interconnect group. 
   If not supplied a default will be used. Snmp Configuration is documented below.
 
+* `interconnect_bay_set` - (Optional) This option is required on Synergy hardware, but not needed for C7000.
+  The Interconnect bay set associated with the logical interconnect group. Supported interconnect bay set is
+  1 (bays 1&4), 2 (bays 2&5), or 3 (bays 3&6).
+
+* `redundancy_type` - (Optional) This option is required on Synergy hardware, but not needed for C7000.
+  The type of enclosure redundancy. Supported enclosure redundancy types are HighlyAvailable,
+  NonRedundantASide, NonRedundantBSide, and Redundant.
+
+* `enclosure_indexes` - (Optional) This option is required on Synergy hardware, but not needed for C7000.
+  The list of enclosure indices that are specified by this logical interconnect group. The value [-1] indicates
+  that this is a single enclosure logical interconnect group for Virtual Connect SE FC Modules. The value [1]
+  indicates that this is a single enclosure logical interconnect group for other supported interconnects. If
+  you are building a logical interconnect group for use with a three enclosures interconnect link topology, the
+  value needs to be [1,2,3].
+
 * `interconnect_map_entry_template` - (Optional) Interconnect map associated with the logical interconnect group.
   This can be specified multiple times. Interconnect Map Entry Template is documented below. 
 
@@ -106,7 +121,10 @@ Telemetry Configuration supports the following:
 
 Snmp Configuration supports the following: 
 
-* `enabled` - (Optional) Enables SNMP. Defaults to true.
+* `enabled` - (Optional) Enables SNMP v1 and v2. Defaults to true.
+
+* `v3_enabled` - (Optional) Enables SNMP v3.  Defaults to false.  Must be set to true
+  for a Virtual Connect SE 40Gb F8 Module.
 
 * `read_community` - (Optional) Authentication string for read-only access.
   Defaults to public.

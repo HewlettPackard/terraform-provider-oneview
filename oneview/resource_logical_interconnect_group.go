@@ -27,6 +27,9 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 		Read:   resourceLogicalInterconnectGroupRead,
 		Update: resourceLogicalInterconnectGroupUpdate,
 		Delete: resourceLogicalInterconnectGroupDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -37,6 +40,22 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "logical-interconnect-groupV3",
+			},
+			"interconnect_bay_set": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"redundancy_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"enclosure_indexes": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+				Set: func(a interface{}) int {
+					return a.(int)
+				},
 			},
 			"interconnect_map_entry_template": {
 				Optional: true,
@@ -181,6 +200,11 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
+						},
+						"v3_enabled": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
 						},
 						"type": {
 							Type:     schema.TypeString,
@@ -435,6 +459,23 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		Type: d.Get("type").(string),
 	}
 
+	if val, ok := d.GetOk("interconnect_bay_set"); ok {
+		lig.InterconnectBaySet = val.(int)
+	}
+
+	if val, ok := d.GetOk("redundancy_type"); ok {
+		lig.RedundancyType = val.(string)
+	}
+
+	if val, ok := d.GetOk("enclosure_indexes"); ok {
+		rawEnclosureIndexes := val.(*schema.Set).List()
+		enclosureIndexes := make([]int, len(rawEnclosureIndexes))
+		for i, raw := range rawEnclosureIndexes {
+			enclosureIndexes[i] = raw.(int)
+		}
+		lig.EnclosureIndexes = enclosureIndexes
+	}
+
 	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
 	for i := 0; i < interconnectMapEntryTemplateCount; i++ {
@@ -587,6 +628,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
 		enabled := val.(bool)
 		snmpConfiguration.Enabled = &enabled
+	}
+	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
+		v3Enabled := val.(bool)
+		snmpConfiguration.V3Enabled = &v3Enabled
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
@@ -796,6 +841,14 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("eTag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
 	d.Set("interconnect_settings.0.igmp_snooping", logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping)
+	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
+	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
+
+	enclosureIndexes := make([]interface{}, len(logicalInterconnectGroup.EnclosureIndexes))
+	for i, enclosureIndexVal := range logicalInterconnectGroup.EnclosureIndexes {
+		enclosureIndexes[i] = enclosureIndexVal
+	}
+	d.Set("enclosure_indexes", schema.NewSet(func(a interface{}) int { return a.(int) }, enclosureIndexes))
 
 	interconnectMapEntryTemplates := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates))
 	for _, interconnectMapEntryTemplate := range logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates {
@@ -1008,6 +1061,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	snmpConfiguration := make([]map[string]interface{}, 0, 1)
 	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
 		"enabled":          *logicalInterconnectGroup.SnmpConfiguration.Enabled,
+		"v3_enabled":       *logicalInterconnectGroup.SnmpConfiguration.V3Enabled,
 		"read_community":   logicalInterconnectGroup.SnmpConfiguration.ReadCommunity,
 		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
 		"system_contact":   logicalInterconnectGroup.SnmpConfiguration.SystemContact,
@@ -1100,6 +1154,23 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		Name: d.Get("name").(string),
 		Type: d.Get("type").(string),
 		URI:  utils.NewNstring(d.Get("uri").(string)),
+	}
+
+	if val, ok := d.GetOk("interconnect_bay_set"); ok {
+		lig.InterconnectBaySet = val.(int)
+	}
+
+	if val, ok := d.GetOk("redundancy_type"); ok {
+		lig.RedundancyType = val.(string)
+	}
+
+	if val, ok := d.GetOk("enclosure_indexes"); ok {
+		rawEnclosureIndexes := val.(*schema.Set).List()
+		enclosureIndexes := make([]int, len(rawEnclosureIndexes))
+		for i, raw := range rawEnclosureIndexes {
+			enclosureIndexes[i] = raw.(int)
+		}
+		lig.EnclosureIndexes = enclosureIndexes
 	}
 
 	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
@@ -1254,6 +1325,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
 		enabled := val.(bool)
 		snmpConfiguration.Enabled = &enabled
+	}
+	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
+		v3Enabled := val.(bool)
+		snmpConfiguration.V3Enabled = &v3Enabled
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
