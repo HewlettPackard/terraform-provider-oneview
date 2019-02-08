@@ -32,7 +32,7 @@ type LogicalInterconnectGroup struct {
 	Status                  string                   `json:"status,omitempty"`                 // "status": "Critical",
 	TelemetryConfiguration  *TelemetryConfiguration  `json:"telemetryConfiguration,omitempty"` // "telemetryConfiguration": {...},
 	Type                    string                   `json:"type"`                             // "type": "logical-interconnect-groupsV3",
-	UplinkSets              []UplinkSet              `json:"uplinkSets,omitempty"`             // "uplinkSets": {...},
+	UplinkSets              []UplinkSets             `json:"uplinkSets,omitempty"`             // "uplinkSets": {...},
 	URI                     utils.Nstring            `json:"uri,omitempty"`                    // "uri": "/rest/logical-interconnect-groups/e2f0031b-52bd-4223-9ac1-d91cb519d548",
 }
 
@@ -181,7 +181,8 @@ type SnmpConfiguration struct {
 	SystemContact    string            `json:"systemContact,omitempty"`    // "systemContact": "",
 	TrapDestinations []TrapDestination `json:"trapDestinations,omitempty"` // "trapDestinations": {...}
 	Type             string            `json:"type,omitempty"`             // "type": "snmp-configuration",
-	URI              utils.Nstring     `json:"uri,omitempty"`              // "uri": null
+	URI              utils.Nstring     `json:"uri,omitempty"`              // "uri": null,
+	V3Enabled        *bool             `json:"v3Enabled,omitempty"`        // "v3Enabled": true
 }
 
 type TrapDestination struct {
@@ -210,7 +211,7 @@ type TelemetryConfiguration struct {
 	URI             utils.Nstring `json:"uri,omitempty"`             // "uri": null
 }
 
-type UplinkSet struct {
+type UplinkSets struct {
 	EthernetNetworkType    string                  `json:"ethernetNetworkType,omitempty"` // "ethernetNetworkType": "Tagged",
 	LacpTimer              string                  `json:"lacpTimer,omitempty"`           // "lacpTimer": "Long",
 	LogicalPortConfigInfos []LogicalPortConfigInfo `json:"logicalPortConfigInfos"`        // "logicalPortConfigInfos": {...},

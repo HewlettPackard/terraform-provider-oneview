@@ -201,6 +201,11 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Optional: true,
 							Default:  true,
 						},
+						"v3_enabled": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
+						},
 						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -511,10 +516,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
 	uplinkSetCount := d.Get("uplink_set.#").(int)
-	uplinkSets := make([]ov.UplinkSet, 0)
+	uplinkSets := make([]ov.UplinkSets, 0)
 	for i := 0; i < uplinkSetCount; i++ {
 		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
-		uplinkSet := ov.UplinkSet{}
+		uplinkSet := ov.UplinkSets{}
 		if val, ok := d.GetOk(uplinkSetPrefix + ".name"); ok {
 			uplinkSet.Name = val.(string)
 		}
@@ -623,6 +628,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
 		enabled := val.(bool)
 		snmpConfiguration.Enabled = &enabled
+	}
+	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
+		v3Enabled := val.(bool)
+		snmpConfiguration.V3Enabled = &v3Enabled
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
@@ -1052,6 +1061,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	snmpConfiguration := make([]map[string]interface{}, 0, 1)
 	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
 		"enabled":          *logicalInterconnectGroup.SnmpConfiguration.Enabled,
+		"v3_enabled":       *logicalInterconnectGroup.SnmpConfiguration.V3Enabled,
 		"read_community":   logicalInterconnectGroup.SnmpConfiguration.ReadCommunity,
 		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
 		"system_contact":   logicalInterconnectGroup.SnmpConfiguration.SystemContact,
@@ -1204,10 +1214,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
 	uplinkSetCount := d.Get("uplink_set.#").(int)
-	uplinkSets := make([]ov.UplinkSet, 0)
+	uplinkSets := make([]ov.UplinkSets, 0)
 	for i := 0; i < uplinkSetCount; i++ {
 		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
-		uplinkSet := ov.UplinkSet{}
+		uplinkSet := ov.UplinkSets{}
 		if val, ok := d.GetOk(uplinkSetPrefix + ".name"); ok {
 			uplinkSet.Name = val.(string)
 		}
@@ -1315,6 +1325,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
 		enabled := val.(bool)
 		snmpConfiguration.Enabled = &enabled
+	}
+	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
+		v3Enabled := val.(bool)
+		snmpConfiguration.V3Enabled = &v3Enabled
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)

@@ -121,7 +121,10 @@ Telemetry Configuration supports the following:
 
 Snmp Configuration supports the following: 
 
-* `enabled` - (Optional) Enables SNMP. Defaults to true.
+* `enabled` - (Optional) Enables SNMP v1 and v2. Defaults to true.
+
+* `v3_enabled` - (Optional) Enables SNMP v3.  Defaults to false.  Must be set to true
+  for a Virtual Connect SE 40Gb F8 Module.
 
 * `read_community` - (Optional) Authentication string for read-only access.
   Defaults to public.
