@@ -85,38 +85,38 @@
 		{
 			"checksumSHA1": "kasshieWdVIntOY0Vrz1OXNv7IA=",
 			"path": "github.com/HewlettPackard/oneview-golang/i3s",
-			"revision": "9fbcf5309ee596ed3be2e88d02d26d24d2cd55a9",
-			"revisionTime": "2019-02-07T10:10:34Z"
+			"revision": "4e7a40fe7e77cf0ebc9941c6f10e583aba873901",
+			"revisionTime": "2019-01-21T09:07:18Z"
 		},
 		{
 			"checksumSHA1": "yrIv4kgbuYsHS05EqD5Va+sATQM=",
 			"path": "github.com/HewlettPackard/oneview-golang/icsp",
-			"revision": "9fbcf5309ee596ed3be2e88d02d26d24d2cd55a9",
-			"revisionTime": "2019-02-07T10:10:34Z"
+			"revision": "4e7a40fe7e77cf0ebc9941c6f10e583aba873901",
+			"revisionTime": "2019-01-21T09:07:18Z"
 		},
 		{
 			"checksumSHA1": "T7C6uoGuuhXZ0UNMJr/7IyhF5ls=",
 			"path": "github.com/HewlettPackard/oneview-golang/liboneview",
-			"revision": "9fbcf5309ee596ed3be2e88d02d26d24d2cd55a9",
-			"revisionTime": "2019-02-07T10:10:34Z"
+			"revision": "4e7a40fe7e77cf0ebc9941c6f10e583aba873901",
+			"revisionTime": "2019-01-21T09:07:18Z"
 		},
 		{
-			"checksumSHA1": "gwTN0HnPzbauSv4k8h0R6lomUXU=",
+			"checksumSHA1": "+1nnO0GGTcj86EBQMsy28EHMXpw=",
 			"path": "github.com/HewlettPackard/oneview-golang/ov",
-			"revision": "9fbcf5309ee596ed3be2e88d02d26d24d2cd55a9",
-			"revisionTime": "2019-02-07T10:10:34Z"
+			"revision": "4e7a40fe7e77cf0ebc9941c6f10e583aba873901",
+			"revisionTime": "2019-01-21T09:07:18Z"
 		},
 		{
 			"checksumSHA1": "FvTuPZUjQi9nSxEqpSBnLJePgqY=",
 			"path": "github.com/HewlettPackard/oneview-golang/rest",
-			"revision": "9fbcf5309ee596ed3be2e88d02d26d24d2cd55a9",
-			"revisionTime": "2019-02-07T10:10:34Z"
+			"revision": "4e7a40fe7e77cf0ebc9941c6f10e583aba873901",
+			"revisionTime": "2019-01-21T09:07:18Z"
 		},
 		{
 			"checksumSHA1": "tSDhcm+zX/nRBHeXiQN2KqaRKu0=",
 			"path": "github.com/HewlettPackard/oneview-golang/utils",
-			"revision": "9fbcf5309ee596ed3be2e88d02d26d24d2cd55a9",
-			"revisionTime": "2019-02-07T10:10:34Z"
+			"revision": "4e7a40fe7e77cf0ebc9941c6f10e583aba873901",
+			"revisionTime": "2019-01-21T09:07:18Z"
 		},
 		{
 			"path": "github.com/Unknwon/com",
@@ -177,7 +177,7 @@
 			"origin": "github.com/hashicorp/terraform/vendor/github.com/aws/aws-sdk-go/aws/corehandlers",
 			"path": "github.com/aws/aws-sdk-go/aws/corehandlers",
 			"revision": "50fb9aecbdf9bc637c1b3b2ae9eeb01ca06fe95e",
-			"revisionTime": "2017-03-31T18:33:08Z"
+			"revisionTime":"2017-03-31T18:33:08Z"
 		},
 		{
 			"checksumSHA1": "zu5C95rmCZff6NYZb62lEaT5ibE=",
