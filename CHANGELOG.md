@@ -7,15 +7,15 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Major changes:
 - Extended support of SDK to OneView API800.
-- Support for Go 1.11
-- Support for Terraform 0.11    
+- Support for Go 1.11  
 - Added example files for the resources for improved readability and usability.
 - Added CHANGELOG to track versions, issues and improvements.
 - Officially adopted Semantic Versioning for the SDK
 - Added endpoints-support.md to track the supported and tested endpoints for the different HPE OneView REST APIs
 
 #### Bug fixes & Enhancements:
-
+- [#52] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/52) What API Versions are supported?
+- [#45] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/45) FC Networks - Assign Bandwidth
 
 ### Oneview Features supported
 - Enclosure    
