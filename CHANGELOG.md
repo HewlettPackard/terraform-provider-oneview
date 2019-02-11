@@ -14,8 +14,10 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Added endpoints-support.md to track the supported and tested endpoints for the different HPE OneView REST APIs
 
 #### Bug fixes & Enhancements:
-- [#52] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/52) What API Versions are supported?
-- [#45] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/45) FC Networks - Assign Bandwidth
+- [#58] (https://github.com/HewlettPackard/terraform-provider-oneview/pull/58) Added SNMP v3 configuration support to Logical Interconnect Group
+- [#56] (https://github.com/HewlettPackard/terraform-provider-oneview/pull/56) Added Synergy Support for Logical Interconnect Groups
+- [#54] (https://github.com/HewlettPackard/terraform-provider-oneview/pull/54) Added import support to all resources
+- [#51] (https://github.com/HewlettPackard/terraform-provider-oneview/pull/51) Updated contribution guidelines
 
 ### Oneview Features supported
 - Enclosure    
