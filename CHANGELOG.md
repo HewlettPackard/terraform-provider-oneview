@@ -12,12 +12,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Added CHANGELOG to track versions, issues and improvements.
 - Officially adopted Semantic Versioning for the SDK
 - Added endpoints-support.md to track the supported and tested endpoints for the different HPE OneView REST APIs
+- Added SNMP v3 configuration support to Logical Interconnect Group
+- Added import support to all resources
+- Updated contribution guidelines
 
 #### Bug fixes & Enhancements:
-- [#58] (https://github.com/HewlettPackard/terraform-provider-oneview/pull/58) Added SNMP v3 configuration support to Logical Interconnect Group
-- [#56] (https://github.com/HewlettPackard/terraform-provider-oneview/pull/56) Added Synergy Support for Logical Interconnect Groups
-- [#54] (https://github.com/HewlettPackard/terraform-provider-oneview/pull/54) Added import support to all resources
-- [#51] (https://github.com/HewlettPackard/terraform-provider-oneview/pull/51) Updated contribution guidelines
+- [#47] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/47) Added Synergy Support for Logical Interconnect Groups
 
 ### Oneview Features supported
 - Enclosure    
