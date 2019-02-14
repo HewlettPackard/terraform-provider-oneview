@@ -52,6 +52,10 @@ func resourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"managed_san_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -113,6 +117,7 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		Name:                    d.Get("name").(string),
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
+		ManagedSanURI:           utils.NewNstring(d.Get("managed_san_uri").(string)),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
@@ -151,6 +156,7 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("type", fcNet.Type)
 	d.Set("uri", fcNet.URI.String())
 	d.Set("connection_template_uri", fcNet.ConnectionTemplateUri.String())
+	d.Set("managed_san_uri", fcNet.ManagedSanURI.String())
 	d.Set("status", fcNet.Status)
 	d.Set("category", fcNet.Category)
 	d.Set("state", fcNet.State)
