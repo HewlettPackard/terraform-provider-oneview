@@ -59,6 +59,12 @@ type BiosOption struct {
 	OverriddenSettings []BiosSettings `json:"overriddenSettings,omitempty"` // "overriddenSettings": []
 }
 
+type ConnectionSettings struct {
+	ComplianceControl string       `json:"complianceControl,omitempty"` // "complianceControl": "Checked",
+	ManageConnections bool         `json:"manageConnections,omitempty"` // "manageConnections": false,
+	Connections       []Connection `json:"connections,omitempty"`
+}
+
 // ServerProfile - server profile object for ov
 type ServerProfile struct {
 	ServerProfilev200
@@ -70,6 +76,7 @@ type ServerProfile struct {
 	BootMode              BootModeOption      `json:"bootMode,omitempty"`         // "bootMode": {},
 	Category              string              `json:"category,omitempty"`         // "category": "server-profiles",
 	Connections           []Connection        `json:"connections,omitempty"`
+	ConnectionSettings    ConnectionSettings  `json:"connectionSettings,omitempty"`
 	Description           string              `json:"description,omitempty"`           // "description": "Docker Machine Bay 16",
 	Created               string              `json:"created,omitempty"`               // "created": "20150831T154835.250Z",
 	ETAG                  string              `json:"eTag,omitempty"`                  // "eTag": "1441036118675/8"
@@ -79,11 +86,13 @@ type ServerProfile struct {
 	Firmware              FirmwareOption      `json:"firmware,omitempty"`              // "firmware": { },
 	HideUnusedFlexNics    bool                `json:"hideUnusedFlexNics,omitempty"`    // "hideUnusedFlexNics": false,
 	InProgress            bool                `json:"inProgress,omitempty"`            // "inProgress": false,
+	InitialScopeUris      []utils.Nstring     `json:"initialScopeUris,omitempty"`      // "initialScopeUris":[],
 	LocalStorage          LocalStorageOptions `json:"localStorage,omitempty"`          // "localStorage": {},
 	MACType               string              `json:"macType,omitempty"`               // "macType": "Physical",
 	Modified              string              `json:"modified,omitempty"`              // "modified": "20150902T175611.657Z",
 	Name                  string              `json:"name,omitempty"`                  // "name": "Server_Profile_scs79",
 	SanStorage            SanStorageOptions   `json:"sanStorage,omitempty"`            // "sanStorage": {},
+	ScopesUri             string              `json:"scopesUri,omitempty"`             // "scopesUri": "/rest/scopes/resources/rest/server-profiles/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
 	SerialNumber          utils.Nstring       `json:"serialNumber,omitempty"`          // "serialNumber": "2M25090RMW",
 	SerialNumberType      string              `json:"serialNumberType,omitempty"`      // "serialNumberType": "Physical",
 	ServerHardwareTypeURI utils.Nstring       `json:"serverHardwareTypeUri,omitempty"` // "serverHardwareTypeUri": "/rest/server-hardware-types/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
@@ -91,7 +100,7 @@ type ServerProfile struct {
 	State                 string              `json:"state,omitempty"`                 // "state": "Normal",
 	Status                string              `json:"status,omitempty"`                // "status": "Critical",
 	TaskURI               utils.Nstring       `json:"taskUri,omitempty"`               // "taskUri": "/rest/tasks/6F0DF438-7D30-41A2-A36D-62AB866BC7E8",
-	Type                  string              `json:"type,omitempty"`                  // 	Type               string `json:"type,omitempty"`	// "type": "ServerProfileV4",
+	Type                  string              `json:"type,omitempty"`                  // "type": "ServerProfileV4",
 	URI                   utils.Nstring       `json:"uri,omitempty"`                   // "uri": "/rest/server-profiles/9979b3a4-646a-4c3e-bca6-80ca0b403a93",
 	UUID                  utils.Nstring       `json:"uuid,omitempty"`                  // "uuid": "30373237-3132-4D32-3235-303930524D57",
 	WWNType               string              `json:"wwnType,omitempty"`               // "wwnType": "Physical",
@@ -134,6 +143,7 @@ func (s ServerProfile) Clone() ServerProfile {
 		SerialNumberType:   s.SerialNumberType,
 		Type:               s.Type,
 		WWNType:            s.WWNType,
+		URI:                s.URI,
 	}
 }
 
@@ -155,7 +165,7 @@ func (c *OVClient) GetProfileByName(name string) (ServerProfile, error) {
 	var (
 		profile ServerProfile
 	)
-	profiles, err := c.GetProfiles(fmt.Sprintf("name matches '%s'", name), "name:asc")
+	profiles, err := c.GetProfiles("", "", fmt.Sprintf("name matches '%s'", name), "name:asc", "")
 	if profiles.Total > 0 {
 		return profiles.Members[0], err
 	} else {
@@ -168,7 +178,7 @@ func (c *OVClient) GetProfileBySN(serialnum string) (ServerProfile, error) {
 	var (
 		profile ServerProfile
 	)
-	profiles, err := c.GetProfiles(fmt.Sprintf("serialNumber matches '%s'", serialnum), "name:asc")
+	profiles, err := c.GetProfiles("", "", fmt.Sprintf("serialNumber matches '%s'", serialnum), "name:asc", "")
 	if profiles.Total > 0 {
 		return profiles.Members[0], err
 	} else {
@@ -177,19 +187,31 @@ func (c *OVClient) GetProfileBySN(serialnum string) (ServerProfile, error) {
 }
 
 // GetProfiles - get a server profiles
-func (c *OVClient) GetProfiles(filter string, sort string) (ServerProfileList, error) {
+func (c *OVClient) GetProfiles(start string, count string, filter string, sort string, scopeUris string) (ServerProfileList, error) {
 	var (
 		uri      = "/rest/server-profiles"
 		q        map[string]interface{}
 		profiles ServerProfileList
 	)
 	q = make(map[string]interface{})
-	if filter != "" {
+	if len(filter) > 0 {
 		q["filter"] = filter
 	}
 
 	if sort != "" {
 		q["sort"] = sort
+	}
+
+	if start != "" {
+		q["start"] = start
+	}
+
+	if count != "" {
+		q["count"] = count
+	}
+
+	if scopeUris != "" {
+		q["scopeUris"] = scopeUris
 	}
 
 	// refresh login
@@ -233,12 +255,16 @@ func (c *OVClient) GetProfileByURI(uri utils.Nstring) (ServerProfile, error) {
 }
 
 // SubmitNewProfile - submit new profile template
-func (c *OVClient) SubmitNewProfile(p ServerProfile) (t *Task, err error) {
+func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 	log.Infof("Initializing creation of server profile for %s.", p.Name)
 	var (
 		uri = "/rest/server-profiles"
-	// 	task = rest_api(:oneview, :post, '/rest/server-profiles', { 'body' => new_template_profile })
+		t   *Task
 	)
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
 	t = t.NewProfileTask(c)
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, p)
@@ -247,17 +273,22 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (t *Task, err error) {
 	if err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error submitting new profile request: %s", err)
-		return t, err
+		return err
 	}
 
-	log.Debugf("Response NewProfile %s", data)
+	log.Debugf("Response New Profile %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
-		return t, err
+		return err
 	}
 
-	return t, err
+	err = t.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // create profile from template
@@ -285,16 +316,10 @@ func (c *OVClient) CreateProfileFromTemplate(name string, template ServerProfile
 	new_template.ServerHardwareURI = blade.URI
 	new_template.Description += " " + name
 	new_template.Name = name
+	log.Debugf("new_template -> %+v", new_template)
 
-	t, err := c.SubmitNewProfile(new_template)
-	if err != nil {
-		return err
-	}
-	err = t.Wait()
-	if err != nil {
-		return err
-	}
-	return nil
+	err = c.SubmitNewProfile(new_template)
+	return err
 }
 
 // submit new profile template
@@ -347,7 +372,7 @@ func (c *OVClient) DeleteProfile(name string) error {
 
 	if profile.Name != "" {
 		if profile.ServerHardwareURI != "" {
-			server, err = c.GetServerHardware(profile.ServerHardwareURI)
+			server, err = c.GetServerHardwareByUri(profile.ServerHardwareURI)
 			if err != nil {
 				log.Warnf("Problem getting server hardware, %s", err)
 			} else {

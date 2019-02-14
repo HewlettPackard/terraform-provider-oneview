@@ -62,7 +62,7 @@ func (c *OVClient) CreateMachine(host_name string, server_template string) (err 
 	if bladep.ServerHardwareURI != "" {
 		// Template already exist, power it on and continue
 		// Power on the server profile if it exist
-		if blade, err = c.GetServerHardware(bladep.ServerHardwareURI); err != nil {
+		if blade, err = c.GetServerHardwareByUri(bladep.ServerHardwareURI); err != nil {
 			log.Errorf("Error in getting server hardware from uri, %s", err)
 			return err
 		}
@@ -94,7 +94,7 @@ func (c *OVClient) CreateMachine(host_name string, server_template string) (err 
 	}
 
 	// load that available hardware
-	blade, err = c.GetServerHardware(blade.URI)
+	blade, err = c.GetServerHardwareByUri(blade.URI)
 	if err != nil {
 		return err
 	}

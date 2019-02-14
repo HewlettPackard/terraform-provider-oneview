@@ -55,7 +55,7 @@ func (c *OVClient) GetProfileTemplateByName(name string) (ServerProfile, error) 
 	)
 	// v2 way to get ServerProfile
 	if c.IsProfileTemplates() {
-		profiles, err := c.GetProfileTemplates(fmt.Sprintf("name matches '%s'", name), "name:asc")
+		profiles, err := c.GetProfileTemplates("", "", fmt.Sprintf("name matches '%s'", name), "name:asc", "")
 		if profiles.Total > 0 {
 			return profiles.Members[0], err
 		} else {
@@ -64,7 +64,7 @@ func (c *OVClient) GetProfileTemplateByName(name string) (ServerProfile, error) 
 	} else {
 
 		// v1 way to get a ServerProfile
-		profiles, err := c.GetProfiles(fmt.Sprintf("name matches '%s'", name), "name:asc")
+		profiles, err := c.GetProfiles("", "", fmt.Sprintf("name matches '%s'", name), "name:asc", "")
 		if profiles.Total > 0 {
 			return profiles.Members[0], err
 		} else {
@@ -75,19 +75,31 @@ func (c *OVClient) GetProfileTemplateByName(name string) (ServerProfile, error) 
 }
 
 // get a server profiles
-func (c *OVClient) GetProfileTemplates(filter string, sort string) (ServerProfileList, error) {
+func (c *OVClient) GetProfileTemplates(start string, count string, filter string, sort string, scopeUris string) (ServerProfileList, error) {
 	var (
 		uri      = "/rest/server-profile-templates"
 		q        map[string]interface{}
 		profiles ServerProfileList
 	)
 	q = make(map[string]interface{})
-	if filter != "" {
+	if len(filter) > 0 {
 		q["filter"] = filter
 	}
 
 	if sort != "" {
 		q["sort"] = sort
+	}
+
+	if start != "" {
+		q["start"] = start
+	}
+
+	if count != "" {
+		q["count"] = count
+	}
+
+	if scopeUris != "" {
+		q["scopeUris"] = scopeUris
 	}
 
 	// refresh login
@@ -97,6 +109,7 @@ func (c *OVClient) GetProfileTemplates(filter string, sort string) (ServerProfil
 	if len(q) > 0 {
 		c.SetQueryString(q)
 	}
+
 	data, err := c.RestAPICall(rest.GET, uri, nil)
 	if err != nil {
 		return profiles, err
@@ -123,10 +136,23 @@ func (c *OVClient) CreateProfileTemplate(serverProfileTemplate ServerProfile) er
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, serverProfileTemplate)
 	log.Debugf("task -> %+v", t)
-	_, err := c.RestAPICall(rest.POST, uri, serverProfileTemplate)
+	data, err := c.RestAPICall(rest.POST, uri, serverProfileTemplate)
+
 	if err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error submitting new server profile template request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response New server profile template %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
 		return err
 	}
 
