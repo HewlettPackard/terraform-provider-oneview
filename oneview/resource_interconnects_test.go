@@ -62,7 +62,7 @@ func testAccCheckInterconnectExists(n string, interconnect *ov.Interconnect) res
 			return err
 		}
 
-		testFCNetwork, err := config.ovClient.GetInterconnectByName(rs.Primary.ID)
+		testInterconnect, err := config.ovClient.GetInterconnectByName(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -74,7 +74,7 @@ func testAccCheckInterconnectExists(n string, interconnect *ov.Interconnect) res
 	}
 }
 
-var testAccFCNetwork = `resource "oneview_interconnect" "test" {
+var testAccInterconnect = `resource "oneview_interconnect" "test" {
   count = 1
   name = "Terraform Interconnect 1"
 }`
