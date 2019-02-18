@@ -20,10 +20,12 @@ type InterconnectType struct {
 	MinimumFirmwareVersion   string                 `json:"minimumFirmwareVersion,omitempty"`   // "minimumFirmwareVersion": "2.0.0",
 	Modified                 string                 `json:"modified,omitempty"`                 // "modified": "20150831T154835.250Z",
 	Name                     utils.Nstring          `json:"name,omitempty"`                     // "name": null,
+	OtherFamilyMembers       []OtherFamilyMember    `json:"otherFamilyMembers,omitempty"`       // "otherFamilyMembers":"[]",
 	PartNumber               string                 `json:"partNumber,omitempty"`               // "partNumber": "572018-B21",
 	PortInfos                []PortInfo             `json:"portInfos,omitempty"`                // "portInfos": {...},
 	State                    string                 `json:"state,omitempty"`                    // "state": "Normal",
 	Status                   string                 `json:"status,omitempty"`                   // "status": "Critical",
+	TaaCompliant             bool                   `json:"taaCompliant"`                       // "taaCompliant": true,
 	Type                     string                 `json:"type,omitempty"`                     // "type": "interconnect-typeV3",
 	UnsupportedCapabilities  []string               `json:"unsupportedCapabilities,omitempty"`  // "unsupportedCapabilities": [],
 	URI                      utils.Nstring          `json:"uri,omitempty"`                      // "uri": "/rest/interconnect-types/9d31081c-e010-4005-bf0b-e64b0ca04af5"
@@ -51,6 +53,12 @@ type InterconnectCapability struct {
 	MaxBandwidthInGbps int      `json:"maxBandwidthInGbps,omitempty"` // "maxBandwidthInGbps": 10,
 }
 
+type OtherFamilyMember struct {
+	ModelName    string `json:"modelName,omitempty"`    // "modelName":"",
+	PartNumber   string `json:"partNumber,omitempty"`   // "partNumber":"",
+	TaaCompliant bool   `json:"taaCompliant,omitempty"` // "taaCompliant": true,
+}
+
 type PortInfo struct {
 	DownlinkCapable  bool          `json:"downlinkCapable,omitempty"` // "downlinkCapable": true,
 	PairedPortName   utils.Nstring `json:"pairedPortName,omitempty"`  // "pairedPortName": null,
@@ -74,7 +82,7 @@ func (c *OVClient) GetInterconnectTypeByName(name string) (InterconnectType, err
 	var (
 		interconnectType InterconnectType
 	)
-	interconnectTypes, err := c.GetInterconnectTypes(fmt.Sprintf("name matches '%s'", name), "name:asc")
+	interconnectTypes, err := c.GetInterconnectTypes("", "", fmt.Sprintf("name matches '%s'", name), "name:asc")
 	if interconnectTypes.Total > 0 {
 		return interconnectTypes.Members[0], err
 	} else {
@@ -100,7 +108,7 @@ func (c *OVClient) GetInterconnectTypeByUri(uri utils.Nstring) (InterconnectType
 	return interconnectType, nil
 }
 
-func (c *OVClient) GetInterconnectTypes(filter string, sort string) (InterconnectTypeList, error) {
+func (c *OVClient) GetInterconnectTypes(start string, count string, filter string, sort string) (InterconnectTypeList, error) {
 	var (
 		uri               = "/rest/interconnect-types"
 		q                 map[string]interface{}
@@ -113,6 +121,14 @@ func (c *OVClient) GetInterconnectTypes(filter string, sort string) (Interconnec
 
 	if sort != "" {
 		q["sort"] = sort
+	}
+
+	if start != "" {
+		q["start"] = start
+	}
+
+	if count != "" {
+		q["count"] = count
 	}
 
 	// refresh login
