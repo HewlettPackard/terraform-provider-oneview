@@ -36,6 +36,9 @@
 |<sub>/rest/fcoe-networks</sub>                                                           | POST     | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |
 |<sub>/rest/fcoe-networks/{id}</sub>                                                      | PUT      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |
 |<sub>/rest/fcoe-networks/{id}</sub>                                                      | DELETE   | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |
+|     **Interconnects**                                                                                                                          |
+|<sub>/rest/interconnects</sub>                                                           | GET      | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   |
+|<sub>/rest/interconnects/{id}</sub>                                                      | GET      | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   |
 |     **Logical Interconnect Groups**                                                                                                             |
 |<sub>/rest/logical-interconnect-groups</sub>                                             | POST     | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |  :heavy_multiplication_x: | :heavy_multiplication_x:   |
 |<sub>/rest/logical-interconnect-groups/{id}</sub>                                        | PUT      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |  :heavy_multiplication_x: |  :heavy_multiplication_x:   |
