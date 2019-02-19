@@ -58,21 +58,21 @@ func resourceUplinkSet() *schema.Resource {
 				Set: schema.HashString,
 			},
 			"connection_mode": {
-				Type:     schema.TypeBool,
+				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_type": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"ethernet_network_type": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "fc-networkV2",
+				Default:  "uplink-setV4",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -110,9 +110,9 @@ func resourceUplinkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"manual_logi_redistribution_state": {
+			"manual_login_redistribution_state": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"native_network_uri": {
 				Type:     schema.TypeString,
@@ -143,7 +143,7 @@ func resourceUplinkSet() *schema.Resource {
 				},
 			},
 			"port_config_infos": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -152,24 +152,12 @@ func resourceUplinkSet() *schema.Resource {
 							Optional: true,
 						},
 						"location": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
-			"primary_port_location": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"location": {
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"location_entries": {
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -198,12 +186,13 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	uplinkSet := ov.UplinkSet{
-		LogicalInterconnectURI:         d.Get("logical_interconnect_uri"),
-		ConnectionMode:                 g.Get("connection_mode"),
-		NetworkType:                    d.Get("network_type"),
-		EthernetNetworkType:            d.Get("ethernet_network_type"),
-		Type:                           d.Get("type"),
-		ManualLoginRedistributionState: d.Get("manual_login_redistribution_state"),
+		Name: d.Get("name").(string),
+		LogicalInterconnectURI: utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
+		ConnectionMode:         d.Get("connection_mode").(string),
+		NetworkType:            d.Get("network_type").(string),
+		EthernetNetworkType:    d.Get("ethernet_network_type").(string),
+		Type:                   d.Get("type").(string),
+		ManualLoginRedistributionState: d.Get("manual_login_redistribution_state").(string),
 	}
 
 	if val, ok := d.GetOk("network_uris"); ok {
@@ -212,7 +201,7 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 		for i, raw := range rawNetworkUris {
 			NetworkUris[i] = utils.Nstring(raw.(string))
 		}
-		uplinkSet.NetworkUris = NetworkUris	
+		uplinkSet.NetworkURIs = NetworkUris
 	}
 
 	if val, ok := d.GetOk("fc_network_uris"); ok {
@@ -221,7 +210,7 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 		for i, raw := range rawFcNetworkUris {
 			FcNetworkUris[i] = utils.Nstring(raw.(string))
 		}
-		uplinkSet.FcNetworkUris = FcNetworkUris
+		uplinkSet.FcNetworkURIs = FcNetworkUris
 	}
 
 	if val, ok := d.GetOk("fcoe_network_uris"); ok {
@@ -230,36 +219,36 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 		for i, raw := range rawFcoeNetworkUris {
 			FcoeNetworkUris[i] = utils.Nstring(raw.(string))
 		}
-		uplinkSet.FcoeNetworkUris = FcoeNetworkUris
+		uplinkSet.FcoeNetworkURIs = FcoeNetworkUris
 	}
+	/*
+		portLocationEntriesPrefix := fmt.Sprintf("location_entries.0")
+		portLocationEntries := ov.LocationEntries{}
+		if val, ok := d.GetOk(portLocationEntries + ".value"); ok {
+			portLocationEntries.Value = val.(string)
+		}
+		if val, ok := d.GetOk(portLocationEntries + ".type"); ok {
+			portLocationEntries.Type = &portLocation
+		}
 
-	portLocationEntriesPrefix := fmt.Sprintf("location_entries.0")
-	portLocationEntries := ov.LocationEntries{}
-	if val, ok := d.GetOk(portLocationEntries + ".value"); ok {
-		portLocationEntries.DesiredSpeed = val.(string)
-	}
-	if val, ok := d.GetOk(portLocationEntries + ".type"); ok {
-		portLocationEntries.location = &portLocation
-	}
-	
-	portLocationPrefix := fmt.Sprintf("location.0")
-	portLocation := ov.Location{}
-	if val, ok := d.GetOk(portLocation + ".location_entries"); ok {
-		portLocation =  &portLocationEntries
-	}
-	
-	portConfigInfosPrefix := fmt.Sprintf("port_config_infos.0")
-	portConfigInfos := ov.PortConfigInfos{}
-	if val, ok := d.GetOk(portConfigInfosPrefix + ".desired_speed"); ok {
-		portConfigInfos.DesiredSpeed = val.(string)
-	}
-	if val, ok := d.GetOk(portConfigInfosPrefix + ".location"); ok {
-		portConfigInfos.location = &portLocation
-	}
-	if portConfigInfos != (ov.PortConfigInfos{}) {
-		uplink_set.portConfigInfos = &portConfigInfos
-	}
+		portLocationPrefix := fmt.Sprintf("location.0")
+		portLocation := ov.Location{}
+		if val, ok := d.GetOk(portLocation + ".location_entries"); ok {
+			portLocation =  &portLocationEntries
+		}
 
+		portConfigInfosPrefix := fmt.Sprintf("port_config_infos.0")
+		portConfigInfos := ov.PortConfigInfos{}
+		if val, ok := d.GetOk(portConfigInfosPrefix + ".desired_speed"); ok {
+			portConfigInfos.DesiredSpeed = val.(string)
+		}
+		if val, ok := d.GetOk(portConfigInfosPrefix + ".location"); ok {
+			portConfigInfos.Location = &portLocation
+		}
+		if portConfigInfos != (ov.PortConfigInfos{}) {
+			uplink_set.PortConfigInfos = &portConfigInfos
+		}
+	*/
 	uplinkSetError := config.ovClient.CreateUplinkSet(uplinkSet)
 	d.SetId(d.Get("name").(string))
 	if uplinkSetError != nil {
@@ -278,20 +267,20 @@ func resourceUplinkSetRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 	d.Set("name", uplinkSet.Name)
-        d.Set("logical_interconnect_uri", uplinkSet.LogicalInterconnectUri)
-        d.Set("network_uris", uplinkSet.NetworkURIs.String())
-        d.Set("manual_login_redistribution_state", uplinkSet.ManualLoginRedistributionState)
-        d.Set("description", uplinkSet.Description)
-        d.Set("type", uplinkSet.Type)
-        d.Set("uri", uplinkSet.URI.String())
-        d.Set("fcoe_network_uris", uplinkSet.FcoeNetworkURIs.String())
-        d.Set("status", uplinkSet.Status)
-        d.Set("category", uplinkSet.Category)
-        d.Set("state", uplinkSet.State)
-        d.Set("fc_network_uris", uplinkSet.FcNetworkURIs.String())
-        d.Set("created", uplinkSet.Created)
-        d.Set("modified", uplinkSet.Modified)
-        d.Set("eTag", uplinkSet.ETAG)
+	d.Set("logical_interconnect_uri", uplinkSet.LogicalInterconnectURI)
+	d.Set("network_uris", uplinkSet.NetworkURIs)
+	d.Set("manual_login_redistribution_state", uplinkSet.ManualLoginRedistributionState)
+	d.Set("description", uplinkSet.Description)
+	d.Set("type", uplinkSet.Type)
+	d.Set("uri", uplinkSet.URI.String())
+	d.Set("fcoe_network_uris", uplinkSet.FcoeNetworkURIs)
+	d.Set("status", uplinkSet.Status)
+	d.Set("category", uplinkSet.Category)
+	d.Set("state", uplinkSet.State)
+	d.Set("fc_network_uris", uplinkSet.FcNetworkURIs)
+	d.Set("created", uplinkSet.Created)
+	d.Set("modified", uplinkSet.Modified)
+	d.Set("eTag", uplinkSet.Etag)
 	d.Set("reachability", uplinkSet.Reachability)
 	d.Set("expected_neighbor", uplinkSet.ExpectedNeighbor)
 	d.Set("network_type", uplinkSet.NetworkType)
@@ -304,18 +293,14 @@ func resourceUplinkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	uplinkSet := ov.UplinkSet{
-		ETAG:                    d.Get("eTag").(string),
-		URI:                     utils.NewNstring(d.Get("uri").(string)),
-		Name:                    d.Get("name").(string),
-		FabricType:              d.Get("fabric_type").(string),
-		LinkStabilityTime:       d.Get("link_stability_time").(int),
-		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type: d.Get("type").(string),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Description:           d.Get("description").(string),
+		Etag:        d.Get("eTag").(string),
+		URI:         utils.NewNstring(d.Get("uri").(string)),
+		Name:        d.Get("name").(string),
+		Type:        d.Get("type").(string),
+		Description: utils.NewNstring(d.Get("description").(string)),
 	}
 
-	err := config.ovClient.UpdateFcNetwork(uplinkSet)
+	err := config.ovClient.UpdateUplinkSet(uplinkSet)
 	if err != nil {
 		return err
 	}
