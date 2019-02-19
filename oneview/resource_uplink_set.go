@@ -223,44 +223,34 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 		uplinkSet.FcoeNetworkURIs = FcoeNetworkUris
 	}
 
-	portConfigInfosCount := d.Get("portConfigInfos.#").(int)
-
-	portConfigInfosAll := make([]ov.PortConfigInfos, 0, portConfigInfosCount)
+	portConfigInfosCount := d.Get("port_config_infos.#").(int)
+	portConfigInfosAll := make([]ov.PortConfigInfos, 0)
 
 	for i := 0; i < portConfigInfosCount; i++ {
-
 		portConfigInfosPrefix := fmt.Sprintf("port_config_infos.%d", i)
 		location := ov.Location{}
 
 		locationPrefix := fmt.Sprintf(portConfigInfosPrefix + ".location.0")
-
-		locationEntriesCount := d.Get(locationPrefix + "locationEntries.#").(int)
-
-		locationEntriesAll := make([]ov.LocationEntries, 0, locationEntriesCount)
+		locationEntriesCount := d.Get(locationPrefix + ".location_entries.#").(int)
+		locationEntriesAll := make([]ov.LocationEntries, 0)
 
 		for i := 0; i < locationEntriesCount; i++ {
-
-			locationEntriesPrefix := fmt.Sprintf(locationPrefix+"locationEntries.%d", i)
-
+			locationEntriesPrefix := fmt.Sprintf(locationPrefix+".locationEntries.%d", i)
 			locationEntries := ov.LocationEntries{
-
 				Value: d.Get(locationEntriesPrefix + ".value").(string),
-
 				Type: d.Get(locationEntriesPrefix + ".type").(string),
 			}
-
 			locationEntriesAll = append(locationEntriesAll, locationEntries)
-
 		}
 
 		if locationEntriesCount > 0 {
-
 			location.LocationEntries = locationEntriesAll
-
 		}
-		portConfigInfos := ov.PortConfigInfos{
-			DesiredSpeed: d.Get(portConfigInfosPrefix + ".desired_speed").(string),
-			Location:     location,
+		portConfigInfos := ov.PortConfigInfos{}
+		portConfigInfos.Location = location
+
+		if val, ok := d.GetOk(portConfigInfosPrefix + ".desired_speed"); ok {
+			portConfigInfos.DesiredSpeed = val.(string)
 		}
 
 		portConfigInfosAll = append(portConfigInfosAll, portConfigInfos)
