@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -165,7 +166,7 @@ func resourceUplinkSet() *schema.Resource {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"location": {
+												"type": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
@@ -221,34 +222,55 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 		uplinkSet.FcoeNetworkURIs = FcoeNetworkUris
 	}
-	/*
-		portLocationEntriesPrefix := fmt.Sprintf("location_entries.0")
-		portLocationEntries := ov.LocationEntries{}
-		if val, ok := d.GetOk(portLocationEntries + ".value"); ok {
-			portLocationEntries.Value = val.(string)
-		}
-		if val, ok := d.GetOk(portLocationEntries + ".type"); ok {
-			portLocationEntries.Type = &portLocation
+
+portConfigInfosCount := d.Get("portConfigInfos.#").(int) 
+
+portConfigInfosAll := make([]ov.portConfigInfos, 0, portConfigInfosCount) 
+
+for i := 0; i < portConfigInfosCount; i++ { 
+
+	portConfigInfosPrefix := fmt.Sprintf("port_config_infos.%d",i) 
+	location =ov.Location{}
+
+	locationPrefix := fmt.Sprintf(portConfigInfosPrefix + ".location.0") 
+
+	locationEntriesCount := d.Get(locationPrefix + "locationEntries.#").(int) 
+
+	locationEntries := make([]ov.LocationEntries, 0, locationEntriesCount) 
+
+	for i := 0; i < locationEntriesCount; i++ { 
+
+		locationEntriesPrefix := fmt.Sprintf(locationPrefix+"locationEntries.%d", i) 
+
+		locationEntries := ov.LocationEntries{ 
+
+			Value:    d.Get(locationEntriesPrefix + ".value").(string), 
+
+			Type:    d.Get(locationEntriesPrefix + ".type").(string), 
+
 		}
 
-		portLocationPrefix := fmt.Sprintf("location.0")
-		portLocation := ov.Location{}
-		if val, ok := d.GetOk(portLocation + ".location_entries"); ok {
-			portLocation =  &portLocationEntries
-		}
 
-		portConfigInfosPrefix := fmt.Sprintf("port_config_infos.0")
-		portConfigInfos := ov.PortConfigInfos{}
-		if val, ok := d.GetOk(portConfigInfosPrefix + ".desired_speed"); ok {
-			portConfigInfos.DesiredSpeed = val.(string)
-		}
-		if val, ok := d.GetOk(portConfigInfosPrefix + ".location"); ok {
-			portConfigInfos.Location = &portLocation
-		}
-		if portConfigInfos != (ov.PortConfigInfos{}) {
-			uplink_set.PortConfigInfos = &portConfigInfos
-		}
-	*/
+	locationEntriesAll = append(locationEntriesAll, locationEntries) 
+
+	}
+
+	if locationEntriesCount > 0 {
+
+	location.LocationEntries = locationEntriesAll
+
+	}
+	portConfigInfos = ov.PortConfigInfos {
+		DesiredSpeed: d.Get(portConfigInfosPrefix + ".desired_speed").(string),
+		Location: location,
+	}
+
+portConfigInfosAll = append(portConfigInfosAll, portConfigInfos) 
+
+}
+uplinkSet.PortConfigInfos = &portConfigInfosAll 
+
+}
 	uplinkSetError := config.ovClient.CreateUplinkSet(uplinkSet)
 	d.SetId(d.Get("name").(string))
 	if uplinkSetError != nil {
