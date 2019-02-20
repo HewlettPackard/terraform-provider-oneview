@@ -1,6 +1,6 @@
 ---
 layout: "oneview"
-page_title:"Oneview: interconnects"
+page_title: "Oneview: interconnects"
 sidebar_current: "docs-interconnects"
 description: |-
   Gets information about an existing interconnects.
@@ -33,4 +33,4 @@ output "oneview_interconnect_value" {
 
 * `uri` - The URI of the created resource.
 
-* `eTag` - Entity tag/version ID of the resource.ed.
+* `eTag` - Entity tag/version ID of the resource.
