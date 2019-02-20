@@ -6,10 +6,10 @@ provider "oneview" {
 	ov_apiversion = 800
 }
 
-resource "oneview_interconnect" "InterconnectImport" {}
+data "oneview_interconnect" "interconnect" {
+	name = "EN1, interconnect 3"
+}
 
-/* Run Example
-
-terraform import oneview_interconnect.InterconnectImport "EN1, interconnect 3"
-
-*/
+output "oneiew_interconnect_value" {
+	value = "${data.oneview_interconnect.interconnect.uri}"
+}

@@ -15,12 +15,10 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceInterconnects() *schema.Resource {
+func dataSourceInterconnects() *schema.Resource {
 	return &schema.Resource{
-		Read: resourceInterconnectsRead,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
+		Read: dataSourceInterconnectsRead,
+
 		Schema: map[string]*schema.Schema{
 			"base_wwn": {
 				Type:     schema.TypeString,
@@ -1158,14 +1156,16 @@ func resourceInterconnects() *schema.Resource {
 	}
 }
 
-func resourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+	name := d.Get("name").(string)
 
-	interconnect, err := config.ovClient.GetInterconnectByName(d.Id())
+	interconnect, err := config.ovClient.GetInterconnectByName(name)
 	if err != nil || interconnect.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
+	d.SetId(name)
 
 	d.Set("base_wwn", interconnect.BaseWWN)
 	d.Set("category", interconnect.Category)
