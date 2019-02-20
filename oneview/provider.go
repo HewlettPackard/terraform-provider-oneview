@@ -98,7 +98,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"oneview_interconnect":               dataSourceInterconnects(),
+			"oneview_interconnect": dataSourceInterconnects(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{

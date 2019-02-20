@@ -3,7 +3,7 @@ layout: "oneview"
 page_title:"Oneview: interconnects"
 sidebar_current: "docs-interconnects"
 description: |-
-Gets information about an existing interconnects.
+  Gets information about an existing interconnects.
 ---
 
 # oneview\_interconnects
@@ -14,11 +14,11 @@ Use this data source to access the attributes of an Interconnect.
 
 ```hcl
 data "oneview_interconnect" "test" {
-name = "Test Interconnect"
+  name = "Test Interconnect"
 }
 
 output "oneview_interconnect_value" {
-value = "${data.oneview_interconnect.test.uri}"
+  value = "${data.oneview_interconnect.test.uri}"
 }
 ```
 
