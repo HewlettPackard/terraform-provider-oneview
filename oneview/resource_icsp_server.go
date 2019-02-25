@@ -24,6 +24,9 @@ func resourceIcspServer() *schema.Resource {
 		Read:   resourceIcspServerRead,
 		Update: resourceIcspServerUpdate,
 		Delete: resourceIcspServerDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"type": {

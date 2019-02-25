@@ -26,6 +26,9 @@ func resourceServerProfile() *schema.Resource {
 		Read:   resourceServerProfileRead,
 		Update: resourceServerProfileUpdate,
 		Delete: resourceServerProfileDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -149,7 +152,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	serverHardware, err := config.ovClient.GetServerHardware(serverProfile.ServerHardwareURI)
+	serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
 	if err != nil {
 		return err
 	}

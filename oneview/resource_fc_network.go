@@ -23,6 +23,9 @@ func resourceFCNetwork() *schema.Resource {
 		Read:   resourceFCNetworkRead,
 		Update: resourceFCNetworkUpdate,
 		Delete: resourceFCNetworkDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -46,6 +49,10 @@ func resourceFCNetwork() *schema.Resource {
 				Default:  true,
 			},
 			"connection_template_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"managed_san_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -86,6 +93,19 @@ func resourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"scopesUri": {
+				Optional: true,
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 		},
 	}
 }
@@ -97,11 +117,20 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		Name:                    d.Get("name").(string),
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
+		ManagedSanURI:           utils.NewNstring(d.Get("managed_san_uri").(string)),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
 		Type:        d.Get("type").(string),
 		Description: d.Get("description").(string),
 	}
 
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		rawInitialScopeUris := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		for i, raw := range rawInitialScopeUris {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		fcNet.InitialScopeUris = initialScopeUris
+	}
 	fcNetError := config.ovClient.CreateFCNetwork(fcNet)
 	d.SetId(d.Get("name").(string))
 	if fcNetError != nil {
@@ -114,7 +143,7 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	fcNet, err := config.ovClient.GetFCNetworkByName(d.Get("name").(string))
+	fcNet, err := config.ovClient.GetFCNetworkByName(d.Id())
 	if err != nil || fcNet.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -127,6 +156,7 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("type", fcNet.Type)
 	d.Set("uri", fcNet.URI.String())
 	d.Set("connection_template_uri", fcNet.ConnectionTemplateUri.String())
+	d.Set("managed_san_uri", fcNet.ManagedSanURI.String())
 	d.Set("status", fcNet.Status)
 	d.Set("category", fcNet.Category)
 	d.Set("state", fcNet.State)
@@ -134,6 +164,8 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("created", fcNet.Created)
 	d.Set("modified", fcNet.Modified)
 	d.Set("eTag", fcNet.ETAG)
+	d.Set("scopesUri", fcNet.ScopesUri.String())
+	d.Set("initial_scope_uris", fcNet.InitialScopeUris)
 	return nil
 }
 

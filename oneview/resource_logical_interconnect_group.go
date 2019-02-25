@@ -27,6 +27,9 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 		Read:   resourceLogicalInterconnectGroupRead,
 		Update: resourceLogicalInterconnectGroupUpdate,
 		Delete: resourceLogicalInterconnectGroupDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -197,6 +200,11 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
+						},
+						"v3_enabled": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
 						},
 						"type": {
 							Type:     schema.TypeString,
@@ -620,6 +628,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
 		enabled := val.(bool)
 		snmpConfiguration.Enabled = &enabled
+	}
+	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
+		v3Enabled := val.(bool)
+		snmpConfiguration.V3Enabled = &v3Enabled
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
@@ -1049,6 +1061,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	snmpConfiguration := make([]map[string]interface{}, 0, 1)
 	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
 		"enabled":          *logicalInterconnectGroup.SnmpConfiguration.Enabled,
+		"v3_enabled":       *logicalInterconnectGroup.SnmpConfiguration.V3Enabled,
 		"read_community":   logicalInterconnectGroup.SnmpConfiguration.ReadCommunity,
 		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
 		"system_contact":   logicalInterconnectGroup.SnmpConfiguration.SystemContact,
@@ -1312,6 +1325,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
 		enabled := val.(bool)
 		snmpConfiguration.Enabled = &enabled
+	}
+	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
+		v3Enabled := val.(bool)
+		snmpConfiguration.V3Enabled = &v3Enabled
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
