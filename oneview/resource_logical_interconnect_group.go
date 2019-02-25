@@ -78,7 +78,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 					},
 				},
 			},
-			"uplink_set": {
+			"uplink_sets": {
 				Optional: true,
 				Type:     schema.TypeList,
 				Elem: &schema.Resource{
@@ -953,10 +953,10 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		}
 
 		//Oneview returns an unordered list so order it to match the configuration file
-		logicalPortCount := d.Get("uplink_set." + strconv.Itoa(i) + ".logical_port_config.#").(int)
+		logicalPortCount := d.Get("uplink_sets." + strconv.Itoa(i) + ".logical_port_config.#").(int)
 		oneviewLogicalPortCount := len(logicalPortConfigs)
 		for j := 0; j < logicalPortCount; j++ {
-			currBay := d.Get("uplink_set." + strconv.Itoa(i) + ".logical_port_config." + strconv.Itoa(j) + ".bay_num").(int)
+			currBay := d.Get("uplink_sets." + strconv.Itoa(i) + ".logical_port_config." + strconv.Itoa(j) + ".bay_num").(int)
 			for k := 0; k < oneviewLogicalPortCount; k++ {
 				if currBay == logicalPortConfigs[k]["bay_num"] && j <= k {
 					logicalPortConfigs[j], logicalPortConfigs[k] = logicalPortConfigs[k], logicalPortConfigs[j]
@@ -980,17 +980,17 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 			"network_uris":          schema.NewSet(schema.HashString, networkUris),
 		})
 	}
-	uplinkCount := d.Get("uplink_set.#").(int)
+	uplinkCount := d.Get("uplink_sets.#").(int)
 	oneviewUplinkCount := len(uplinkSets)
 	for i := 0; i < uplinkCount; i++ {
-		currUplinkName := d.Get("uplink_set." + strconv.Itoa(i) + ".name").(string)
+		currUplinkName := d.Get("uplink_sets." + strconv.Itoa(i) + ".name").(string)
 		for j := 0; j < oneviewUplinkCount; j++ {
 			if currUplinkName == uplinkSets[j]["name"] && i <= j {
 				uplinkSets[i], uplinkSets[j] = uplinkSets[j], uplinkSets[i]
 			}
 		}
 	}
-	d.Set("uplink_set", uplinkSets)
+	d.Set("uplink_sets", uplinkSets)
 
 	internalNetworkUris := make([]interface{}, len(logicalInterconnectGroup.InternalNetworkUris))
 	for i, internalNetworkUri := range logicalInterconnectGroup.InternalNetworkUris {
