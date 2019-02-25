@@ -248,12 +248,10 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 		location := ov.Location{
 			LocationEntries: locationEntriesAll,
 		}
-		portConfigInfos := ov.PortConfigInfos{}
-		portConfigInfos.Location = location
 
-		// Setting Desired Speed of port config info
-		if val, ok := d.GetOk(portConfigInfosPrefix + ".desired_speed"); ok {
-			portConfigInfos.DesiredSpeed = val.(string)
+		portConfigInfos := ov.PortConfigInfos{
+			Location:     location,
+			DesiredSpeed: d.Get(portConfigInfosPrefix + ".desired_speed").(string),
 		}
 
 		portConfigInfosAll = append(portConfigInfosAll, portConfigInfos)
