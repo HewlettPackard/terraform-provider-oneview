@@ -43,7 +43,7 @@ type UplinkSet struct {
 	Type                           string            `json:"type,omitempty"`                           // "type": "uplink-setV4",
 	Category                       string            `json:"category,omitempty"`                       //"category":"uplink-sets",
 	Created                        string            `json:"created,omitempty"`                        //"created":"20150831T154835.250Z",
-	Description                    utils.Nstring     `json:"description,omitempty"`                    // "description": "Uplink-set 1",
+	Description                    string     `json:"description,omitempty"`                    // "description": "Uplink-set 1",
 	Etag                           string            `json:"eTag,omitempty"`                           // "eTag": "1441036118675/8",
 	Modified                       string            `json:"modified,omitempty"`                       // "modified": "20150831T154835.250Z",
 	LacpTimer                      string            `json:"lacpTimer,omitempty"`                      // "lacpTimer": "Long",

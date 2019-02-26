@@ -1218,7 +1218,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	for i := 0; i < uplinkSetCount; i++ {
 		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
 		uplinkSet := ov.UplinkSets{}
-		}
+
 		if val, ok := d.GetOk(uplinkSetPrefix + ".network_type"); ok {
 			uplinkSet.NetworkType = val.(string)
 		}
