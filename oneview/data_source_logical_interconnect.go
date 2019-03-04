@@ -12,16 +12,13 @@
 package oneview
 
 import (
-	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceLogicalInterconnect() *schema.Resource {
+func dataSourceLogicalInterconnect() *schema.Resource {
 	return &schema.Resource{
-		Read: resourceLogicalInterconnectRead,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
+		Read: dataSourceLogicalInterconnectRead,
+		
 		Schema: map[string]*schema.Schema{
 			"category": {
 				Type:     schema.TypeString,
@@ -407,29 +404,33 @@ func resourceLogicalInterconnect() *schema.Resource {
 	}
 }
 
-func resourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	logInt, err := config.ovClient.GetLogicalInterconnectById(d.Id())
-	fmt.Printf("asdasa")
+	id := d.Get("name").(string)
+	logInt, err := config.ovClient.GetLogicalInterconnectById(id)
 
 	if err != nil || logInt.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
-	/*d.Set("category", logInt.Category)
+
+	d.SetId(id)
+
+	d.Set("category", logInt.Category)
 	d.Set("consistency_status", logInt.ConsistencyStatus)
 	d.Set("created", logInt.Created)
 	d.Set("description", logInt.Description)
 	d.Set("eTag", logInt.ETAG)
-	d.Set("fusion_domain_uri", logInt.FusionDomainUri.String())
-	d.Set("logical_interconnect_group_uri", logInt.LogicalInterconnectGroupUri.String())
+	d.Set("fusion_domain_uri", logInt.FusionDomainUri)
+	d.Set("logical_interconnect_group_uri", logInt.LogicalInterconnectGroupUri)
 	d.Set("modified", logInt.Modified)
+	d.Set("name", logInt.Name)
 	d.Set("stacking_health", logInt.StackingHealth)
 	d.Set("state", logInt.State)
 	d.Set("status", logInt.Status)
-	d.Set("type", logInt.Type)*/
-	d.Set("uri", logInt.URI.String())
+	d.Set("type", logInt.Type)
+	d.Set("uri", logInt.URI)
+
 
 	return nil
 }

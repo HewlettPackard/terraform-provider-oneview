@@ -216,69 +216,7 @@ func resourceEnclosure() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"oa": {
-				Computed: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"bay_number": {
-							Type:     schema.TypeInt,
-							Computed: true,
-						},
-						"dhcp_enable": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"dhcp_ipv6_enable": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"fqdn_host_name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"fw_build_date": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"fw_version": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"ip_address": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"ipv6-addresses": {
-							Computed: true,
-							Type:     schema.TypeSet,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"address": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"type": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-								},
-							},
-							Set: schema.HashString,
-						},
-						"role": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"state": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
-				Set: schema.HashString,
-			},
-			"on_bay_count": {
+			"oa_bays": {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
@@ -421,8 +359,7 @@ func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("licensing_intent", enclosure.LicensingIntent)
 	d.Set("modified", enclosure.Modified)
 	d.Set("name", enclosure.Name)
-	d.Set("oa", enclosure.OA)
-	d.Set("on_bay_count", enclosure.OaBayCount)
+	d.Set("oa_bays", enclosure.OaBays)
 	d.Set("part_number", enclosure.PartNumber)
 	d.Set("rack_name", enclosure.RackName)
 	d.Set("refresh_state", enclosure.RefreshState)

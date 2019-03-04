@@ -7,12 +7,10 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
-resource "oneview_logical_interconnect" "LogicalInterconnectImport" {}
+data "oneview_logical_interconnect" "logical_interconnect" {
+	name = "d4468f89-4442-4324-9c01-624c7382db2d"
+}
 
-/* Run
-
-terraform import oneview_logical_interconnect.LogicalInterconnectImport "EN1, interconnect 3"
-
-in terminal
-
-*/
+output "oneview_logical_interconnect_value" {
+	value = "${data.oneview_logical_interconnect.logical_interconnect.uri}"
+}

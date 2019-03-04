@@ -96,6 +96,11 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_I3S_ENDPOINT", ""),
 			},
 		},
+
+		DataSourcesMap: map[string]*schema.Resource{
+			"oneview_logical_interconnect":	dataSourceLogicalInterconnect(),
+		},
+
 		ResourcesMap: map[string]*schema.Resource{
 			"oneview_server_profile":             resourceServerProfile(),
 			"oneview_enclosure":                  resourceEnclosure(),
@@ -104,7 +109,6 @@ func Provider() terraform.ResourceProvider {
 			"oneview_fcoe_network":               resourceFCoENetwork(),
 			"oneview_fc_network":                 resourceFCNetwork(),
 			"oneview_server_profile_template":    resourceServerProfileTemplate(),
-			"oneview_logical_interconnect":       resourceLogicalInterconnect(),
 			"oneview_logical_interconnect_group": resourceLogicalInterconnectGroup(),
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
 			"oneview_icsp_server":                resourceIcspServer(),
