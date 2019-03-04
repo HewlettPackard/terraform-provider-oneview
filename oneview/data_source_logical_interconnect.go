@@ -18,7 +18,7 @@ import (
 func dataSourceLogicalInterconnect() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceLogicalInterconnectRead,
-		
+
 		Schema: map[string]*schema.Schema{
 			"category": {
 				Type:     schema.TypeString,
@@ -430,7 +430,6 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 	d.Set("status", logInt.Status)
 	d.Set("type", logInt.Type)
 	d.Set("uri", logInt.URI)
-
 
 	return nil
 }
