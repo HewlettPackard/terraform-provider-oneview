@@ -103,6 +103,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_network_set":                resourceNetworkSet(),
 			"oneview_fcoe_network":               resourceFCoENetwork(),
 			"oneview_fc_network":                 resourceFCNetwork(),
+			"oneview_scope":                      resourceScope(),
 			"oneview_server_profile_template":    resourceServerProfileTemplate(),
 			"oneview_logical_interconnect_group": resourceLogicalInterconnectGroup(),
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),

@@ -14,7 +14,7 @@ import (
 type StorageVolumeV3 struct {
 	Category                  string                    `json:"category,omitempty"`
 	Created                   string                    `json:"created,omitempty"`
-	Description               string                    `json:"description,omitempty"`
+	Description               utils.Nstring             `json:"description,omitempty"`
 	ETAG                      string                    `json:"eTag,omitempty"`
 	Name                      string                    `json:"name,omitempty"`
 	State                     string                    `json:"state,omitempty"`

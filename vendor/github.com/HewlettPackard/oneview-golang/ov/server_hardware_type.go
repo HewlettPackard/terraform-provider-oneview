@@ -12,7 +12,7 @@ import (
 type ServerHardwareType struct {
 	Category    string        `json:"category,omitempty"`    // "category": "server-hardware",
 	Created     string        `json:"created,omitempty"`     // "created": "20150831T154835.250Z",
-	Description string        `json:"description,omitempty"` // "description": "ServerHardware",
+	Description utils.Nstring `json:"description,omitempty"` // "description": "ServerHardware",
 	ETAG        string        `json:"eTag,omitempty"`        // "eTag": "1441036118675/8",
 	Modified    string        `json:"modified,omitempty"`    // "modified": "20150831T154835.250Z",
 	Name        string        `json:"name,omitempty"`        // "name": "ServerHardware 1",

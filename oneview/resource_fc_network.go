@@ -120,7 +120,7 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		ManagedSanURI:           utils.NewNstring(d.Get("managed_san_uri").(string)),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
 		Type:        d.Get("type").(string),
-		Description: d.Get("description").(string),
+		Description: utils.NewNstring(d.Get("description").(string)),
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
@@ -152,7 +152,7 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("fabric_type", fcNet.FabricType)
 	d.Set("link_stability_time", fcNet.LinkStabilityTime)
 	d.Set("auto_login_redistribution", fcNet.AutoLoginRedistribution)
-	d.Set("description", fcNet.Description)
+	d.Set("description", fcNet.Description.String())
 	d.Set("type", fcNet.Type)
 	d.Set("uri", fcNet.URI.String())
 	d.Set("connection_template_uri", fcNet.ConnectionTemplateUri.String())
@@ -181,7 +181,7 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
 		Type: d.Get("type").(string),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Description:           d.Get("description").(string),
+		Description:           utils.NewNstring(d.Get("description").(string)),
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)

@@ -23,6 +23,7 @@ type EthernetNetwork struct {
 	SmartLink             bool            `json:"smartLink"`                       // "smartLink": false,
 	State                 string          `json:"state,omitempty"`                 // "state": "Normal",
 	Status                string          `json:"status,omitempty"`                // "status": "Critical",
+	SubnetUri             utils.Nstring   `json:"subnetUri,omitempty"`             // "subnetUri": "",
 	Type                  string          `json:"type,omitempty"`                  // "type": "ethernet-networkV3",
 	URI                   utils.Nstring   `json:"uri,omitempty"`                   // "uri": "/rest/ethernet-networks/e2f0031b-52bd-4223-9ac1-d91cb519d548"
 	VlanId                int             `json:"vlanId,omitempty"`                // "vlanId": 1,
