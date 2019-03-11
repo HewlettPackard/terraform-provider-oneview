@@ -8,6 +8,7 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
+
 package oneview
 
 import (
@@ -23,8 +24,8 @@ func resourceScope() *schema.Resource {
 		Update: resourceScopeUpdate,
 		Delete: resourceScopeDelete,
 		Importer: &schema.ResourceImporter{
-                        State: schema.ImportStatePassthrough,
-                },
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"description": {
@@ -120,15 +121,15 @@ func resourceScopeCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	scope := ov.Scope{
-		Type:           d.Get("type").(string),
-		Name:           d.Get("name").(string),
-		Description:    utils.NewNstring(d.Get("description").(string)),
+		Type:        d.Get("type").(string),
+		Name:        d.Get("name").(string),
+		Description: utils.NewNstring(d.Get("description").(string)),
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawinitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawinitialScopeUris))
-		for i, rawData :=  range rawinitialScopeUris {
+		for i, rawData := range rawinitialScopeUris {
 			initialScopeUris[i] = utils.Nstring(rawData.(string))
 		}
 		scope.InitialScopeUris = initialScopeUris
@@ -195,11 +196,10 @@ func resourceScopeUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	scope := ov.Scope{
-		URI:  utils.NewNstring(d.Get("uri").(string)),
-		Type: d.Get("type").(string),
-		Name: d.Get("name").(string),
+		URI:         utils.NewNstring(d.Get("uri").(string)),
+		Type:        d.Get("type").(string),
+		Name:        d.Get("name").(string),
 		Description: utils.NewNstring(d.Get("description").(string)),
-
 	}
 
 	if val, ok := d.GetOk("added_resource_uris"); ok {

@@ -333,7 +333,7 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	enclosure, err := config.ovClient.GetEnclosureByName(d.Id()) 
+	enclosure, err := config.ovClient.GetEnclosureByName(d.Id())
 	if err != nil || enclosure.URI.IsNil() {
 		d.SetId("")
 		return nil

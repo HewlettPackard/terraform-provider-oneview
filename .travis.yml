@@ -24,13 +24,12 @@ env:
 install:
     - mkdir -p $TF_DOWNLOAD_PATH
     - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
-    - echo "gofmt -e $UNFORMATTED[0]"
 
 before_script:
     - if ! [ -z "$UNFORMATTED" ]; then
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
-        echo -e "  gofmt -e $PWD/$fn";
+        echo -e "  gofmt -w $PWD/$fn";
         done;
         exit 1;
       fi
