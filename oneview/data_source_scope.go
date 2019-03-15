@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func dataSourceScope() *schema.Resource {
