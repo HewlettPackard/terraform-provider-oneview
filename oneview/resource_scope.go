@@ -46,7 +46,7 @@ func resourceScope() *schema.Resource {
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,

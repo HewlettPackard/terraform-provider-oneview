@@ -9,7 +9,7 @@ provider "oneview" {
 
 resource "oneview_scope" "scope_inst" {
 	name = "TestScope"
-	description = "Test for rename Teraform"
+	description = "Create Scope"
 	type = "ScopeV3"
 	initial_scope_uris = ["/rest/scopes/8aa405fb-bc62-42e5-9ca6-4a544e7ffdec"]
 	added_resource_uris = ["/rest/fc-networks/9886a1ac-accb-4089-a33f-349dd449982a"]

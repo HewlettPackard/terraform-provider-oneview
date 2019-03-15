@@ -96,6 +96,11 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_I3S_ENDPOINT", ""),
 			},
 		},
+
+		DataSourcesMap: map[string]*schema.Resource{
+			"oneview_scope": dataSourceScope(),
+		},
+
 		ResourcesMap: map[string]*schema.Resource{
 			"oneview_server_profile":             resourceServerProfile(),
 			"oneview_enclosure":                  resourceEnclosure(),
