@@ -19,7 +19,7 @@ import (
 
 func dataSourceScope() *schema.Resource {
 	return &schema.Resource{
-		Read:   resourceScopeRead,
+		Read: resourceScopeRead,
 
 		Schema: map[string]*schema.Schema{
 			"description": {
@@ -114,7 +114,7 @@ func dataSourceScopeRead(d *schema.ResourceData, meta interface{}) error {
 
 	config := meta.(*Config)
 	name := d.Get("name").(string)
-	
+
 	scope, err := config.ovClient.GetScopeByName(name)
 	if err != nil || scope.URI.IsNil() {
 		d.SetId("")
