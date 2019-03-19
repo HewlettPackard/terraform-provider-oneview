@@ -17,7 +17,7 @@ import (
 
 func dataSourceScope() *schema.Resource {
 	return &schema.Resource{
-		Read: resourceScopeRead,
+		Read: dataSourceScopeRead,
 
 		Schema: map[string]*schema.Schema{
 			"description": {
@@ -38,7 +38,7 @@ func dataSourceScope() *schema.Resource {
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Required: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -118,6 +118,7 @@ func dataSourceScopeRead(d *schema.ResourceData, meta interface{}) error {
 		d.SetId("")
 		return nil
 	}
+	d.SetId(name)
 	d.Set("name", scope.Name)
 	d.Set("description", scope.Description)
 	d.Set("modified", scope.Modified)

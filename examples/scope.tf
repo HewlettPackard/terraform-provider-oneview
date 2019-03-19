@@ -7,6 +7,14 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
+data "oneview_scope" "scope" {
+        name = "Scope_Sample"
+}
+
+output "scope_value" {
+        value = "${data.oneview_scope.scope.uri}"
+}
+
 resource "oneview_scope" "scope_inst" {
 	name = "TestScope"
 	description = "Create Scope"
