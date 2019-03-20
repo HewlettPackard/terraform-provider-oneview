@@ -11,7 +11,7 @@ import (
 type InterconnectType struct {
 	Category                 string                 `json:"category,omitempty"`                 // "category": "interconnect-types",
 	Created                  string                 `json:"created,omitempty"`                  // "created": "20150831T154835.250Z",
-	Description              string                 `json:"description,omitempty"`              // "description": "Interconnect Type 1",
+	Description              utils.Nstring          `json:"description,omitempty"`              // "description": "Interconnect Type 1",
 	DownlinkCount            int                    `json:"downlinkCount,omitempty"`            // "downlinkCount": 2,
 	DownlinkPortCapability   DownlinkPortCapability `json:"downlinkPortCapability,omitempty"`   // "downlinkPortCapability": {...},
 	ETAG                     string                 `json:"eTag,omitempty"`                     // "eTag": "1441036118675/8",

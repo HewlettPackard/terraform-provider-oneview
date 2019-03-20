@@ -184,6 +184,16 @@ resource "oneview_logical_switch" "default" {
 }
 ```
 
+
+
+#### [Scope](docs/r/scope.html.markdown)
+```js
+resource "oneview_scope" "default" {
+  name = "test-scope"
+  type = "ScopeV3"
+}
+```
+
 ### License
 
 This project is licensed under the Apache 2.0 license.

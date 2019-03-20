@@ -19,8 +19,10 @@ type LocationEntries struct {
 }
 
 type PortConfigInfos struct {
-	DesiredSpeed string   `json:"desiredSpeed,omitempty"` //"desiredSpeed":"Auto",
-	Location     Location `json:"location"`               //"location":"{...},
+	DesiredSpeed     string            `json:"desiredSpeed,omitempty"` //"desiredSpeed":"Auto",
+	ExpectedNeighbor *ExpectedNeighbor `json:"expectedNeighbor"`       //"expectedNeighbor":"",
+	Location         Location          `json:"location"`               //"location":"{...},
+	PortUri          string            `json:"portUri"`                //"portUri:"",
 }
 
 type ExpectedNeighbor struct {
@@ -47,8 +49,7 @@ type UplinkSet struct {
 	Etag                           string            `json:"eTag,omitempty"`                           // "eTag": "1441036118675/8",
 	Modified                       string            `json:"modified,omitempty"`                       // "modified": "20150831T154835.250Z",
 	LacpTimer                      string            `json:"lacpTimer,omitempty"`                      // "lacpTimer": "Long",
-	FcMode                         string            `json:"mode,omitempty"`                           // "mode": "TRUNK",
-	ExpectedNeighbor               *ExpectedNeighbor `json:"expectedNeighbor,omitempty"`               //"expectedNeighbor": ""
+	FcMode                         string            `json:"fcMode,omitempty"`                         // "fcMode": "TRUNK",
 	NativeNetworkUri               utils.Nstring     `json:"nativeNetworkUri,omitempty"`               // "nativeNetworkUri": null,
 	PrimaryPortLocation            *Location         `json:"primaryPort,omitempty"`                    // "primaryPort": {...},
 	Reachability                   string            `json:"reachability,omitempty"`                   // "reachability": "Reachable",

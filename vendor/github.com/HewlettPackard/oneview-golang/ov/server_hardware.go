@@ -123,7 +123,7 @@ func (h ServerHardware) GetIloIPAddress() string {
 	if h.Client.IsHardwareSchemaV2() {
 		if h.MpHostInfo != nil {
 			log.Debug("working on getting IloIPAddress from MpHostInfo using v2")
-			for _, MpIPObj := range h.MpHostInfo.MpIPAddress {
+			for _, MpIPObj := range h.MpHostInfo.MpIPAddresses {
 				if len(MpIPObj.Address) > 0 &&
 					(MpDHCP.Equal(MpIPObj.Type) ||
 						MpStatic.Equal(MpIPObj.Type) ||
@@ -152,7 +152,30 @@ type ServerHardwareList struct {
 	Start       int              `json:"start,omitempty"`       // "start": 0,
 	Total       int              `json:"total,omitempty"`       // "total": 15,
 	URI         string           `json:"uri,omitempty"`         // "uri": "/rest/server-hardware?sort=name:asc&filter=serverHardwareTypeUri=%27/rest/server-hardware-types/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C%27&filter=serverGroupUri=%27/rest/enclosure-groups/56ad0069-8362-42fd-b4e3-f5c5a69af039%27&start=0&count=100"
-	Members     []ServerHardware `json:"members,omitempty"`     //"members":[]
+	Members     []ServerHardware `json:"members,omitempty"`     // "members":[]
+}
+
+// ServerFirmware get server firmware from ov
+type ServerFirmware struct {
+	Category          string        `json:"category,omitempty"`          // "category": "server-hardware",
+	Components        []Component   `json:"components,omitempty"`        // "components": [],
+	Created           string        `json:"created,omitempty"`           // "created": "2019-02-11T16:01:30.321Z",
+	ETAG              string        `json:"eTag,omitempty"`              // "eTag": null,
+	Modified          string        `json:"modified,omitempty"`          // "modified": "2019-02-11T16:01:30.324Z",
+	ServerHardwareURI utils.Nstring `json:"serverHardwareUri,omitempty"` // "serverHardwareUri": "/rest/server-hardware/31393736-3831-4753-4831-30305837524E",
+	ServerModel       string        `json:"serverModel,omitempty"`       // "serverModel": "ProLiant BL660c Gen9",
+	ServerName        string        `json:"serverName,omitempty"`        // "serverName": "Encl1, bay 1",
+	State             string        `json:"state,omitempty"`             // "state": "Supported",
+	Type              string        `json:"type,omitempty"`              // "type": "server-hardware-firmware-1",
+	URI               utils.Nstring `json:"uri,omitempty"`               // "uri": "/rest/server-hardware/31393736-3831-4753-4831-30305837524E/firmware"
+}
+
+// Component Firmware Map from ServerFirmware
+type Component struct {
+	ComponentKey      string `json:"componentKey,omitempty"`      // "componentKey": "TBD",
+	ComponentLocation string `json:"componentLocation,omitempty"` // "componentLocation": "System Board",
+	ComponentName     string `json:"componentName,omitempty"`     // "componentName": "Power Management Controller Firmware",
+	ComponentVersion  string `json:"componentVersion,omitempty"`  // "componentVersion": "1.0"
 }
 
 // server hardware power off
@@ -281,4 +304,32 @@ func (c *OVClient) GetAvailableHardware(hardwaretype_uri utils.Nstring, servergr
 		return hw, errors.New("No more blades are available for provisioning!")
 	}
 	return hw, nil
+}
+
+// get firmware for a server hardware with uri
+func (c *OVClient) GetServerFirmwareByUri(uri utils.Nstring) (ServerFirmware, error) {
+
+	var (
+		firmware ServerFirmware
+		main_uri = uri.String()
+	)
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	// Get firmware
+	main_uri = main_uri + "/firmware"
+
+	// rest call
+	data, err := c.RestAPICall(rest.GET, main_uri, nil)
+	if err != nil {
+		return firmware, err
+	}
+
+	log.Debugf("GetServerHardware %s", data)
+	if err := json.Unmarshal([]byte(data), &firmware); err != nil {
+		return firmware, err
+	}
+	return firmware, nil
 }

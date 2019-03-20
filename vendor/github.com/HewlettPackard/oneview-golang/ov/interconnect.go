@@ -12,7 +12,7 @@ type Interconnect struct {
 	BaseWWN                       string               `json:"baseWWN,omitempty"`                       // "baseWWN": "10:00:00:11:0A:06:08:69",
 	Category                      string               `json:"category,omitempty"`                      // "category": "interconnects",
 	Created                       string               `json:"created,omitempty"`                       // "created": "2018-08-02T15:49:59.963Z",
-	Description                   string               `json:"description,omitempty"`                   // "description": null,
+	Description                   utils.Nstring        `json:"description,omitempty"`                   // "description": null,
 	DeviceResetState              string               `json:"deviceResetState,omitempty"`              // "deviceResetState": "Normal",
 	EdgeVirtualBridgingAvailable  bool                 `json:"edgeVirtualBridgingAvailable,omitempty"`  // "edgeVirtualBridgingAvailable": false,
 	EnableCutThrough              bool                 `json:"enableCutThrough,omitempty"`              // "enableCutThrough": false,
