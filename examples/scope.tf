@@ -8,19 +8,15 @@ provider "oneview" {
 }
 
 data "oneview_scope" "scope" {
-        name = "Scope_Sample"
-}
-
-output "scope_value" {
-        value = "${data.oneview_scope.scope.uri}"
+	name = "Scope_Sample"
 }
 
 resource "oneview_scope" "scope_inst" {
 	name = "TestScope"
-	description = "Create Scope"
+	description = "Testing creation of scope"
 	type = "ScopeV3"
-	initial_scope_uris = ["/rest/scopes/8aa405fb-bc62-42e5-9ca6-4a544e7ffdec"]
-	added_resource_uris = ["/rest/fc-networks/9886a1ac-accb-4089-a33f-349dd449982a"]
+	initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
+	added_resource_uris = ["/rest/fc-networks/ac24da0d-d993-4ac5-b16c-c42c2842a918"]
 }
 
 # Updates the resource created above 
