@@ -32,10 +32,6 @@ func resourceScope() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"modified": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -69,10 +65,6 @@ func resourceScope() *schema.Resource {
 				Computed: true,
 			},
 			"category": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -174,7 +166,6 @@ func resourceScopeRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.Set("name", scope.Name)
 	d.Set("description", scope.Description)
-	d.Set("modified", scope.Modified)
 	d.Set("state", scope.State)
 	d.Set("status", scope.Status)
 	d.Set("type", scope.Type)
@@ -182,7 +173,6 @@ func resourceScopeRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("appliance_id", scope.ApplianceId)
 	d.Set("category", scope.Category)
 	d.Set("etag", scope.Etag)
-	d.Set("created", scope.Created)
 	d.Set("old_uri", scope.OldUri.String())
 	d.Set("scopes_uri", scope.ScopesUri.String())
 	d.Set("initial_scope_uris", scope.InitialScopeUris)
