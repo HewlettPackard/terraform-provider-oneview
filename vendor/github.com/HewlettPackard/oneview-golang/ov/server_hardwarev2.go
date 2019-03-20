@@ -61,8 +61,8 @@ type ServerHardwarev200 struct {
 
 // MpHostInfov200 -
 type MpHostInfov200 struct {
-	MpHostName  string            `json:"mpHostName,omitempty"`    // mpHostName The host name of the Management Processor. string
-	MpIPAddress []MpIPAddressv200 `json:"mpIpAddresses,omitempty"` // The list of IP addresses and corresponding type information for the Management Processor.
+	MpHostName    string            `json:"mpHostName,omitempty"`    // mpHostName The host name of the Management Processor. string
+	MpIPAddresses []MpIPAddressv200 `json:"mpIpAddresses,omitempty"` // The list of IP addresses and corresponding type information for the Management Processor.
 }
 
 // MpIPAddressv200 -

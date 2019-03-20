@@ -6,7 +6,7 @@ A Terraform provider for oneview
 
 ## Installing `terraform-provider-oneview` with Go
 
-* Install Go 1.8. For previous versions, you may have to set your `$GOPATH` manually, if you haven't done it yet.
+* Install Go 1.11. For previous versions, you may have to set your `$GOPATH` manually, if you haven't done it yet.
 * Install Terraform 0.9.x or above [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists)
 * Download the code by issuing a `go get` command.
 
@@ -181,6 +181,16 @@ resource "oneview_logical_switch" "default" {
   name = "test-logical-switch"
   switch_type_name = "Cisco Nexus 6xxx"
   switch_count = 1
+}
+```
+
+
+
+#### [Scope](docs/r/scope.html.markdown)
+```js
+resource "oneview_scope" "default" {
+  name = "test-scope"
+  type = "ScopeV3"
 }
 ```
 

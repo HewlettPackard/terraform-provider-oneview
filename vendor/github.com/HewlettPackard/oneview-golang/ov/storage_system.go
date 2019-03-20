@@ -29,7 +29,7 @@ type StorageSystemV4 struct {
 	Category                              string                                 `json:"category,omitempty"`
 	ETAG                                  string                                 `json:"eTag,omitempty"`
 	Name                                  string                                 `json:"name,omitempty"`
-	Description                           string                                 `json:"description,omitempty"`
+	Description                           utils.Nstring                          `json:"description,omitempty"`
 	State                                 string                                 `json:"state,omitempty"`
 	Status                                string                                 `json:"status,omitempty"`
 	Type                                  string                                 `json:"type,omitempty"`

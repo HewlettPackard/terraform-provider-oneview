@@ -14,7 +14,7 @@ import (
 type StorageAttachment struct {
 	Category         string        `json:"category,omitempty"`
 	Created          string        `json:"created,omitempty"`
-	Description      string        `json:"description,omitempty"`
+	Description      utils.Nstring `json:"description,omitempty"`
 	ETAG             string        `json:"eTag,omitempty"`
 	Host             *Host         `json:"host,omitempty"`
 	Paths            *Paths        `json:"paths,omitempty"`

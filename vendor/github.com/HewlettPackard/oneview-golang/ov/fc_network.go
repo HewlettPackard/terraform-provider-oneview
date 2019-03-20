@@ -17,7 +17,7 @@ type FCNetwork struct {
 	ManagedSanURI           utils.Nstring   `json:"managedSanUri,omitempty"`
 	LinkStabilityTime       int             `json:"linkStabilityTime"`
 	AutoLoginRedistribution bool            `json:"autoLoginRedistribution"`
-	Description             string          `json:"description,omitempty"`
+	Description             utils.Nstring   `json:"description,omitempty"`
 	Name                    string          `json:"name,omitempty"`
 	State                   string          `json:"state,omitempty"`
 	Status                  string          `json:"status,omitempty"`

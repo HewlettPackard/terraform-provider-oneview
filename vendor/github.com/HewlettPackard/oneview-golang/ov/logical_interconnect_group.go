@@ -3,10 +3,10 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
+	"strconv"
 )
 
 type LogicalInterconnectGroup struct {
@@ -25,6 +25,11 @@ type LogicalInterconnectGroup struct {
 	Name                    string                   `json:"name"`                             // "name": "Logical Interconnect Group1",
 	QosConfiguration        *QosConfiguration        `json:"qosConfiguration,omitempty"`       // "qosConfiguration": {},
 	RedundancyType          string                   `json:"redundancyType,omitempty"`         // "redundancyType": "HighlyAvailable"
+	ScopeUri                string                   `json:"scopeUri,omitempty"`               // "scopeUri":""
+	NextPageUri             string                   `json:"NextPageUri,omitempty"`            // "NextPageUri":""
+	PrevPageUri             string                   `json:"prevPageUri,omitempty"`            // "PrevPageUri":""
+	Start                   int                      `json:"start,omitempty"`                  // "start":""
+	Total                   int                      `json:"total,omitempty"`                  // "total":""
 	SnmpConfiguration       *SnmpConfiguration       `json:"snmpConfiguration,omitempty"`      // "snmpConfiguration": {...}
 	StackingHealth          string                   `json:"stackingHealth,omitempty"`         //"stackingHealth": "Connected",
 	StackingMode            string                   `json:"stackingMode,omitempty"`           //"stackingMode": "Enclosure",
@@ -47,14 +52,22 @@ type EthernetSettings struct {
 	EnableNetworkLoopProtection *bool         `json:"enableNetworkLoopProtection,omitempty"` // "enableNetworkLoopProtection": false,
 	EnablePauseFloodProtection  *bool         `json:"enablePauseFloodProtection,omitempty"`  // "enablePauseFloodProtection": false,
 	EnableRichTLV               *bool         `json:"enableRichTLV,omitempty"`               // "enableRichTLV": false,
+	EnableStormControl          *bool         `json:"enableStormControl,omitempty"`          // "enableStormControl": false,
+	EnableTaggedLldp            *bool         `json:"enableTaggedLldp,omitempty"`            // "enableTaggedLldp": false,
 	ID                          string        `json:"id,omitempty"`                          //"id": "0c398238-2d35-48eb-9eb5-7560d59f94b3",
 	IgmpIdleTimeoutInterval     int           `json:"igmpIdleTimeoutInterval,omitempty"`     // "igmpIdleTimeoutInterval": 260,
+	IgmpSnoopingVlanIds         string        `json:"igmpSnoopingVlanIds,omitempty"`         // "igmpSnoopingVlanIds": "",
+	LldpIpAddressMode           string        `json:"lldpIpAddressMode,omitempty"`           // "lldpIpAddressMode": "IPV4",
+	LldpIpv4Address             string        `json:"lldpIpv4Address,omitempty"`             // "lldpIpv4Address": "",
+	LldpIpv6Address             string        `json:"lldpIpv6Address,omitempty"`             //"lldpIpv6Address": "",
 	InterconnectType            string        `json:"interconnectType,omitempty"`            // "interconnectType": "Ethernet",
 	MacRefreshInterval          int           `json:"macRefreshInterval,omitempty"`          // "macRefreshInterval": 5,
 	Modified                    string        `json:"modified,omitempty"`                    // "modified": "20150831T154835.250Z",
 	Name                        string        `json:"name,omitempty"`                        // "name": "ethernetSettings 1",
 	State                       string        `json:"state,omitempty"`                       // "state": "Normal",
 	Status                      string        `json:"status,omitempty"`                      // "status": "Critical",
+	StormControlPollingInterval int           `json:"stormControlPollingInterval,omitempty"` //"stormControlPollingInterval": 10,
+	StormControlThreshold       int           `json:"stormControlThreshold,,omitempty"`      //"stormControlThreshold": 0,
 	Type                        string        `json:"type,omitempty"`                        // "EthernetInterconnectSettingsV3",
 	URI                         utils.Nstring `json:"uri,omitempty"`                         // "uri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86/ethernetSettings"
 }
@@ -176,6 +189,7 @@ type SnmpConfiguration struct {
 	Name             string            `json:"name,omitempty"`             // "name": "Snmp Config",
 	ReadCommunity    string            `json:"readCommunity,omitempty"`    // "readCommunity": "public",
 	SnmpAccess       []string          `json:"snmpAccess,omitempty"`       // "snmpAccess": [],
+	snmpUsers        []Snmpv3User      `json:"snmpUsers,omitempty"`        // "snmpUsers": []
 	State            string            `json:"state,omitempty"`            // "state": "Normal",
 	Status           string            `json:"status,omitempty"`           // "status": "Critical",
 	SystemContact    string            `json:"systemContact,omitempty"`    // "systemContact": "",
@@ -185,6 +199,20 @@ type SnmpConfiguration struct {
 	V3Enabled        *bool             `json:"v3Enabled,omitempty"`        // "v3Enabled": true
 }
 
+type Snmpv3User struct {
+	SnmpV3UserName    string             `json:"snmpV3UserName,omitempty"`    //"snmpV3UserName":"",
+	UserCredentials   []ExtentedProperty `json:"userCredentials,omitempty"`   //"UserCredentials":"",
+	V3AuthProtocol    string             `json:"v3AuthProtocol,omitempty"`    // "v3AuthProtocol":"",
+	V3PrivacyProtocol string             `json:"v3PrivacyProtocol,omitempty"` // "v3PrivacyProtocol":""
+}
+
+type ExtentedProperty struct {
+	PropertyName string `json:"propertyName"` //"propertyName":"",
+	Value        string `json:"value"`        //"value":"",
+	ValueFormat  string `json:"valueFormat"`  //"valueFormat":"",
+	ValueType    string `json:"valueType"`    //"valueType":"",
+
+}
 type TrapDestination struct {
 	CommunityString    string   `json:"communityString,omitempty"`    //"communityString": "public",
 	EnetTrapCategories []string `json:"enetTrapCategories,omitempty"` //"enetTrapCategories": ["PortStatus", "Other"],
@@ -216,6 +244,7 @@ type UplinkSets struct {
 	LacpTimer              string                  `json:"lacpTimer,omitempty"`           // "lacpTimer": "Long",
 	LogicalPortConfigInfos []LogicalPortConfigInfo `json:"logicalPortConfigInfos"`        // "logicalPortConfigInfos": {...},
 	Mode                   string                  `json:"mode,omitempty"`                // "mode": "Auto",
+	FcMode                 string                  `json:"fcMode,omitempty"`              //"fcMode": "NA",
 	Name                   string                  `json:"name,omitempty"`                // "name": "Uplink 1",
 	NativeNetworkUri       utils.Nstring           `json:"nativeNetworkUri,omitempty"`    // "nativeNetworkUri": null,
 	NetworkType            string                  `json:"networkType,omitempty"`         // "networkType": "Ethernet",
@@ -239,11 +268,62 @@ type LogicalInterconnectGroupList struct {
 	Members     []LogicalInterconnectGroup `json:"members,omitempty"`     // "members":[]
 }
 
+type LogicalInterconnectGroupDefaultSettings struct {
+	Type             string            `json:"type"`                       // "type": "InterconnectSettingsV4",
+	URI              utils.Nstring     `json:"uri,omitempty"`              // "uri": null,
+	Category         string            `json:"category,omitempty"`         // "category": null
+	ETAG             string            `json:"eTag,omitempty"`             //"eTag": null,
+	Created          string            `json:"created,omitempty"`          //"created": null,
+	Modified         string            `json:"modified,omitempty"`         //"modified": null,
+	EthernetSettings *EthernetSettings `json:"ethernetSettings,omitempty"` // "ethernetSettings": {...},
+	FcoeSettings     string            `json:"fcoeSettings,omitempty"`     // "fcoeSettings": null,
+	Description      string            `json:"description,omitempty"`      // "description": null,
+	State            string            `json:"state,omitempty"`            //  "state": null,
+	Status           string            `json:"status,omitempty"`           // "status": null,
+	Name             string            `json:"name,omitempty"`             // "name": null
+}
+
+func (c *OVClient) GetLogicalInterconnectGroupDefaultSettings() (LogicalInterconnectGroupDefaultSettings, error) {
+	var (
+		uri   = "/rest/logical-interconnect-groups/defaultSettings"
+		ligDS LogicalInterconnectGroupDefaultSettings
+	)
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return ligDS, err
+	}
+	log.Debugf("GetLogicalInterconnectGroup %s", data)
+	if err := json.Unmarshal([]byte(data), &ligDS); err != nil {
+		return ligDS, err
+	}
+	return ligDS, nil
+}
+
+func (c *OVClient) GetLogicalInterconnectGroupSettings(uri string) (LogicalInterconnectGroupDefaultSettings, error) {
+	var (
+		ligDS LogicalInterconnectGroupDefaultSettings
+	)
+	uri = uri + "/settings"
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return ligDS, err
+	}
+	log.Debugf("GetLogicalInterconnectGroup %s", data)
+	if err := json.Unmarshal([]byte(data), &ligDS); err != nil {
+		return ligDS, err
+	}
+	return ligDS, nil
+}
+
 func (c *OVClient) GetLogicalInterconnectGroupByName(name string) (LogicalInterconnectGroup, error) {
 	var (
 		logicalInterconnectGroup LogicalInterconnectGroup
 	)
-	logicalInterconnectGroups, err := c.GetLogicalInterconnectGroups(fmt.Sprintf("name matches '%s'", name), "name:asc")
+	logicalInterconnectGroups, err := c.GetLogicalInterconnectGroups(0, fmt.Sprintf("name matches '%s'", name), "", "name:asc", 0)
 	if logicalInterconnectGroups.Total > 0 {
 		return logicalInterconnectGroups.Members[0], err
 	} else {
@@ -269,7 +349,7 @@ func (c *OVClient) GetLogicalInterconnectGroupByUri(uri utils.Nstring) (LogicalI
 	return lig, nil
 }
 
-func (c *OVClient) GetLogicalInterconnectGroups(filter string, sort string) (LogicalInterconnectGroupList, error) {
+func (c *OVClient) GetLogicalInterconnectGroups(count int, filter string, scopeUris string, sort string, start int) (LogicalInterconnectGroupList, error) {
 	var (
 		uri                       = "/rest/logical-interconnect-groups"
 		q                         map[string]interface{}
@@ -282,6 +362,15 @@ func (c *OVClient) GetLogicalInterconnectGroups(filter string, sort string) (Log
 
 	if sort != "" {
 		q["sort"] = sort
+	}
+	if count != 0 {
+		q["count"] = strconv.Itoa(count)
+	}
+	if scopeUris != "" {
+		q["scopeUris"] = scopeUris
+	}
+	if start >= 0 {
+		q["start"] = strconv.Itoa(start)
 	}
 
 	// refresh login
