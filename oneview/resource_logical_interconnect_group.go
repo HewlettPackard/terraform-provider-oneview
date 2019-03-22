@@ -58,8 +58,8 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				},
 			},
 			"interconnect_map_entry_template": {
-				Optional: true,
-				Type:     schema.TypeList,
+				Required: true,
+				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bay_number": {
@@ -476,11 +476,11 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		lig.EnclosureIndexes = enclosureIndexes
 	}
 
-	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
-	for i := 0; i < interconnectMapEntryTemplateCount; i++ {
-		interconnectMapEntryTemplatePrefix := fmt.Sprintf("interconnect_map_entry_template.%d", i)
-		interconnectTypeName := d.Get(interconnectMapEntryTemplatePrefix + ".interconnect_type_name").(string)
+	rawInterconnectMapEntryTemplates := d.Get("interconnect_map_entry_template").(*schema.Set).List()
+	for _, raw := range rawInterconnectMapEntryTemplates {
+		interconnectMapEntryTemplate := raw.(map[string]interface{})
+		interconnectTypeName := interconnectMapEntryTemplate["interconnect_type_name"].(string)
 		interconnectType, err := config.ovClient.GetInterconnectTypeByName(interconnectTypeName)
 		if err != nil {
 			return err
@@ -490,14 +490,14 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		}
 
 		enclosureLocation := ov.LocationEntry{
-			RelativeValue: d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
+			RelativeValue: interconnectMapEntryTemplate["enclosure_index"].(int),
 			Type:          "Enclosure",
 		}
 		locationEntries := make([]ov.LocationEntry, 0)
 		locationEntries = append(locationEntries, enclosureLocation)
 
 		bayLocation := ov.LocationEntry{
-			RelativeValue: d.Get(interconnectMapEntryTemplatePrefix + ".bay_number").(int),
+			RelativeValue: interconnectMapEntryTemplate["bay_number"].(int),
 			Type:          "Bay",
 		}
 		locationEntries = append(locationEntries, bayLocation)
@@ -506,7 +506,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		}
 		interconnectMapEntryTemplates = append(interconnectMapEntryTemplates, ov.InterconnectMapEntryTemplate{
 			LogicalLocation:              logicalLocation,
-			EnclosureIndex:               d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
+			EnclosureIndex:               interconnectMapEntryTemplate["enclosure_index"].(int),
 			PermittedInterconnectTypeUri: interconnectType.URI,
 		})
 	}
@@ -876,15 +876,15 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		})
 	}
 
-	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
-	for i := 0; i < interconnectMapEntryTemplateCount; i++ {
-		currBayNum := d.Get("interconnect_map_entry_template." + strconv.Itoa(i) + ".bay_number")
-		for j := 0; j < len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates); j++ {
-			if currBayNum == interconnectMapEntryTemplates[j]["bay_number"] {
-				interconnectMapEntryTemplates[i], interconnectMapEntryTemplates[j] = interconnectMapEntryTemplates[j], interconnectMapEntryTemplates[i]
-			}
-		}
-	}
+	// interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
+	// for i := 0; i < interconnectMapEntryTemplateCount; i++ {
+	// 	currBayNum := d.Get("interconnect_map_entry_template." + strconv.Itoa(i) + ".bay_number")
+	// 	for j := 0; j < len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates); j++ {
+	// 		if currBayNum == interconnectMapEntryTemplates[j]["bay_number"] {
+	// 			interconnectMapEntryTemplates[i], interconnectMapEntryTemplates[j] = interconnectMapEntryTemplates[j], interconnectMapEntryTemplates[i]
+	// 		}
+	// 	}
+	// }
 	d.Set("interconnect_map_entry_template", interconnectMapEntryTemplates)
 
 	uplinkSets := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.UplinkSets))
@@ -1173,11 +1173,11 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		lig.EnclosureIndexes = enclosureIndexes
 	}
 
-	interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
-	for i := 0; i < interconnectMapEntryTemplateCount; i++ {
-		interconnectMapEntryTemplatePrefix := fmt.Sprintf("interconnect_map_entry_template.%d", i)
-		interconnectTypeName := d.Get(interconnectMapEntryTemplatePrefix + ".interconnect_type_name").(string)
+	rawInterconnectMapEntryTemplates := d.Get("interconnect_map_entry_template").(*schema.Set).List()
+	for _, raw := range rawInterconnectMapEntryTemplates {
+		interconnectMapEntryTemplate := raw.(map[string]interface{})
+		interconnectTypeName := interconnectMapEntryTemplate["interconnect_type_name"].(string)
 		interconnectType, err := config.ovClient.GetInterconnectTypeByName(interconnectTypeName)
 		if err != nil {
 			return err
@@ -1187,14 +1187,14 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		}
 
 		enclosureLocation := ov.LocationEntry{
-			RelativeValue: d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
+			RelativeValue: interconnectMapEntryTemplate["enclosure_index"].(int),
 			Type:          "Enclosure",
 		}
 		locationEntries := make([]ov.LocationEntry, 0)
 		locationEntries = append(locationEntries, enclosureLocation)
 
 		bayLocation := ov.LocationEntry{
-			RelativeValue: d.Get(interconnectMapEntryTemplatePrefix + ".bay_number").(int),
+			RelativeValue: interconnectMapEntryTemplate["bay_number"].(int),
 			Type:          "Bay",
 		}
 		locationEntries = append(locationEntries, bayLocation)
@@ -1203,7 +1203,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		}
 		interconnectMapEntryTemplates = append(interconnectMapEntryTemplates, ov.InterconnectMapEntryTemplate{
 			LogicalLocation:              logicalLocation,
-			EnclosureIndex:               d.Get(interconnectMapEntryTemplatePrefix + ".enclosure_index").(int),
+			EnclosureIndex:               interconnectMapEntryTemplate["enclosure_index"].(int),
 			PermittedInterconnectTypeUri: interconnectType.URI,
 		})
 	}
