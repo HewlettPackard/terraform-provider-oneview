@@ -59,7 +59,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 			},
 			"interconnect_map_entry_template": {
 				Optional: true,
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bay_number": {
@@ -80,7 +80,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 			},
 			"uplink_sets": {
 				Optional: true,
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"network_type": {
@@ -515,10 +515,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	}
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
-	uplinkSetCount := d.Get("uplink_set.#").(int)
+	uplinkSetCount := d.Get("uplink_sets.#").(int)
 	uplinkSets := make([]ov.UplinkSets, 0)
 	for i := 0; i < uplinkSetCount; i++ {
-		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
+		uplinkSetPrefix := fmt.Sprintf("uplink_sets.%d", i)
 		uplinkSet := ov.UplinkSets{}
 		if val, ok := d.GetOk(uplinkSetPrefix + ".name"); ok {
 			uplinkSet.Name = val.(string)
@@ -1213,10 +1213,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	}
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
-	uplinkSetCount := d.Get("uplink_set.#").(int)
+	uplinkSetCount := d.Get("uplink_sets.#").(int)
 	uplinkSets := make([]ov.UplinkSets, 0)
 	for i := 0; i < uplinkSetCount; i++ {
-		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
+		uplinkSetPrefix := fmt.Sprintf("uplink_sets.%d", i)
 		uplinkSet := ov.UplinkSets{}
 		if val, ok := d.GetOk(uplinkSetPrefix + ".name"); ok {
 			uplinkSet.Name = val.(string)
