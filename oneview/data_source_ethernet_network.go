@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2019 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -12,20 +12,12 @@
 package oneview
 
 import (
-	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceEthernetNetwork() *schema.Resource {
+func dataSourceEthernetNetwork() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceEthernetNetworkCreate,
-		Read:   resourceEthernetNetworkRead,
-		Update: resourceEthernetNetworkUpdate,
-		Delete: resourceEthernetNetworkDelete,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
+		Read: dataSourceEthernetNetworkRead,
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -33,9 +25,10 @@ func resourceEthernetNetwork() *schema.Resource {
 				Required: true,
 			},
 			"vlan_id": {
-				Type:     schema.TypeInt,
-				Required: true,
-				//				ForceNew: true,
+				Type: schema.TypeInt,
+				//Required: true,
+				Computed: true,
+				ForceNew: true,
 			},
 			"purpose": {
 				Type:     schema.TypeString,
@@ -119,41 +112,10 @@ func resourceEthernetNetwork() *schema.Resource {
 	}
 }
 
-func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) error {
+func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	eNet := ov.EthernetNetwork{
-		Name:                d.Get("name").(string),
-		VlanId:              d.Get("vlan_id").(int),
-		Purpose:             d.Get("purpose").(string),
-		SmartLink:           d.Get("smart_link").(bool),
-		PrivateNetwork:      d.Get("private_network").(bool),
-		EthernetNetworkType: d.Get("ethernet_network_type").(string),
-		Type:                d.Get("type").(string),
-		Description:         utils.NewNstring(d.Get("description").(string)),
-	}
-	if val, ok := d.GetOk("initial_scope_uris"); ok {
-		rawInitialScopeUris := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-		for i, raw := range rawInitialScopeUris {
-			initialScopeUris[i] = utils.Nstring(raw.(string))
-		}
-		eNet.InitialScopeUris = initialScopeUris
-	}
-
-	eNetError := config.ovClient.CreateEthernetNetwork(eNet)
-	d.SetId(d.Get("name").(string))
-	if eNetError != nil {
-		d.SetId("")
-		return eNetError
-	}
-	return resourceEthernetNetworkRead(d, meta)
-}
-
-func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-
-	eNet, err := config.ovClient.GetEthernetNetworkByName(d.Id())
+	name := d.Get("name").(string)
+	eNet, err := config.ovClient.GetEthernetNetworkByName(name)
 	if err != nil || eNet.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -176,40 +138,6 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("eTag", eNet.ETAG)
 	d.Set("scopesUri", eNet.ScopesUri.String())
 	d.Set("initial_scope_uris", eNet.InitialScopeUris)
-
-	return nil
-}
-
-func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-
-	newENet := ov.EthernetNetwork{
-		ETAG:                  d.Get("eTag").(string),
-		URI:                   utils.NewNstring(d.Get("uri").(string)),
-		VlanId:                d.Get("vlan_id").(int),
-		Purpose:               d.Get("purpose").(string),
-		Name:                  d.Get("name").(string),
-		PrivateNetwork:        d.Get("private_network").(bool),
-		SmartLink:             d.Get("smart_link").(bool),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type: d.Get("type").(string),
-	}
-
-	err := config.ovClient.UpdateEthernetNetwork(newENet)
-	if err != nil {
-		return err
-	}
-	d.SetId(d.Get("name").(string))
-
-	return resourceEthernetNetworkRead(d, meta)
-}
-
-func resourceEthernetNetworkDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-
-	err := config.ovClient.DeleteEthernetNetwork(d.Get("name").(string))
-	if err != nil {
-		return err
-	}
+	d.SetId(name)
 	return nil
 }
