@@ -1,10 +1,11 @@
 provider "oneview" {
-	ov_username = "administrator"
-	ov_password = "madhav123"
-	ov_endpoint = "https://10.170.16.44"
-	ov_sslverify = false
-	ov_apiversion = 800
-	ov_ifmatch = "*"
+        ov_username = "<ov-username>"
+        ov_password = "<ov-password>"
+        ov_endpoint = "<ov-endpoint>"
+        ov_sslverify = false
+        ov_apiversion = <ov-apiversion>
+        ov_ifmatch = "*"
+
 }
 
 data "oneview_scope" "scope_obj" {

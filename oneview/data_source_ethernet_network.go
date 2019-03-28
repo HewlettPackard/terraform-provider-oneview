@@ -25,8 +25,7 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				Required: true,
 			},
 			"vlan_id": {
-				Type: schema.TypeInt,
-				//Required: true,
+				Type:     schema.TypeInt,
 				Computed: true,
 				ForceNew: true,
 			},
