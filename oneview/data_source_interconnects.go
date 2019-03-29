@@ -12,11 +12,7 @@
 package oneview
 
 import (
-	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
-	"os"
-	//"strconv"
-	//"github.com/HewlettPackard/oneview-golang/utils"
 )
 
 func dataSourceInterconnects() *schema.Resource {
@@ -157,11 +153,11 @@ func dataSourceInterconnects() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"ip_address": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 						"ip_address_type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 					},
 				},
@@ -200,7 +196,7 @@ func dataSourceInterconnects() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"network_loop_protection_interval": {
 				Type:     schema.TypeInt,
@@ -546,31 +542,12 @@ func dataSourceInterconnects() *schema.Resource {
 func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	name := d.Get("name").(string)
-	//uri := utils.NewNstring(name)
-	f, err := os.Create("test.txt")
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	_, err = f.WriteString("No 1")
-	if err != nil {
-		f.Close()
-		return nil
-	}
 
 	interconnect, err := config.ovClient.GetInterconnectByName(name)
 	if err != nil || interconnect.URI.IsNil() {
 		d.SetId("")
-		_, err = f.WriteString(err.Error())
-		if err != nil {
-			f.Close()
-		}
 
 		return nil
-	}
-	_, err = f.WriteString("No 3")
-	if err != nil {
-		f.Close()
 	}
 
 	d.SetId(name)
