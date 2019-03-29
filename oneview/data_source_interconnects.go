@@ -12,7 +12,11 @@
 package oneview
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
+	"os"
+	//"strconv"
+	//"github.com/HewlettPackard/oneview-golang/utils"
 )
 
 func dataSourceInterconnects() *schema.Resource {
@@ -25,10 +29,6 @@ func dataSourceInterconnects() *schema.Resource {
 				Optional: true,
 			},
 			"category": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"created": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -99,38 +99,6 @@ func dataSourceInterconnects() *schema.Resource {
 			"host_name": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"icm_licenses": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"license": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"consumed_count": {
-										Type:     schema.TypeInt,
-										Optional: true,
-									},
-									"license_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"required_count": {
-										Type:     schema.TypeInt,
-										Optional: true,
-									},
-									"state": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
-						},
-					},
-				},
 			},
 			"igmp_idle_timeout_interval": {
 				Type:     schema.TypeInt,
@@ -230,10 +198,6 @@ func dataSourceInterconnects() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"modified": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -287,34 +251,6 @@ func dataSourceInterconnects() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"created": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"dcbx_info": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"dcbx_ap_reason": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"dcbx_pfc_reason": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"dcbx_pg_reason": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"dcbx_status": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
-						},
 						"description": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -326,60 +262,6 @@ func dataSourceInterconnects() *schema.Resource {
 						"enabled": {
 							Type:     schema.TypeBool,
 							Optional: true,
-						},
-						"fc_port_properties": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"fcf_mac": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"logins": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"logins_count": {
-										Type:     schema.TypeInt,
-										Optional: true,
-									},
-									"neighbor_interconnect_name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"op_online": {
-										Type:     schema.TypeBool,
-										Optional: true,
-									},
-									"op_online_reason": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"principle_interconnect_name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"principle_interconnect_name_list": {
-										Type:     schema.TypeSet,
-										Optional: true,
-										Elem:     &schema.Schema{Type: schema.TypeString},
-										Set:      schema.HashString,
-									},
-									"trunk_master": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"wwnn": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"wwpn": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
 						},
 						"interconnect_name": {
 							Type:     schema.TypeString,
@@ -393,73 +275,9 @@ func dataSourceInterconnects() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"modified": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
-						},
-						"neighbor": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"link_label": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"link_uri": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_chassis_id": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_chassis_id_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_mgmt_address": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_mgmt_address_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_port_description": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_port_id": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_port_id_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_system_capabilities": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_system_description": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_system_name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"remote_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
 						},
 						"operational_speed": {
 							Type:     schema.TypeString,
@@ -513,10 +331,6 @@ func dataSourceInterconnects() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"subports": {
 							Type:     schema.TypeList,
 							Optional: true,
@@ -564,464 +378,6 @@ func dataSourceInterconnects() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"qos_configuration": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"active_qos_config": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"category": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"config_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"created": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"description": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"downlink_classification_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"eTag": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"modified": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"qos_traffic_classifiers": {
-										Type:     schema.TypeList,
-										Optional: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"qos_classification_mapping": {
-													Type:     schema.TypeList,
-													Optional: true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"dot1p_class_mapping": {
-																Type:     schema.TypeSet,
-																Optional: true,
-																Elem:     &schema.Schema{Type: schema.TypeInt},
-																Set: func(a interface{}) int {
-																	return a.(int)
-																},
-															},
-															"dscp_class_mapping": {
-																Type:     schema.TypeSet,
-																Optional: true,
-																Elem:     &schema.Schema{Type: schema.TypeString},
-																Set:      schema.HashString,
-															},
-														},
-													},
-												},
-												"qos_traffic_class": {
-													Type:     schema.TypeList,
-													Optional: true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"bandwidth_share": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"class_name": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"egress_dot1p_value": {
-																Type:     schema.TypeInt,
-																Optional: true,
-															},
-															"enabled": {
-																Type:     schema.TypeBool,
-																Optional: true,
-															},
-															"max_bandwidth": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"real_time": {
-																Type:     schema.TypeBool,
-																Optional: true,
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-									"state": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"status": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"uplink_classification_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"uri": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
-						},
-						"category": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"created": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"eTag": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"inactive_fcoe_qos_config": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"category": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"config_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"created": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"description": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"downlink_classification_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"eTag": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"modified": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"qos_traffic_classifiers": {
-										Type:     schema.TypeList,
-										Optional: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"qos_classification_mapping": {
-													Type:     schema.TypeList,
-													Optional: true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"dot1p_class_mapping": {
-																Type:     schema.TypeSet,
-																Optional: true,
-																Elem:     &schema.Schema{Type: schema.TypeInt},
-																Set: func(a interface{}) int {
-																	return a.(int)
-																},
-															},
-															"dscp_class_mapping": {
-																Type:     schema.TypeSet,
-																Optional: true,
-																Elem:     &schema.Schema{Type: schema.TypeString},
-																Set:      schema.HashString,
-															},
-														},
-													},
-												},
-												"qos_traffic_class": {
-													Type:     schema.TypeList,
-													Optional: true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"bandwidth_share": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"class_name": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"egress_dot1p_value": {
-																Type:     schema.TypeInt,
-																Optional: true,
-															},
-															"enabled": {
-																Type:     schema.TypeBool,
-																Optional: true,
-															},
-															"max_bandwidth": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"real_time": {
-																Type:     schema.TypeBool,
-																Optional: true,
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-									"state": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"status": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"uplink_classification_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"uri": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
-						},
-						"inactive_non_fcoe_qos_config": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"category": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"config_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"created": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"description": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"downlink_classification_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"eTag": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"modified": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"qos_traffic_classifiers": {
-										Type:     schema.TypeList,
-										Optional: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"qos_classification_mapping": {
-													Type:     schema.TypeList,
-													Optional: true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"dot1p_class_mapping": {
-																Type:     schema.TypeSet,
-																Optional: true,
-																Elem:     &schema.Schema{Type: schema.TypeInt},
-																Set: func(a interface{}) int {
-																	return a.(int)
-																},
-															},
-															"dscp_class_mapping": {
-																Type:     schema.TypeSet,
-																Optional: true,
-																Elem:     &schema.Schema{Type: schema.TypeString},
-																Set:      schema.HashString,
-															},
-														},
-													},
-												},
-												"qos_traffic_class": {
-													Type:     schema.TypeList,
-													Optional: true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"bandwidth_share": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"class_name": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"egress_dot1p_value": {
-																Type:     schema.TypeInt,
-																Optional: true,
-															},
-															"enabled": {
-																Type:     schema.TypeBool,
-																Optional: true,
-															},
-															"max_bandwidth": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"real_time": {
-																Type:     schema.TypeBool,
-																Optional: true,
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-									"state": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"status": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"uplink_classification_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"uri": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
-						},
-						"modified": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
-			"remote_support": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"remote_support_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"support_data_collection_state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"support_data_collection_type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"support_data_collections_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"support_settings": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"destination": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"support_current_state": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
-						},
-						"support_state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
 			"roles": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -1045,24 +401,12 @@ func dataSourceInterconnects() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"created": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"eTag": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"enabled": {
 							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"modified": {
-							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"name": {
@@ -1077,13 +421,60 @@ func dataSourceInterconnects() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"system_contact": {
 							Type:     schema.TypeString,
 							Optional: true,
+						},
+						"snmp_access": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+						"trap_destination": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"community_string": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"enet_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+									"fc_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+									"vcm_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+									"trap_destination": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"trap_format": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "SNMPv1",
+									},
+									"trap_severities": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+								},
+							},
 						},
 						"type": {
 							Type:     schema.TypeString,
@@ -1117,10 +508,6 @@ func dataSourceInterconnects() *schema.Resource {
 				Optional: true,
 			},
 			"state": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -1159,17 +546,37 @@ func dataSourceInterconnects() *schema.Resource {
 func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	name := d.Get("name").(string)
+	//uri := utils.NewNstring(name)
+	f, err := os.Create("test.txt")
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	_, err = f.WriteString("No 1")
+	if err != nil {
+		f.Close()
+		return nil
+	}
 
 	interconnect, err := config.ovClient.GetInterconnectByName(name)
 	if err != nil || interconnect.URI.IsNil() {
 		d.SetId("")
+		_, err = f.WriteString(err.Error())
+		if err != nil {
+			f.Close()
+		}
+
 		return nil
 	}
+	_, err = f.WriteString("No 3")
+	if err != nil {
+		f.Close()
+	}
+
 	d.SetId(name)
 
 	d.Set("base_wwn", interconnect.BaseWWN)
 	d.Set("category", interconnect.Category)
-	d.Set("created", interconnect.Created)
 	d.Set("description", interconnect.Description)
 	d.Set("device_reset_state", interconnect.DeviceResetState)
 	d.Set("eTag", interconnect.ETag)
@@ -1200,7 +607,6 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("mgmt_interface", interconnect.MgmtInterface)
 	d.Set("migration_state", interconnect.MigrationState)
 	d.Set("model", interconnect.Model)
-	d.Set("modified", interconnect.Modified)
 	d.Set("name", interconnect.Name)
 	d.Set("network_loop_protection_interval", interconnect.NetworkLoopProtectionInterval)
 	d.Set("part_number", interconnect.PartNumber)
@@ -1214,7 +620,6 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("stacking_domain_role", interconnect.StackingDomainRole)
 	d.Set("stacking_member_id", interconnect.StackingMemberId)
 	d.Set("state", interconnect.State)
-	d.Set("status", interconnect.Status)
 	d.Set("storm_control_polling_interval", interconnect.StormControlPollingInterval)
 	d.Set("storm_control_threshold", interconnect.StormControlThreshold)
 	d.Set("sub_port_count", interconnect.SubPortCount)
@@ -1222,5 +627,133 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("uid_state", interconnect.UidState)
 	d.Set("unsupported_capabilities", interconnect.UnsupportedCapabilities)
 	d.Set("uri", interconnect.URI.String())
+
+	locationEntries := make([]map[string]interface{}, 0,
+		len(interconnect.InterconnectLocation.LocationEntries))
+	for _, locationEntry := range interconnect.InterconnectLocation.LocationEntries {
+		locationEntries = append(locationEntries, map[string]interface{}{
+			"type":  locationEntry.Type,
+			"value": locationEntry.Value,
+		})
+	}
+	interconnectLocation := make([]map[string]interface{}, 0, 1)
+	interconnectLocation = append(interconnectLocation, map[string]interface{}{
+		"location_entries": locationEntries,
+	})
+	d.Set("interconnect_location", interconnectLocation)
+
+	ipAddressList := make([]map[string]interface{}, 0,
+		len(interconnect.IpAddressList))
+	for _, ipAddress := range interconnect.IpAddressList {
+		ipAddressList = append(ipAddressList, map[string]interface{}{
+			"ip_address_type": ipAddress.IpAddressType,
+			"ip_address":      ipAddress.IpAddress,
+		})
+	}
+
+	d.Set("ip_address_list", ipAddressList)
+
+	initialScopeUris := make([]interface{}, len(interconnect.InitialScopeUris))
+	for i, initialScopeUri := range interconnect.InitialScopeUris {
+		initialScopeUris[i] = initialScopeUri
+	}
+
+	d.Set("initial_scope_uris", initialScopeUris)
+
+	trapDestinations := make([]map[string]interface{}, 0, 1)
+	for _, trapDestination := range interconnect.SnmpConfiguration.TrapDestinations {
+
+		enetTrapCategories := make([]interface{}, len(trapDestination.EnetTrapCategories))
+		for i, enetTrapCategory := range trapDestination.EnetTrapCategories {
+			enetTrapCategories[i] = enetTrapCategory
+		}
+
+		fcTrapCategories := make([]interface{}, len(trapDestination.FcTrapCategories))
+		for i, fcTrapCategory := range trapDestination.FcTrapCategories {
+			fcTrapCategories[i] = fcTrapCategory
+		}
+
+		vcmTrapCategories := make([]interface{}, len(trapDestination.VcmTrapCategories))
+		for i, vcmTrapCategory := range trapDestination.VcmTrapCategories {
+			vcmTrapCategories[i] = vcmTrapCategory
+		}
+
+		trapSeverities := make([]interface{}, len(trapDestination.TrapSeverities))
+		for i, trapSeverity := range trapDestination.TrapSeverities {
+			trapSeverities[i] = trapSeverity
+		}
+
+		trapDestinations = append(trapDestinations, map[string]interface{}{
+			"trap_destination":     trapDestination.TrapDestination,
+			"community_string":     trapDestination.CommunityString,
+			"trap_format":          trapDestination.TrapFormat,
+			"enet_trap_categories": schema.NewSet(schema.HashString, enetTrapCategories),
+			"fc_trap_categories":   schema.NewSet(schema.HashString, fcTrapCategories),
+			"vcm_trap_categories":  schema.NewSet(schema.HashString, vcmTrapCategories),
+			"trap_severities":      schema.NewSet(schema.HashString, trapSeverities),
+		})
+	}
+
+	snmpAccess := make([]interface{}, len(interconnect.SnmpConfiguration.SnmpAccess))
+	for i, snmpAccessIP := range interconnect.SnmpConfiguration.SnmpAccess {
+		snmpAccess[i] = snmpAccessIP
+	}
+
+	snmpConfiguration := make([]map[string]interface{}, 0, 1)
+	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
+		"enabled":          *interconnect.SnmpConfiguration.Enabled,
+		"v3_enabled":       *interconnect.SnmpConfiguration.V3Enabled,
+		"read_community":   interconnect.SnmpConfiguration.ReadCommunity,
+		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
+		"system_contact":   interconnect.SnmpConfiguration.SystemContact,
+		"type":             interconnect.SnmpConfiguration.Type,
+		"trap_destination": trapDestinations,
+	})
+	d.Set("snmp_configuration", snmpConfiguration)
+
+	ports := make([]map[string]interface{}, 0, len(interconnect.Ports))
+	for _, port := range interconnect.Ports {
+		subports := make([]map[string]interface{}, 0, len(port.SubPorts))
+		for _, subport := range port.SubPorts {
+			subports = append(subports, map[string]interface{}{
+				"port_number":        subport.PortNumber,
+				"port_status":        subport.PortStatus,
+				"port_status_reason": subport.PortStatusReason,
+			})
+		}
+		ports = append(ports, map[string]interface{}{
+			"associated_uplink_set_uri":    port.AssociatedUplinkSetUri.String(),
+			"available":                    port.Available,
+			"bay_number":                   port.BayNumber,
+			"category":                     port.Category,
+			"connector_type":               port.ConnectorType,
+			"description":                  port.Description,
+			"eTag":                         port.ETag,
+			"enabled":                      port.Enabled,
+			"interconnect_name":            port.InterconnectName,
+			"lag_id":                       port.LagId,
+			"name":                         port.Name,
+			"operational_speed":            port.OperationalSpeed,
+			"paired_port_name":             port.PairedPortName,
+			"port_health_status":           port.PortHealthStatus,
+			"port_id":                      port.PortId,
+			"port_monitor_config_info":     port.PortMonitorConfigInfo,
+			"port_name":                    port.PortName,
+			"port_running_capability_type": port.PortRunningCapabilityType,
+			"port_split_mode":              port.PortSplitMode,
+			"port_status":                  port.PortStatus,
+			"port_status_reason":           port.PortStatusReason,
+			"port_type":                    port.PortType,
+			"port_type_extended":           port.PortTypeExtended,
+			"state":                        port.State,
+			"type":                         port.Type,
+			"uri":                          port.URI.String(),
+			"vendor_specific_port_name":    port.VendorSpecificPortName,
+			"vlans":                        port.Vlans,
+			"subports":                     subports,
+		})
+	}
+	d.Set("ports", ports)
+
 	return nil
 }

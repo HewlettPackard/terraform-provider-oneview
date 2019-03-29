@@ -50,6 +50,10 @@
 |<sub>/rest/network-sets</sub>                                                            | POST     | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |
 |<sub>/rest/network-sets/{id}</sub>                                                       | PUT      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |
 |<sub>/rest/network-sets/{id}</sub>                                                       | DELETE   | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |
+|     **Scope**                                                                                                                  |
+|<sub>/rest/scopes</sub>                                                                  | POST     | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:         | :heavy_multiplication_x:   | :white_check_mark:   |
+|<sub>/rest/scopes/{id}</sub>                                                             | PUT      | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:         | :heavy_multiplication_x:   | :white_check_mark:   |
+|<sub>/rest/scopes/{id}</sub>                                                             | DELETE   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:         | :heavy_multiplication_x:   | :white_check_mark:   |
 |     **Server Profile Templates**                                                                                                                  |
 |<sub>/rest/server-profile-templates</sub>                                                | POST     | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |
 |<sub>/rest/server-profile-templates/{id}</sub>                                           | PUT      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |
@@ -58,3 +62,12 @@
 |<sub>/rest/server-profiles</sub>                                                         | POST     | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |
 |<sub>/rest/server-profiles</sub>                                                         | DELETE   | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |
 <sub>/rest/server-profiles</sub>                                                          | PUT      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |
+
+## HPE Synergy Image Streamer
+
+| Endpoints                                                                       | Verb     | V200 | V300 | V500 |V600 |V800
+| --------------------------------------------------------------------------------------- | -------- | :------------------: | :------------------: | :------------------: | :------------------: | :------------------: |
+|     **OS Deployment Plans**                                                                                                                           |
+|<sub>/rest/os-deployment-plans</sub>                                                         | POST     | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |
+|<sub>/rest/os-deployment-plans</sub>                                                         | DELETE   | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |
+<sub>/rest/os-deployment-plans</sub>                                                          | PUT      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |

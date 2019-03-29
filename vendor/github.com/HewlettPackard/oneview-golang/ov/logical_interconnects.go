@@ -66,19 +66,30 @@ type InterconnectMapEntries struct {
 }
 
 type PortMonitor struct {
-	Type              string        `json:"type,omitempty"`              //type": "port-monitor",
-	URI               utils.Nstring `json:"uri,omitempty"`               //"uri": "/rest/logical-interconnects/d4468f89-4442-4324-9c01-624c7382db2d/port-monitor",
-	Category          string        `json:"category,omitempty"`          //"category": "port-monitor",
-	ETAG              string        `json:"eTag,omitempty"`              //"eTag": "8a302a85-ec4d-4214-a3e0-10ef71d28769",
-	Created           string        `json:"created,omitempty"`           //"created": null,
-	Modified          string        `json:"modified,omitempty"`          //"modified": null,
-	EnablePortMonitor string        `json:"enablePortMonitor,omitempty"` //"enablePortMonitor": false,
-	AnalyzerPort      string        `json:"analyzerPort,omitempty"`      //"analyzerPort": null,
-	MonitoredPorts    string        `json:"monitoredPorts,omitempty"`    //"monitoredPorts": [],
-	Description       utils.Nstring `json:"description,omitempty"`       //"description": null,
-	State             string        `json:"state,omitempty"`             //"state": null,
-	Status            string        `json:"status,omitempty"`            //"status": null,
-	Name              string        `json:"name,omitempty"`              //"name": "name2095641007-1533682087640"
+	Type              string            `json:"type,omitempty"`              //type": "port-monitor",
+	URI               utils.Nstring     `json:"uri,omitempty"`               //"uri": "/rest/logical-interconnects/d4468f89-4442-4324-9c01-624c7382db2d/port-monitor",
+	Category          string            `json:"category,omitempty"`          //"category": "port-monitor",
+	ETAG              string            `json:"eTag,omitempty"`              //"eTag": "8a302a85-ec4d-4214-a3e0-10ef71d28769",
+	Created           string            `json:"created,omitempty"`           //"created": null,
+	Modified          string            `json:"modified,omitempty"`          //"modified": null,
+	EnablePortMonitor bool              `json:"enablePortMonitor,omitempty"` //"enablePortMonitor": false,
+	AnalyzerPort      MonitorPortInfo   `json:"analyzerPort,omitempty"`      //"analyzerPort": null,
+	MonitoredPorts    []MonitorPortInfo `json:"monitoredPorts,omitempty"`    //"monitoredPorts": [],
+	Description       utils.Nstring     `json:"description,omitempty"`       //"description": null,
+	State             string            `json:"state,omitempty"`             //"state": null,
+	Status            string            `json:"status,omitempty"`            //"status": null,
+	Name              string            `json:"name,omitempty"`              //"name": "name2095641007-1533682087640"
+}
+
+type MonitorPortInfo struct {
+	BayNumber             string `json:"bayNumber,omitempty"`
+	InterconnectName      string `json:"interconnectName,omitempty"`
+	InterconnectUri       string `json:"interconnectUri,omitempty"`
+	PortHealthStatus      string `json:"portHealthStatus,omitempty"`
+	PortMonitorConfigInfo string `json:"portMonitorConfigInfo,omitempty"`
+	PortName              string `json:"portName,omitempty"`
+	PortStatus            string `json:"portStatus,omitempty"`
+	PortUri               string `json:"portUri,omitempty"`
 }
 
 type PortMonitorPortCollection struct {

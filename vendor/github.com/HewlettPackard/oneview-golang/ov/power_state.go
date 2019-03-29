@@ -101,7 +101,7 @@ func (pt *PowerTask) NewPowerTask(b ServerHardware) *PowerTask {
 	return pt
 }
 
-// get current power state
+// GetCurrentPowerState gets current power state
 func (pt *PowerTask) GetCurrentPowerState() error {
 	// Quick check to make sure we have a proper hardware blade
 	if pt.Blade.URI.IsNil() {

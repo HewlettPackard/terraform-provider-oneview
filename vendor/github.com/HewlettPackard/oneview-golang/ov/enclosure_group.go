@@ -13,7 +13,7 @@ type EnclosureGroup struct {
 	AssociatedLogicalInterconnectGroups []string             `json:"associatedInterconnectGroups,omitempty"` // "associatedInterconnectGorups": [],
 	Category                            string               `json:"category,omitempty"`                     // "category": "enclosure-groups",
 	Created                             string               `json:"created,omitempty"`                      // "created": "20150831T154835.250Z",
-	Description                         string               `json:"description,omitempty"`                  // "description": "Enclosure Group 1",
+	Description                         utils.Nstring        `json:"description,omitempty"`                  // "description": "Enclosure Group 1",
 	ETAG                                string               `json:"eTag,omitempty"`                         // "eTag": "1441036118675/8",
 	EnclosureCount                      int                  `json:"enclosureCount,omitempty"`               // "enclosureCount": 1,
 	EnclosureTypeUri                    utils.Nstring        `json:"enclosureTypeUri,omitempty"`             // "enclosureTypeUri": "/rest/enclosures/e2f0031b-52bd-4223-9ac1-d91cb5219d548"
