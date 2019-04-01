@@ -28,10 +28,6 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"created": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -52,10 +48,6 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"category": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"created": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -99,19 +91,11 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 							Type:     schema.TypeInt,
 							Optional: true,
 						},
-						"modified": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"status": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -431,5 +415,57 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 	d.Set("type", logInt.Type)
 	d.Set("uri", logInt.URI)
 
+	enclosureUris := make([]interface{}, len(logInt.EnclosureUris))
+	for i, enclosureUri := range logInt.EnclosureUris {
+		enclosureUris[i] = enclosureUri
+	}
+
+	d.Set("enclosure_uris", enclosureUris)
+
+	ethernetSettings := make([]map[string]interface{}, 0, 1)
+
+	ethernetSettings = append(ethernetSettings, map[string]interface{}{
+		"category": logInt.EthernetSettings.Category,
+		"dependent_resource_uri": logInt.EthernetSettings.DependentResourceUri.String(),
+		"description": logInt.EthernetSettings.Description.String(),
+		"eTag": logInt.EthernetSettings.ETAG,
+		"enable_fast_mac_cache_failover": *logInt.EthernetSettings.EnableFastMacCacheFailover,
+		"enable_igmp_snooping": *logInt.EthernetSettings.EnableIgmpSnooping,
+		"enable_network_loop_protection": *logInt.EthernetSettings.EnableNetworkLoopProtection,
+		"id": logInt.EthernetSettings.ID,
+		"igmp_idle_timeout_interval": logInt.EthernetSettings.IgmpIdleTimeoutInterval,
+		"interconnect_type": logInt.EthernetSettings.InterconnectType,
+		"mac_refresh_interval": logInt.EthernetSettings.MacRefreshInterval,
+		"name": logInt.EthernetSettings.Name,
+		"state": logInt.EthernetSettings.State,
+		"type": logInt.EthernetSettings.Type,
+		"uri": logInt.EthernetSettings.URI.String(),
+	})
+	d.Set("ethernet_settings", ethernetSettings)
+
+	interconnectMapEntries := make([]map[string]interface{}, 0, len(logInt.InterconnectMap.InterconnectMapEntries))
+	for _, interconnectMapEntry := range logInt.InterconnectMap.InterconnectMapEntries {
+		location := make([]map[string]interface{},0, 1)
+		locationEntries := make([]map[string]interface{}, 0, len(interconnectMapEntry.LogicalLocation.LocationEntries))
+		for _, locationEntry := range interconnectMapEntry.LogicalLocation.LocationEntries {
+			locationEntries = append(locationEntries, map[string]interface{}{
+				"type": locationEntry.Type,
+				"value": locationEntry.RelativeValue,
+			})
+		}
+		location = append(location, map[string]interface{}{
+			"locationEntries": locationEntries,
+		})
+		interconnectMapEntries = append(interconnectMapEntries, map[string]interface{}{
+			"location": location,
+			"logical_downlink_uri": interconnectMapEntry.LogicalDownlinkUri.String(),
+			"permitted_interconnect_type_uri": interconnectMapEntry.PermittedInterconnectTypeUri.String(),
+		})
+	}
+	interconnectMap := make([]map[string]interface{}, 0, 1)
+	interconnectMap = append(interconnectMap, map[string]interface{}{
+		"interconnect_map_entries": interconnectMapEntries,
+		})
+	d.Set("interconnect_map", interconnectMap)
 	return nil
 }

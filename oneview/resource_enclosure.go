@@ -216,10 +216,6 @@ func resourceEnclosure() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"oa_bays": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
 			"op": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -321,7 +317,7 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 	rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
 	initialScopeUris := make([]string, len(rawInitialScopeUris))
 	for i, raw := range rawInitialScopeUris {
-		initialScopeUris[i] = raw.(string) //utils.Nstring(raw.(string))
+		initialScopeUris[i] = raw.(string)
 	}
 	enclosureCreateMap.InitialScopeUris = initialScopeUris
 
@@ -337,7 +333,7 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	enclosure, err := config.ovClient.GetEnclosureByName(d.Id()) //Get("id").(string))
+	enclosure, err := config.ovClient.GetEnclosureByName(d.Id())
 	if err != nil || enclosure.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -359,7 +355,6 @@ func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("licensing_intent", enclosure.LicensingIntent)
 	d.Set("modified", enclosure.Modified)
 	d.Set("name", enclosure.Name)
-	d.Set("oa_bays", enclosure.OaBays)
 	d.Set("part_number", enclosure.PartNumber)
 	d.Set("rack_name", enclosure.RackName)
 	d.Set("refresh_state", enclosure.RefreshState)

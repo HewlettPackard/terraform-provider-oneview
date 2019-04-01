@@ -58,7 +58,7 @@ type InterconnectMap struct {
 }
 
 type InterconnectMapEntries struct {
-	LogicalLocation              LogicalLocation `json:"logicalLocation,omitempty"`              //"logicalLocation":{...},
+	LogicalLocation              LogicalLocation `json:"location,omitempty"`              //"logicalLocation":{...},
 	LogicalDownlinkUri           utils.Nstring   `json:"logicalDownlinkUri,omitempty"`           //"logicalDownlinkUri": "/rest/logical-downlinks/126ee6e0-db82-4fac-a4ce-c8ee423b77dc",
 	PermittedInterconnectTypeUri utils.Nstring   `json:"permittedInterconnectTypeUri,omitempty"` //"permittedInterconnectTypeUri": "/rest/interconnect-types/59080afb-85b5-43ae-8c69-27c08cb91f3a",
 	InterconnectUri              utils.Nstring   `json:"interconnectUri,omitempty"`              //"interconnectUri": "/rest/interconnects/aca6687f-1370-46cd-b832-7e3192dbddfd",
