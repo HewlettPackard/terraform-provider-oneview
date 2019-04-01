@@ -129,6 +129,7 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 										Optional: true,
 									},
 									"interconnect_uri": {
+
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -186,22 +187,14 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"port_monitor": {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"analyzer_port": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"category": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"created": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -217,19 +210,11 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"modified": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"status": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -253,24 +238,12 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"created": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"eTag": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"enabled": {
 							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"modified": {
-							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"name": {
@@ -285,13 +258,60 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"system_contact": {
 							Type:     schema.TypeString,
 							Optional: true,
+						},
+						"snmp_access": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+						"trap_destination": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"community_string": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"enet_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+									"fc_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+									"vcm_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+									"trap_destination": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"trap_format": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "SNMPv1",
+									},
+									"trap_severities": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+								},
+							},
 						},
 						"type": {
 							Type:     schema.TypeString,
@@ -299,6 +319,10 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 						},
 						"uri": {
 							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"v3_enabled": {
+							Type:     schema.TypeBool,
 							Optional: true,
 						},
 					},
@@ -315,66 +339,6 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"telemetry_configuration": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"category": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"created": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"eTag": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"enable_telemetry": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"modified": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"sample_count": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"sample_interval": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -425,47 +389,121 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 	ethernetSettings := make([]map[string]interface{}, 0, 1)
 
 	ethernetSettings = append(ethernetSettings, map[string]interface{}{
-		"category": logInt.EthernetSettings.Category,
-		"dependent_resource_uri": logInt.EthernetSettings.DependentResourceUri.String(),
-		"description": logInt.EthernetSettings.Description.String(),
-		"eTag": logInt.EthernetSettings.ETAG,
+		"category":                       logInt.EthernetSettings.Category,
+		"dependent_resource_uri":         logInt.EthernetSettings.DependentResourceUri.String(),
+		"description":                    logInt.EthernetSettings.Description.String(),
+		"eTag":                           logInt.EthernetSettings.ETAG,
 		"enable_fast_mac_cache_failover": *logInt.EthernetSettings.EnableFastMacCacheFailover,
-		"enable_igmp_snooping": *logInt.EthernetSettings.EnableIgmpSnooping,
+		"enable_igmp_snooping":           *logInt.EthernetSettings.EnableIgmpSnooping,
 		"enable_network_loop_protection": *logInt.EthernetSettings.EnableNetworkLoopProtection,
-		"id": logInt.EthernetSettings.ID,
-		"igmp_idle_timeout_interval": logInt.EthernetSettings.IgmpIdleTimeoutInterval,
-		"interconnect_type": logInt.EthernetSettings.InterconnectType,
-		"mac_refresh_interval": logInt.EthernetSettings.MacRefreshInterval,
-		"name": logInt.EthernetSettings.Name,
-		"state": logInt.EthernetSettings.State,
-		"type": logInt.EthernetSettings.Type,
-		"uri": logInt.EthernetSettings.URI.String(),
+		"id":                             logInt.EthernetSettings.ID,
+		"igmp_idle_timeout_interval":     logInt.EthernetSettings.IgmpIdleTimeoutInterval,
+		"interconnect_type":              logInt.EthernetSettings.InterconnectType,
+		"mac_refresh_interval":           logInt.EthernetSettings.MacRefreshInterval,
+		"name":                           logInt.EthernetSettings.Name,
+		"state":                          logInt.EthernetSettings.State,
+		"type":                           logInt.EthernetSettings.Type,
+		"uri":                            logInt.EthernetSettings.URI.String(),
 	})
 	d.Set("ethernet_settings", ethernetSettings)
 
 	interconnectMapEntries := make([]map[string]interface{}, 0, len(logInt.InterconnectMap.InterconnectMapEntries))
 	for _, interconnectMapEntry := range logInt.InterconnectMap.InterconnectMapEntries {
-		location := make([]map[string]interface{},0, 1)
+		location := make([]map[string]interface{}, 0, 1)
 		locationEntries := make([]map[string]interface{}, 0, len(interconnectMapEntry.LogicalLocation.LocationEntries))
 		for _, locationEntry := range interconnectMapEntry.LogicalLocation.LocationEntries {
 			locationEntries = append(locationEntries, map[string]interface{}{
-				"type": locationEntry.Type,
-				"value": locationEntry.RelativeValue,
+				"type":  locationEntry.Type,
+				"value": locationEntry.Value,
 			})
 		}
 		location = append(location, map[string]interface{}{
-			"locationEntries": locationEntries,
+			"location_entries": locationEntries,
 		})
 		interconnectMapEntries = append(interconnectMapEntries, map[string]interface{}{
-			"location": location,
-			"logical_downlink_uri": interconnectMapEntry.LogicalDownlinkUri.String(),
+			"location":                        location,
+			"logical_downlink_uri":            interconnectMapEntry.LogicalDownlinkUri.String(),
 			"permitted_interconnect_type_uri": interconnectMapEntry.PermittedInterconnectTypeUri.String(),
+			"interconnect_uri":                interconnectMapEntry.InterconnectUri,
+			"enclosure_index":                 interconnectMapEntry.EnclosureIndex,
 		})
 	}
 	interconnectMap := make([]map[string]interface{}, 0, 1)
 	interconnectMap = append(interconnectMap, map[string]interface{}{
 		"interconnect_map_entries": interconnectMapEntries,
-		})
+	})
 	d.Set("interconnect_map", interconnectMap)
+
+	interconnects := make([]interface{}, len(logInt.Interconnects))
+	for i, interconnect := range logInt.Interconnects {
+		interconnects[i] = interconnect
+	}
+
+	d.Set("interconnects", interconnects)
+
+	portMonitor := make([]map[string]interface{}, 0, 1)
+
+	portMonitor = append(portMonitor, map[string]interface{}{
+		"category":            logInt.PortMonitor.Category,
+		"description":         logInt.PortMonitor.Description.String(),
+		"eTag":                logInt.PortMonitor.ETAG,
+		"enable_port_monitor": logInt.PortMonitor.EnablePortMonitor,
+		"name":                logInt.PortMonitor.Name,
+		"state":               logInt.PortMonitor.State,
+		"type":                logInt.PortMonitor.Type,
+		"uri":                 logInt.PortMonitor.URI.String(),
+	})
+	d.Set("port_monitor", portMonitor)
+
+	trapDestinations := make([]map[string]interface{}, 0, 1)
+	for _, trapDestination := range logInt.SnmpConfiguration.TrapDestinations {
+
+		enetTrapCategories := make([]interface{}, len(trapDestination.EnetTrapCategories))
+		for i, enetTrapCategory := range trapDestination.EnetTrapCategories {
+			enetTrapCategories[i] = enetTrapCategory
+		}
+
+		fcTrapCategories := make([]interface{}, len(trapDestination.FcTrapCategories))
+		for i, fcTrapCategory := range trapDestination.FcTrapCategories {
+			fcTrapCategories[i] = fcTrapCategory
+		}
+
+		vcmTrapCategories := make([]interface{}, len(trapDestination.VcmTrapCategories))
+		for i, vcmTrapCategory := range trapDestination.VcmTrapCategories {
+			vcmTrapCategories[i] = vcmTrapCategory
+		}
+
+		trapSeverities := make([]interface{}, len(trapDestination.TrapSeverities))
+		for i, trapSeverity := range trapDestination.TrapSeverities {
+			trapSeverities[i] = trapSeverity
+		}
+
+		trapDestinations = append(trapDestinations, map[string]interface{}{
+			"trap_destination":     trapDestination.TrapDestination,
+			"community_string":     trapDestination.CommunityString,
+			"trap_format":          trapDestination.TrapFormat,
+			"enet_trap_categories": schema.NewSet(schema.HashString, enetTrapCategories),
+			"fc_trap_categories":   schema.NewSet(schema.HashString, fcTrapCategories),
+			"vcm_trap_categories":  schema.NewSet(schema.HashString, vcmTrapCategories),
+			"trap_severities":      schema.NewSet(schema.HashString, trapSeverities),
+		})
+	}
+
+	snmpAccess := make([]interface{}, len(logInt.SnmpConfiguration.SnmpAccess))
+	for i, snmpAccessIP := range logInt.SnmpConfiguration.SnmpAccess {
+		snmpAccess[i] = snmpAccessIP
+	}
+
+	snmpConfiguration := make([]map[string]interface{}, 0, 1)
+	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
+		"enabled":          *logInt.SnmpConfiguration.Enabled,
+		"v3_enabled":       *logInt.SnmpConfiguration.V3Enabled,
+		"read_community":   logInt.SnmpConfiguration.ReadCommunity,
+		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
+		"system_contact":   logInt.SnmpConfiguration.SystemContact,
+		"type":             logInt.SnmpConfiguration.Type,
+		"trap_destination": trapDestinations,
+	})
+	d.Set("snmp_configuration", snmpConfiguration)
 	return nil
 }
