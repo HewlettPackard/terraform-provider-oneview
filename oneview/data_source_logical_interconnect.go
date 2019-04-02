@@ -410,8 +410,8 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 	interconnectMapEntries := make([]map[string]interface{}, 0, len(logInt.InterconnectMap.InterconnectMapEntries))
 	for _, interconnectMapEntry := range logInt.InterconnectMap.InterconnectMapEntries {
 		location := make([]map[string]interface{}, 0, 1)
-		locationEntries := make([]map[string]interface{}, 0, len(interconnectMapEntry.LogicalLocation.LocationEntries))
-		for _, locationEntry := range interconnectMapEntry.LogicalLocation.LocationEntries {
+		locationEntries := make([]map[string]interface{}, 0, len(interconnectMapEntry.Location.LocationEntries))
+		for _, locationEntry := range interconnectMapEntry.Location.LocationEntries {
 			locationEntries = append(locationEntries, map[string]interface{}{
 				"type":  locationEntry.Type,
 				"value": locationEntry.Value,

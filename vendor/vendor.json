@@ -85,38 +85,38 @@
 		{
 			"checksumSHA1": "kasshieWdVIntOY0Vrz1OXNv7IA=",
 			"path": "github.com/HewlettPackard/oneview-golang/i3s",
-			"revision": "e2745c80aa8f6c16bde06989b798936291c8929d",
-			"revisionTime": "2019-03-05T07:26:27Z"
+			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
+			"revisionTime": "2019-04-02T11:18:28Z"
 		},
 		{
-			"checksumSHA1": "yrIv4kgbuYsHS05EqD5Va+sATQM=",
+			"checksumSHA1": "upcruuWO2FdYVzZJs8DDj4tBO2c=",
 			"path": "github.com/HewlettPackard/oneview-golang/icsp",
-			"revision": "e2745c80aa8f6c16bde06989b798936291c8929d",
-			"revisionTime": "2019-03-05T07:26:27Z"
+			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
+			"revisionTime": "2019-04-02T11:18:28Z"
 		},
 		{
 			"checksumSHA1": "T7C6uoGuuhXZ0UNMJr/7IyhF5ls=",
 			"path": "github.com/HewlettPackard/oneview-golang/liboneview",
-			"revision": "e2745c80aa8f6c16bde06989b798936291c8929d",
-			"revisionTime": "2019-03-05T07:26:27Z"
+			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
+			"revisionTime": "2019-04-02T11:18:28Z"
 		},
 		{
-			"checksumSHA1": "4vHEojbQP4Vn72xQgwlEDJ8HME8=",
+			"checksumSHA1": "kQp582CKtymXaw3bDZcc2m7iE5Y=",
 			"path": "github.com/HewlettPackard/oneview-golang/ov",
-			"revision": "e2745c80aa8f6c16bde06989b798936291c8929d",
-			"revisionTime": "2019-03-05T07:26:27Z"
+			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
+			"revisionTime": "2019-04-02T11:18:28Z"
 		},
 		{
-			"checksumSHA1": "FvTuPZUjQi9nSxEqpSBnLJePgqY=",
+			"checksumSHA1": "JS9zgKnymnPN0XuzmBL28HYXYwk=",
 			"path": "github.com/HewlettPackard/oneview-golang/rest",
-			"revision": "e2745c80aa8f6c16bde06989b798936291c8929d",
-			"revisionTime": "2019-03-05T07:26:27Z"
+			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
+			"revisionTime": "2019-04-02T11:18:28Z"
 		},
 		{
 			"checksumSHA1": "tSDhcm+zX/nRBHeXiQN2KqaRKu0=",
 			"path": "github.com/HewlettPackard/oneview-golang/utils",
-			"revision": "e2745c80aa8f6c16bde06989b798936291c8929d",
-			"revisionTime": "2019-03-05T07:26:27Z"
+			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
+			"revisionTime": "2019-04-02T11:18:28Z"
 		},
 		{
 			"path": "github.com/Unknwon/com",
