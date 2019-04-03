@@ -725,9 +725,9 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 			"state":                        port.State,
 			"type":                         port.Type,
 			"uri":                          port.URI.String(),
-			"vendor_specific_port_name":    port.VendorSpecificPortName,
-			"vlans":                        port.Vlans,
-			"subports":                     subports,
+			"vendor_specific_port_name": port.VendorSpecificPortName,
+			"vlans":                     port.Vlans,
+			"subports":                  subports,
 		})
 	}
 	d.Set("ports", ports)
