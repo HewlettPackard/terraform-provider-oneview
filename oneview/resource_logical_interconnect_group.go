@@ -876,15 +876,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		})
 	}
 
-	// interconnectMapEntryTemplateCount := d.Get("interconnect_map_entry_template.#").(int)
-	// for i := 0; i < interconnectMapEntryTemplateCount; i++ {
-	// 	currBayNum := d.Get("interconnect_map_entry_template." + strconv.Itoa(i) + ".bay_number")
-	// 	for j := 0; j < len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates); j++ {
-	// 		if currBayNum == interconnectMapEntryTemplates[j]["bay_number"] {
-	// 			interconnectMapEntryTemplates[i], interconnectMapEntryTemplates[j] = interconnectMapEntryTemplates[j], interconnectMapEntryTemplates[i]
-	// 		}
-	// 	}
-	// }
 	d.Set("interconnect_map_entry_template", interconnectMapEntryTemplates)
 
 	uplinkSets := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.UplinkSets))
