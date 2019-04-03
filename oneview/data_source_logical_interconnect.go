@@ -301,7 +301,7 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 									},
 									"trap_format": {
 										Type:     schema.TypeString,
-										Computed: true,
+										Optional: true,
 										Default:  "SNMPv1",
 									},
 									"trap_severities": {
