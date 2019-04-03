@@ -22,134 +22,134 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"category": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"consistency_status": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"eTag": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"enclosure_uris": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
 			"ethernet_settings": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"category": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"dependent_resource_uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"description": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"eTag": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"enable_fast_mac_cache_failover": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"enable_igmp_snooping": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"enable_network_loop_protection": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"id": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"igmp_idle_timeout_interval": {
 							Type:     schema.TypeInt,
-							Optional: true,
+							Computed: true,
 						},
 						"interconnect_type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"mac_refresh_interval": {
 							Type:     schema.TypeInt,
-							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"fusion_domain_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"interconnect_map": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"interconnect_map_entries": {
 							Type:     schema.TypeList,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"enclosure_index": {
 										Type:     schema.TypeInt,
-										Optional: true,
+										Computed: true,
 									},
 									"interconnect_uri": {
 
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"location": {
 										Type:     schema.TypeList,
-										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"location_entries": {
 													Type:     schema.TypeList,
-													Optional: true,
+													Computed: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"type": {
 																Type:     schema.TypeString,
-																Optional: true,
+																Computed: true,
 															},
 															"value": {
 																Type:     schema.TypeString,
-																Optional: true,
+																Computed: true,
 															},
 														},
 													},
@@ -159,11 +159,11 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 									},
 									"logical_downlink_uri": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"permitted_interconnect_type_uri": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 								},
 							},
@@ -173,17 +173,17 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 			},
 			"interconnects": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
 			"logical_interconnect_group_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"modified": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -191,107 +191,107 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 			},
 			"port_monitor": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"category": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"description": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"eTag": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"enable_port_monitor": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"snmp_configuration": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"category": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"description": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"enabled": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"read_community": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"system_contact": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"snmp_access": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
 						"trap_destination": {
 							Type:     schema.TypeList,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"community_string": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"enet_trap_categories": {
 										Type:     schema.TypeSet,
-										Optional: true,
+										Computed: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
 									"fc_trap_categories": {
 										Type:     schema.TypeSet,
-										Optional: true,
+										Computed: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
 									"vcm_trap_categories": {
 										Type:     schema.TypeSet,
-										Optional: true,
+										Computed: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
@@ -301,12 +301,12 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 									},
 									"trap_format": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 										Default:  "SNMPv1",
 									},
 									"trap_severities": {
 										Type:     schema.TypeSet,
-										Optional: true,
+										Computed: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
@@ -315,38 +315,38 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 						},
 						"type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"v3_enabled": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"stacking_health": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 		},
 	}
