@@ -22,115 +22,115 @@ func dataSourceInterconnects() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"base_wwn": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"category": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"device_reset_state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"eTag": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"edge_virtual_bridging_available": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_cut_through": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_fast_mac_cache_failover": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_igmp_snooping": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_network_loop_protection": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_pause_flood_protection": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_rich_tlv": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_storm_control": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_tagged_lldp": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enclosure_name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"enclosure_type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"enclosure_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"firmware_version": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"host_name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"igmp_idle_timeout_interval": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"igmp_snooping_vlan_ids": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"initial_scope_uris": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
 			"interconnect_ip": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"interconnect_location": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"location_entries": {
 							Type:     schema.TypeList,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"type": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"value": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 								},
 							},
@@ -140,15 +140,15 @@ func dataSourceInterconnects() *schema.Resource {
 			},
 			"interconnect_mac": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"interconnect_type_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"ip_address_list": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"ip_address": {
@@ -164,35 +164,35 @@ func dataSourceInterconnects() *schema.Resource {
 			},
 			"lldp_ip_address_mode": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"lldp_ipv4_address": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"lldp_ipv6_address": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"logical_interconnect_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"max_bandwidth": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"mgmt_interface": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"migration_state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"model": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -200,257 +200,257 @@ func dataSourceInterconnects() *schema.Resource {
 			},
 			"network_loop_protection_interval": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"part_number": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"port_count": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"ports": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"associated_uplink_set_uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"available": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"bay_number": {
 							Type:     schema.TypeInt,
-							Optional: true,
+							Computed: true,
 						},
 						"capability": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
 						"category": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"config_port_types": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
 						"connector_type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"description": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"eTag": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"enabled": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"interconnect_name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"lag_id": {
 							Type:     schema.TypeInt,
-							Optional: true,
+							Computed: true,
 						},
 						"lag_states": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"operational_speed": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"paired_port_name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_health_status": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_id": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_monitor_config_info": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_running_capability_type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_split_mode": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_status": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_status_reason": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"port_type_extended": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"subports": {
 							Type:     schema.TypeList,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"port_number": {
 										Type:     schema.TypeInt,
-										Optional: true,
+										Computed: true,
 									},
 									"port_status": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"port_status_reason": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 								},
 							},
 						},
 						"type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"vendor_specific_port_name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"vlans": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"power_state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"product_name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"roles": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"serial_number": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"snmp_configuration": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"category": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"description": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"enabled": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"read_community": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"system_contact": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"snmp_access": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
 						"trap_destination": {
 							Type:     schema.TypeList,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"community_string": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"enet_trap_categories": {
 										Type:     schema.TypeSet,
-										Optional: true,
+										Computed: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
 									"fc_trap_categories": {
 										Type:     schema.TypeSet,
-										Optional: true,
+										Computed: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
 									"vcm_trap_categories": {
 										Type:     schema.TypeSet,
-										Optional: true,
+										Computed: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
@@ -465,7 +465,7 @@ func dataSourceInterconnects() *schema.Resource {
 									},
 									"trap_severities": {
 										Type:     schema.TypeSet,
-										Optional: true,
+										Computed: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
@@ -474,66 +474,66 @@ func dataSourceInterconnects() *schema.Resource {
 						},
 						"type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"v3_enabled": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"spare_part_number": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"stacking_domain_id": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"stacking_domain_role": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"stacking_member_id": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"storm_control_polling_interval": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"storm_control_threshold": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"sub_port_count": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uid_state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"unsupported_capabilities": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 		},
 	}
