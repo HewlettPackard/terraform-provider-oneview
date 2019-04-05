@@ -27,31 +27,30 @@ func dataSourceEthernetNetwork() *schema.Resource {
 			"vlan_id": {
 				Type:     schema.TypeInt,
 				Computed: true,
-				ForceNew: true,
 			},
 			"purpose": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 				Default:  "General",
 			},
 			"private_network": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 				Default:  false,
 			},
 			"smart_link": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 				Default:  false,
 			},
 			"ethernet_network_type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 				Default:  "Tagged",
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 				Default:  "ethernet-networkV3",
 			},
 			"connection_template_uri": {
@@ -68,7 +67,7 @@ func dataSourceEthernetNetwork() *schema.Resource {
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -95,12 +94,12 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"scopesUri": {
-				Optional: true,
+				Computed: true,
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"initial_scope_uris": {
-				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
