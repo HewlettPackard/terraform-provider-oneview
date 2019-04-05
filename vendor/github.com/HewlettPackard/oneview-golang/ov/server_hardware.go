@@ -192,7 +192,7 @@ func (s ServerHardware) PowerOn() error {
 	return pt.PowerExecutor(P_ON)
 }
 
-// get the power state
+// GetPowerState gets the power state
 func (s ServerHardware) GetPowerState() (PowerState, error) {
 	var pt *PowerTask
 	pt = pt.NewPowerTask(s)
@@ -202,7 +202,7 @@ func (s ServerHardware) GetPowerState() (PowerState, error) {
 	return pt.State, nil
 }
 
-// get a server hardware with uri
+// GetServerHardwareByUri gets a server hardware with uri
 func (c *OVClient) GetServerHardwareByUri(uri utils.Nstring) (ServerHardware, error) {
 
 	var hardware ServerHardware
@@ -225,7 +225,7 @@ func (c *OVClient) GetServerHardwareByUri(uri utils.Nstring) (ServerHardware, er
 	return hardware, nil
 }
 
-// get a server hardware with uri
+// GetServerHardwareByName gets a server hardware with uri
 func (c *OVClient) GetServerHardwareByName(name string) (ServerHardware, error) {
 
 	var (
@@ -242,7 +242,7 @@ func (c *OVClient) GetServerHardwareByName(name string) (ServerHardware, error) 
 	}
 }
 
-// get a server hardware with filters
+// GetServerHardwareList gets a server hardware with filters
 func (c *OVClient) GetServerHardwareList(filters []string, sort string) (ServerHardwareList, error) {
 	var (
 		uri        = "/rest/server-hardware"
@@ -278,7 +278,7 @@ func (c *OVClient) GetServerHardwareList(filters []string, sort string) (ServerH
 	return serverlist, nil
 }
 
-// get available server
+// GetAvailableHardware gets available server
 // blades = rest_api(:oneview, :get, "/rest/server-hardware?sort=name:asc&filter=serverHardwareTypeUri='#{server_hardware_type_uri}'&filter=serverGroupUri='#{enclosure_group_uri}'")
 func (c *OVClient) GetAvailableHardware(hardwaretype_uri utils.Nstring, servergroup_uri utils.Nstring) (hw ServerHardware, err error) {
 	var (
@@ -306,7 +306,7 @@ func (c *OVClient) GetAvailableHardware(hardwaretype_uri utils.Nstring, servergr
 	return hw, nil
 }
 
-// get firmware for a server hardware with uri
+// GetServerFirmwareByUri gets firmware for a server hardware with uri
 func (c *OVClient) GetServerFirmwareByUri(uri utils.Nstring) (ServerFirmware, error) {
 
 	var (
