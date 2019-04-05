@@ -33,4 +33,4 @@ output "oneview_interconnect_value" {
 
 * `uri` - The URI of the created resource.
 
-* `eTag` - Entity tag/version ID of the resource.
+* `type` - Type of the resource.

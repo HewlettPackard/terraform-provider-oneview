@@ -44,12 +44,6 @@ func dataSourceInterconnects() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"initial_scope_uris": {
-				Type:     schema.TypeSet,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
-			},
 			"interconnect_ip": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -296,13 +290,6 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 	}
 
 	d.Set("ip_address_list", ipAddressList)
-
-	initialScopeUris := make([]interface{}, len(interconnect.InitialScopeUris))
-	for i, initialScopeUri := range interconnect.InitialScopeUris {
-		initialScopeUris[i] = initialScopeUri
-	}
-
-	d.Set("initial_scope_uris", initialScopeUris)
 
 	trapDestinations := make([]map[string]interface{}, 0, 1)
 	for _, trapDestination := range interconnect.SnmpConfiguration.TrapDestinations {
