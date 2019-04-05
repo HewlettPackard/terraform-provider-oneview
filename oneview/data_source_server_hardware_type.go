@@ -36,6 +36,32 @@ func dataSourceServerHardwareType() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"storage_capability": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"controller_modes": {
+							Type:     schema.TypeSet,
+							Computed: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+						"drive_technologies": {
+							Type:     schema.TypeSet,
+							Computed: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+						"raid_levels": {
+							Type:     schema.TypeSet,
+							Computed: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+					},
+				},
+			},
 			"uri": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -61,5 +87,25 @@ func dataSourceServerHardwareTypeRead(d *schema.ResourceData, meta interface{}) 
 	d.Set("etag", server_hardware_type.ETAG)
 	d.Set("uri", server_hardware_type.URI.String())
 
+	controllerModes := make([]interface{}, len(server_hardware_type.StorageCapabilities.ControllerModes))
+	for i, controllerMode := range server_hardware_type.StorageCapabilities.ControllerModes {
+		controllerModes[i] = controllerMode
+	}
+	driveTechnologies := make([]interface{}, len(server_hardware_type.StorageCapabilities.DriveTechnologies))
+	for i, driveTechnology := range server_hardware_type.StorageCapabilities.DriveTechnologies {
+		driveTechnologies[i] = driveTechnology
+	}
+	raidLevels := make([]interface{}, len(server_hardware_type.StorageCapabilities.RaidLevels))
+	for i, raidLevel := range server_hardware_type.StorageCapabilities.RaidLevels {
+		raidLevels[i] = raidLevel
+	}
+
+	storageCapability := make([]map[string]interface{}, 0, 1)
+	storageCapability = append(storageCapability, map[string]interface{}{
+		"controller_modes":   schema.NewSet(schema.HashString, controllerModes),
+		"drive_technologies": schema.NewSet(schema.HashString, driveTechnologies),
+		"raid_levels":        schema.NewSet(schema.HashString, raidLevels),
+	})
+	d.Set("storage_capability", storageCapability)
 	return nil
 }
