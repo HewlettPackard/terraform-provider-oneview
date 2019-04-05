@@ -294,11 +294,11 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 		"category":               logInt.EthernetSettings.Category,
 		"dependent_resource_uri": logInt.EthernetSettings.DependentResourceUri.String(),
 		"description":            logInt.EthernetSettings.Description.String(),
-		"id": logInt.EthernetSettings.ID,
-		"interconnect_type":          logInt.EthernetSettings.InterconnectType,
-		"name":                       logInt.EthernetSettings.Name,
-		"type":                       logInt.EthernetSettings.Type,
-		"uri":                        logInt.EthernetSettings.URI.String(),
+		"id":                     logInt.EthernetSettings.ID,
+		"interconnect_type":      logInt.EthernetSettings.InterconnectType,
+		"name":                   logInt.EthernetSettings.Name,
+		"type":                   logInt.EthernetSettings.Type,
+		"uri":                    logInt.EthernetSettings.URI.String(),
 	})
 	d.Set("ethernet_settings", ethernetSettings)
 
