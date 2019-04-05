@@ -22,15 +22,15 @@ func dataSourceServerHardwareType() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"category": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"etag": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -64,7 +64,7 @@ func dataSourceServerHardwareType() *schema.Resource {
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 		},
 	}
