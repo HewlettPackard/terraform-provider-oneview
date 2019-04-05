@@ -24,15 +24,7 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"consistency_status": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"eTag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -59,43 +51,15 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"eTag": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"enable_fast_mac_cache_failover": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"enable_igmp_snooping": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"enable_network_loop_protection": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
 						"id": {
 							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"igmp_idle_timeout_interval": {
-							Type:     schema.TypeInt,
 							Computed: true,
 						},
 						"interconnect_type": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"mac_refresh_interval": {
-							Type:     schema.TypeInt,
-							Computed: true,
-						},
 						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"state": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -181,53 +145,9 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-			},
-			"port_monitor": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"category": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"description": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"eTag": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"enable_port_monitor": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"state": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"uri": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
 			},
 			"snmp_configuration": {
 				Type:     schema.TypeList,
@@ -251,10 +171,6 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 							Computed: true,
 						},
 						"read_community": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"state": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -332,14 +248,6 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"state": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -365,17 +273,11 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 	d.SetId(id)
 
 	d.Set("category", logInt.Category)
-	d.Set("consistency_status", logInt.ConsistencyStatus)
-	d.Set("created", logInt.Created)
 	d.Set("description", logInt.Description)
-	d.Set("eTag", logInt.ETAG)
 	d.Set("fusion_domain_uri", logInt.FusionDomainUri)
 	d.Set("logical_interconnect_group_uri", logInt.LogicalInterconnectGroupUri)
-	d.Set("modified", logInt.Modified)
 	d.Set("name", logInt.Name)
 	d.Set("stacking_health", logInt.StackingHealth)
-	d.Set("state", logInt.State)
-	d.Set("status", logInt.Status)
 	d.Set("type", logInt.Type)
 	d.Set("uri", logInt.URI)
 
@@ -392,16 +294,9 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 		"category":               logInt.EthernetSettings.Category,
 		"dependent_resource_uri": logInt.EthernetSettings.DependentResourceUri.String(),
 		"description":            logInt.EthernetSettings.Description.String(),
-		"eTag":                   logInt.EthernetSettings.ETAG,
-		"enable_fast_mac_cache_failover": *logInt.EthernetSettings.EnableFastMacCacheFailover,
-		"enable_igmp_snooping":           *logInt.EthernetSettings.EnableIgmpSnooping,
-		"enable_network_loop_protection": *logInt.EthernetSettings.EnableNetworkLoopProtection,
 		"id": logInt.EthernetSettings.ID,
-		"igmp_idle_timeout_interval": logInt.EthernetSettings.IgmpIdleTimeoutInterval,
 		"interconnect_type":          logInt.EthernetSettings.InterconnectType,
-		"mac_refresh_interval":       logInt.EthernetSettings.MacRefreshInterval,
 		"name":                       logInt.EthernetSettings.Name,
-		"state":                      logInt.EthernetSettings.State,
 		"type":                       logInt.EthernetSettings.Type,
 		"uri":                        logInt.EthernetSettings.URI.String(),
 	})
@@ -440,20 +335,6 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 	}
 
 	d.Set("interconnects", interconnects)
-
-	portMonitor := make([]map[string]interface{}, 0, 1)
-
-	portMonitor = append(portMonitor, map[string]interface{}{
-		"category":            logInt.PortMonitor.Category,
-		"description":         logInt.PortMonitor.Description.String(),
-		"eTag":                logInt.PortMonitor.ETAG,
-		"enable_port_monitor": logInt.PortMonitor.EnablePortMonitor,
-		"name":                logInt.PortMonitor.Name,
-		"state":               logInt.PortMonitor.State,
-		"type":                logInt.PortMonitor.Type,
-		"uri":                 logInt.PortMonitor.URI.String(),
-	})
-	d.Set("port_monitor", portMonitor)
 
 	trapDestinations := make([]map[string]interface{}, 0, 1)
 	for _, trapDestination := range logInt.SnmpConfiguration.TrapDestinations {
