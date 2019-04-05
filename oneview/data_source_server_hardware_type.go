@@ -75,28 +75,28 @@ func dataSourceServerHardwareTypeRead(d *schema.ResourceData, meta interface{}) 
 	config := meta.(*Config)
 	name := d.Get("name").(string)
 
-	server_hardware_type, err := config.ovClient.GetServerHardwareTypeByName(name)
-	if err != nil || server_hardware_type.URI.IsNil() {
+	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByName(name)
+	if err != nil || serverHardwareType.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
 	d.SetId(name)
-	d.Set("name", server_hardware_type.Name)
-	d.Set("description", server_hardware_type.Description.String())
-	d.Set("category", server_hardware_type.Category)
-	d.Set("etag", server_hardware_type.ETAG)
-	d.Set("uri", server_hardware_type.URI.String())
+	d.Set("name", serverHardwareType.Name)
+	d.Set("description", serverHardwareType.Description.String())
+	d.Set("category", serverHardwareType.Category)
+	d.Set("etag", serverHardwareType.ETAG)
+	d.Set("uri", serverHardwareType.URI.String())
 
-	controllerModes := make([]interface{}, len(server_hardware_type.StorageCapabilities.ControllerModes))
-	for i, controllerMode := range server_hardware_type.StorageCapabilities.ControllerModes {
+	controllerModes := make([]interface{}, len(serverHardwareType.StorageCapabilities.ControllerModes))
+	for i, controllerMode := range serverHardwareType.StorageCapabilities.ControllerModes {
 		controllerModes[i] = controllerMode
 	}
-	driveTechnologies := make([]interface{}, len(server_hardware_type.StorageCapabilities.DriveTechnologies))
-	for i, driveTechnology := range server_hardware_type.StorageCapabilities.DriveTechnologies {
+	driveTechnologies := make([]interface{}, len(serverHardwareType.StorageCapabilities.DriveTechnologies))
+	for i, driveTechnology := range serverHardwareType.StorageCapabilities.DriveTechnologies {
 		driveTechnologies[i] = driveTechnology
 	}
-	raidLevels := make([]interface{}, len(server_hardware_type.StorageCapabilities.RaidLevels))
-	for i, raidLevel := range server_hardware_type.StorageCapabilities.RaidLevels {
+	raidLevels := make([]interface{}, len(serverHardwareType.StorageCapabilities.RaidLevels))
+	for i, raidLevel := range serverHardwareType.StorageCapabilities.RaidLevels {
 		raidLevels[i] = raidLevel
 	}
 
