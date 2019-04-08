@@ -48,7 +48,7 @@ func (c *OVClient) IsProfileTemplates() bool {
 	return !c.ProfileTemplatesNotSupported()
 }
 
-// get a server profile template by name
+// GetProfileTemplateByName gets a server profile template by name
 func (c *OVClient) GetProfileTemplateByName(name string) (ServerProfile, error) {
 	var (
 		profile ServerProfile
@@ -74,7 +74,7 @@ func (c *OVClient) GetProfileTemplateByName(name string) (ServerProfile, error) 
 
 }
 
-// get a server profiles
+// GetProfileTemplates gets a server profiles
 func (c *OVClient) GetProfileTemplates(start string, count string, filter string, sort string, scopeUris string) (ServerProfileList, error) {
 	var (
 		uri      = "/rest/server-profile-templates"
