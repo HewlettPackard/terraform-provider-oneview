@@ -83,13 +83,12 @@ func dataSourceServerHardware() *schema.Resource {
 func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	name := d.Get("name").(string)
-	servHard, err := config.ovClient.GetServerHardwareByName(name)
+	servHard, err := config.ovClient.GetServerHardwareByName(d.Get("name").(string))
 	if err != nil || servHard.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
-	d.SetId(name)
+	d.SetId(d.Get("name").(string))
 	d.Set("name", servHard.Name)
 	d.Set("location_uri", servHard.LocationURI.String())
 	d.Set("power_state", servHard.PowerState)
