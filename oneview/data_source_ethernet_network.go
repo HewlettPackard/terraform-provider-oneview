@@ -94,7 +94,6 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"scopesUri": {
-				Computed: true,
 				Type:     schema.TypeString,
 				Computed: true,
 			},
