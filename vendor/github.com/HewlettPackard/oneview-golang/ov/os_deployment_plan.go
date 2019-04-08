@@ -50,7 +50,7 @@ type CustomAttribute struct {
 	Value         string `json:"value,omitempty"`         // "value": "attribute_value",
 }
 
-// get an os deployment plan with uri
+// GetOSDeploymentPlan gets an os deployment plan with uri
 func (c *OVClient) GetOSDeploymentPlan(uri utils.Nstring) (OSDeploymentPlan, error) {
 
 	var osDeploymentPlan OSDeploymentPlan

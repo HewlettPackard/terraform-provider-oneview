@@ -160,7 +160,7 @@ type ServerProfileList struct {
 	Members     []ServerProfile `json:"members,omitempty"`     // "members":[]
 }
 
-// get a server profile by name
+// GetProfileByName gets a server profile by name
 func (c *OVClient) GetProfileByName(name string) (ServerProfile, error) {
 	var (
 		profile ServerProfile

@@ -12,7 +12,6 @@
 package oneview
 
 import (
-	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -64,11 +63,11 @@ func resourceUplinkSet() *schema.Resource {
 			},
 			"network_type": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"ethernet_network_type": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -81,7 +80,7 @@ func resourceUplinkSet() *schema.Resource {
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -113,7 +112,7 @@ func resourceUplinkSet() *schema.Resource {
 			},
 			"manual_login_redistribution_state": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"native_network_uri": {
 				Type:     schema.TypeString,
@@ -127,22 +126,6 @@ func resourceUplinkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"expected_neighbour": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"remote_chasis_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"remote_port_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
 			"port_config_infos": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -152,29 +135,29 @@ func resourceUplinkSet() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"location": {
-							Type:     schema.TypeSet,
+						"port_uri": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"location_entries": {
-										Type:     schema.TypeSet,
-										Optional: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"value": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"type": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-											},
-										},
-									},
-								},
-							},
+						},
+						"bay_number": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"enclosure_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"port_number": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"remote_chassis_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"remote_port_id": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 					},
 				},
@@ -186,6 +169,10 @@ func resourceUplinkSet() *schema.Resource {
 func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	const Bay = "Bay"
+	const Enclosure = "Enclosure"
+	const Port = "Port"
+
 	uplinkSet := ov.UplinkSet{
 		Name: d.Get("name").(string),
 		LogicalInterconnectURI: utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
@@ -196,68 +183,77 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 		ManualLoginRedistributionState: d.Get("manual_login_redistribution_state").(string),
 	}
 
-	if val, ok := d.GetOk("network_uris"); ok {
-		rawNetworkUris := val.(*schema.Set).List()
-		NetworkUris := make([]utils.Nstring, len(rawNetworkUris))
-		for i, raw := range rawNetworkUris {
-			NetworkUris[i] = utils.Nstring(raw.(string))
-		}
-		uplinkSet.NetworkURIs = NetworkUris
-	}
+	networkUriList := d.Get("network_uris").(*schema.Set).List()
+	networkUris := make([]utils.Nstring, 0)
 
-	if val, ok := d.GetOk("fc_network_uris"); ok {
-		rawFcNetworkUris := val.(*schema.Set).List()
-		FcNetworkUris := make([]utils.Nstring, len(rawFcNetworkUris))
-		for i, raw := range rawFcNetworkUris {
-			FcNetworkUris[i] = utils.Nstring(raw.(string))
-		}
-		uplinkSet.FcNetworkURIs = FcNetworkUris
+	for _, raw := range networkUriList {
+		networkUris = append(networkUris, utils.NewNstring(raw.(string)))
 	}
+	uplinkSet.NetworkURIs = networkUris
 
-	if val, ok := d.GetOk("fcoe_network_uris"); ok {
-		rawFcoeNetworkUris := val.(*schema.Set).List()
-		FcoeNetworkUris := make([]utils.Nstring, len(rawFcoeNetworkUris))
-		for i, raw := range rawFcoeNetworkUris {
-			FcoeNetworkUris[i] = utils.Nstring(raw.(string))
-		}
-		uplinkSet.FcoeNetworkURIs = FcoeNetworkUris
+	fcNetworkUriList := d.Get("fc_network_uris").(*schema.Set).List()
+	fcNetworkUris := make([]utils.Nstring, 0)
+
+	for _, raw := range fcNetworkUriList {
+		fcNetworkUris = append(fcNetworkUris, utils.NewNstring(raw.(string)))
 	}
+	uplinkSet.FcNetworkURIs = fcNetworkUris
+
+	fcoeNetworkUriList := d.Get("fcoe_network_uris").(*schema.Set).List()
+	fcoeNetworkUris := make([]utils.Nstring, 0)
+
+	for _, raw := range fcoeNetworkUriList {
+		fcoeNetworkUris = append(fcoeNetworkUris, utils.NewNstring(raw.(string)))
+	}
+	uplinkSet.FcoeNetworkURIs = fcoeNetworkUris
 
 	// Getting list of port config info
-	portConfigInfosCount := d.Get("port_config_infos.#").(int)
-	portConfigInfosAll := make([]ov.PortConfigInfos, 0)
+	portConfigInfosList := d.Get("port_config_infos").(*schema.Set).List()
+	portConfigInfos := make([]ov.PortConfigInfos, 0)
 
-	for i := 0; i < portConfigInfosCount; i++ {
-		portConfigInfosPrefix := fmt.Sprintf("port_config_infos.%d", i)
+	for _, raw := range portConfigInfosList {
+		portConfigInfo := raw.(map[string]interface{})
 
-		// Getting the list of Location Entries.
-		locationPrefix := fmt.Sprintf(portConfigInfosPrefix + ".location.0")
-		locationEntriesCount := d.Get(locationPrefix + ".location_entries.#").(int)
-		locationEntriesAll := make([]ov.LocationEntries, 0)
+		desiredSpeed := portConfigInfo["desired_speed"].(string)
+		portUri := portConfigInfo["port_uri"].(string)
 
-		for j := 0; j < locationEntriesCount; j++ {
-			locationEntriesPrefix := fmt.Sprintf(locationPrefix+".locationEntries.%d", j)
-			locationEntries := ov.LocationEntries{
-				Value: d.Get(locationEntriesPrefix + ".value").(string),
-				Type:  d.Get(locationEntriesPrefix + ".type").(string),
-			}
-			locationEntriesAll = append(locationEntriesAll, locationEntries)
+		enclosureLocation := ov.LocationEntries{
+			Value: portConfigInfo["enclosure_uri"].(string),
+			Type:  Enclosure,
 		}
+		locationEntries := make([]ov.LocationEntries, 0)
+		locationEntries = append(locationEntries, enclosureLocation)
 
-		// Setting the Location attribute of port config info
+		bayLocation := ov.LocationEntries{
+			Value: portConfigInfo["bay_number"].(string),
+			Type:  Bay,
+		}
+		locationEntries = append(locationEntries, bayLocation)
+
+		portLocation := ov.LocationEntries{
+			Value: portConfigInfo["port_number"].(string),
+			Type:  Port,
+		}
+		locationEntries = append(locationEntries, portLocation)
+
 		location := ov.Location{
-			LocationEntries: locationEntriesAll,
+			LocationEntries: locationEntries,
 		}
 
-		portConfigInfos := ov.PortConfigInfos{
-			Location:     location,
-			DesiredSpeed: d.Get(portConfigInfosPrefix + ".desired_speed").(string),
+		expectedNeighbor := ov.ExpectedNeighbor{
+			RemoteChassisId: portConfigInfo["remote_chassis_id"].(string),
+			RemotePortId:    portConfigInfo["remote_port_id"].(string),
 		}
 
-		portConfigInfosAll = append(portConfigInfosAll, portConfigInfos)
-
+		portConfigInfos = append(portConfigInfos, ov.PortConfigInfos{
+			DesiredSpeed:     desiredSpeed,
+			PortUri:          portUri,
+			ExpectedNeighbor: &expectedNeighbor,
+			Location:         location,
+		})
 	}
-	uplinkSet.PortConfigInfos = portConfigInfosAll
+
+	uplinkSet.PortConfigInfos = portConfigInfos
 
 	uplinkSetError := config.ovClient.CreateUplinkSet(uplinkSet)
 	d.SetId(d.Get("name").(string))
@@ -292,7 +288,6 @@ func resourceUplinkSetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("modified", uplinkSet.Modified)
 	d.Set("eTag", uplinkSet.Etag)
 	d.Set("reachability", uplinkSet.Reachability)
-	d.Set("expected_neighbor", uplinkSet.ExpectedNeighbor)
 	d.Set("network_type", uplinkSet.NetworkType)
 	d.Set("ethernet_network_type", uplinkSet.EthernetNetworkType)
 	d.Set("port_config_infos", uplinkSet.PortConfigInfos)
@@ -302,13 +297,92 @@ func resourceUplinkSetRead(d *schema.ResourceData, meta interface{}) error {
 func resourceUplinkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	const Bay = "Bay"
+	const Enclosure = "Enclosure"
+	const Port = "Port"
+
 	uplinkSet := ov.UplinkSet{
-		Etag:        d.Get("eTag").(string),
-		URI:         utils.NewNstring(d.Get("uri").(string)),
-		Name:        d.Get("name").(string),
-		Type:        d.Get("type").(string),
-		Description: utils.NewNstring(d.Get("description").(string)),
+		Name: d.Get("name").(string),
+		LogicalInterconnectURI: utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
+		ConnectionMode:         d.Get("connection_mode").(string),
+		NetworkType:            d.Get("network_type").(string),
+		EthernetNetworkType:    d.Get("ethernet_network_type").(string),
+		Type:                   d.Get("type").(string),
+		URI:                    utils.NewNstring(d.Get("uri").(string)),
+		ManualLoginRedistributionState: d.Get("manual_login_redistribution_state").(string),
 	}
+
+	networkUriList := d.Get("network_uris").(*schema.Set).List()
+	networkUris := make([]utils.Nstring, 0)
+
+	for _, raw := range networkUriList {
+		networkUris = append(networkUris, utils.NewNstring(raw.(string)))
+	}
+	uplinkSet.NetworkURIs = networkUris
+
+	fcNetworkUriList := d.Get("fc_network_uris").(*schema.Set).List()
+	fcNetworkUris := make([]utils.Nstring, 0)
+
+	for _, raw := range fcNetworkUriList {
+		fcNetworkUris = append(fcNetworkUris, utils.NewNstring(raw.(string)))
+	}
+	uplinkSet.FcNetworkURIs = fcNetworkUris
+
+	fcoeNetworkUriList := d.Get("fcoe_network_uris").(*schema.Set).List()
+	fcoeNetworkUris := make([]utils.Nstring, 0)
+
+	for _, raw := range fcoeNetworkUriList {
+		fcoeNetworkUris = append(fcoeNetworkUris, utils.NewNstring(raw.(string)))
+	}
+	uplinkSet.FcoeNetworkURIs = fcoeNetworkUris
+
+	// Getting list of port config info
+	portConfigInfosList := d.Get("port_config_infos").(*schema.Set).List()
+	portConfigInfos := make([]ov.PortConfigInfos, 0)
+
+	for _, raw := range portConfigInfosList {
+		portConfigInfo := raw.(map[string]interface{})
+
+		desiredSpeed := portConfigInfo["desired_speed"].(string)
+		portUri := portConfigInfo["port_uri"].(string)
+
+		enclosureLocation := ov.LocationEntries{
+			Value: portConfigInfo["enclosure_uri"].(string),
+			Type:  Enclosure,
+		}
+		locationEntries := make([]ov.LocationEntries, 0)
+		locationEntries = append(locationEntries, enclosureLocation)
+
+		bayLocation := ov.LocationEntries{
+			Value: portConfigInfo["bay_number"].(string),
+			Type:  Bay,
+		}
+		locationEntries = append(locationEntries, bayLocation)
+
+		portLocation := ov.LocationEntries{
+			Value: portConfigInfo["port_number"].(string),
+			Type:  Port,
+		}
+		locationEntries = append(locationEntries, portLocation)
+
+		location := ov.Location{
+			LocationEntries: locationEntries,
+		}
+
+		expectedNeighbor := ov.ExpectedNeighbor{
+			RemoteChassisId: portConfigInfo["remote_chassis_id"].(string),
+			RemotePortId:    portConfigInfo["remote_port_id"].(string),
+		}
+
+		portConfigInfos = append(portConfigInfos, ov.PortConfigInfos{
+			DesiredSpeed:     desiredSpeed,
+			PortUri:          portUri,
+			ExpectedNeighbor: &expectedNeighbor,
+			Location:         location,
+		})
+	}
+
+	uplinkSet.PortConfigInfos = portConfigInfos
 
 	err := config.ovClient.UpdateUplinkSet(uplinkSet)
 	if err != nil {
