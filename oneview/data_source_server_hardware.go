@@ -22,7 +22,7 @@ func dataSourceServerHardware() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"location_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -30,51 +30,51 @@ func dataSourceServerHardware() *schema.Resource {
 			},
 			"power_state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"server_group_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"server_hardware_type_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"server_profile_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uuid": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"virtual_serial_number": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"virtual_uuid": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"mp_ip_address": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"mp_firmware_version": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"mp_dns_name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 		},
 	}
