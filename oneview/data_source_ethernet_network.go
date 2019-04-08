@@ -31,27 +31,22 @@ func dataSourceEthernetNetwork() *schema.Resource {
 			"purpose": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Default:  "General",
 			},
 			"private_network": {
 				Type:     schema.TypeBool,
 				Computed: true,
-				Default:  false,
 			},
 			"smart_link": {
 				Type:     schema.TypeBool,
 				Computed: true,
-				Default:  false,
 			},
 			"ethernet_network_type": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Default:  "Tagged",
 			},
 			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Default:  "ethernet-networkV3",
 			},
 			"connection_template_uri": {
 				Type:     schema.TypeString,
