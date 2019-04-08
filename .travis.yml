@@ -20,6 +20,7 @@ env:
         - REPO=$DOCKER_USERNAME/terraform-provider-oneview
         - TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "branch-${TRAVIS_BRANCH}"; fi)
         - UNFORMATTED=$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
+        - echo $UNFORMATTED
 
 install:
     - mkdir -p $TF_DOWNLOAD_PATH
