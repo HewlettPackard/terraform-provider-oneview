@@ -31,10 +31,10 @@ func resourceUplinkSet() *schema.Resource {
 			},
 			"logical_interconnect_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"network_uris": {
-				Optional: true,
+				Required: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -42,7 +42,7 @@ func resourceUplinkSet() *schema.Resource {
 				Set: schema.HashString,
 			},
 			"fc_network_uris": {
-				Optional: true,
+				Required: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -50,7 +50,7 @@ func resourceUplinkSet() *schema.Resource {
 				Set: schema.HashString,
 			},
 			"fcoe_network_uris": {
-				Optional: true,
+				Required: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -59,19 +59,19 @@ func resourceUplinkSet() *schema.Resource {
 			},
 			"connection_mode": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"network_type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"ethernet_network_type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 				Default:  "uplink-setV4",
 			},
 			"description": {
@@ -82,37 +82,17 @@ func resourceUplinkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"category": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"state": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"eTag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"created": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"modified": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"lcaptimer": {
+			"lacptimer": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"manual_login_redistribution_state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"native_network_uri": {
 				Type:     schema.TypeString,
@@ -128,7 +108,7 @@ func resourceUplinkSet() *schema.Resource {
 			},
 			"port_config_infos": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"desired_speed": {
@@ -291,6 +271,11 @@ func resourceUplinkSetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("network_type", uplinkSet.NetworkType)
 	d.Set("ethernet_network_type", uplinkSet.EthernetNetworkType)
 	d.Set("port_config_infos", uplinkSet.PortConfigInfos)
+	d.Set("connection_mode", uplinkSet.ConnectionMode)
+	d.Set("lacptimer", uplinkSet.LacpTimer)
+	d.Set("native_network_uri", uplinkSet.NativeNetworkUri)
+	d.Set("fc_mode", uplinkSet.FcMode)
+
 	return nil
 }
 
