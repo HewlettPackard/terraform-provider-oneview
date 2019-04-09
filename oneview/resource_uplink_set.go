@@ -71,7 +71,7 @@ func resourceUplinkSet() *schema.Resource {
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 				Default:  "uplink-setV4",
 			},
 			"description": {
