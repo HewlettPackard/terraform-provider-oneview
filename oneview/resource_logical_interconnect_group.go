@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
-	//	"os"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
