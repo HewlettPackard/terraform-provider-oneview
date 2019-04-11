@@ -128,7 +128,7 @@ func (c *ICSPClient) SubmitDeploymentJobs(dj DeploymentJobs) (jt *JobTask, err e
 	return jt, err
 }
 
-// ApplyDeployment plan to server
+// ApplyDeploymentJobs plan to server
 func (c *ICSPClient) ApplyDeploymentJobs(buildplans []string, bpdata *OSDPersonalityDataV2, s Server) (jt *JobTask, err error) {
 
 	var dj DeploymentJobs
