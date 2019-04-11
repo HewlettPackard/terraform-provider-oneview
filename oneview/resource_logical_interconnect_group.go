@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+//	"os"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -469,9 +470,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 	if val, ok := d.GetOk("enclosure_indexes"); ok {
 		rawEnclosureIndexes := val.(*schema.Set).List()
-		enclosureIndexes := make([]int, len(rawEnclosureIndexes))
-		for i, raw := range rawEnclosureIndexes {
-			enclosureIndexes[i] = raw.(int)
+		enclosureIndexes := make([]int, 0)
+		for _, raw := range rawEnclosureIndexes {
+			enclosureIndex := raw.(int)
+			enclosureIndexes = append(enclosureIndexes,enclosureIndex)
 		}
 		lig.EnclosureIndexes = enclosureIndexes
 	}
