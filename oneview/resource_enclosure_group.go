@@ -9,24 +9,20 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 package oneview
-
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
 )
-
 func resourceEnclosureGroup() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceEnclosureGroupCreate,
 		Read:   resourceEnclosureGroupRead,
 		Update: resourceEnclosureGroupUpdate,
 		Delete: resourceEnclosureGroupDelete,
-
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-
 		Schema: map[string]*schema.Schema{
 			"ambient_temperature_mode": {
 				Type:     schema.TypeString,
@@ -155,21 +151,16 @@ func resourceEnclosureGroup() *schema.Resource {
 		},
 	}
 }
-
 func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
 	enclosureGroup := ov.EnclosureGroup{
-
 		Name: d.Get("name").(string),
 	}
-
 	if val, ok := d.GetOk("interconnect_bay_mappings"); ok {
 		rawInterconnectBayMappings := val.(*schema.Set).List()
 		interconnectBayMappings := make([]ov.InterconnectBayMap, 0)
 		for _, raw := range rawInterconnectBayMappings {
 			interconnectBayMappingItem := raw.(map[string]interface{})
-
 			interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
 				EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
 				InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
@@ -177,7 +168,6 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 		enclosureGroup.InterconnectBayMappings = interconnectBayMappings
 	}
-
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawinitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawinitialScopeUris))
@@ -186,27 +176,21 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 		enclosureGroup.InitialScopeUris = initialScopeUris
 	}
-
 	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
 		enclosureGroup.AmbientTemperatureMode = val.(string)
 	}
-
 	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
 		enclosureGroup.AmbientTemperatureMode = val.(string)
 	}
-
 	if val, ok := d.GetOk("enclosure_count"); ok {
 		enclosureGroup.EnclosureCount = val.(int)
 	}
-
 	if val, ok := d.GetOk("power_mode"); ok {
 		enclosureGroup.PowerMode = val.(string)
 	}
-
 	if val, ok := d.GetOk("ip_addressing_mode"); ok {
 		enclosureGroup.IpAddressingMode = val.(string)
 	}
-
 	if val, ok := d.GetOk("ip_range_uris"); ok {
 		rawIpRangeUris := val.(*schema.Set).List()
 		ipRangeUris := make([]utils.Nstring, 0)
@@ -215,7 +199,6 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 		enclosureGroup.IpRangeUris = ipRangeUris
 	}
-
 	enclosureGroupError := config.ovClient.CreateEnclosureGroup(enclosureGroup)
 	d.SetId(d.Get("name").(string))
 	if enclosureGroupError != nil {
@@ -224,10 +207,8 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 	return resourceEnclosureGroupRead(d, meta)
 }
-
 func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Id())
 	if err != nil || enclosureGroup.URI.IsNil() {
 		d.SetId("")
@@ -257,10 +238,8 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("uri", enclosureGroup.URI.String())
 	return nil
 }
-
 func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
 	enclosureGroup := ov.EnclosureGroup{
 		URI:                         utils.NewNstring(d.Get("uri").(string)),
 		InterconnectBayMappingCount: d.Get("interconnect_bay_mapping_count").(int),
@@ -280,6 +259,7 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 	enclosureGroup.InterconnectBayMappings = interconnectBayMappings
 
+	// Optional Parameters
 	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
 		enclosureGroup.AmbientTemperatureMode = val.(string)
 	}
