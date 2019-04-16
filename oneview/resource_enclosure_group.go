@@ -280,7 +280,6 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 	enclosureGroup.InterconnectBayMappings = interconnectBayMappings
 
-	// Optional Parameters
 	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
 		enclosureGroup.AmbientTemperatureMode = val.(string)
 	}
