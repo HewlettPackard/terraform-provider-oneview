@@ -25,7 +25,7 @@ install:
     - mkdir -p $TF_DOWNLOAD_PATH
     - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
     - echo $UNFORMATTED
-    - gofmt -w -e $PWD/oneview/resource_enclosure_group.go
+    - gofmt -s -d -e $PWD/oneview/resource_enclosure_group.go
 
 before_script:
     - if ! [ -z "$UNFORMATTED" ]; then
