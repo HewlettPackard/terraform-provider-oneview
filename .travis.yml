@@ -24,7 +24,6 @@ env:
 install:
     - mkdir -p $TF_DOWNLOAD_PATH
     - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
-    - echo $UNFORMATTED
 
 before_script:
     - if ! [ -z "$UNFORMATTED" ]; then
