@@ -194,9 +194,9 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 		enclosureGroup.IpAddressingMode = val.(string)
 	}
 	if val, ok := d.GetOk("ip_range_uris"); ok {
-		rawIpRangeUris := val.(*schema.Set).List()
+		rawIPRangeUris := val.(*schema.Set).List()
 		ipRangeUris := make([]utils.Nstring, 0)
-		for _, rawData := range rawIpRangeUris {
+		for _, rawData := range rawIPRangeUris {
 			ipRangeUris = append(ipRangeUris, utils.Nstring(rawData.(string)))
 		}
 		enclosureGroup.IpRangeUris = ipRangeUris
