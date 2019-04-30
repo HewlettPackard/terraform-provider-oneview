@@ -160,7 +160,7 @@ type ServerProfileList struct {
 	Members     []ServerProfile `json:"members,omitempty"`     // "members":[]
 }
 
-// get a server profile by name
+// GetProfileByName gets a server profile by name
 func (c *OVClient) GetProfileByName(name string) (ServerProfile, error) {
 	var (
 		profile ServerProfile
@@ -306,7 +306,7 @@ func (c *OVClient) CreateProfileFromTemplate(name string, template ServerProfile
 		if err != nil {
 			return err
 		}
-		new_template.Type = "ServerProfileV5"
+		new_template.Type = "ServerProfileV9"
 		new_template.ServerProfileTemplateURI = template.URI // create relationship
 		log.Debugf("new_template -> %+v", new_template)
 	} else {
