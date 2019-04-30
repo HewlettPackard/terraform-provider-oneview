@@ -96,7 +96,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	if val, ok := d.GetOk("hardware_name"); ok {
 		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
 		if err != nil {
-			return err 
+			return err
 		}
 		if serverHardware.PowerState != "off" {
 			return errors.New("Server Hardware must be powered off to assign to the server profile")
@@ -107,7 +107,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	if val, ok := d.GetOk("template"); ok {
 		serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
 		if err != nil || serverProfileTemplate.URI.IsNil() {
-			return fmt.Errorf("Could not find Server Profile Template\n%+v", val.(string))
+			return err
 		}
 		serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 	}
@@ -180,7 +180,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 	if val, ok := d.GetOk("template"); ok {
 		serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
 		if err != nil || serverProfileTemplate.URI.IsNil() {
-			return fmt.Errorf("Could not find Server Profile Template\n%+v", val.(string))
+			return err
 		}
 		serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 	}
