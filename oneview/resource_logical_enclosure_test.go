@@ -74,7 +74,7 @@ func testAccCheckLogicalEnclosureExists(n string, logicalEnclosure *ov.LogicalEn
 	}
 }
 
-func testAccLogicalEnclosureDestroy(s *terraform.State) error {
+func testAccCheckLogicalEnclosureDestroy(s *terraform.State) error {
 	config := testAccProvider.Meta().(*Config)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "oneview_logical_enclosure" {
