@@ -167,7 +167,6 @@ func dataSourceLogicalEnclosure() *schema.Resource {
 			},
 		},
 	}
-
 }
 
 func dataSourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) error {
