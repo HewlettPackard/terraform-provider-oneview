@@ -16,8 +16,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceServerProfile() *schema.Resource {
@@ -36,7 +36,7 @@ func resourceServerProfile() *schema.Resource {
 				Required: true,
 			},
 			"uri": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"template": {
@@ -120,7 +120,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-
 	return resourceServerProfileRead(d, meta)
 }
 
@@ -161,38 +160,38 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-        serverProfile := ov.ServerProfile{
-                Type: d.Get("type").(string),
-                Name: d.Get("name").(string),
-		URI: utils.NewNstring(d.Get("uri").(string)),
-        }
+	serverProfile := ov.ServerProfile{
+		Type: d.Get("type").(string),
+		Name: d.Get("name").(string),
+		URI:  utils.NewNstring(d.Get("uri").(string)),
+	}
 
-        if val, ok := d.GetOk("hardware_name"); ok {
-                serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
-                if err != nil {
-                        return fmt.Errorf("couldnt not find resource", err)
-                }
-		if serverHardware.PowerState != "off" {
-                        return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
+	if val, ok := d.GetOk("hardware_name"); ok {
+		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
+		if err != nil {
+			return fmt.Errorf("couldnt not find resource", err)
 		}
-                serverProfile.ServerHardwareURI = serverHardware.URI
-        }
+		if serverHardware.PowerState != "off" {
+			return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
+		}
+		serverProfile.ServerHardwareURI = serverHardware.URI
+	}
 
-        if val, ok := d.GetOk("template"); ok {
-                serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
-                if err != nil || serverProfileTemplate.URI.IsNil() {
-                        return fmt.Errorf("Could not find Server Profile Template\n%+v", val.(string))
-                }
-                serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
-        }
+	if val, ok := d.GetOk("template"); ok {
+		serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
+		if err != nil || serverProfileTemplate.URI.IsNil() {
+			return fmt.Errorf("Could not find Server Profile Template\n%+v", val.(string))
+		}
+		serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
+	}
 
-        err := config.ovClient.UpdateServerProfile(serverProfile)
+	err := config.ovClient.UpdateServerProfile(serverProfile)
 	if err != nil {
 		return err
 	}
-        d.SetId(d.Get("name").(string))
+	d.SetId(d.Get("name").(string))
 
-        return resourceServerProfileRead(d, meta)
+	return resourceServerProfileRead(d, meta)
 
 }
 
