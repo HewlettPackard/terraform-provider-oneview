@@ -98,8 +98,8 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"oneview_scope":           dataSourceScope(),
-			"oneview_server_hardware": dataSourceServerHardware(),
+			"oneview_scope":             dataSourceScope(),
+			"oneview_server_hardware":   dataSourceServerHardware(),
 			"oneview_logical_enclosure": dataSourceLogicalEnclosure(),
 		},
 
@@ -116,7 +116,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
 			"oneview_icsp_server":                resourceIcspServer(),
 			"oneview_i3s_plan":                   resourceI3SPlan(),
-			"oneview_logical_enclosure":	      resourceLogicalEnclosure(),
+			"oneview_logical_enclosure":          resourceLogicalEnclosure(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
