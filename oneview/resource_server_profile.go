@@ -96,10 +96,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	if val, ok := d.GetOk("hardware_name"); ok {
 		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
 		if err != nil {
-			return fmt.Errorf("could not find resource", err)
+			return err 
 		}
 		if serverHardware.PowerState != "off" {
-			return fmt.Errorf("Server Hardware must be powered off to assign to the server profile")
+			return errors.New("Server Hardware must be powered off to assign to the server profile")
 		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
@@ -169,7 +169,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 	if val, ok := d.GetOk("hardware_name"); ok {
 		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
 		if err != nil {
-			return fmt.Errorf("couldnt not find resource", err)
+			return err
 		}
 		if serverHardware.PowerState != "off" {
 			return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
