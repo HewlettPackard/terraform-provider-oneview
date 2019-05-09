@@ -12,8 +12,6 @@
 package oneview
 
 import (
-	//"strconv"
-
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
