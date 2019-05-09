@@ -96,6 +96,10 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Optional: true,
 				Default:  "Bay",
 			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -108,6 +112,12 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+			"initial_scope_uris": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
 			},
 			"serial_number_type": {
 				Type:     schema.TypeString,
@@ -141,6 +151,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		SerialNumberType:   d.Get("serial_number_type").(string),
 		WWNType:            d.Get("wwn_type").(string),
 		MACType:            d.Get("mac_type").(string),
+		Description:        d.Get("description").(string),
 		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
 	}
 
@@ -181,6 +192,15 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.Boot.Order = bootOrder
 	}
 
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		initialScopeUrisOrder := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
+		for i, raw := range initialScopeUrisOrder {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		serverProfileTemplate.InitialScopeUris = initialScopeUris
+	}
+
 	sptError := config.ovClient.CreateProfileTemplate(serverProfileTemplate)
 	d.SetId(d.Get("name").(string))
 	if sptError != nil {
@@ -219,6 +239,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("serial_number_type", spt.SerialNumberType)
 	d.Set("wwn_type", spt.WWNType)
 	d.Set("mac_type", spt.MACType)
+	d.Set("description", spt.Description)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
 
 	networks := make([]map[string]interface{}, 0, len(spt.Connections))
@@ -259,6 +280,17 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		}
 		d.Set("boot_order", bootOrder)
 	}
+
+	initialScopeUris := make([]interface{}, 0)
+	for _, currBoot := range spt.InitialScopeUris {
+		initialScopeUrisOrder := d.Get("initial_scope_uris").(*schema.Set).List()
+		for _, raw := range initialScopeUrisOrder {
+			if raw == currBoot {
+				initialScopeUris = append(initialScopeUris, currBoot)
+			}
+		}
+	}
+	d.Set("initial_scope_uris", initialScopeUris)
 	return nil
 }
 
@@ -269,6 +301,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		Name:               d.Get("name").(string),
 		Type:               d.Get("type").(string),
 		Affinity:           d.Get("affinity").(string),
+		Description:        d.Get("description").(string),
 		URI:                utils.NewNstring(d.Get("uri").(string)),
 		ETAG:               d.Get("etag").(string),
 		SerialNumberType:   d.Get("serial_number_type").(string),
