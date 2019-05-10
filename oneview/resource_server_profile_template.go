@@ -105,6 +105,10 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Optional: true,
 				Default:  true,
 			},
+			"manage_connections": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -181,6 +185,10 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		})
 	}
 	serverProfileTemplate.Connections = networks
+	if _, ok := d.GetOk("manage_connections"); ok {
+		serverProfileTemplate.ConnectionSettings.ManageConnections = d.Get("manage_connections").(bool)
+		serverProfileTemplate.ConnectionSettings.Connections = networks
+	}
 
 	if val, ok := d.GetOk("boot_order"); ok {
 		rawBootOrder := val.(*schema.Set).List()
@@ -226,13 +234,13 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	if err != nil {
 		return err
 	}
-	d.Set("enclosure_group_uri", enclosureGroup.Name)
+	d.Set("enclosure_group", enclosureGroup.Name)
 
 	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByUri(spt.ServerHardwareTypeURI)
 	if err != nil {
 		return err
 	}
-	d.Set("server_hardware_type_uri", serverHardwareType.Name)
+	d.Set("server_hardware_type", serverHardwareType.Name)
 	d.Set("affinity", spt.Affinity)
 	d.Set("uri", spt.URI.String())
 	d.Set("etag", spt.ETAG)
@@ -242,32 +250,39 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("description", spt.Description)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
 
-	networks := make([]map[string]interface{}, 0, len(spt.Connections))
-	for _, network := range spt.Connections {
-
-		networks = append(networks, map[string]interface{}{
-			"name":           network.Name,
-			"function_type":  network.FunctionType,
-			"network_uri":    network.NetworkURI,
-			"port_id":        network.PortID,
-			"requested_mbps": network.RequestedMbps,
-			"id":             network.ID,
-		})
+	var connections []ov.Connection
+	if len(spt.ConnectionSettings.Connections) != 0 {
+		connections = spt.ConnectionSettings.Connections
+	} else {
+		connections = spt.Connections
 	}
+	if len(connections) != 0 {
+		networks := make([]map[string]interface{}, 0, len(connections))
+		for _, network := range connections {
 
-	networkCount := d.Get("network.#").(int)
-	if networkCount > 0 {
-		for i := 0; i < networkCount; i++ {
-			currNetworkId := d.Get("network." + strconv.Itoa(i) + ".id")
-			for j := 0; j < len(spt.Connections); j++ {
-				if spt.Connections[j].ID == currNetworkId && i <= len(spt.Connections)-1 {
-					networks[i], networks[j] = networks[j], networks[i]
+			networks = append(networks, map[string]interface{}{
+				"name":           network.Name,
+				"function_type":  network.FunctionType,
+				"network_uri":    network.NetworkURI,
+				"port_id":        network.PortID,
+				"requested_mbps": network.RequestedMbps,
+				"id":             network.ID,
+			})
+		}
+		networkCount := len(connections)
+
+		if networkCount > 0 {
+			for i := 0; i < networkCount; i++ {
+				currNetworkId := d.Get("network." + strconv.Itoa(i) + ".id")
+				for j := 0; j < len(connections); j++ {
+					if connections[j].ID == currNetworkId && i <= len(connections)-1 {
+						networks[i], networks[j] = networks[j], networks[i]
+					}
 				}
 			}
+			d.Set("network", networks)
 		}
-		d.Set("network", networks)
 	}
-
 	if spt.Boot.ManageBoot {
 		bootOrder := make([]interface{}, 0)
 		for _, currBoot := range spt.Boot.Order {
@@ -281,16 +296,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		d.Set("boot_order", bootOrder)
 	}
 
-	initialScopeUris := make([]interface{}, 0)
-	for _, currBoot := range spt.InitialScopeUris {
-		initialScopeUrisOrder := d.Get("initial_scope_uris").(*schema.Set).List()
-		for _, raw := range initialScopeUrisOrder {
-			if raw == currBoot {
-				initialScopeUris = append(initialScopeUris, currBoot)
-			}
-		}
-	}
-	d.Set("initial_scope_uris", initialScopeUris)
 	return nil
 }
 
@@ -363,5 +368,6 @@ func resourceServerProfileTemplateDelete(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

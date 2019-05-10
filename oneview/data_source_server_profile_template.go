@@ -12,7 +12,9 @@
 package oneview
 
 import (
+	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/schema"
+	"strconv"
 )
 
 func dataSourceServerProfileTemplate() *schema.Resource {
@@ -23,6 +25,12 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"boot_order": {
+				Type:     schema.TypeSet,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -36,11 +44,51 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"network": {
+				Optional: true,
+				Type:     schema.TypeList,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"function_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"network_uri": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"port_id": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"requested_mbps": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"id": {
+							Type:     schema.TypeInt,
+							Computed: true,
+						},
+					},
+				},
+			},
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
 			"uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"server_hardware_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"enclosure_group": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -80,12 +128,68 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	d.Set("type", spt.Type)
 	d.Set("affinity", spt.Affinity)
 	d.Set("uri", spt.URI.String())
+
+	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
+	if err != nil {
+		return err
+	}
+	d.Set("enclosure_group", enclosureGroup.Name)
+
+	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByUri(spt.ServerHardwareTypeURI)
+	if err != nil {
+		return err
+	}
+
+	d.Set("server_hardware_type", serverHardwareType.Name)
+
 	d.Set("etag", spt.ETAG)
 	d.Set("serial_number_type", spt.SerialNumberType)
 	d.Set("wwn_type", spt.WWNType)
 	d.Set("mac_type", spt.MACType)
 	d.Set("description", spt.Description)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
+
+	var connections []ov.Connection
+	if len(spt.ConnectionSettings.Connections) != 0 {
+		connections = spt.ConnectionSettings.Connections
+	} else {
+		connections = spt.Connections
+	}
+	if len(connections) != 0 {
+		networks := make([]map[string]interface{}, 0, len(connections))
+		for _, network := range connections {
+
+			networks = append(networks, map[string]interface{}{
+				"name":           network.Name,
+				"function_type":  network.FunctionType,
+				"network_uri":    network.NetworkURI,
+				"port_id":        network.PortID,
+				"requested_mbps": network.RequestedMbps,
+				"id":             network.ID,
+			})
+		}
+		networkCount := len(connections)
+
+		if networkCount > 0 {
+			for i := 0; i < networkCount; i++ {
+				currNetworkId := d.Get("network." + strconv.Itoa(i) + ".id")
+				for j := 0; j < len(connections); j++ {
+					if connections[j].ID == currNetworkId && i <= len(connections)-1 {
+						networks[i], networks[j] = networks[j], networks[i]
+					}
+				}
+			}
+			d.Set("network", networks)
+		}
+	}
+
+	if spt.Boot.ManageBoot {
+		bootOrder := make([]interface{}, len(spt.Boot.Order))
+		for i, currBoot := range spt.Boot.Order {
+			bootOrder[i] = currBoot
+		}
+		d.Set("boot_order", bootOrder)
+	}
 
 	return nil
 }
