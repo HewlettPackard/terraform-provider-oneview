@@ -13,7 +13,6 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"
-	"strconv"
 )
 
 func dataSourceLogicalEnclosure() *schema.Resource {
@@ -27,32 +26,32 @@ func dataSourceLogicalEnclosure() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"ambient_temperature_mode": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"delete_failed": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"deployment_manager_settings": {
-				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"deployement_cluster_uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"deployment_mode": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"deployment_network_uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"manage_os_deployment": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -67,33 +66,33 @@ func dataSourceLogicalEnclosure() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"firmware": {
-				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"firmware_baseline_uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"firmware_update_on": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"force_install_firmware": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"logical_interconnect_update_mode": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"update_firmware_on_unmanaged_interconnect": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"validate_if_li_firmware_update_is_non_disruptive": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -101,42 +100,42 @@ func dataSourceLogicalEnclosure() *schema.Resource {
 
 			"ip_addressing_mode": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"ipv4_range": {
-				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"dns_servers": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"domain": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"gateway": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"ip_range_uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"subnet_mask": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"logical_interconnect_uris": {
-				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
@@ -147,23 +146,23 @@ func dataSourceLogicalEnclosure() *schema.Resource {
 			},
 			"power_mode": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"scaling_state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 		},
 	}
@@ -219,16 +218,6 @@ func dataSourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) er
 			"name":         logicalEnclosureIpv4Range.Name,
 			"subnet_mask":  logicalEnclosureIpv4Range.SubnetMask,
 		})
-	}
-	ipv4RangeCount := d.Get("ipv4_range.#").(int)
-	oneviewIpv4RangeCount := len(logicalEnclosureIpv4Ranges)
-	for i := 0; i < ipv4RangeCount; i++ {
-		currIpv4RangeName := d.Get("ipv4_range." + strconv.Itoa(i) + ".name").(string)
-		for j := 0; j < oneviewIpv4RangeCount; j++ {
-			if currIpv4RangeName == logicalEnclosureIpv4Ranges[j]["name"] && i <= j {
-				logicalEnclosureIpv4Ranges[i], logicalEnclosureIpv4Ranges[j] = logicalEnclosureIpv4Ranges[j], logicalEnclosureIpv4Ranges[i]
-			}
-		}
 	}
 	d.Set("ipv4_range", logicalEnclosureIpv4Ranges)
 	d.Set("logical_interconnect_uris", logicalEnclosure.LogicalInterconnectUris)

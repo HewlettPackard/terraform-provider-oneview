@@ -181,14 +181,9 @@ func resourceLogicalEnclosure() *schema.Resource {
 func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	logicalEnclosure := ov.LogicalEnclosure{
-		Name:                   d.Get("name").(string),
-		EnclosureGroupUri:      utils.NewNstring(d.Get("enclosure_group_uri").(string)),
-		AmbientTemperatureMode: d.Get("ambient_temperature_mode").(string),
-		DeleteFailed:           d.Get("delete_failed").(bool),
-		ScopesUri:              utils.NewNstring(d.Get("scopes_uri").(string)),
-		Type:                   d.Get("type").(string),
-		Status:                 d.Get("status").(string),
-		URI:                    utils.NewNstring(d.Get("uri").(string)),
+		Name:              d.Get("name").(string),
+		ScopesUri:         utils.NewNstring(d.Get("scopes_uri").(string)),
+		EnclosureGroupUri: utils.NewNstring(d.Get("enclosure_group_uri").(string)),
 	}
 	enclosureSetCount := d.Get("enclosure_uris.#").(int)
 	enclosureUris := make([]utils.Nstring, enclosureSetCount)
@@ -199,53 +194,13 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 	logicalEnclosure.EnclosureUris = enclosureUris
-	deploymentManagerSettingsList := d.Get("deployment_manager_settings").(*schema.Set).List()
-	for _, raw := range deploymentManagerSettingsList {
-		deploymentManagerSetting := raw.(map[string]interface{})
-		deploymentModeSettings := ov.DeploymentModeSettings{
-			DeploymentMode:       deploymentManagerSetting["deployment_mode"].(string),
-			DeploymentNetworkUri: utils.NewNstring(deploymentManagerSetting["deployment_network_uri"].(string)),
-		}
-		leOsDeploymentSettings := ov.LeOsDeploymentSettings{
-			ManageOSDeployment:     deploymentManagerSetting["manage_os_deployment"].(bool),
-			DeploymentModeSettings: &deploymentModeSettings,
-		}
-		deploymentClusterUri := utils.NewNstring(deploymentManagerSetting["deployment_cluster_uri"].(string))
-		deploymentManagerSettings := ov.DeploymentManagerSettings{
-			DeploymentClusterUri: deploymentClusterUri,
-			OsDeploymentSettings: &leOsDeploymentSettings,
-		}
-		logicalEnclosure.DeploymentManagerSettings = &deploymentManagerSettings
-	}
-
-	ipv4rangesList := d.Get("ipv4_range").(*schema.Set).List()
-	ipv4rangesCollect := make([]ov.Ipv4Ranges, 0)
-	for _, raw := range ipv4rangesList {
-		ipv4range := raw.(map[string]interface{})
-		dnsServers := make([]string, 0)
-		dnsServers = append(dnsServers, ipv4range["dns_servers"].(string))
-		ipv4ranges := ov.Ipv4Ranges{
-			DnsServers: dnsServers,
-			Domain:     ipv4range["domain"].(string),
-			Gateway:    ipv4range["gateway"].(string),
-			IpRangeUri: utils.NewNstring(ipv4range["ip_range_uri"].(string)),
-			Name:       ipv4range["name"].(string),
-			SubnetMask: ipv4range["subnet_mask"].(string),
-		}
-		ipv4rangesCollect = append(ipv4rangesCollect, ipv4ranges)
-	}
-	logicalEnclosure.Ipv4Ranges = ipv4rangesCollect
 
 	firmwareList := d.Get("firmware").(*schema.Set).List()
 	for _, raw := range firmwareList {
 		firmware := raw.(map[string]interface{})
 		logicalEnclosureFirmware := ov.LogicalEnclosureFirmware{
-			FirmwareBaselineUri:                       utils.NewNstring(firmware["firmware_baseline_uri"].(string)),
-			FirmwareUpdateOn:                          firmware["firmware_update_on"].(string),
-			ForceInstallFirmware:                      firmware["force_install_firmware"].(bool),
-			LogicalInterconnectUpdateMode:             firmware["logical_interconnect_update_mode"].(string),
-			UpdateFirmwareOnUnmanagedInterconnect:     firmware["update_firmware_on_unmanaged_interconnect"].(bool),
-			ValidateIfLIFirmwareUpdateIsNonDisruptive: firmware["validate_if_li_firmware_update_is_non_disruptive"].(bool),
+			FirmwareBaselineUri:  utils.NewNstring(firmware["firmware_baseline_uri"].(string)),
+			ForceInstallFirmware: firmware["force_install_firmware"].(bool),
 		}
 		logicalEnclosure.Firmware = &logicalEnclosureFirmware
 	}
@@ -335,8 +290,72 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 	config := meta.(*Config)
 
 	logicalEnclosure := ov.LogicalEnclosure{
-		URI: utils.NewNstring(d.Get("uri").(string)),
+		Name: d.Get("name").(string),
+		AmbientTemperatureMode: d.Get("ambient_temperature_mode").(string),
+		DeleteFailed:           d.Get("delete_failed").(bool),
+		URI:                    utils.NewNstring(d.Get("uri").(string)),
+		PowerMode:              d.Get("power_mode").(string),
+		ScalingState:           d.Get("scaling_state").(string),
+		ScopesUri:              utils.NewNstring(d.Get("scopes_uri").(string)),
+		Type:                   d.Get("type").(string),
 	}
+	deploymentManagerSettingsList := d.Get("deployment_manager_settings").(*schema.Set).List()
+	for _, raw := range deploymentManagerSettingsList {
+		deploymentManagerSetting := raw.(map[string]interface{})
+		deploymentModeSettings := ov.DeploymentModeSettings{
+			DeploymentMode:       deploymentManagerSetting["deployment_mode"].(string),
+			DeploymentNetworkUri: utils.NewNstring(deploymentManagerSetting["deployment_network_uri"].(string)),
+		}
+		leOsDeploymentSettings := ov.LeOsDeploymentSettings{
+			ManageOSDeployment:     deploymentManagerSetting["manage_os_deployment"].(bool),
+			DeploymentModeSettings: &deploymentModeSettings,
+		}
+		deploymentClusterUri := utils.NewNstring(deploymentManagerSetting["deployment_cluster_uri"].(string))
+		deploymentManagerSettings := ov.DeploymentManagerSettings{
+			DeploymentClusterUri: deploymentClusterUri,
+			OsDeploymentSettings: &leOsDeploymentSettings,
+		}
+		logicalEnclosure.DeploymentManagerSettings = &deploymentManagerSettings
+	}
+	enclosureSetCount := d.Get("enclosure_uris.#").(int)
+	enclosureUris := make([]utils.Nstring, enclosureSetCount)
+	for i := 0; i < enclosureSetCount; i++ {
+		enclosureSetPrefix := fmt.Sprintf("enclosure_uris.%d", i)
+		if val, ok := d.GetOk(enclosureSetPrefix); ok {
+			enclosureUris[i] = utils.NewNstring(val.(string))
+		}
+	}
+	logicalEnclosure.EnclosureUris = enclosureUris
+	firmwareList := d.Get("firmware").(*schema.Set).List()
+	for _, raw := range firmwareList {
+		firmware := raw.(map[string]interface{})
+		logicalEnclosureFirmware := ov.LogicalEnclosureFirmware{
+			FirmwareBaselineUri:                       utils.NewNstring(firmware["firmware_baseline_uri"].(string)),
+			FirmwareUpdateOn:                          firmware["firmware_update_on"].(string),
+			ForceInstallFirmware:                      firmware["force_install_firmware"].(bool),
+			LogicalInterconnectUpdateMode:             firmware["logical_interconnect_update_mode"].(string),
+			UpdateFirmwareOnUnmanagedInterconnect:     firmware["update_firmware_on_unmanaged_interconnect"].(bool),
+			ValidateIfLIFirmwareUpdateIsNonDisruptive: firmware["validate_if_li_firmware_update_is_non_disruptive"].(bool),
+		}
+		logicalEnclosure.Firmware = &logicalEnclosureFirmware
+	}
+	ipv4rangesList := d.Get("ipv4_range").(*schema.Set).List()
+	ipv4rangesCollect := make([]ov.Ipv4Ranges, 0)
+	for _, raw := range ipv4rangesList {
+		ipv4range := raw.(map[string]interface{})
+		dnsServers := make([]string, 0)
+		dnsServers = append(dnsServers, ipv4range["dns_servers"].(string))
+		ipv4ranges := ov.Ipv4Ranges{
+			DnsServers: dnsServers,
+			Domain:     ipv4range["domain"].(string),
+			Gateway:    ipv4range["gateway"].(string),
+			IpRangeUri: utils.NewNstring(ipv4range["ip_range_uri"].(string)),
+			Name:       ipv4range["name"].(string),
+			SubnetMask: ipv4range["subnet_mask"].(string),
+		}
+		ipv4rangesCollect = append(ipv4rangesCollect, ipv4ranges)
+	}
+	logicalEnclosure.Ipv4Ranges = ipv4rangesCollect
 
 	err := config.ovClient.UpdateLogicalEnclosure(logicalEnclosure)
 	if err != nil {

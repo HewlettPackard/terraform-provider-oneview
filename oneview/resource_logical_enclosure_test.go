@@ -38,6 +38,16 @@ func TestAccLogicalEnclosure_1(t *testing.T) {
 				),
 			},
 			{
+				Config: testAccLogicalEnclosure_updated,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckLogicalEnclosureExists(
+						"oneview_logical_enclosure.test", &logicalEnclosure),
+					resource.TestCheckResourceAttr(
+						"oneview_logical_enclosure.test", "name", "Terraform le 2",
+					),
+				),
+			},
+			{
 				ResourceName:      testAccLogicalEnclosure,
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -94,4 +104,9 @@ func testAccCheckLogicalEnclosureDestroy(s *terraform.State) error {
 var testAccLogicalEnclosure = `
   resource "oneview_logical_enclosure" "test" {
     name = "Terraform le 1"
+  }`
+
+var testAccLogicalEnclosure_updated = `
+  resource "oneview_logical_enclosure" "test" {
+    name = "Terraform le 2"
   }`
