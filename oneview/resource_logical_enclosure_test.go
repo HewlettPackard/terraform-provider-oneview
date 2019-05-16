@@ -38,7 +38,7 @@ func TestAccLogicalEnclosure_1(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccLogicalEnclosure_updated,
+				Config: testAccLogicalEnclosureUpdated,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckLogicalEnclosureExists(
 						"oneview_logical_enclosure.test", &logicalEnclosure),
@@ -106,7 +106,7 @@ var testAccLogicalEnclosure = `
     name = "Terraform le 1"
   }`
 
-var testAccLogicalEnclosure_updated = `
+var testAccLogicalEnclosureUpdated = `
   resource "oneview_logical_enclosure" "test" {
     name = "Terraform le 2"
   }`

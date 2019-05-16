@@ -12,22 +12,18 @@
 package oneview
 
 import (
-	"fmt"
-	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
 	"testing"
 )
 
-func TestAccLogicalEnclosure_1(t *testing.T) {
-	var logicalEnclosure ov.LogicalEnclosure
+func TestAccLogicalEnclosure_2(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccLogicalEnclosure,
+				Config: testAccLogicalEnclosureData,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("oneview_logical_enclosure.test", "enclosure_group_uri", "/rest/enclosure-groups/4f7b2cf4-fdb5-4065-8886-54a9905659f9"),
 					resource.TestCheckResourceAttr("oneview_logical_enclosure.test", "name", "Terraform le 1"),
@@ -37,7 +33,7 @@ func TestAccLogicalEnclosure_1(t *testing.T) {
 	})
 }
 
-var testAccLogicalEnclosure = `
+var testAccLogicalEnclosureData = `
   data "oneview_logical_enclosure" "test" {
     enclosure_group_uri = "/rest/enclosure-groups/4f7b2cf4-fdb5-4065-8886-54a9905659f9"		  
     name = "Terraform le 1"
