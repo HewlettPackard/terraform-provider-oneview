@@ -40,10 +40,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"network": {
 				Optional: true,
 				Type:     schema.TypeList,
@@ -146,7 +142,6 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	d.Set("serial_number_type", spt.SerialNumberType)
 	d.Set("wwn_type", spt.WWNType)
 	d.Set("mac_type", spt.MACType)
-	d.Set("description", spt.Description)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
 
 	var connections []ov.Connection

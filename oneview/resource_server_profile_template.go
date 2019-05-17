@@ -96,10 +96,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Optional: true,
 				Default:  "Bay",
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -155,7 +151,6 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		SerialNumberType:   d.Get("serial_number_type").(string),
 		WWNType:            d.Get("wwn_type").(string),
 		MACType:            d.Get("mac_type").(string),
-		Description:        d.Get("description").(string),
 		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
 	}
 
@@ -247,7 +242,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("serial_number_type", spt.SerialNumberType)
 	d.Set("wwn_type", spt.WWNType)
 	d.Set("mac_type", spt.MACType)
-	d.Set("description", spt.Description)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
 
 	var connections []ov.Connection
@@ -306,7 +300,6 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		Name:               d.Get("name").(string),
 		Type:               d.Get("type").(string),
 		Affinity:           d.Get("affinity").(string),
-		Description:        d.Get("description").(string),
 		URI:                utils.NewNstring(d.Get("uri").(string)),
 		ETAG:               d.Get("etag").(string),
 		SerialNumberType:   d.Get("serial_number_type").(string),
