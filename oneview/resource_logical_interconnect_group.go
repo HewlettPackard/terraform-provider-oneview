@@ -477,8 +477,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	}
 
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
-	rawInterconnectMapEntryTemplates := d.Get("interconnect_map_entry_template").(*schema.Set).List()
-	for _, raw := range rawInterconnectMapEntryTemplates {
+	for _, raw := range d.Get("interconnect_map_entry_template").(*schema.Set).List() {
 		interconnectMapEntryTemplate := raw.(map[string]interface{})
 		interconnectTypeName := interconnectMapEntryTemplate["interconnect_type_name"].(string)
 		interconnectType, err := config.ovClient.GetInterconnectTypeByName(interconnectTypeName)
@@ -1165,8 +1164,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	}
 
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
-	rawInterconnectMapEntryTemplates := d.Get("interconnect_map_entry_template").(*schema.Set).List()
-	for _, raw := range rawInterconnectMapEntryTemplates {
+	for _, raw := range d.Get("interconnect_map_entry_template").(*schema.Set).List() {
 		interconnectMapEntryTemplate := raw.(map[string]interface{})
 		interconnectTypeName := interconnectMapEntryTemplate["interconnect_type_name"].(string)
 		interconnectType, err := config.ovClient.GetInterconnectTypeByName(interconnectTypeName)
