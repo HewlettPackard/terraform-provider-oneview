@@ -182,7 +182,6 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 	config := meta.(*Config)
 	logicalEnclosure := ov.LogicalEnclosure{
 		Name:              d.Get("name").(string),
-		ScopesUri:         utils.NewNstring(d.Get("scopes_uri").(string)),
 		EnclosureGroupUri: utils.NewNstring(d.Get("enclosure_group_uri").(string)),
 	}
 	enclosureSetCount := d.Get("enclosure_uris.#").(int)
@@ -291,14 +290,32 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 
 	logicalEnclosure := ov.LogicalEnclosure{
 		Name: d.Get("name").(string),
-		AmbientTemperatureMode: d.Get("ambient_temperature_mode").(string),
-		DeleteFailed:           d.Get("delete_failed").(bool),
-		URI:                    utils.NewNstring(d.Get("uri").(string)),
-		PowerMode:              d.Get("power_mode").(string),
-		ScalingState:           d.Get("scaling_state").(string),
-		ScopesUri:              utils.NewNstring(d.Get("scopes_uri").(string)),
-		Type:                   d.Get("type").(string),
+		Type: d.Get("type").(string),
 	}
+	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
+		logicalEnclosure.AmbientTemperatureMode = val.(string)
+	}
+	if val, ok := d.GetOk("delete_failed"); ok {
+                logicalEnclosure.DeleteFailed = val.(bool)
+        }
+	if val, ok := d.GetOk("uri"); ok {
+                logicalEnclosure.URI = utils.NewNstring(val.(string))
+        }
+
+	if val, ok := d.GetOk("power_mode"); ok {
+                logicalEnclosure.PowerMode = val.(string)
+        }
+	if val, ok := d.GetOk("scaling_state"); ok {
+                logicalEnclosure.PowerMode = val.(string)
+        }
+
+	if val, ok := d.GetOk("scopes_uri"); ok {
+                logicalEnclosure.ScopesUri = utils.NewNstring(val.(string))
+        }
+
+
+
+
 	deploymentManagerSettingsList := d.Get("deployment_manager_settings").(*schema.Set).List()
 	for _, raw := range deploymentManagerSettingsList {
 		deploymentManagerSetting := raw.(map[string]interface{})
