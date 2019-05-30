@@ -296,25 +296,22 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 		logicalEnclosure.AmbientTemperatureMode = val.(string)
 	}
 	if val, ok := d.GetOk("delete_failed"); ok {
-                logicalEnclosure.DeleteFailed = val.(bool)
-        }
+		logicalEnclosure.DeleteFailed = val.(bool)
+	}
 	if val, ok := d.GetOk("uri"); ok {
-                logicalEnclosure.URI = utils.NewNstring(val.(string))
-        }
+		logicalEnclosure.URI = utils.NewNstring(val.(string))
+	}
 
 	if val, ok := d.GetOk("power_mode"); ok {
-                logicalEnclosure.PowerMode = val.(string)
-        }
+		logicalEnclosure.PowerMode = val.(string)
+	}
 	if val, ok := d.GetOk("scaling_state"); ok {
-                logicalEnclosure.PowerMode = val.(string)
-        }
+		logicalEnclosure.PowerMode = val.(string)
+	}
 
 	if val, ok := d.GetOk("scopes_uri"); ok {
-                logicalEnclosure.ScopesUri = utils.NewNstring(val.(string))
-        }
-
-
-
+		logicalEnclosure.ScopesUri = utils.NewNstring(val.(string))
+	}
 
 	deploymentManagerSettingsList := d.Get("deployment_manager_settings").(*schema.Set).List()
 	for _, raw := range deploymentManagerSettingsList {
