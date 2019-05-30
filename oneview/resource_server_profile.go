@@ -88,6 +88,14 @@ func resourceServerProfile() *schema.Resource {
 func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
+	if val, ok := d.GetOk("template"); ok {
+                serverProfile, err := config.ovClient.GetProfileTemplateByName(val.(string))
+                if err != nil || serverProfile.URI.IsNil() {
+                        return err
+                }
+                serverProfile.ServerProfileTemplateURI = serverProfile.URI
+        }
+
 	serverProfile := ov.ServerProfile{
 		Type: d.Get("type").(string),
 		Name: d.Get("name").(string),
@@ -98,19 +106,12 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		if err != nil {
 			return err
 		}
-		if serverHardware.PowerState != "off" {
+		/*if serverHardware.PowerState != "off" {
 			return errors.New("Server Hardware must be powered off to assign to the server profile")
-		}
+		}*/
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
 
-	if val, ok := d.GetOk("template"); ok {
-		serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
-		if err != nil || serverProfileTemplate.URI.IsNil() {
-			return err
-		}
-		serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
-	}
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
@@ -171,9 +172,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		if err != nil {
 			return err
 		}
-		if serverHardware.PowerState != "off" {
+		/*if serverHardware.PowerState != "off" {
 			return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
-		}
+		}*/
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
 
