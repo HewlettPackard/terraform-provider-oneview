@@ -46,7 +46,7 @@ func resourceServerProfile() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ServerProfileV9",
+				Default:  "ServerProfileV5",
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
