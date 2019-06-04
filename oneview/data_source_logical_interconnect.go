@@ -35,7 +35,7 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 				Set:      schema.HashString,
 			},
 			"ethernet_settings": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -280,15 +280,9 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 	d.Set("stacking_health", logInt.StackingHealth)
 	d.Set("type", logInt.Type)
 	d.Set("uri", logInt.URI)
+	d.Set("enclosure_uris", logInt.EnclosureUris)
 
-	enclosureUris := make([]interface{}, len(logInt.EnclosureUris))
-	for i, enclosureUri := range logInt.EnclosureUris {
-		enclosureUris[i] = enclosureUri
-	}
-
-	d.Set("enclosure_uris", enclosureUris)
-
-	ethernetSettings := make([]map[string]interface{}, 0, 1)
+	ethernetSettings := make([]map[string]interface{}, 0)
 
 	ethernetSettings = append(ethernetSettings, map[string]interface{}{
 		"category":               logInt.EthernetSettings.Category,
@@ -336,43 +330,17 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 
 	d.Set("interconnects", interconnects)
 
-	trapDestinations := make([]map[string]interface{}, 0, 1)
+	trapDestinations := make([]map[string]interface{}, 0, len(logInt.SnmpConfiguration.TrapDestinations))
 	for _, trapDestination := range logInt.SnmpConfiguration.TrapDestinations {
-
-		enetTrapCategories := make([]interface{}, len(trapDestination.EnetTrapCategories))
-		for i, enetTrapCategory := range trapDestination.EnetTrapCategories {
-			enetTrapCategories[i] = enetTrapCategory
-		}
-
-		fcTrapCategories := make([]interface{}, len(trapDestination.FcTrapCategories))
-		for i, fcTrapCategory := range trapDestination.FcTrapCategories {
-			fcTrapCategories[i] = fcTrapCategory
-		}
-
-		vcmTrapCategories := make([]interface{}, len(trapDestination.VcmTrapCategories))
-		for i, vcmTrapCategory := range trapDestination.VcmTrapCategories {
-			vcmTrapCategories[i] = vcmTrapCategory
-		}
-
-		trapSeverities := make([]interface{}, len(trapDestination.TrapSeverities))
-		for i, trapSeverity := range trapDestination.TrapSeverities {
-			trapSeverities[i] = trapSeverity
-		}
-
 		trapDestinations = append(trapDestinations, map[string]interface{}{
 			"trap_destination":     trapDestination.TrapDestination,
 			"community_string":     trapDestination.CommunityString,
 			"trap_format":          trapDestination.TrapFormat,
-			"enet_trap_categories": schema.NewSet(schema.HashString, enetTrapCategories),
-			"fc_trap_categories":   schema.NewSet(schema.HashString, fcTrapCategories),
-			"vcm_trap_categories":  schema.NewSet(schema.HashString, vcmTrapCategories),
-			"trap_severities":      schema.NewSet(schema.HashString, trapSeverities),
+			"enet_trap_categories":	trapDestination.EnetTrapCategories,
+			"fc_trap_categories":   trapDestination.FcTrapCategories,
+			"vcm_trap_categories":  trapDestination.VcmTrapCategories,
+			"trap_severities":      trapDestination.TrapSeverities,
 		})
-	}
-
-	snmpAccess := make([]interface{}, len(logInt.SnmpConfiguration.SnmpAccess))
-	for i, snmpAccessIP := range logInt.SnmpConfiguration.SnmpAccess {
-		snmpAccess[i] = snmpAccessIP
 	}
 
 	snmpConfiguration := make([]map[string]interface{}, 0, 1)
@@ -380,7 +348,7 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 		"enabled":          *logInt.SnmpConfiguration.Enabled,
 		"v3_enabled":       *logInt.SnmpConfiguration.V3Enabled,
 		"read_community":   logInt.SnmpConfiguration.ReadCommunity,
-		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
+		"snmp_access":      logInt.SnmpConfiguration.SnmpAccess,
 		"system_contact":   logInt.SnmpConfiguration.SystemContact,
 		"type":             logInt.SnmpConfiguration.Type,
 		"trap_destination": trapDestinations,
