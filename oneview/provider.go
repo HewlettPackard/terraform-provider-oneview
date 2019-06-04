@@ -101,11 +101,15 @@ func Provider() terraform.ResourceProvider {
 			"oneview_scope":             dataSourceScope(),
 			"oneview_server_hardware":   dataSourceServerHardware(),
 			"oneview_logical_enclosure": dataSourceLogicalEnclosure(),
+			"oneview_scope":           dataSourceScope(),
+			"oneview_server_hardware": dataSourceServerHardware(),
+			"oneview_enclosure_group": dataSourceEnclosureGroup(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
 			"oneview_server_profile":             resourceServerProfile(),
 			"oneview_enclosure":                  resourceEnclosure(),
+			"oneview_enclosure_group":            resourceEnclosureGroup(),
 			"oneview_ethernet_network":           resourceEthernetNetwork(),
 			"oneview_network_set":                resourceNetworkSet(),
 			"oneview_fcoe_network":               resourceFCoENetwork(),

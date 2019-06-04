@@ -15,8 +15,15 @@ Creates an enclosure group.
 ```js
 resource "oneview_enclosure_group" "default" {
   name = "default-enclosure-group"
-  logical_interconnect_broups = ["${oneview_logical_interconnect_group.primary.name}", 
-                                 "${oneview_logical_interconnect_group.secondary.name}"]
+  ip_addressing_mode = "External"
+  enclosure_count = 3
+  "interconnect_bay_mappings":
+    [
+        {
+            "interconnect_bay": 1,
+            "logical_interconnect_group_uri": "/rest/logical-interconnect-groups/aeef7314-527d-4053-868c-17b87df1b57c"
+        },
+	]
 }
 ```
 
@@ -28,11 +35,15 @@ The following arguments are supported:
 
 ---
 
-* `logical_interconnect_groups` - (Optional) The set of logical interconnect group names to associate with the enclosure group.
+* `interconnect_bay_mappings` - (Optional) Defines which logical interconnect group is associated with each interconnect bay in which enclosure.
 
-* `stacking mode` - (Optional) Stacking mode of the enclosure group. Defaults to Enclosure.
+* `enclosure_count` - (Optional) The number of enclosures in the enclosure group.
 
-* `number_of_bays` - (Optional) The number of interconnect bay mappings. Defaults to 8.
+* `ip_addressing_mode` - (Optional)  IPv4 address allocation for interconnects and device bay management processors. Used for Synergy only.
+
+* `stacking_mode` - (Optional) Stacking mode of the enclosure group. Defaults to Enclosure.
+
+* `interconnect_bay_mapping_count` - (Optional) The number of interconnect bay mappings. Defaults to 8.
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
