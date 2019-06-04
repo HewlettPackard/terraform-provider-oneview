@@ -24,6 +24,10 @@
 |<sub>/rest/enclosure</sub>                                                               | POST     | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   |
 |<sub>/rest/enclosure/{id}</sub>                                                          | PUT      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   |
 |<sub>/rest/enclosure/{id}</sub>                                                          | DELETE   | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   |
+|     **Enclosure Group**                                                                                                                  |
+|<sub>/rest/enclosure-group</sub>                                                         | POST     | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   |
+|<sub>/rest/enclosure-group/{id}</sub>                                                    | PUT      | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   |
+|<sub>/rest/enclosure-group/{id}</sub>                                                    | DELETE   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   |
 |     **Ethernet Networks**                                                                                                                         |
 |<sub>/rest/ethernet-networks</sub>                                                       | POST     | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |
 |<sub>/rest/ethernet-networks/{id}</sub>                                                  | PUT      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   |

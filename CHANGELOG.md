@@ -20,7 +20,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#47] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/47) Added Synergy Support for Logical Interconnect Groups
 
 ### Oneview Features supported
-- Enclosure    
+- Enclosure
+- Enclosure group
 - FC network
 - Logical interconnect group
 - Scope
