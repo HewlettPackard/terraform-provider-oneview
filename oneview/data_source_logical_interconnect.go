@@ -336,7 +336,7 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 			"trap_destination":     trapDestination.TrapDestination,
 			"community_string":     trapDestination.CommunityString,
 			"trap_format":          trapDestination.TrapFormat,
-			"enet_trap_categories":	trapDestination.EnetTrapCategories,
+			"enet_trap_categories": trapDestination.EnetTrapCategories,
 			"fc_trap_categories":   trapDestination.FcTrapCategories,
 			"vcm_trap_categories":  trapDestination.VcmTrapCategories,
 			"trap_severities":      trapDestination.TrapSeverities,
