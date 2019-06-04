@@ -51,3 +51,13 @@ resource "oneview_enclosure_group" "eg_inst" {
 	type = "EnclosureGroupV7"
 	stacking_mode = "Enclosure"
 }*/
+
+/* Test for data source
+
+data "oneview_enclosure_group" "enclosure_group" {
+        name = "EnclosureGroupDemo"
+}
+
+output "oneview_enclosure_group_value" {
+        value = "${data.oneview_enclosure_group.enclosure_group.uri}"
+}*/
