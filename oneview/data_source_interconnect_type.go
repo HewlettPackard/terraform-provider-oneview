@@ -188,7 +188,7 @@ func dataSourceInterconnectTypeRead(d *schema.ResourceData, meta interface{}) er
 
 	InterconnectCapabilities = append(InterconnectCapabilities, map[string]interface{}{
 
-		"capabilities": schema.NewSet(schema.HashString, capabilitiesMap),
+		"capabilities":          schema.NewSet(schema.HashString, capabilitiesMap),
 		"max_bandwidth_in_gbps": interconnectType.InterconnectCapabilities.MaxBandwidthInGbps,
 	})
 	d.Set("interconnect_capabilities", InterconnectCapabilities)
