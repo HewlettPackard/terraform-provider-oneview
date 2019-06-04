@@ -12,9 +12,6 @@
 package oneview
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -43,7 +40,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"network": {
 				Optional: true,
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -166,17 +163,16 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
-	networkCount := d.Get("network.#").(int)
+	rawNetwork := d.Get("network").(*schema.Set).List()
 	networks := make([]ov.Connection, 0)
-	for i := 0; i < networkCount; i++ {
-		networkPrefix := fmt.Sprintf("network.%d", i)
+	for _, rawNet := range rawNetwork {
+		rawNetworkItem := rawNet.(map[string]interface{})
 		networks = append(networks, ov.Connection{
-			Name:          d.Get(networkPrefix + ".name").(string),
-			FunctionType:  d.Get(networkPrefix + ".function_type").(string),
-			NetworkURI:    utils.NewNstring(d.Get(networkPrefix + ".network_uri").(string)),
-			PortID:        d.Get(networkPrefix + ".port_id").(string),
-			RequestedMbps: d.Get(networkPrefix + ".requested_mbps").(string),
-			ID:            i + 1,
+			Name:          rawNetworkItem["name"].(string),
+			FunctionType:  rawNetworkItem["function_type"].(string),
+			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+			PortID:        rawNetworkItem["port_id"].(string),
+			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
 		})
 	}
 	serverProfileTemplate.Connections = networks
@@ -252,30 +248,16 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	}
 	if len(connections) != 0 {
 		networks := make([]map[string]interface{}, 0, len(connections))
-		for _, network := range connections {
-
+		for _, rawNet := range connections {
 			networks = append(networks, map[string]interface{}{
-				"name":           network.Name,
-				"function_type":  network.FunctionType,
-				"network_uri":    network.NetworkURI,
-				"port_id":        network.PortID,
-				"requested_mbps": network.RequestedMbps,
-				"id":             network.ID,
+				"name":          rawNet.Name,
+				"function_type":  rawNet.FunctionType,
+				"network_uri":    rawNet.NetworkURI.String(),
+				"port_id":        rawNet.PortID,
+				"requested_mbps": rawNets.RequestedMbps,
 			})
 		}
-		networkCount := len(connections)
-
-		if networkCount > 0 {
-			for i := 0; i < networkCount; i++ {
-				currNetworkId := d.Get("network." + strconv.Itoa(i) + ".id")
-				for j := 0; j < len(connections); j++ {
-					if connections[j].ID == currNetworkId && i <= len(connections)-1 {
-						networks[i], networks[j] = networks[j], networks[i]
-					}
-				}
-			}
-			d.Set("network", networks)
-		}
+		d.Set("network", networks)
 	}
 	if spt.Boot.ManageBoot {
 		bootOrder := make([]interface{}, 0)
@@ -320,17 +302,16 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
-	networkCount := d.Get("network.#").(int)
+	rawNetwork := d.Get("network").(*schema.Set).List()
 	networks := make([]ov.Connection, 0)
-	for i := 0; i < networkCount; i++ {
-		networkPrefix := fmt.Sprintf("network.%d", i)
+	for _, rawNet := range rawNetwork {
+		rawNetworkItem := rawNet.(map[string]interface{})
 		networks = append(networks, ov.Connection{
-			Name:          d.Get(networkPrefix + ".name").(string),
-			FunctionType:  d.Get(networkPrefix + ".function_type").(string),
-			NetworkURI:    utils.NewNstring(d.Get(networkPrefix + ".network_uri").(string)),
-			PortID:        d.Get(networkPrefix + ".port_id").(string),
-			RequestedMbps: d.Get(networkPrefix + ".requested_mbps").(string),
-			ID:            d.Get(networkPrefix + ".id").(int),
+			Name:          rawNetworkItem["name"].(string),
+			FunctionType:  rawNetworkItem["function_type"].(string),
+			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+			PortID:        rawNetworkItem["port_id"].(string),
+			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
 		})
 	}
 	serverProfileTemplate.Connections = networks
@@ -357,10 +338,11 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 func resourceServerProfileTemplateDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	err := config.ovClient.DeleteProfileTemplate(d.Get("name").(string))
-	if err != nil {
-		return err
-	}
+err := config.ovClient.DeleteProfileTemplate(d.Get("name").(string))
+if err != nil {
+return err
+}
+
 
 	return nil
 }
