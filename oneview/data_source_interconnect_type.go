@@ -30,7 +30,7 @@ func dataSourceInterconnectType() *schema.Resource {
 			},
 			"interconnect_bay_set": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"interconnect_capabilities": {
 				Computed: true,
@@ -80,8 +80,8 @@ func dataSourceInterconnectType() *schema.Resource {
 				},
 			},
 			"port_info": {
-				Optional: true,
-				Type:     schema.TypeList,
+				Computed: true,
+				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"downlink_capable": {
@@ -102,12 +102,11 @@ func dataSourceInterconnectType() *schema.Resource {
 						},
 						"mode": {
 							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "Auto",
+							Computed: true,
 						},
 						"paired_port_name": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Computed: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
@@ -124,7 +123,7 @@ func dataSourceInterconnectType() *schema.Resource {
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -190,7 +189,6 @@ func dataSourceInterconnectTypeRead(d *schema.ResourceData, meta interface{}) er
 	InterconnectCapabilities = append(InterconnectCapabilities, map[string]interface{}{
 
 		"capabilities": schema.NewSet(schema.HashString, capabilitiesMap),
-		//		"capabilities": interconnectType.InterconnectCapabilities.Capabilities[0],
 		"max_bandwidth_in_gbps": interconnectType.InterconnectCapabilities.MaxBandwidthInGbps,
 	})
 	d.Set("interconnect_capabilities", InterconnectCapabilities)

@@ -13,5 +13,4 @@ data "oneview_interconnect_type" "interconnect_type" {
 
 output "oneview_interconnect_type_value" {
 	value = "${data.oneview_interconnect_type.interconnect_type.type}"
-//	value = "Null"
 }
