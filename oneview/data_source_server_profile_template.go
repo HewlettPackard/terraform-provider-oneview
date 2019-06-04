@@ -41,7 +41,7 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 			},
 			"network": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {

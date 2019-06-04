@@ -254,7 +254,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"function_type":  rawNet.FunctionType,
 				"network_uri":    rawNet.NetworkURI.String(),
 				"port_id":        rawNet.PortID,
-				"requested_mbps": rawNets.RequestedMbps,
+				"requested_mbps": rawNet.RequestedMbps,
 			})
 		}
 		d.Set("network", networks)
