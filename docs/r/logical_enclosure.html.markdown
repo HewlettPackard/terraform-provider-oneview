@@ -3,7 +3,7 @@ layout: "oneview"
 page_title: "Oneview: logical_enclosure"
 sidebar_current: "docs-oneview-logical-enclosure"
 description: |-
-  Creates an logical-enclosure.
+  Creates a logical-enclosure.
 ---
 
 # oneview\_logical\_enclosure
@@ -25,11 +25,11 @@ resource "oneview_logical_enclosure" "default" {
 
 The following arguments are supported: 
 
-* `name` - A unique name for the resource.
+* `name` -(Optional) A unique name for the resource.
 
 ---
 
-* `enclosure_uris` - The set of uris associated with the enclosure.
+* `enclosure_uris` -(Optional) The set of uris associated with the enclosure.
 
-* `enclosure_group_uri` - The uri of the enclosure group. 
+* `enclosure_group_uri` - (Optional) The uri of the enclosure group. 
 
