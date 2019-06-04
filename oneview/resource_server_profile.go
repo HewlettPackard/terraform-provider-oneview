@@ -46,7 +46,7 @@ func resourceServerProfile() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ServerProfileV5",
+				Default:  "ServerProfileV9",
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
@@ -88,18 +88,19 @@ func resourceServerProfile() *schema.Resource {
 func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	if val, ok := d.GetOk("template"); ok {
-                serverProfile, err := config.ovClient.GetProfileTemplateByName(val.(string))
-                if err != nil || serverProfile.URI.IsNil() {
-                        return err
-                }
-                serverProfile.ServerProfileTemplateURI = serverProfile.URI
-        }
+	serverProfile := ov.ServerProfile{}
 
-	serverProfile := ov.ServerProfile{
-		Type: d.Get("type").(string),
-		Name: d.Get("name").(string),
+	if val, ok := d.GetOk("template"); ok {
+		serverProfileByTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
+		if err != nil || serverProfileByTemplate.URI.IsNil() {
+			return err
+		}
+		serverProfile = serverProfileByTemplate
+		serverProfile.ServerProfileTemplateURI = serverProfileByTemplate.URI
 	}
+
+	serverProfile.Type = d.Get("type").(string)
+	serverProfile.Name = d.Get("name").(string)
 
 	if val, ok := d.GetOk("hardware_name"); ok {
 		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
@@ -111,7 +112,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}*/
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
-
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
