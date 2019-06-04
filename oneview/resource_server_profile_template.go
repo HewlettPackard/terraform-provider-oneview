@@ -250,7 +250,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		networks := make([]map[string]interface{}, 0, len(connections))
 		for _, rawNet := range connections {
 			networks = append(networks, map[string]interface{}{
-				"name":          rawNet.Name,
+				"name":           rawNet.Name,
 				"function_type":  rawNet.FunctionType,
 				"network_uri":    rawNet.NetworkURI.String(),
 				"port_id":        rawNet.PortID,
@@ -338,11 +338,10 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 func resourceServerProfileTemplateDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-err := config.ovClient.DeleteProfileTemplate(d.Get("name").(string))
-if err != nil {
-return err
-}
-
+	err := config.ovClient.DeleteProfileTemplate(d.Get("name").(string))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -153,12 +153,12 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 		networks := make([]map[string]interface{}, 0, len(connections))
 		for _, rawNet := range connections {
 			networks = append(networks, map[string]interface{}{
-				"name":          rawNet.Name,
+				"name":           rawNet.Name,
 				"function_type":  rawNet.FunctionType,
 				"network_uri":    rawNet.NetworkURI.String(),
 				"port_id":        rawNet.PortID,
 				"requested_mbps": rawNet.RequestedMbps,
-				"id": rawNet.ID,
+				"id":             rawNet.ID,
 			})
 		}
 		d.Set("network", networks)
