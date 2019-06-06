@@ -102,6 +102,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_logical_interconnect": dataSourceLogicalInterconnect(),
 			"oneview_scope":                dataSourceScope(),
 			"oneview_server_hardware":      dataSourceServerHardware(),
+			"oneview_server_hardware_type": dataSourceServerHardwareType(),
 			"oneview_logical_enclosure":    dataSourceLogicalEnclosure(),
 			"oneview_enclosure_group":      dataSourceEnclosureGroup(),
 		},
