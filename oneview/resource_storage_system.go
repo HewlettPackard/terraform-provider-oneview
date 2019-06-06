@@ -12,12 +12,9 @@
 package oneview
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	"io/ioutil"
 )
 
 func resourceStorageSystem() *schema.Resource {
@@ -211,13 +208,8 @@ func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	id := d.Get("hostname").(string)
 
-	a1 := []byte(id)
-	ioutil.WriteFile("ReadInput.txt", a1, 0644)
 	storageSystemList, err := config.ovClient.GetStorageSystems(fmt.Sprintf("hostname matches '%s'", id), "")
-	a2, _ := json.MarshalIndent(storageSystemList, "", " ")
-	ioutil.WriteFile("ReadOutPut.txt", a2, 0644)
 	if err != nil || len(storageSystemList.Members) < 1 {
-		//	if err != nil || storageSystem.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
@@ -306,7 +298,7 @@ func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error
 
 	rawManagedPools := d.Get("managed_pool").(*schema.Set).List()
 	managedPools := make([]ov.ManagedPools, 0)
-	//	if len(rawManagedPools) > 0 {
+
 	for _, rawMP := range rawManagedPools {
 		managedPoolItem := rawMP.(map[string]interface{})
 		managedPools = append(managedPools, ov.ManagedPools{
@@ -317,11 +309,10 @@ func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error
 			RaidLevel:     managedPoolItem["raid_level"].(string),
 			Totalcapacity: managedPoolItem["total_capacity"].(string)})
 	}
-	//}
 
 	rawDeviceSpecificAttributes := d.Get("storage_system_device_specific_attributes").(*schema.Set).List()
 	deviceSpecificAttributes := ov.StorageSystemDeviceSpecificAttributes{}
-	//if len(rawDeviceSpecificAttributes)>0 {
+	
 	for _, rawData := range rawDeviceSpecificAttributes {
 		deviceSpecificAttributesItem := rawData.(map[string]interface{})
 		deviceSpecificAttributes = ov.StorageSystemDeviceSpecificAttributes{
@@ -330,13 +321,11 @@ func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error
 			ManagedPools:  managedPools,
 			ManagedDomain: deviceSpecificAttributesItem["managed_domain"].(string)}
 	}
-	//}
 
 	storageSystem.StorageSystemDeviceSpecificAttributes = &deviceSpecificAttributes
 
 	rawPorts := d.Get("ports").(*schema.Set).List()
 	ports := make([]ov.Ports, 0)
-	//	if len(rawPorts)>0 {
 	for _, rawPort := range rawPorts {
 		portsItem := rawPort.(map[string]interface{})
 		ports = append(ports, ov.Ports{
@@ -345,7 +334,7 @@ func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error
 			PortDeviceSpecificAttributes: ov.PortDeviceSpecificAttributes{
 				PartnerPort: portsItem["partner_port"].(string)}})
 	}
-	//}
+	
 	storageSystem.Ports = ports
 
 	if val, ok := d.GetOk("category"); ok {
@@ -384,10 +373,6 @@ func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error
 		storageSystem.Type = val.(string)
 	}
 
-	a1 := []byte(credentials.Username + "::" + credentials.Password)
-	ioutil.WriteFile("a1.txt", a1, 0644)
-	jsonobj, _ := json.MarshalIndent(storageSystem, "", " ")
-	ioutil.WriteFile("test.json", jsonobj, 0644)
 	err := config.ovClient.UpdateStorageSystem(storageSystem)
 	if err != nil {
 		return err
