@@ -83,40 +83,46 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "kasshieWdVIntOY0Vrz1OXNv7IA=",
-			"path": "github.com/HewlettPackard/oneview-golang/i3s",
+			"checksumSHA1": "38d/C/zuER4NCtOKqelL6WPYeFc=",
+			"path": "github.com/HewlettPackard/oneview-golang",
 			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
 			"revisionTime": "2019-04-02T11:18:28Z"
+		},
+		{
+			"checksumSHA1": "kasshieWdVIntOY0Vrz1OXNv7IA=",
+			"path": "github.com/HewlettPackard/oneview-golang/i3s",
+			"revision": "d7e154e0573eabf30af672b6869f10ce657d8aaf",
+			"revisionTime": "2019-03-21T07:31:06Z"
 		},
 		{
 			"checksumSHA1": "upcruuWO2FdYVzZJs8DDj4tBO2c=",
 			"path": "github.com/HewlettPackard/oneview-golang/icsp",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "d7e154e0573eabf30af672b6869f10ce657d8aaf",
+			"revisionTime": "2019-03-21T07:31:06Z"
 		},
 		{
 			"checksumSHA1": "T7C6uoGuuhXZ0UNMJr/7IyhF5ls=",
 			"path": "github.com/HewlettPackard/oneview-golang/liboneview",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "d7e154e0573eabf30af672b6869f10ce657d8aaf",
+			"revisionTime": "2019-03-21T07:31:06Z"
 		},
 		{
-			"checksumSHA1": "kQp582CKtymXaw3bDZcc2m7iE5Y=",
+			"checksumSHA1": "HKPi1TKjgh1mMzYCIjpRxKoiv6Q=",
 			"path": "github.com/HewlettPackard/oneview-golang/ov",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "d7e154e0573eabf30af672b6869f10ce657d8aaf",
+			"revisionTime": "2019-03-21T07:31:06Z"
 		},
 		{
 			"checksumSHA1": "JS9zgKnymnPN0XuzmBL28HYXYwk=",
 			"path": "github.com/HewlettPackard/oneview-golang/rest",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "d7e154e0573eabf30af672b6869f10ce657d8aaf",
+			"revisionTime": "2019-03-21T07:31:06Z"
 		},
 		{
 			"checksumSHA1": "tSDhcm+zX/nRBHeXiQN2KqaRKu0=",
 			"path": "github.com/HewlettPackard/oneview-golang/utils",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "d7e154e0573eabf30af672b6869f10ce657d8aaf",
+			"revisionTime": "2019-03-21T07:31:06Z"
 		},
 		{
 			"path": "github.com/Unknwon/com",
