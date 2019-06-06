@@ -17,7 +17,7 @@ import (
 
 func dataSourceServerProfile() *schema.Resource {
 	return &schema.Resource{
-		Read:   dataSourceServerProfileRead,
+		Read: dataSourceServerProfileRead,
 
 		Schema: map[string]*schema.Schema{
 			"name": {
