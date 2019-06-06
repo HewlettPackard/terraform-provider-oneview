@@ -93,10 +93,6 @@ func dataSourceStorageSystem() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"mode": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"ports": {
 				Computed: true,
 				Type:     schema.TypeSet,
@@ -194,7 +190,6 @@ func dataSourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("type", storageSystem.Type)
 	d.Set("uri", storageSystem.URI.String())
 	d.Set("family", storageSystem.Family)
-	d.Set("mode", storageSystem.Mode)
 	d.Set("storage_pools_uri", storageSystem.StoragePoolsUri.String())
 	d.Set("total_capacity", storageSystem.TotalCapacity)
 
