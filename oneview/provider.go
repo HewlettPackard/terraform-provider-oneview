@@ -106,6 +106,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_server_hardware_type": dataSourceServerHardwareType(),
 			"oneview_logical_enclosure":    dataSourceLogicalEnclosure(),
 			"oneview_enclosure_group":      dataSourceEnclosureGroup(),
+			"oneview_server_profile":       dataSourceServerProfile(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
