@@ -100,11 +100,20 @@ func Provider() terraform.ResourceProvider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"oneview_scope":            dataSourceScope(),
 			"oneview_ethernet_network": dataSourceEthernetNetwork(),
+			"oneview_interconnect_type":    dataSourceInterconnectType(),
+			"oneview_interconnect":         dataSourceInterconnects(),
+			"oneview_logical_interconnect": dataSourceLogicalInterconnect(),
+			"oneview_scope":                dataSourceScope(),
+			"oneview_server_hardware":      dataSourceServerHardware(),
+			"oneview_server_hardware_type": dataSourceServerHardwareType(),
+			"oneview_logical_enclosure":    dataSourceLogicalEnclosure(),
+			"oneview_enclosure_group":      dataSourceEnclosureGroup(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
 			"oneview_server_profile":             resourceServerProfile(),
 			"oneview_enclosure":                  resourceEnclosure(),
+			"oneview_enclosure_group":            resourceEnclosureGroup(),
 			"oneview_ethernet_network":           resourceEthernetNetwork(),
 			"oneview_network_set":                resourceNetworkSet(),
 			"oneview_fcoe_network":               resourceFCoENetwork(),
@@ -113,8 +122,10 @@ func Provider() terraform.ResourceProvider {
 			"oneview_server_profile_template":    resourceServerProfileTemplate(),
 			"oneview_logical_interconnect_group": resourceLogicalInterconnectGroup(),
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
+			"oneview_uplink_set":                 resourceUplinkSet(),
 			"oneview_icsp_server":                resourceIcspServer(),
 			"oneview_i3s_plan":                   resourceI3SPlan(),
+			"oneview_logical_enclosure":          resourceLogicalEnclosure(),
 		},
 		ConfigureFunc: providerConfigure,
 	}

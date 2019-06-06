@@ -90,7 +90,7 @@ func (c *Client) GetQueryString(u *url.URL) {
 	return
 }
 
-// SetAuthHeaderOptins - set the Headers Options
+// SetAuthHeaderOptions - set the Headers Options
 func (c *Client) SetAuthHeaderOptions(headers map[string]string) {
 	c.Option.Headers = headers
 }
