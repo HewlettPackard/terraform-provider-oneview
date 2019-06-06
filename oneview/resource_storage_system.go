@@ -313,7 +313,7 @@ func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error
 
 	rawDeviceSpecificAttributes := d.Get("storage_system_device_specific_attributes").(*schema.Set).List()
 	deviceSpecificAttributes := ov.StorageSystemDeviceSpecificAttributes{}
-	
+
 	for _, rawData := range rawDeviceSpecificAttributes {
 		deviceSpecificAttributesItem := rawData.(map[string]interface{})
 		deviceSpecificAttributes = ov.StorageSystemDeviceSpecificAttributes{
@@ -335,7 +335,7 @@ func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error
 			PortDeviceSpecificAttributes: ov.PortDeviceSpecificAttributes{
 				PartnerPort: portsItem["partner_port"].(string)}})
 	}
-	
+
 	storageSystem.Ports = ports
 
 	if val, ok := d.GetOk("category"); ok {
