@@ -25,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - FC network
 - Logical interconnect
 - Logical interconnect group
+- Interconnect
 - Scope
 - Server hardware
 - LogicalEnclosure

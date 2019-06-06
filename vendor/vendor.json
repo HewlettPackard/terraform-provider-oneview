@@ -83,6 +83,12 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "38d/C/zuER4NCtOKqelL6WPYeFc=",
+			"path": "github.com/HewlettPackard/oneview-golang",
+			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
+			"revisionTime": "2019-04-02T11:18:28Z"
+		},
+		{
 			"checksumSHA1": "kasshieWdVIntOY0Vrz1OXNv7IA=",
 			"path": "github.com/HewlettPackard/oneview-golang/i3s",
 			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
