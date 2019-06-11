@@ -236,16 +236,16 @@ func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("storage_pools_uri", storageSystem.StoragePoolsUri.String())
 	d.Set("total_capacity", storageSystem.TotalCapacity)
 
-	raw_credentials := storageSystem.Credentials
+	rawcredentials := storageSystem.Credentials
 	credentials := make([]map[string]interface{}, 0)
 	credentials = append(credentials, map[string]interface{}{
-		"username": raw_credentials.Username,
-		"password": raw_credentials.Password})
+		"username": rawcredentials.Username,
+		"password": rawcredentials.Password})
 	d.Set("credentials", credentials)
 
-	raw_ports := storageSystem.Ports
-	ports := make([]map[string]interface{}, 0, len(raw_ports))
-	for _, port := range raw_ports {
+	rawports := storageSystem.Ports
+	ports := make([]map[string]interface{}, 0, len(rawports))
+	for _, port := range rawports {
 		ports = append(ports, map[string]interface{}{
 			"id":           port.Id,
 			"mode":         port.Mode,
@@ -253,9 +253,9 @@ func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.Set("ports", ports)
 
-	raw_mp := storageSystem.StorageSystemDeviceSpecificAttributes.ManagedPools
+	rawmp := storageSystem.StorageSystemDeviceSpecificAttributes.ManagedPools
 	managedPools := make([]map[string]interface{}, 0)
-	for _, mp := range raw_mp {
+	for _, mp := range rawmp {
 		managedPools = append(managedPools, map[string]interface{}{
 			"name":           mp.Name,
 			"domain":         mp.Domain,
@@ -266,12 +266,12 @@ func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.Set("managed_pool", managedPools)
 
-	raw_ssda := storageSystem.StorageSystemDeviceSpecificAttributes
+	rawssda := storageSystem.StorageSystemDeviceSpecificAttributes
 	deviceSpecificAttributes := make([]map[string]interface{}, 0)
 	deviceSpecificAttributes = append(deviceSpecificAttributes, map[string]interface{}{
-		"firmware":       raw_ssda.Firmware,
-		"model":          raw_ssda.Model,
-		"managed_domain": raw_ssda.ManagedDomain})
+		"firmware":       rawssda.Firmware,
+		"model":          rawssda.Model,
+		"managed_domain": rawssda.ManagedDomain})
 	d.Set("storage_system_device_specific_attributes", deviceSpecificAttributes)
 
 	return nil
