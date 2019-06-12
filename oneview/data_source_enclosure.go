@@ -32,10 +32,6 @@ func dataSourceEnclosure() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"created": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -94,10 +90,6 @@ func dataSourceEnclosure() *schema.Resource {
 							Computed: true,
 						},
 						"model": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"modified": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -226,6 +218,10 @@ func dataSourceEnclosure() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"scope_uris": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"serial_number": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -299,9 +295,9 @@ func dataSourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("active_oa_preferred_ip", enclosure.ActiveOaPreferredIP)
 	d.Set("asset_tag", enclosure.AssetTag)
 	d.Set("category", enclosure.Category)
-	d.Set("created", enclosure.Created)
 	d.Set("description", enclosure.Description)
 	d.Set("device_bay_count", enclosure.DeviceBayCount)
+//	d.Set("device_bays", enclosure.DeviceBays)
 	d.Set("eTag", enclosure.ETAG)
 	d.Set("enclosure_group_uri", enclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_type", enclosure.EnclosureType)
@@ -311,11 +307,11 @@ func dataSourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("interconnect_bays", enclosure.InterconnectBays)
 	d.Set("is_fw_managed", enclosure.IsFwManaged)
 	d.Set("licensing_intent", enclosure.LicensingIntent)
-	d.Set("modified", enclosure.Modified)
 	d.Set("name", enclosure.Name)
 	d.Set("part_number", enclosure.PartNumber)
 	d.Set("rack_name", enclosure.RackName)
 	d.Set("refresh_state", enclosure.RefreshState)
+	d.Set("scopes_uri", enclosure.ScopesUri.String())
 	d.Set("serial_number", enclosure.SerialNumber)
 	d.Set("standby_oa_preferred_ip", enclosure.StandbyOaPreferredIP)
 	d.Set("state", enclosure.State)
