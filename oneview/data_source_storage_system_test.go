@@ -25,7 +25,7 @@ func TestAccStorageSystem_2(t *testing.T) {
 			{
 				Config: testAccStorageSystemData,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("oneview_storage_system.test", "enclosure_group_uri", "/rest/storage-syatems/4f7b2cf4-fdb5-4065-8886-54a9905659f9"),
+					resource.TestCheckResourceAttr("oneview_storage_system.test", "family", "StoreServ"),
 					resource.TestCheckResourceAttr("oneview_storage_system.test", "name", "Terraform le 1"),
 				),
 			},
@@ -35,6 +35,6 @@ func TestAccStorageSystem_2(t *testing.T) {
 
 var testAccStorageSystemData = `
   data "oneview_storage_system" "test" {
-    storage_system_uri = "/rest/storage-systems/4f7b2cf4-fdb5-4065-8886-54a9905659f9"		  
+    family = "StoreServ"		  
     name = "Terraform le 1"
   }`
