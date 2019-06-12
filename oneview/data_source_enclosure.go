@@ -17,7 +17,7 @@ import (
 
 func dataSourceEnclosure() *schema.Resource {
 	return &schema.Resource{
-		Read:   dataSourceEnclosureRead,
+		Read: dataSourceEnclosureRead,
 
 		Schema: map[string]*schema.Schema{
 			"active_oa_preferred_ip": {
@@ -297,7 +297,7 @@ func dataSourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("category", enclosure.Category)
 	d.Set("description", enclosure.Description)
 	d.Set("device_bay_count", enclosure.DeviceBayCount)
-//	d.Set("device_bays", enclosure.DeviceBays)
+	d.Set("device_bays", enclosure.DeviceBays)
 	d.Set("eTag", enclosure.ETAG)
 	d.Set("enclosure_group_uri", enclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_type", enclosure.EnclosureType)

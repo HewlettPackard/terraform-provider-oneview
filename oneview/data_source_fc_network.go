@@ -17,8 +17,8 @@ import (
 
 func dataSourceFCNetwork() *schema.Resource {
 	return &schema.Resource{
-		Read:   dataSourceFCNetworkRead,
-		
+		Read: dataSourceFCNetworkRead,
+
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
