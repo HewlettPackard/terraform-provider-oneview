@@ -109,6 +109,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_enclosure_group":         dataSourceEnclosureGroup(),
 			"oneview_server_profile":          dataSourceServerProfile(),
 			"oneview_server_profile_template": dataSourceServerProfileTemplate(),
+			"oneview_storage_system":          dataSourceStorageSystem(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -121,6 +122,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_fc_network":                 resourceFCNetwork(),
 			"oneview_scope":                      resourceScope(),
 			"oneview_server_profile_template":    resourceServerProfileTemplate(),
+			"oneview_storage_system":             resourceStorageSystem(),
 			"oneview_logical_interconnect_group": resourceLogicalInterconnectGroup(),
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
 			"oneview_uplink_set":                 resourceUplinkSet(),
