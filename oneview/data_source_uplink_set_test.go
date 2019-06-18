@@ -23,7 +23,7 @@ func TestAccUplinkSet_2(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccEnlosureData,
+				Config: testAccUplinkSetData,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("oneview_uplink_set.test", "name", "up1"),
 				),
