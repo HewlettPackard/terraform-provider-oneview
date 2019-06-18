@@ -16,8 +16,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	"strings"
 )
 
 func resourceServerProfile() *schema.Resource {
@@ -35,14 +35,18 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"template": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ServerProfileV5",
+				Default:  "ServerProfileV9",
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
@@ -52,17 +56,6 @@ func resourceServerProfile() *schema.Resource {
 			"hardware_name": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"power_state": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ValidateFunc: func(v interface{}, k string) (warning []string, errors []error) {
-					val := v.(string)
-					if val != "on" && val != "off" {
-						errors = append(errors, fmt.Errorf("%q must be 'on' or 'off'", k))
-					}
-					return
-				},
 			},
 			"public_connection": {
 				Type:     schema.TypeString,
@@ -95,49 +88,37 @@ func resourceServerProfile() *schema.Resource {
 func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(d.Get("template").(string))
-	if err != nil || serverProfileTemplate.URI.IsNil() {
-		return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("template").(string))
+	serverProfile := ov.ServerProfile{}
+
+	if val, ok := d.GetOk("template"); ok {
+		serverProfileByTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
+		if err != nil || serverProfileByTemplate.URI.IsNil() {
+			return err
+		}
+		serverProfile = serverProfileByTemplate
+		serverProfile.ServerProfileTemplateURI = serverProfileByTemplate.URI
 	}
-	var serverHardware ov.ServerHardware
+
+	serverProfile.Type = d.Get("type").(string)
+	serverProfile.Name = d.Get("name").(string)
+
 	if val, ok := d.GetOk("hardware_name"); ok {
-		serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
+		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
 		if err != nil {
 			return err
 		}
-	} else {
-		var hwFilters = []string{}
-		for _, filter := range d.Get("hw_filter").([]interface{}) {
-			hwFilters = append(hwFilters, filter.(string))
-		}
-		serverHardware, err = getServerHardware(config, serverProfileTemplate, hwFilters)
-		if err != nil {
-			return err
-		}
+		/*if serverHardware.PowerState != "off" {
+			return errors.New("Server Hardware must be powered off to assign to the server profile")
+		}*/
+		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
 
-	profileType := d.Get("type")
-	if profileType == "ServerProfileV6" {
-		err = config.ovClient.CreateProfileFromTemplateWithI3S(d.Get("name").(string), serverProfileTemplate, serverHardware)
-		d.SetId(d.Get("name").(string))
+	err := config.ovClient.SubmitNewProfile(serverProfile)
+	d.SetId(d.Get("name").(string))
 
-		if err != nil {
-			d.SetId("")
-			return err
-		}
-	} else {
-		err = config.ovClient.CreateProfileFromTemplate(d.Get("name").(string), serverProfileTemplate, serverHardware)
-		d.SetId(d.Get("name").(string))
-
-		if err != nil {
-			d.SetId("")
-			return err
-		}
-	}
-	if d.Get("power_state").(string) == "on" {
-		if err = serverHardware.PowerOn(); err != nil {
-			return err
-		}
+	if err != nil {
+		d.SetId("")
+		return err
 	}
 
 	return resourceServerProfileRead(d, meta)
@@ -146,7 +127,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	serverProfile, err := config.ovClient.GetProfileByName(d.Id())
+	serverProfile, err := config.ovClient.GetProfileByName(d.Get("name").(string))
 	if err != nil || serverProfile.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -160,7 +141,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("hardware_uri", serverHardware.URI.String())
 	d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	d.Set("serial_number", serverProfile.SerialNumber.String())
-	d.Set("power_state", strings.ToLower(serverHardware.PowerState))
 
 	if val, ok := d.GetOk("public_connection"); ok {
 		publicConnection, err := serverProfile.GetConnectionByName(val.(string))
@@ -171,18 +151,49 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("public_slot_id", publicConnection.ID)
 	}
 
+	d.Set("name", serverProfile.Name)
+	d.Set("type", serverProfile.Type)
+	d.Set("uri", serverProfile.URI.String())
+
 	return nil
 }
 
 func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	serverProfile, err := config.ovClient.GetProfileByName(d.Id())
-	if err != nil || serverProfile.URI.IsNil() {
-		d.SetId("")
-		return nil
+
+	serverProfile := ov.ServerProfile{
+		Type: d.Get("type").(string),
+		Name: d.Get("name").(string),
+		URI:  utils.NewNstring(d.Get("uri").(string)),
 	}
 
+	if val, ok := d.GetOk("hardware_name"); ok {
+		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
+		if err != nil {
+			return err
+		}
+		/*if serverHardware.PowerState != "off" {
+			return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
+		}*/
+		serverProfile.ServerHardwareURI = serverHardware.URI
+	}
+
+	if val, ok := d.GetOk("template"); ok {
+		serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
+		if err != nil || serverProfileTemplate.URI.IsNil() {
+			return err
+		}
+		serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
+	}
+
+	err := config.ovClient.UpdateServerProfile(serverProfile)
+	if err != nil {
+		return err
+	}
+	d.SetId(d.Get("name").(string))
+
 	return resourceServerProfileRead(d, meta)
+
 }
 
 func resourceServerProfileDelete(d *schema.ResourceData, meta interface{}) error {
