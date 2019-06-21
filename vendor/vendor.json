@@ -85,38 +85,38 @@
 		{
 			"checksumSHA1": "kasshieWdVIntOY0Vrz1OXNv7IA=",
 			"path": "github.com/HewlettPackard/oneview-golang/i3s",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "7a17a8285b20b643b4471ad6ca1fe181b3344bfd",
+			"revisionTime": "2019-06-13T11:20:01Z"
 		},
 		{
 			"checksumSHA1": "upcruuWO2FdYVzZJs8DDj4tBO2c=",
 			"path": "github.com/HewlettPackard/oneview-golang/icsp",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "7a17a8285b20b643b4471ad6ca1fe181b3344bfd",
+			"revisionTime": "2019-06-13T11:20:01Z"
 		},
 		{
 			"checksumSHA1": "T7C6uoGuuhXZ0UNMJr/7IyhF5ls=",
 			"path": "github.com/HewlettPackard/oneview-golang/liboneview",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "7a17a8285b20b643b4471ad6ca1fe181b3344bfd",
+			"revisionTime": "2019-06-13T11:20:01Z"
 		},
 		{
-			"checksumSHA1": "kQp582CKtymXaw3bDZcc2m7iE5Y=",
+			"checksumSHA1": "POgRGFv2ffV7jiVS4OIRvKCEl10=",
 			"path": "github.com/HewlettPackard/oneview-golang/ov",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "7a17a8285b20b643b4471ad6ca1fe181b3344bfd",
+			"revisionTime": "2019-06-13T11:20:01Z"
 		},
 		{
 			"checksumSHA1": "JS9zgKnymnPN0XuzmBL28HYXYwk=",
 			"path": "github.com/HewlettPackard/oneview-golang/rest",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "7a17a8285b20b643b4471ad6ca1fe181b3344bfd",
+			"revisionTime": "2019-06-13T11:20:01Z"
 		},
 		{
 			"checksumSHA1": "tSDhcm+zX/nRBHeXiQN2KqaRKu0=",
 			"path": "github.com/HewlettPackard/oneview-golang/utils",
-			"revision": "6330591c0e2a314e6048afe7e0968e484065028d",
-			"revisionTime": "2019-04-02T11:18:28Z"
+			"revision": "7a17a8285b20b643b4471ad6ca1fe181b3344bfd",
+			"revisionTime": "2019-06-13T11:20:01Z"
 		},
 		{
 			"path": "github.com/Unknwon/com",

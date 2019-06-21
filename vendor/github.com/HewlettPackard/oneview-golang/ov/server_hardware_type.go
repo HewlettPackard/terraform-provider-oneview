@@ -9,15 +9,96 @@ import (
 	"strconv"
 )
 
+type VirtualPort struct {
+	Capabilities []string `json:"capabilities,omitempty"` // "capabilities": {}
+	PortFunction string   `json:"portFunction,omitempty"` // "portFunction": "a"
+	PortNumber   int      `json:"portNumber,omitempty"`   // "portNumber": 2
+}
+type SHTPort struct {
+	Mapping               int           `json:"mapping,omitempty"`               // "mapping": 3
+	MaxSpeedMbps          int           `json:"maxSpeedMbps,omitempty"`          // "maxSpeedMbps":3553
+	MaxVFsSupported       int           `json:"maxVFsSupported,omitempty"`       // "maxVFsSupported": 23
+	Number                int           `json:"number,omitempty"`                // "number": 1
+	PhysicalFunctionCount int           `json:"physicalFunctionCount,omitempty"` // "physicalFunctionCount": 4
+	SupportedFcGbps       []string      `json:"supportedFcGbps,omitempty"`       // "supportedFcGbps": ""
+	Type                  string        `json:"type,omitempty"`                  // "type": "Ethernet"
+	VirtualPort           []VirtualPort `json:"virtualPorts,omitempty"`          // "virtualPorts": {}
+}
+type Adapter struct {
+	Capabilities        []string           `json:"capabilities,omitempty"`        // "capabilities": {}
+	DeviceNumber        int                `json:"deviceNumber,omitempty"`        // "deviceNumber": 123
+	DeviceType          string             `json:"deviceType,omitempty"`          // "deviceType":"Ethernet"
+	Location            string             `json:"location,omitempty"`            // "location": "Mezz"
+	MaxVFsSupported     int                `json:"maxVFsSupported,omitempty"`     // "maxVFsSupported": 256
+	MinVFsIncrement     int                `json:"minVFsIncrement,omitempty"`     // "minVFsIncrement": 8
+	Model               string             `json:"model,omitempty"`               // "model": ""
+	Ports               []SHTPort          `json:"ports,omitempty"`               // "ports": {}
+	Slot                int                `json:"slot,omitempty"`                // "slot": 3
+	StorageCapabilities *StorageCapability `json:"storageCapabilities,omitempty"` // "storageCapabilities":{..,},
+}
+
+type Dependency struct {
+	Type string `json:"type,omitempty"` // "type": "Map"
+}
+
+type OptionLink struct {
+	Action    string `json:"action,omitempty"`
+	OptionID  string `json:"optionId,omitempty"`
+	SettingID string `json:"settingId,omitempty"`
+}
+
+type Option struct {
+	ID          string       `json:"id,omitempty"`          //"id":"sc3d"
+	Name        string       `json:"name,omitempty"`        // "name":"COM"
+	OptionLinks []OptionLink `json:"optionLinks,omitempty"` // "optionLinks":{}
+}
+type BiosSetting struct {
+	Category        string       `json:"category,omitempty"`        // "category":""
+	DefaultValue    string       `json:"defaultValue,omitempty"`    // "defaultValue":"Cpm21Trq"
+	DependencyList  []Dependency `json:"dependencyList,omitempty"`  //"dependencyList:" {}
+	HelpText        string       `json:"helpText,omitempty"`        // "helpText": ""
+	ID              string       `json:"id,omitempty"`              // "id":""
+	LowerBound      int          `json:"lowerBound,omitempty"`      // "lowerBound": 3
+	Name            string       `json:"name,omitempty"`            // "name": ""
+	Options         []Option     `json:"options,omitempty"`         // "options":{}
+	ScalarIncrement int          `json:"scalarIncrement,omitempty"` // "scalarIncrement":4
+	StringMaxLength int          `json:"stringMaxLength,omitempty"` // "stringMaxLength":24
+	StringMinLength int          `json:"stringMinLength,omitempty"` // "stringMinLength":2
+	Type            string       `json:"type,omitempty"`            // "type":""
+	UpperBound      int          `json:"upperBound,omitempty"`      // "upperBound": 78
+	ValueExpression string       `json:"valueExpression,omitempty"` // "valueExpression":""
+	WarningText     string       `json:"warningText,omitempty"`     // "warningText":""
+}
+
+type StorageCapability struct {
+	ControllerModes            []string `json:"controllerModes,omitempty"`            // "controllerModes":{}
+	DriveTechnologies          []string `json:"driveTechnologies,omitempty"`          // "driveTechnologies":{}
+	DriveWriteCacheSupported   bool     `json:"driveWriteCacheSupported,omitempty"`   // "driveWriteCacheSupported":false
+	MaximumDrives              int      `json:"maximumDrives,omitempty"`              // "maximumDrives":5
+	NvmeBackplaneCapable       bool     `json:"nvmeBackplaneCapable,omitempty"`       // "nvmeBackplaneCapable":true
+	RaidLevels                 []string `json:"raidLevels,omitempty"`                 // "raidLevels":{}
+	StandupControllerSupported bool     `json:"standupControllerSupported,omitempty"` // "standupControllerSupported,":false
+}
 type ServerHardwareType struct {
-	Category    string        `json:"category,omitempty"`    // "category": "server-hardware",
-	Created     string        `json:"created,omitempty"`     // "created": "20150831T154835.250Z",
-	Description utils.Nstring `json:"description,omitempty"` // "description": "ServerHardware",
-	ETAG        string        `json:"eTag,omitempty"`        // "eTag": "1441036118675/8",
-	Modified    string        `json:"modified,omitempty"`    // "modified": "20150831T154835.250Z",
-	Name        string        `json:"name,omitempty"`        // "name": "ServerHardware 1",
-	Type        string        `json:"type,omitempty"`        // "type": "server-hardware-type-4",
-	URI         utils.Nstring `json:"uri,omitempty"`         // "uri": "/rest/server-hardware-types/e2f0031b-52bd-4223-9ac1-d91cb519d548"
+	Adapters            []Adapter          `json:"adapters,omitempty"`            // "adapters": {},
+	BiosSettings        []BiosSetting      `json:"biosSettings,omitempty"`        //"biosSettings": {},
+	BootCapabilities    []string           `json:"bootCapabilities,omitempty"`    // "bootCapabilities":{},
+	BootModes           []string           `json:"bootModes,omitempty"`           // "bootModes":{},
+	Capabilities        []string           `json:"capabilities,omitempty"`        // "capabilities": {},
+	Category            string             `json:"category,omitempty"`            // "category": "server-hardware",
+	Created             string             `json:"created,omitempty"`             // "created": "20150831T154835.250Z",
+	Description         utils.Nstring      `json:"description,omitempty"`         // "description": "ServerHardware",
+	ETAG                string             `json:"eTag,omitempty"`                // "eTag": "1441036118675/8",
+	Family              string             `json:"family,omitempty"`              // "family":"135",
+	FormFactor          string             `json:"formFactor,omitempty"`          // "formFactor":"HalfHeight",
+	Model               string             `json:"model,omitempty"`               // "model":"",
+	Modified            string             `json:"modified,omitempty"`            // "modified": "20150831T154835.250Z",
+	Name                string             `json:"name,omitempty"`                // "name": "ServerHardware 1",
+	PxeBootPolicies     []string           `json:"pxeBootPolicies,omitempty"`     // "pxeBootPolicies":{},
+	StorageCapabilities *StorageCapability `json:"storageCapabilities,omitempty"` // "storageCapabilities":{..,},
+	Type                string             `json:"type,omitempty"`                // "type": "server-hardware-type-4",
+	URI                 utils.Nstring      `json:"uri,omitempty"`                 // "uri": "/rest/server-hardware-types/e2f0031b-52bd-4223-9ac1-d91cb519d548"
+	UefiClass           string             `json:"uefiClass,omitempty"`           // "uefiClass":"2"
 }
 
 type ServerHardwareTypeList struct {

@@ -88,32 +88,17 @@ func resourceServerProfile() *schema.Resource {
 func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	serverProfile := ov.ServerProfile{}
-
-	if val, ok := d.GetOk("template"); ok {
-		serverProfileByTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
-		if err != nil || serverProfileByTemplate.URI.IsNil() {
-			return err
-		}
-		serverProfile = serverProfileByTemplate
-		serverProfile.ServerProfileTemplateURI = serverProfileByTemplate.URI
+	serverHardware, err := config.ovClient.GetServerHardwareByName(d.Get("hardware_name").(string))
+	if err != nil || serverHardware.URI.IsNil() {
+		return err
 	}
 
-	serverProfile.Type = d.Get("type").(string)
-	serverProfile.Name = d.Get("name").(string)
-
-	if val, ok := d.GetOk("hardware_name"); ok {
-		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
-		if err != nil {
-			return err
-		}
-		/*if serverHardware.PowerState != "off" {
-			return errors.New("Server Hardware must be powered off to assign to the server profile")
-		}*/
-		serverProfile.ServerHardwareURI = serverHardware.URI
+	serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(d.Get("template").(string))
+	if err != nil || serverProfileTemplate.URI.IsNil() {
+		return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("template").(string))
 	}
 
-	err := config.ovClient.SubmitNewProfile(serverProfile)
+	err = config.ovClient.CreateProfileFromTemplate(d.Get("name").(string), serverProfileTemplate, serverHardware)
 	d.SetId(d.Get("name").(string))
 
 	if err != nil {

@@ -13,4 +13,6 @@ resource "oneview_server_profile" "SP" {
   name = "TestSP"
   hardware_name = "0000A66102, bay 3"
   type = "ServerProfileV9"
+  template = "testspt"
 }
+
