@@ -15,8 +15,20 @@ resource "oneview_enclosure" "enclosure_inst" {
 	licensing_intent = "Oneview"
 	initial_scope_uris = ["/rest/scopes/bf7df2e6-ebbb-4c6b-bc7a-be8cdac930bf"]
 }
+
 /*resource "oneview_enclosure" "enclosure_inst" {
 	op = "replace"
 	path = "/name"
 	value = "Enclosure_Renamed"
 }*/
+
+/* Testing data source
+data "oneview_enclosure" "enclosure" {
+        name = "SYN03_Frame1"
+}
+
+output "oneview_enclosure_value" {
+        value = "${data.oneview_enclosure.enclosure.uuid}"
+}
+
+*/
