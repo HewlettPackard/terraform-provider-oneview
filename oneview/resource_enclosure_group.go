@@ -41,6 +41,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"category": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Default:  "enclosure-groups",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -132,7 +133,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"stacking_mode": {
 				Type:     schema.TypeString,
@@ -148,7 +149,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 		},
 	}
