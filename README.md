@@ -19,6 +19,26 @@ $ go get -u github.com/HewlettPackard/terraform-provider-oneview
 $ mv $GOPATH/bin/terraform-provider-oneview /usr/local/bin/terraform
 ```
 
+
+
+## Using `terraform-provider-oneview` with Docker
+
+
+We also provide a lightweight and easy way to test and execute `terraform-provider-oneview`. The `dciacoe/terraform-provider-oneview` docker image contains
+an installation of Terraform and our provider you can use by just pulling down the Docker Image:
+
+```bash
+# Download and store a local copy of terraform-provider-oneview and
+# use it as a Docker image.
+$ docker pull dciacoe/terraform-provider-oneview
+ 
+# Run docker commands using the "ash" shell from Alpine, this will create
+# a sh session where you can create files, issue commands and execute both
+# terraform and the provider with ease.
+$ docker run -it dciacoe/terraform-provider-oneview /bin/sh
+```
+
+
 ### Provider Information
 
 For authentication, you need to provide the provider information in examples:
