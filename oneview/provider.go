@@ -112,6 +112,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_scope":                      resourceScope(),
 			"oneview_server_profile_template":    resourceServerProfileTemplate(),
 			"oneview_logical_interconnect_group": resourceLogicalInterconnectGroup(),
+			"oneview_logical_interconnect":       resourceLogicalInterconnect(),
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
 			"oneview_uplink_set":                 resourceUplinkSet(),
 			"oneview_icsp_server":                resourceIcspServer(),

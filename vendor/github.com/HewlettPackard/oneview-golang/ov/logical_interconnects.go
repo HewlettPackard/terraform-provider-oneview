@@ -225,7 +225,6 @@ func (c *OVClient) GetLogicalInterconnectById(Id string) (LogicalInterconnect, e
 	)
 	uri += Id
 	logicalInterconnect, err := c.GetLogicalInterconnectByUri(uri)
-	fmt.Println(logicalInterconnect)
 
 	return logicalInterconnect, err
 }
@@ -511,8 +510,44 @@ func (c *OVClient) UpdateLogicalInterconnectConsistentState(liCompliance Logical
 		return err
 	}
 	return nil
+}
+
+func (c *OVClient) UpdateLogicalInterconnectConsistentStateById(Id string) error {
+	var (
+		uri = "/rest/logical-interconnects/"
+		t   *Task
+	)
+
+	uri = uri + Id + "/compliance"
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Infof("REST : %s \n %+v\n", uri, nil)
+	log.Infof("task -> %+v", t)
+	data, err := c.RestAPICall(rest.PUT, uri, nil)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error updating logicalInterConnectCompliance request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response update LogicalInterConnectCompliance %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
+	}
+	return nil
 
 }
+
 func (c *OVClient) UpdateLogicalInterconnectEthernetSettings(ethernetSetting EthernetSettings, Id string) error {
 	err_ethernet := c.UpdateLogicalInterconnectEthernetSettingsForce(ethernetSetting, Id, false)
 	return err_ethernet
@@ -845,8 +880,6 @@ func (c *OVClient) GetLogicalInterconnects(sort string, start string, count stri
 		logicalInterconnectList LogicalInterconnectList
 	)
 	q = make(map[string]interface{})
-	fmt.Println("q")
-	fmt.Println(q)
 	if sort != "" {
 		q["sort"] = sort
 	}
@@ -857,7 +890,6 @@ func (c *OVClient) GetLogicalInterconnects(sort string, start string, count stri
 		q["count"] = count
 	}
 
-	fmt.Println(q)
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
