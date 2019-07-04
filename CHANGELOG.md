@@ -3,7 +3,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.0.0]
 ### Notes
-  Major release which extends support to OneView appliances with versions 4.10, using the OneView Rest API version 800.
+  This is the first release of the OneView modules in Terraform and it adds support to core features listed below. 
+  This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800. 
 
 ### Major changes:
 - Extended support of SDK to OneView API800.
