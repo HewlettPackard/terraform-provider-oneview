@@ -17,9 +17,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Updated contribution guidelines
 - Support for datasources of resources.
 
-#### Bug fixes & Enhancements:
-- [#47] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/47) Added Synergy Support for Logical Interconnect Groups
-
 ### Oneview Features supported
 - Enclosure
 - Enclosure group
