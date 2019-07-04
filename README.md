@@ -24,7 +24,7 @@ $ mv $GOPATH/bin/terraform-provider-oneview /usr/local/bin/terraform
 For authentication, you need to provide the provider information in examples:
 
 
-```python
+```bash
 provider "oneview" {
 	ov_username = "<ov_username>"
 	ov_password = "<ov_password>"
