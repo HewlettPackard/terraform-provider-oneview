@@ -7,7 +7,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
   This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800. 
 
 ### Major changes:
-- Extended support of SDK to OneView API800.
 - Support for Go 1.11  
 - Added example files for the resources for improved readability and usability.
 - Added CHANGELOG to track versions, issues and improvements.
