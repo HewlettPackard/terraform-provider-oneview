@@ -129,7 +129,6 @@ func Provider() terraform.ResourceProvider {
 			"oneview_logical_interconnect_group": resourceLogicalInterconnectGroup(),
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
 			"oneview_uplink_set":                 resourceUplinkSet(),
-			"oneview_icsp_server":                resourceIcspServer(),
 			"oneview_i3s_plan":                   resourceI3SPlan(),
 			"oneview_logical_enclosure":          resourceLogicalEnclosure(),
 		},
@@ -150,19 +149,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 
 	if err := config.loadAndValidate(); err != nil {
 		return nil, err
-	}
-
-	if _, ok := d.GetOk("icsp_endpoint"); ok {
-		config.ICSPDomain = d.Get("icsp_domain").(string)
-		config.ICSPUsername = d.Get("icsp_username").(string)
-		config.ICSPPassword = d.Get("icsp_password").(string)
-		config.ICSPEndpoint = d.Get("icsp_endpoint").(string)
-		config.ICSPSSLVerify = d.Get("icsp_sslverify").(bool)
-		config.ICSPAPIVersion = d.Get("icsp_apiversion").(int)
-
-		if err := config.loadAndValidateICSP(); err != nil {
-			return nil, err
-		}
 	}
 
 	if val, ok := d.GetOk("i3s_endpoint"); ok {
