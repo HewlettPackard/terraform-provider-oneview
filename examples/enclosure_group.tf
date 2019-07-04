@@ -33,7 +33,6 @@ resource "oneview_enclosure_group" "eg_inst" {
 # To update uncomment the below lines and add the values to the attributes mentioned
 /*resource "oneview_enclosure_group" "eg_inst" {
 	name = "TestEnclosureGroup_Renamed"
-	uri = "/rest/enclosure-groups/fc32bafe-ed6e-46ac-8f08-9988820059bc"
 	enclosure_count = 3 
 	ip_addressing_mode = "External"
 	power_mode = "RedundantPowerFeed"

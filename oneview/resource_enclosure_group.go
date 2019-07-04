@@ -41,6 +41,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"category": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Default:  "enclosure-groups",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -132,7 +133,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"stacking_mode": {
 				Type:     schema.TypeString,
@@ -148,7 +149,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 		},
 	}
@@ -243,10 +244,10 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	enclosureGroup := ov.EnclosureGroup{
-		URI: utils.NewNstring(d.Get("uri").(string)),
+		URI:                         utils.NewNstring(d.Get("uri").(string)),
 		InterconnectBayMappingCount: d.Get("interconnect_bay_mapping_count").(int),
-		Type:         d.Get("type").(string),
-		StackingMode: d.Get("stacking_mode").(string),
+		Type:                        d.Get("type").(string),
+		StackingMode:                d.Get("stacking_mode").(string),
 	}
 
 	rawInterconnectBayMappings := d.Get("interconnect_bay_mappings").(*schema.Set).List()
