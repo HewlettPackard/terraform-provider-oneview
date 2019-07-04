@@ -29,7 +29,7 @@ resource "oneview_enclosure_group" "eg_inst" {
 	]
 }
 
-# Updates teh resource created above
+# Updates the resource created above
 # To update uncomment the below lines and add the values to the attributes mentioned
 /*resource "oneview_enclosure_group" "eg_inst" {
 	name = "TestEnclosureGroup_Renamed"
