@@ -306,8 +306,21 @@ func (c *OVClient) CreateProfileFromTemplate(name string, template ServerProfile
 		if err != nil {
 			return err
 		}
-		new_template.Type = "ServerProfileV5"
+		if c.APIVersion == 200 {
+			new_template.Type = "ServerProfileV5"
+		} else if c.APIVersion == 300 {
+			new_template.Type = "ServerProfileV6"
+		} else if c.APIVersion == 500 {
+			new_template.Type = "ServerProfileV7"
+		} else if c.APIVersion == 600 {
+			new_template.Type = "ServerProfileV8"
+		} else if c.APIVersion == 800 {
+			new_template.Type = "ServerProfileV9"
+		}
 		new_template.ServerProfileTemplateURI = template.URI // create relationship
+		new_template.ConnectionSettings = ConnectionSettings{
+			Connections: template.ConnectionSettings.Connections,
+		}
 		log.Debugf("new_template -> %+v", new_template)
 	} else {
 		log.Debugf("get new_template from clone, v1")

@@ -3,19 +3,22 @@ layout: "oneview"
 page_title: "Oneview: server_profile"
 sidebar_current: "docs-oneview-server-profile"
 description: |-
-  Creates a server profile.
+	Gets information about an existing server_profile.
 ---
 
 # oneview\_server\_profile
 
-Creates a server profile.
-et
+Use this data source to access the attributes of a Server Profile.
+
 ## Example Usage
 
 ```js
-resource "oneview_server_profile" "default" {
-  name = "test-server-profile"
-  template = "${oneview_server_profile_template.test.name}"
+data "oneview_server_profile" "sp" {
+        name = "TestAll"
+}
+
+output "oneview_server_profile_value" {
+        value = "${data.oneview_server_profile.sp.uri}"
 }
 ```
 
@@ -25,20 +28,14 @@ The following arguments are supported:
 
 * `name` - (Required) A unique name for the resource.
 
-* `template` - (Optional) The name of the template you will use for the server profile. 
-
 - - -
 
-* `public_connection` - (Optional) The name of the network that is going out to the public.
+* `public_connection` -  The name of the network that is going out to the public.
 
-* `hardware_name` - (Optional) The name of the Server Hardware the server will be provisioned on.
+* `hardware_name` -  The name of the Server Hardware the server will be provisioned on.
   If this isn't used, a server hardware will be picked based on compatibility with the server profile template and any hw_filter(s) (see below).
 
-* `hw_filter` - (Optional) List of filters to apply to the search for HW. See the OneView API docs pertaining to common filter query params, but the basic format is `[not] {attribute} {operator} '{value}'`. For example, `hw_filter = ["memoryMb >= 4096", "processorCoreCount = 4", "processorSpeedMhz >= 2400", "processorType regex '^Intel.*'"]`
-
-* `power_state` - (Optional) Power state to enforce; `"on"` or `"off"`
-
-* `type` - (Optional) The server profile version to be provisioned. Defaults to ServerProfileV5.
+* `type` -  The server profile version to be provisioned. Defaults to ServerProfileV5.
   Use ServerProfileV6 to use Image Streamer.
 
 ## Attributes Reference

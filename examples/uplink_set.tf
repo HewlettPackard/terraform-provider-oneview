@@ -19,3 +19,12 @@ resource "oneview_uplink_set" "UplinkSet" {
   network_type                      = "Ethernet"
   ethernet_network_type             = "Tagged"
 }
+
+// Example for data source
+data "oneview_uplink_set" "uplink_set" {
+        name = "up1"
+}
+
+output "oneview_uplink_set_value" {
+        value = "${data.oneview_uplink_set.uplink_set.uri}"
+}
