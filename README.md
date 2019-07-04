@@ -29,7 +29,7 @@ provider "oneview" {
 	ov_username = "<ov_username>"
 	ov_password = "<ov_password>"
 	ov_endpoint = "<ov_endpoint>"
-	ov_sslverify = false
+	ov_sslverify = true/false
 	ov_apiversion = <ov_apiversion>
 	ov_ifmatch = "*"
 }
