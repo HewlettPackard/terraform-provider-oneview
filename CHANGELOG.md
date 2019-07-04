@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Added SNMP v3 configuration support to Logical Interconnect Group
 - Added import support to all resources
 - Updated contribution guidelines
+- Support for datasources of resources.
 
 #### Bug fixes & Enhancements:
 - [#47] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/47) Added Synergy Support for Logical Interconnect Groups
