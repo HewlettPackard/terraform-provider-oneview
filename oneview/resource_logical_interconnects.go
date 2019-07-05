@@ -260,7 +260,7 @@ func resourceLogicalInterconnect() *schema.Resource {
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"update_type": {
 				Type:     schema.TypeString,

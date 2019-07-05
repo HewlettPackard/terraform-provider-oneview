@@ -282,77 +282,85 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 	d.Set("uri", logInt.URI)
 	d.Set("enclosure_uris", logInt.EnclosureUris)
 
-	ethernetSettings := make([]map[string]interface{}, 0)
+	if logInt.EthernetSettings != nil {
+		ethernetSettings := make([]map[string]interface{}, 0)
 
-	ethernetSettings = append(ethernetSettings, map[string]interface{}{
-		"category":               logInt.EthernetSettings.Category,
-		"dependent_resource_uri": logInt.EthernetSettings.DependentResourceUri.String(),
-		"description":            logInt.EthernetSettings.Description.String(),
-		"id":                     logInt.EthernetSettings.ID,
-		"interconnect_type":      logInt.EthernetSettings.InterconnectType,
-		"name":                   logInt.EthernetSettings.Name,
-		"type":                   logInt.EthernetSettings.Type,
-		"uri":                    logInt.EthernetSettings.URI.String(),
-	})
-	d.Set("ethernet_settings", ethernetSettings)
+		ethernetSettings = append(ethernetSettings, map[string]interface{}{
+			"category":               logInt.EthernetSettings.Category,
+			"dependent_resource_uri": logInt.EthernetSettings.DependentResourceUri.String(),
+			"description":            logInt.EthernetSettings.Description.String(),
+			"id":                     logInt.EthernetSettings.ID,
+			"interconnect_type":      logInt.EthernetSettings.InterconnectType,
+			"name":                   logInt.EthernetSettings.Name,
+			"type":                   logInt.EthernetSettings.Type,
+			"uri":                    logInt.EthernetSettings.URI.String(),
+		})
+		d.Set("ethernet_settings", ethernetSettings)
+	}
 
-	interconnectMapEntries := make([]map[string]interface{}, 0, len(logInt.InterconnectMap.InterconnectMapEntries))
-	for _, interconnectMapEntry := range logInt.InterconnectMap.InterconnectMapEntries {
-		location := make([]map[string]interface{}, 0, 1)
-		locationEntries := make([]map[string]interface{}, 0, len(interconnectMapEntry.Location.LocationEntries))
-		for _, locationEntry := range interconnectMapEntry.Location.LocationEntries {
-			locationEntries = append(locationEntries, map[string]interface{}{
-				"type":  locationEntry.Type,
-				"value": locationEntry.Value,
+	if logInt.InterconnectMap != nil {
+		interconnectMapEntries := make([]map[string]interface{}, 0, len(logInt.InterconnectMap.InterconnectMapEntries))
+		for _, interconnectMapEntry := range logInt.InterconnectMap.InterconnectMapEntries {
+			location := make([]map[string]interface{}, 0, 1)
+			locationEntries := make([]map[string]interface{}, 0, len(interconnectMapEntry.Location.LocationEntries))
+			for _, locationEntry := range interconnectMapEntry.Location.LocationEntries {
+				locationEntries = append(locationEntries, map[string]interface{}{
+					"type":  locationEntry.Type,
+					"value": locationEntry.Value,
+				})
+			}
+			location = append(location, map[string]interface{}{
+				"location_entries": locationEntries,
+			})
+			interconnectMapEntries = append(interconnectMapEntries, map[string]interface{}{
+				"location":                        location,
+				"logical_downlink_uri":            interconnectMapEntry.LogicalDownlinkUri.String(),
+				"permitted_interconnect_type_uri": interconnectMapEntry.PermittedInterconnectTypeUri.String(),
+				"interconnect_uri":                interconnectMapEntry.InterconnectUri,
+				"enclosure_index":                 interconnectMapEntry.EnclosureIndex,
 			})
 		}
-		location = append(location, map[string]interface{}{
-			"location_entries": locationEntries,
+		interconnectMap := make([]map[string]interface{}, 0, 1)
+		interconnectMap = append(interconnectMap, map[string]interface{}{
+			"interconnect_map_entries": interconnectMapEntries,
 		})
-		interconnectMapEntries = append(interconnectMapEntries, map[string]interface{}{
-			"location":                        location,
-			"logical_downlink_uri":            interconnectMapEntry.LogicalDownlinkUri.String(),
-			"permitted_interconnect_type_uri": interconnectMapEntry.PermittedInterconnectTypeUri.String(),
-			"interconnect_uri":                interconnectMapEntry.InterconnectUri,
-			"enclosure_index":                 interconnectMapEntry.EnclosureIndex,
-		})
-	}
-	interconnectMap := make([]map[string]interface{}, 0, 1)
-	interconnectMap = append(interconnectMap, map[string]interface{}{
-		"interconnect_map_entries": interconnectMapEntries,
-	})
-	d.Set("interconnect_map", interconnectMap)
-
-	interconnects := make([]interface{}, len(logInt.Interconnects))
-	for i, interconnect := range logInt.Interconnects {
-		interconnects[i] = interconnect
+		d.Set("interconnect_map", interconnectMap)
 	}
 
-	d.Set("interconnects", interconnects)
+	if logInt.Interconnects != nil {
+		interconnects := make([]interface{}, len(logInt.Interconnects))
+		for i, interconnect := range logInt.Interconnects {
+			interconnects[i] = interconnect
+		}
 
-	trapDestinations := make([]map[string]interface{}, 0, len(logInt.SnmpConfiguration.TrapDestinations))
-	for _, trapDestination := range logInt.SnmpConfiguration.TrapDestinations {
-		trapDestinations = append(trapDestinations, map[string]interface{}{
-			"trap_destination":     trapDestination.TrapDestination,
-			"community_string":     trapDestination.CommunityString,
-			"trap_format":          trapDestination.TrapFormat,
-			"enet_trap_categories": trapDestination.EnetTrapCategories,
-			"fc_trap_categories":   trapDestination.FcTrapCategories,
-			"vcm_trap_categories":  trapDestination.VcmTrapCategories,
-			"trap_severities":      trapDestination.TrapSeverities,
-		})
+		d.Set("interconnects", interconnects)
 	}
 
-	snmpConfiguration := make([]map[string]interface{}, 0, 1)
-	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
-		"enabled":          *logInt.SnmpConfiguration.Enabled,
-		"v3_enabled":       *logInt.SnmpConfiguration.V3Enabled,
-		"read_community":   logInt.SnmpConfiguration.ReadCommunity,
-		"snmp_access":      logInt.SnmpConfiguration.SnmpAccess,
-		"system_contact":   logInt.SnmpConfiguration.SystemContact,
-		"type":             logInt.SnmpConfiguration.Type,
-		"trap_destination": trapDestinations,
-	})
-	d.Set("snmp_configuration", snmpConfiguration)
+	if logInt.SnmpConfiguration != nil {
+		trapDestinations := make([]map[string]interface{}, 0, len(logInt.SnmpConfiguration.TrapDestinations))
+		for _, trapDestination := range logInt.SnmpConfiguration.TrapDestinations {
+			trapDestinations = append(trapDestinations, map[string]interface{}{
+				"trap_destination":     trapDestination.TrapDestination,
+				"community_string":     trapDestination.CommunityString,
+				"trap_format":          trapDestination.TrapFormat,
+				"enet_trap_categories": trapDestination.EnetTrapCategories,
+				"fc_trap_categories":   trapDestination.FcTrapCategories,
+				"vcm_trap_categories":  trapDestination.VcmTrapCategories,
+				"trap_severities":      trapDestination.TrapSeverities,
+			})
+		}
+
+		snmpConfiguration := make([]map[string]interface{}, 0, 1)
+		snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
+			"enabled":          *logInt.SnmpConfiguration.Enabled,
+			"v3_enabled":       *logInt.SnmpConfiguration.V3Enabled,
+			"read_community":   logInt.SnmpConfiguration.ReadCommunity,
+			"snmp_access":      logInt.SnmpConfiguration.SnmpAccess,
+			"system_contact":   logInt.SnmpConfiguration.SystemContact,
+			"type":             logInt.SnmpConfiguration.Type,
+			"trap_destination": trapDestinations,
+		})
+		d.Set("snmp_configuration", snmpConfiguration)
+	}
 	return nil
 }
