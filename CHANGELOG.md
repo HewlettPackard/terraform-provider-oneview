@@ -3,6 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.0.1] (UnReleased)
   Patch changes to sever profile to include boot order fixes.
+  Usecase for infrasructure provisioning without storage and image streamer
   
 # [v1.0.0]
 ### Notes
