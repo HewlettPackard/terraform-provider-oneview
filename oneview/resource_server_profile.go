@@ -18,6 +18,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"strings"
 )
 
 func resourceServerProfile() *schema.Resource {
@@ -97,6 +98,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 		serverProfile = serverProfileByTemplate
 		serverProfile.ServerProfileTemplateURI = serverProfileByTemplate.URI
+		serverProfile.ConnectionSettings = ov.ConnectionSettings{
+			Connections: serverProfile.ConnectionSettings.Connections,
+		}
 	}
 
 	serverProfile.Type = d.Get("type").(string)
@@ -107,9 +111,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		if err != nil {
 			return err
 		}
-		/*if serverHardware.PowerState != "off" {
+		if !strings.EqualFold(serverHardware.PowerState, "off") {
 			return errors.New("Server Hardware must be powered off to assign to the server profile")
-		}*/
+		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
 
@@ -172,9 +176,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		if err != nil {
 			return err
 		}
-		/*if serverHardware.PowerState != "off" {
+		if !strings.EqualFold(serverHardware.PowerState, "off") {
 			return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
-		}*/
+		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
 

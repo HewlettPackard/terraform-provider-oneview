@@ -38,6 +38,26 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
+			"boot_mode": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_mode": {
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+						"mode": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"pxe_boot_policy": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+			},
 			"network": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -175,10 +195,11 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
 		})
 	}
-	serverProfileTemplate.Connections = networks
-	if _, ok := d.GetOk("manage_connections"); ok {
-		serverProfileTemplate.ConnectionSettings.ManageConnections = d.Get("manage_connections").(bool)
+	if val, ok := d.GetOk("manage_connections"); ok {
+		serverProfileTemplate.ConnectionSettings.ManageConnections = val.(bool)
 		serverProfileTemplate.ConnectionSettings.Connections = networks
+	} else {
+		serverProfileTemplate.Connections = networks
 	}
 
 	if val, ok := d.GetOk("boot_order"); ok {
@@ -189,6 +210,13 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		}
 		serverProfileTemplate.Boot.ManageBoot = true
 		serverProfileTemplate.Boot.Order = bootOrder
+		rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+		serverProfileTemplate.BootMode = ov.BootModeOption{
+			ManageMode:    rawBootMode["manage_mode"].(bool),
+			Mode:          rawBootMode["mode"].(string),
+			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+		}
+
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {

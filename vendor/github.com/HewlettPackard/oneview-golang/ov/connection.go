@@ -38,7 +38,7 @@ type BootOption struct {
 type Connection struct {
 	Connectionv200
 	AllocatedMbps    int           `json:"allocatedMbps,omitempty"`    // allocatedMbps(int:read), The transmit throughput (mbps) currently allocated to this connection. When Fibre Channel connections are set to Auto for requested bandwidth, the value can be set to -2000 to indicate that the actual value is unknown until OneView is able to negotiate the actual speed.
-	Boot             BootOption    `json:"boot,omitempty"`             // boot {}
+	Boot             *BootOption   `json:"boot,omitempty"`             // boot {}
 	DeploymentStatus string        `json:"deploymentStatus,omitempty"` // deploymentStatus(const_string:read), The deployment status of the connection. The value can be 'Undefined', 'Reserved', or 'Deployed'.
 	FunctionType     string        `json:"functionType,omitempty"`     // functionType(const_string),  Type of function required for the connection. functionType cannot be modified after the connection is created. 'Ethernet', 'FibreChannel'
 	ID               int           `json:"id,omitempty"`               // id(int), A unique identifier for this connection. When creating or editing a profile, an id is automatically assigned if the attribute is omitted or 0 is specified. When editing a profile, a connection is created if the id does not identify an existing connection.
