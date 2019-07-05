@@ -91,7 +91,7 @@ func (c *OVClient) ManageI3SConnections(connections []Connection, netname string
 			FunctionType:  "Ethernet",
 			RequestedMbps: "2500",
 			NetworkURI:    deployNet.URI,
-			Boot:          boot1,
+			Boot:          &boot1,
 			PortID:        "Mezz 3:1-a",
 		}
 		connections = append(connections, connection1)
@@ -106,7 +106,7 @@ func (c *OVClient) ManageI3SConnections(connections []Connection, netname string
 			FunctionType:  "Ethernet",
 			RequestedMbps: "2500",
 			NetworkURI:    deployNet.URI,
-			Boot:          boot2,
+			Boot:          &boot2,
 			PortID:        "Mezz 3:2-a",
 		}
 		connections = append(connections, connection2)
