@@ -1,6 +1,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v1.0.1] (UnReleased)
+  Patch changes to sever profile to include boot order fixes.
+  
 # [v1.0.0]
 ### Notes
   This is the first release of the OneView modules in Terraform and it adds support to core features listed below. 
