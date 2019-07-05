@@ -378,9 +378,9 @@ func resourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) e
 func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	update_type := d.Get("update_type").(string)
+	updateType := d.Get("update_type").(string)
 
-	if update_type == "updateComplianceById" {
+	if updateType == "updateComplianceById" {
 		id := strings.Replace(d.Get("uri").(string), "/rest/logical-interconnects/", "", -1)
 
 		err := config.ovClient.UpdateLogicalInterconnectConsistentStateById(id)
