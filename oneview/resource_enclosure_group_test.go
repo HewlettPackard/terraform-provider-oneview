@@ -15,27 +15,31 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/HewlettPackard/oneview-golang/icsp"
+	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccICSP_Server_1(t *testing.T) {
-	var icspServer icsp.Server
+func TestAccEnlosureGroup_1(t *testing.T) {
+	var enclosureGroup ov.EnclosureGroup
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckICSPServerDestroy,
+		CheckDestroy: testAccCheckEnclosureGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccICSPServer,
+				Config: testAccEnclosureGroup,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckICSPServerExists(
-						"oneview_icsp_server.test", &icspServer)),
+					testAccCheckEnclosureGroupExists(
+						"oneview-enclosure_group.test", &enclosureGroup),
+					resource.TestCheckResourceAttr(
+						"oneview-enclosure_group.test", "name", "terraform enclosure group",
+					),
+				),
 			},
 			{
-				ResourceName:      testAccICSPServer,
+				ResourceName:      testAccEnclosureGroup,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -43,7 +47,7 @@ func TestAccICSP_Server_1(t *testing.T) {
 	})
 }
 
-func testAccCheckICSPServerExists(n string, icspServer *icsp.Server) resource.TestCheckFunc {
+func testAccCheckEnclosureGroupExists(n string, enclosureGroup *ov.EnclosureGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -59,46 +63,36 @@ func testAccCheckICSPServerExists(n string, icspServer *icsp.Server) resource.Te
 			return err
 		}
 
-		testICSPServer, err := config.icspClient.GetServerByIP(rs.Primary.ID)
+		testEnclosureGroup, err := config.ovClient.GetEnclosureGroupByName(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
-		if testICSPServer.ILO.IPAddress != rs.Primary.ID {
+		if testEnclosureGroup.Name != rs.Primary.ID {
 			return fmt.Errorf("Instance not found")
 		}
-		*icspServer = testICSPServer
+		*enclosureGroup = testEnclosureGroup
 		return nil
 	}
 }
 
-func testAccCheckICSPServerDestroy(s *terraform.State) error {
+func testAccCheckEnclosureGroupDestroy(s *terraform.State) error {
 	config := testAccProvider.Meta().(*Config)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "oneview_icsp_server" {
+		if rs.Type != "oneview-enclosure_group" {
 			continue
 		}
 
-		testICSPServer, _ := config.icspClient.GetServerByIP(rs.Primary.ID)
+		testEg, _ := config.ovClient.GetEnclosureGroupByName(rs.Primary.ID)
 
-		if testICSPServer.Name != "" {
-			return fmt.Errorf("ICSP server still exists")
+		if testEg.Name != "" {
+			return fmt.Errorf("Enclsoure still exists")
 		}
 	}
 
 	return nil
 }
 
-var testAccICSPServer = `resource "oneview_server_profile" "test" {
-     count           = 1
-     name            = "terraform-test-${count.index}"
-     template = "UCP Template iSCSI"
-   }
-
-   resource "oneview_icsp_server" "test" {
-     count = 1
-     ilo_ip = "${element(oneview_server_profile.test.*.ilo_ip, count.index)}"
-     user_name = "ICspUser"
-     password = "@utoPr0vi$ion"
-     serial_number = "${element(oneview_server_profile.test.*.serial_number, count.index)}"
-   }
-  `
+var testAccEnclosureGroup = `resource "oneview-enclosure_group" "test" {
+    count = 1
+    name = "terraform enclosure group"	
+  }`

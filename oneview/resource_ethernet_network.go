@@ -102,6 +102,19 @@ func resourceEthernetNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"scopesUri": {
+				Optional: true,
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 		},
 	}
 }
@@ -118,6 +131,14 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 		EthernetNetworkType: d.Get("ethernet_network_type").(string),
 		Type:                d.Get("type").(string),
 		Description:         utils.NewNstring(d.Get("description").(string)),
+	}
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		rawInitialScopeUris := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		for i, raw := range rawInitialScopeUris {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		eNet.InitialScopeUris = initialScopeUris
 	}
 
 	eNetError := config.ovClient.CreateEthernetNetwork(eNet)
@@ -153,6 +174,9 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("state", eNet.State)
 	d.Set("fabric_uri", eNet.FabricUri.String())
 	d.Set("eTag", eNet.ETAG)
+	d.Set("scopesUri", eNet.ScopesUri.String())
+	d.Set("initial_scope_uris", eNet.InitialScopeUris)
+
 	return nil
 }
 

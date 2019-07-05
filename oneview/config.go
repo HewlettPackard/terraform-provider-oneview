@@ -15,7 +15,6 @@ import (
 	"errors"
 
 	"github.com/HewlettPackard/oneview-golang/i3s"
-	"github.com/HewlettPackard/oneview-golang/icsp"
 	"github.com/HewlettPackard/oneview-golang/ov"
 )
 
@@ -28,18 +27,10 @@ type Config struct {
 	OVAPIVersion int
 	OVIfMatch    string
 
-	ICSPDomain     string
-	ICSPUsername   string
-	ICSPPassword   string
-	ICSPEndpoint   string
-	ICSPSSLVerify  bool
-	ICSPAPIVersion int
-
 	I3SEndpoint string
 
-	ovClient   *ov.OVClient
-	icspClient *icsp.ICSPClient
-	i3sClient  *i3s.I3SClient
+	ovClient  *ov.OVClient
+	i3sClient *i3s.I3SClient
 }
 
 var ErrConfigNotInitialized = errors.New("config not initialized!")
@@ -59,22 +50,6 @@ func (c *Config) loadAndValidate() error {
 	}
 
 	c.ovClient.APIKey = session.ID
-
-	return nil
-}
-
-func (c *Config) loadAndValidateICSP() error {
-	if c == nil {
-		return ErrConfigNotInitialized
-	}
-
-	client := (&icsp.ICSPClient{}).NewICSPClient(c.ICSPUsername, c.ICSPPassword, c.ICSPDomain, c.ICSPEndpoint, c.ICSPSSLVerify, c.ICSPAPIVersion)
-
-	c.icspClient = client
-
-	if _, err := c.icspClient.SessionLogin(); err != nil {
-		return err
-	}
 
 	return nil
 }

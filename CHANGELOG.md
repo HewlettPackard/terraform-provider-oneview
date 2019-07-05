@@ -1,12 +1,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.0.0] (Unreleased)
+# [v1.0.0]
 ### Notes
-  Major release which extends support to OneView appliances with versions 4.10, using the OneView Rest API version 800.
+  This is the first release of the OneView modules in Terraform and it adds support to core features listed below. 
+  This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800. 
 
 ### Major changes:
-- Extended support of SDK to OneView API800.
 - Support for Go 1.11  
 - Added example files for the resources for improved readability and usability.
 - Added CHANGELOG to track versions, issues and improvements.
@@ -15,15 +15,22 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Added SNMP v3 configuration support to Logical Interconnect Group
 - Added import support to all resources
 - Updated contribution guidelines
-
-#### Bug fixes & Enhancements:
-- [#47] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/47) Added Synergy Support for Logical Interconnect Groups
+- Support for datasources of resources.
 
 ### Oneview Features supported
-- Enclosure    
+- Enclosure
+- Enclosure group
+- Ethernet network
 - FC network
-- Logical Interconnect
+- Interconnect
+- Interconnect type
+- Logical enclosure
+- Logical interconnect
 - Logical interconnect group
 - Scope
 - Server hardware
-- Uplink Set
+- Server hardware type
+- Server profile
+- Server profile template
+- Storage system
+- Uplink set

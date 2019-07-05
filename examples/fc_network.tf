@@ -17,3 +17,13 @@ resource "oneview_fc_network" "FCNetwork" {
 	name = "TestFCNetwork_Renamed"
 	type = "fc-networkV4"
 }*/
+
+/* Testing data source
+data "oneview_fc_network" "fc_network" {
+        name = "SYN03_Frame1"
+}
+
+output "oneview_fc_network_value" {
+        value = "${data.oneview_fc_network.fc_network.fabric_type}"
+}
+*/
