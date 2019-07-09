@@ -83,6 +83,14 @@ func resourceNetworkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 		},
 	}
 }
@@ -101,6 +109,15 @@ func resourceNetworkSetCreate(d *schema.ResourceData, meta interface{}) error {
 		NetworkUris:      netUris,
 		Type:             d.Get("type").(string),
 		NativeNetworkUri: utils.NewNstring(d.Get("native_network_uri").(string)),
+	}
+
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		rawInitialScopeUris := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		for i, raw := range rawInitialScopeUris {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		netSet.InitialScopeUris = initialScopeUris
 	}
 
 	netSetError := config.ovClient.CreateNetworkSet(netSet)
@@ -147,6 +164,7 @@ func resourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 	d.Set("network_uris", networkUris)
+	d.Set("initial_scope_uris", netSet.InitialScopeUris)
 
 	return nil
 

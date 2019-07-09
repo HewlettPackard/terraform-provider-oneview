@@ -32,6 +32,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Logical enclosure
 - Logical interconnect
 - Logical interconnect group
+- Network set
 - Scope
 - Server hardware
 - Server hardware type
