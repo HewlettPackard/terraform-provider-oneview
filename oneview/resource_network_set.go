@@ -83,6 +83,10 @@ func resourceNetworkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"scopes_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"initial_scope_uris": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -165,6 +169,7 @@ func resourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.Set("network_uris", networkUris)
 	d.Set("initial_scope_uris", netSet.InitialScopeUris)
+	d.Set("scopes_uri", netSet.ScopesUri)
 
 	return nil
 

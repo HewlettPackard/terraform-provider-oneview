@@ -74,6 +74,10 @@ func dataSourceNetworkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"scopes_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -114,6 +118,7 @@ func dataSourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 	d.Set("network_uris", networkUris)
+	d.Set("scopes_uri", netSet.ScopesUri)
 
 	return nil
 
