@@ -12,20 +12,12 @@
 package oneview
 
 import (
-	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceNetworkSet() *schema.Resource {
+func dataSourceNetworkSet() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceNetworkSetCreate,
-		Read:   resourceNetworkSetRead,
-		Update: resourceNetworkSetUpdate,
-		Delete: resourceNetworkSetDelete,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
+		Read: dataSourceNetworkSetRead,
 
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -34,18 +26,17 @@ func resourceNetworkSet() *schema.Resource {
 			},
 			"network_uris": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
 			"native_network_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "network-set",
+				Computed: true,
 			},
 			"connection_template_uri": {
 				Type:     schema.TypeString,
@@ -61,7 +52,7 @@ func resourceNetworkSet() *schema.Resource {
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -87,60 +78,19 @@ func resourceNetworkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"initial_scope_uris": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-				Set: schema.HashString,
-			},
 		},
 	}
 }
 
-func resourceNetworkSetCreate(d *schema.ResourceData, meta interface{}) error {
+func dataSourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	rawNetUris := d.Get("network_uris").(*schema.Set).List()
-	netUris := make([]utils.Nstring, len(rawNetUris))
-	for i, raw := range rawNetUris {
-		netUris[i] = utils.NewNstring(raw.(string))
-	}
-
-	netSet := ov.NetworkSet{
-		Name:             d.Get("name").(string),
-		NetworkUris:      netUris,
-		Type:             d.Get("type").(string),
-		NativeNetworkUri: utils.NewNstring(d.Get("native_network_uri").(string)),
-	}
-
-	if val, ok := d.GetOk("initial_scope_uris"); ok {
-		rawInitialScopeUris := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-		for i, raw := range rawInitialScopeUris {
-			initialScopeUris[i] = utils.Nstring(raw.(string))
-		}
-		netSet.InitialScopeUris = initialScopeUris
-	}
-
-	netSetError := config.ovClient.CreateNetworkSet(netSet)
-	d.SetId(d.Get("name").(string))
-	if netSetError != nil {
-		d.SetId("")
-		return netSetError
-	}
-	return resourceNetworkSetRead(d, meta)
-}
-
-func resourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-
-	netSet, err := config.ovClient.GetNetworkSetByName(d.Id())
+	netSet, err := config.ovClient.GetNetworkSetByName(d.Get("name").(string))
 	if err != nil || netSet.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
+	d.SetId(d.Get("name").(string))
 	d.Set("name", netSet.Name)
 	d.Set("type", netSet.Type)
 	d.Set("created", netSet.Created)
@@ -168,46 +118,8 @@ func resourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 	d.Set("network_uris", networkUris)
-	d.Set("initial_scope_uris", netSet.InitialScopeUris)
 	d.Set("scopes_uri", netSet.ScopesUri)
 
 	return nil
 
-}
-
-func resourceNetworkSetUpdate(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-
-	rawNetUris := d.Get("network_uris").(*schema.Set).List()
-	netUris := make([]utils.Nstring, len(rawNetUris))
-	for i, raw := range rawNetUris {
-		netUris[i] = utils.NewNstring(raw.(string))
-	}
-	newNetSet := ov.NetworkSet{
-		ETAG: d.Get("eTag").(string),
-		URI:  utils.NewNstring(d.Get("uri").(string)),
-		Name: d.Get("name").(string),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type:             d.Get("type").(string),
-		NativeNetworkUri: utils.NewNstring(d.Get("native_network_uri").(string)),
-		NetworkUris:      netUris,
-	}
-
-	err := config.ovClient.UpdateNetworkSet(newNetSet)
-	if err != nil {
-		return err
-	}
-	d.SetId(d.Get("name").(string))
-
-	return resourceNetworkSetRead(d, meta)
-}
-
-func resourceNetworkSetDelete(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-
-	err := config.ovClient.DeleteNetworkSet(d.Get("name").(string))
-	if err != nil {
-		return err
-	}
-	return nil
 }

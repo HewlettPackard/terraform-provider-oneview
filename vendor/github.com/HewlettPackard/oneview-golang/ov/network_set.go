@@ -14,10 +14,12 @@ type NetworkSet struct {
 	Created               string          `json:"created,omitempty"`               // "created": "20150831T154835.250Z",
 	Description           utils.Nstring   `json:"description,omitempty"`           // "description": "Network Set 1",
 	ETAG                  string          `json:"eTag,omitempty"`                  // "eTag": "1441036118675/8",
+	InitialScopeUris      []utils.Nstring `json:"initialScopeUris,omitempty"`      // "initialScopeUris":[]
 	Modified              string          `json:"modified,omitempty"`              // "modified": "20150831T154835.250Z",
 	Name                  string          `json:"name"`                            // "name": "Network Set 1",
 	NativeNetworkUri      utils.Nstring   `json:"nativeNetworkUri,omitempty"`
 	NetworkUris           []utils.Nstring `json:"networkUris"`
+	ScopesUri             utils.Nstring   `json:"scopesUri,omitempty"`
 	State                 string          `json:"state,omitempty"`  // "state": "Normal",
 	Status                string          `json:"status,omitempty"` // "status": "Critical",
 	Type                  string          `json:"type"`             // "type": "network-set",
