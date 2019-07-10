@@ -13,107 +13,113 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"
+	"strings"
 )
 
-func dataSourceLogicalInterconnect() *schema.Resource {
+func resourceLogicalInterconnect() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceLogicalInterconnectRead,
+		Read:   resourceLogicalInterconnectRead,
+		Update: resourceLogicalInterconnectUpdate,
+
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"category": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"enclosure_uris": {
 				Type:     schema.TypeSet,
-				Computed: true,
+				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
 			"ethernet_settings": {
 				Type:     schema.TypeSet,
-				Computed: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"category": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"dependent_resource_uri": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"description": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"id": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"interconnect_type": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"type": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 					},
 				},
 			},
 			"fusion_domain_uri": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"interconnect_map": {
 				Type:     schema.TypeList,
-				Computed: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"interconnect_map_entries": {
 							Type:     schema.TypeList,
-							Computed: true,
+							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"enclosure_index": {
 										Type:     schema.TypeInt,
-										Computed: true,
+										Optional: true,
 									},
 									"interconnect_uri": {
 
 										Type:     schema.TypeString,
-										Computed: true,
+										Optional: true,
 									},
 									"location": {
 										Type:     schema.TypeList,
-										Computed: true,
+										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"location_entries": {
 													Type:     schema.TypeList,
-													Computed: true,
+													Optional: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"type": {
 																Type:     schema.TypeString,
-																Computed: true,
+																Optional: true,
 															},
 															"value": {
 																Type:     schema.TypeString,
-																Computed: true,
+																Optional: true,
 															},
 														},
 													},
@@ -123,11 +129,11 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 									},
 									"logical_downlink_uri": {
 										Type:     schema.TypeString,
-										Computed: true,
+										Optional: true,
 									},
 									"permitted_interconnect_type_uri": {
 										Type:     schema.TypeString,
-										Computed: true,
+										Optional: true,
 									},
 								},
 							},
@@ -137,77 +143,77 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 			},
 			"interconnects": {
 				Type:     schema.TypeSet,
-				Computed: true,
+				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
 			"logical_interconnect_group_uri": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"snmp_configuration": {
 				Type:     schema.TypeList,
-				Computed: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"category": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"description": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"enabled": {
 							Type:     schema.TypeBool,
-							Computed: true,
+							Optional: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"read_community": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"system_contact": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"snmp_access": {
 							Type:     schema.TypeSet,
-							Computed: true,
+							Optional: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
 						"trap_destination": {
 							Type:     schema.TypeList,
-							Computed: true,
+							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"community_string": {
 										Type:     schema.TypeString,
-										Computed: true,
+										Optional: true,
 									},
 									"enet_trap_categories": {
 										Type:     schema.TypeSet,
-										Computed: true,
+										Optional: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
 									"fc_trap_categories": {
 										Type:     schema.TypeSet,
-										Computed: true,
+										Optional: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
 									"vcm_trap_categories": {
 										Type:     schema.TypeSet,
-										Computed: true,
+										Optional: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
@@ -222,7 +228,7 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 									},
 									"trap_severities": {
 										Type:     schema.TypeSet,
-										Computed: true,
+										Optional: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
@@ -231,38 +237,42 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 						},
 						"type": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
 						"v3_enabled": {
 							Type:     schema.TypeBool,
-							Computed: true,
+							Optional: true,
 						},
 					},
 				},
 			},
 			"stacking_health": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"update_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
 
-func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) error {
+func resourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Get("name").(string)
+	id := d.Id()
 	logInt, err := config.ovClient.GetLogicalInterconnectById(id)
 
 	if err != nil || logInt.URI.IsNil() {
@@ -363,4 +373,22 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 		d.Set("snmp_configuration", snmpConfiguration)
 	}
 	return nil
+}
+
+func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{}) error {
+	config := meta.(*Config)
+
+	updateType := d.Get("update_type").(string)
+
+	if updateType == "updateComplianceById" {
+		id := strings.Replace(d.Get("uri").(string), "/rest/logical-interconnects/", "", -1)
+
+		err := config.ovClient.UpdateLogicalInterconnectConsistentStateById(id)
+		if err != nil {
+			return err
+		}
+		d.SetId(id)
+	}
+
+	return resourceLogicalInterconnectRead(d, meta)
 }

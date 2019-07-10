@@ -1,10 +1,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v1.0.2] (UnReleased)
+- Support for Update Compliance in Logical Interconnect.
+
 # [v1.0.1]
 ### Notes
-  Patch changes to sever profile to include boot order fixes.
-  Usecase for infrasructure provisioning without storage and image streamer
+- Patch changes to sever profile to include boot order fixes.
+- Usecase for infrasructure provisioning without storage and image streamer
   
 # [v1.0.0]
 ### Notes
