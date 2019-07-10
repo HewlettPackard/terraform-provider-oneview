@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 # [v1.0.2] (UnReleased)
 - Support for Update Compliance in Logical Interconnect.
 
+### Oneview Features supported
+- Network Set
+
 # [v1.0.1]
 ### Notes
 - Patch changes to sever profile to include boot order fixes.
@@ -35,7 +38,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Logical enclosure
 - Logical interconnect
 - Logical interconnect group
-- Network set
 - Scope
 - Server hardware
 - Server hardware type
