@@ -51,6 +51,7 @@ provider "oneview" {
 	ov_endpoint = "<ov_endpoint>"
 	ov_sslverify = true/false
 	ov_apiversion = <ov_apiversion>
+	ov_domain = "<ov_domain>"
 	ov_ifmatch = "*"
 }
 ```
