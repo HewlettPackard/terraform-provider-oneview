@@ -3,6 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.0.2] (UnReleased)
 - Support for Update Compliance in Logical Interconnect.
+- Usecase for synerfy infrastructure provisioning with Network.
 
 ### Oneview Features supported
 - Network Set
