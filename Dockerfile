@@ -1,7 +1,28 @@
-FROM alpine
+FROM golang:alpine
+MAINTAINER "Priyanka Sood <priyanka.sood@hpe.com>"
 
-# Add the recently compiled Go binaries
-ADD bins/linux/ /usr/local/terraform/
+ENV TERRAFORM_VERSION=0.11.10
 
-# Add the folder above to the path
+ENV USER root
+RUN mkdir -p /usr/local/terraform
+RUN apk update && \
+    apk add curl jq python bash ca-certificates git openssl unzip wget && \
+    cd /tmp && \
+    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/terraform/
+
+ENV GOROOT /usr/local/go
+ENV GOPATH /go
+ENV PATH /go/bin:$PATH
+
+RUN mkdir -p ${GOPATH}/src ${GOPATH}/bin
+WORKDIR /go/src/github.com/HewlettPackard/terraform-provider-oneview
+
+COPY . /go/src/github.com/HewlettPackard/terraform-provider-oneview
+
+RUN cd $GOPATH/src/github.com/HewlettPackard/terraform-provider-oneview
+RUN go build -o $GOPATH/bin/terraform-provider-oneview
+RUN mv $GOPATH/bin/terraform-provider-oneview /usr/local/terraform/
+
+RUN go get github.com/kardianos/govendor
 ENV PATH $PATH:/usr/local/terraform/
