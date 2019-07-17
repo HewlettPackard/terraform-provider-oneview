@@ -7,7 +7,7 @@ A Terraform provider for oneview
 ## Installing `terraform-provider-oneview` with Go
 
 * Install Go 1.11. For previous versions, you may have to set your `$GOPATH` manually, if you haven't done it yet.
-* Install Terraform 0.11.x or above [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists)
+* Install Terraform 0.11.x [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists). This provider DOES NOT SUPPORT Terraform 0.12 or above.
 * Download the code by issuing a `go get` command.
 
 ```bash
@@ -24,18 +24,18 @@ $ mv $GOPATH/bin/terraform-provider-oneview /usr/local/bin/terraform
 ## Using `terraform-provider-oneview` with Docker
 
 
-We also provide a lightweight and easy way to test and execute `terraform-provider-oneview`. The `dciacoe/terraform-provider-oneview` docker image contains
+We also provide a lightweight and easy way to test and execute `terraform-provider-oneview`. The `prisood/terraform-provider-oneview` docker image contains
 an installation of Terraform and our provider you can use by just pulling down the Docker Image:
 
 ```bash
 # Download and store a local copy of terraform-provider-oneview and
 # use it as a Docker image.
-$ docker pull dciacoe/terraform-provider-oneview
- 
+$ docker pull prisood/terraform-provider-oneview
+
 # Run docker commands using the "ash" shell from Alpine, this will create
 # a sh session where you can create files, issue commands and execute both
 # terraform and the provider with ease.
-$ docker run -it dciacoe/terraform-provider-oneview /bin/sh
+$ docker run -it prisood/terraform-provider-oneview /bin/sh
 ```
 
 
@@ -51,6 +51,7 @@ provider "oneview" {
 	ov_endpoint = "<ov_endpoint>"
 	ov_sslverify = true/false
 	ov_apiversion = <ov_apiversion>
+	ov_domain = "<ov_domain>"
 	ov_ifmatch = "*"
 }
 ```

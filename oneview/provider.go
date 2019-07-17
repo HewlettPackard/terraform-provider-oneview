@@ -60,36 +60,6 @@ func Provider() terraform.ResourceProvider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_IF_MATCH", "*"),
 			},
-			"icsp_domain": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_DOMAIN", ""),
-			},
-			"icsp_username": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_USER", ""),
-			},
-			"icsp_password": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_PASSWORD", ""),
-			},
-			"icsp_endpoint": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_ENDPOINT", ""),
-			},
-			"icsp_sslverify": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_SSLVERIFY", true),
-			},
-			"icsp_apiversion": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_ICSP_API_VERSION", 200),
-			},
 			"i3s_endpoint": {
 				Type:        schema.TypeString,
 				Optional:    true,
