@@ -39,8 +39,8 @@ resource "oneview_network_set" "network_set" {
 	name = "UC2NetSet"
 	native_network_uri = ""
 	type = "network-setV4"
-	network_uris = ["${oneview_ethernet_network.ethernetnetwork.uri}"]
-	depends_on = ["oneview_ethernet_network.ethernetnetwork"]
+	network_uris = ["${oneview_ethernet_network.ethernet_network.uri}"]
+	depends_on = ["oneview_ethernet_network.ethernet_network"]
 }
 
 /* ADDING NEWTWORK TO LOGICAL INTERCONNECT GROUP USING 'internalNetworkUris' */
@@ -92,7 +92,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
 			 enclosure_num = 1
 		}]
 	}]
-	depends_on = ["oneview_network_set.NetworkSet"]
+	depends_on = ["oneview_network_set.network_set"]
 }
 
 /* PERFORMING UPDATE FROM GROUP ON LOGICAL INTERCONNECT TO BRING BACK IT TO CONSISTENT STATE */
