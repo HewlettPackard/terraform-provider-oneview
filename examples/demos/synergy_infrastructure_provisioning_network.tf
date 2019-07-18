@@ -43,6 +43,11 @@ resource "oneview_network_set" "network_set" {
 	depends_on = ["oneview_ethernet_network.ethernet_network"]
 }
 
+/* GET THE ETHERNET NETWORK TO GET THE URI TO ASSIGN TO UPLINKSET*/
+data "oneview_ethernet_network" "eth_net" {
+        name = "TestEth"
+}
+
 /* ADDING NEWTWORK TO LOGICAL INTERCONNECT GROUP USING 'internalNetworkUris' */
 resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
 	type = "logical-interconnect-groupV5"
@@ -84,7 +89,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
 
 	uplink_set = [{
 		network_type = "Ethernet"
-		network_uris = ["/rest/ethernet-networks/04aa9d03-f628-4c0e-b95f-f051e7f18a2a"]
+		network_uris = ["${data.oneview_ethernet_network.eth_net.uri}"]
 		name = "UPlinkSet1"
 		logical_port_config = [{
 			 port_num = [61]
