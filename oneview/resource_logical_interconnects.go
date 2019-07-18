@@ -13,7 +13,6 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"
-	//	"strings"
 )
 
 func resourceLogicalInterconnect() *schema.Resource {
@@ -381,7 +380,6 @@ func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{})
 	updateType := d.Get("update_type").(string)
 
 	if updateType == "updateComplianceById" {
-		//	id := strings.Replace(d.Get("uri").(string), "/rest/logical-interconnects/", "", -1)
 		id := d.Id()
 		err := config.ovClient.UpdateLogicalInterconnectConsistentStateById(id)
 		if err != nil {

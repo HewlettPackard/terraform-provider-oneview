@@ -415,7 +415,6 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 		d.SetId("")
 		return nil
 	}
-
 	d.SetId(id)
 	d.Set("name", logicalInterconnectGroup.Name)
 	d.Set("type", logicalInterconnectGroup.Type)
