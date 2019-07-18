@@ -11,10 +11,10 @@ provider "oneview" {
 	While executing the following script follow the below steps
 	1. Use target option to update/delete the specific resource. Otherwise there is chance of deleting the Network and NetworkSet first and then updating the LIG and LI.
 	2. To update the LIG and LI follow the below commands
-		terraform apply -targer=oneview_logical_interconnect_group.logical_interconnect_group -target=oneview_logical_interconnect.logical_interconnect
+		terraform apply -target=oneview_logical_interconnect_group.logical_interconnect_group -target=oneview_logical_interconnect.logical_interconnect
 	3. Once the LIG and LI are updated, delete the NetworkSet and Network in order using the below commands.
-		terraform destroy -target=oneview_network_set.NetworkSet
-		terraform destroy -target=oneview_ethernet_network.ethernetnetwork	
+		terraform destroy -target=oneview_network_set.network_et
+		terraform destroy -target=oneview_ethernet_network.ethernet_network	
 */
 
 /* REMOVING THE NETWORK FROM LIG */

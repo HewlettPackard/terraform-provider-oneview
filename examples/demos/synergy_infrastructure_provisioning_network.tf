@@ -12,10 +12,10 @@ provider "oneview" {
    To import existing LIG and LI resources from appliance into the teriraform instances follow the below steps.
 	1. Uncomment the below code snippet, which contains empty resource declarations and comment the rest of the script from that point.
 	2. Save the file and execute the following commands to import.
-		terraform import oneview_logical_interconnect_group.logial_interconnect_group <resource_name>
-		terraform import oneview_logical_interconnect.logicall_interconnect <resource_id>
+		terraform import oneview_logical_interconnect_group.logical_interconnect_group <resource_name>
+		terraform import oneview_logical_interconnect.logical_interconnect <resource_id>
 	Example:
-		terraform import oneview_logical_interconnect_group.logial_inte
+		terraform import oneview_logical_interconnect_group.logical_inte
 rconnect_group TestLIG
 		terraform import oneview_logical_interconnect.li d4468f89-4442-4324-9c01-624c7382db2d
 	3. Once the resources are imported, comment the below empty resource declarations and uncomment the rest of the script and execute the script for the rest of the operations to be performed.
@@ -28,14 +28,14 @@ resource "oneview_logical_interconnect" "logical_interconnect"{
 }*/
 
 /* CREATION OF ETHERNET NETWORK */
-resource "oneview_ethernet_network" "ethernetnetwork" {
+resource "oneview_ethernet_network" "ethernet_network" {
 	name = "UCENet"
 	type = "ethernet-networkV4"
 	vlan_id = 171
 }
 
 /* CREATION OF NETWORKSET USING THE ETHERNET ENTWORK CRAETED ABOVE */
-resource "oneview_network_set" "NetworkSet" {
+resource "oneview_network_set" "network_set" {
 	name = "UC2NetSet"
 	native_network_uri = ""
 	type = "network-setV4"
@@ -50,7 +50,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
 	interconnect_bay_set = 3
 	enclosure_indexes = [1, 2, 3]
 	redundancy_type = "HighlyAvailable"
-	internal_network_uris = ["${oneview_ethernet_network.ethernetnetwork.uri}"]
+	internal_network_uris = ["${oneview_ethernet_network.ethernet_network.uri}"]
 	interconnect_map_entry_template = [{
 	  enclosure_index = 1
 	  bay_number = 3
