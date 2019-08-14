@@ -3,7 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.0.2] (UnReleased)
 ### Notes
- This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800.
+ This version of the module supports OneView appliances with version 4.2, using the OneView REST API version 1000.
 
 - Support for Update Compliance in Logical Interconnect.
 - Usecase for synergy infrastructure provisioning with Network.
