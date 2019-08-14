@@ -11,7 +11,7 @@ import (
 // The Marshal() will omit the bool attibutes below if they are false.
 // Please remove the omitempty option and use it as and when required.
 
-type StorageVolumeV3 struct {
+type StorageVolume struct {
 	Category                  string                    `json:"category,omitempty"`
 	Created                   string                    `json:"created,omitempty"`
 	Description               utils.Nstring             `json:"description,omitempty"`
@@ -35,17 +35,18 @@ type StorageVolumeV3 struct {
 	TemplateURI               utils.Nstring             `json:"templateURI,omitempty"`
 	IsPermanent               bool                      `json:"isPermanent,omitempty"`
 	ProvisioningTypeForUpdate string                    `json:"provisioningType,omitempty"`
+	TemplateVersion           string                    `json:"templateVersion,omitempty"`
 	//	Wwn										string				`json:""`
 
 	/*
-	   Category              string        `json:"category,omitempty"`              //  "type": "StorageVolumeV3",
+	   Category              string        `json:"category,omitempty"`              //  "type": "StorageVolume",
 	   Created               string        `json:"created,omitempty"`               //  "created": "2016-06-20T22:48:14.422Z"
 	   Description           string        `json:"description,omitempty"`           //  "description": "Integration test volume 2",
 	   ETAG                  string        `json:"eTag,omitempty"`                  //  "eTag": "2016-06-20T22:48:17.704Z",            string        `json:"modified,omitempty"`              // "modified": "20150831T154835.250Z",
 	   Name                  string        `json:"name,omitempty"`                  //  "name": "Volume_2",
 	   State                 string        `json:"state,omitempty"`                 //  "state": "Configured",
 	   Status                string        `json:"status,omitempty"`                //  "status": "OK",
-	   Type                  string        `json:"type,omitempty"`                  //  "type": "StorageVolumeV3",
+	   Type                  string        `json:"type,omitempty"`                  //  "type": "StorageVolume",
 	   URI                   utils.Nstring `json:"uri,omitempty"`                   //  "uri": "/rest/storage-volumes/527801AC-B6B6-4A63-8510-D32906C9C57B"
 	   Shareable							string				`json:"shareable,omitempty"`                                //  "shareable": false,
 	   AllocatedCapacity			string				`json:""`																 //  "allocatedCapacity": "1073741824",
@@ -77,36 +78,54 @@ type ProvisioningParameters struct {
 }
 
 type Properties struct {
-	Name             string        `json:"name,omitempty"`
-	Storagepool      utils.Nstring `json:"storagePool,omitempty"`
-	Size             int           `json:"size,omitempty"`
-	ProvisioningType string        `json:"provisioningType,omitempty"`
+	Name                string        `json:"name,omitempty"`
+	Storagepool         utils.Nstring `json:"storagePool,omitempty"`
+	Size                int           `json:"size,omitempty"`
+	ProvisioningType    string        `json:"provisioningType,omitempty"`
+	DataTransferLimit   int           `json:"dataTransferLimit,omitempty"`
+	IsDeduplicated      bool          `json:"isDeduplicated,omitempty"`
+	IsEncrypted         bool          `json:"isEncrypted,omitempty"`
+	IsPinned            bool          `json:"isPinned,omitempty"`
+	IsCompressed        bool          `json:"isCompressed,omitempty"`
+	DataProtectionLevel string        `json:"dataProtectionLevel,omitempty"`
 }
 
 type DeviceSpecificAttributes struct {
-	Transport           string        `json:"transport,omitempty"`
-	Iqn                 string        `json:"iqn,omitempty"`
-	NumberOfReplicas    int           `json:"numberOfReplicas,omitempty"`
-	DataProtectionLevel string        `json:"dataProtectionLevel,omitempty"`
-	Id                  int           `json:"id,omitempty"`
-	Uri                 utils.Nstring `json:"uri,omitempty"`
-	CopyState           string        `json:"copyState,omitempty"`
-	SnapshotPoolUri     utils.Nstring `json:"snapshotPoolUri,omitempty"`
+	ApplicationCategory           string        `json:"applicationCategory,omitempty"`
+	BlockSize                     int           `json:"blockSize,omitempty"`
+	DataTransferLimit             int           `json:"dataTransferLimit,omitempty"`
+	FolderId                      string        `json:"folderId,omitempty"`
+	FolderName                    string        `json:"folderName,omitempty"`
+	IopsLimit                     int           `json:"iopsLimit,omitempty"`
+	IsDeduplicated                bool          `json:"isDeduplicated,omitempty"`
+	IsEncrypted                   bool          `json:"isEncrypted,omitempty"`
+	IsPinned                      bool          `json:"isPinned,omitempty"`
+	PreviouslyDeduplicated        bool          `json:"previouslyDeduplicated,omitempty"`
+	IsCompressed                  bool          `json:"isCompressed,omitempty"`
+	Transport                     string        `json:"transport,omitempty"`
+	Iqn                           string        `json:"iqn,omitempty"`
+	NumberOfReplicas              int           `json:"numberOfReplicas,omitempty"`
+	DataProtectionLevel           string        `json:"dataProtectionLevel,omitempty"`
+	Id                            int           `json:"id,omitempty"`
+	Uri                           utils.Nstring `json:"uri,omitempty"`
+	CopyState                     string        `json:"copyState,omitempty"`
+	SnapshotPoolUri               utils.Nstring `json:"snapshotPoolUri,omitempty"`
+	IsAdaptiveOptimizationEnabled bool          `json:"isAdaptiveOptimizationEnabled,omitempty"`
 }
 
-type StorageVolumesListV3 struct {
-	Total       int               `json:"total,omitempty"`       // "total": 1,
-	Count       int               `json:"count,omitempty"`       // "count": 1,
-	Start       int               `json:"start,omitempty"`       // "start": 0,
-	PrevPageURI utils.Nstring     `json:"prevPageUri,omitempty"` // "prevPageUri": null,
-	NextPageURI utils.Nstring     `json:"nextPageUri,omitempty"` // "nextPageUri": null,
-	URI         utils.Nstring     `json:"uri,omitempty"`         // "uri": "/rest/server-profiles?filter=connectionTemplateUri%20matches%7769cae0-b680-435b-9b87-9b864c81657fsort=name:asc"
-	Members     []StorageVolumeV3 `json:"members,omitempty"`     // "members":[]
+type StorageVolumesList struct {
+	Total       int             `json:"total,omitempty"`       // "total": 1,
+	Count       int             `json:"count,omitempty"`       // "count": 1,
+	Start       int             `json:"start,omitempty"`       // "start": 0,
+	PrevPageURI utils.Nstring   `json:"prevPageUri,omitempty"` // "prevPageUri": null,
+	NextPageURI utils.Nstring   `json:"nextPageUri,omitempty"` // "nextPageUri": null,
+	URI         utils.Nstring   `json:"uri,omitempty"`         // "uri": "/rest/server-profiles?filter=connectionTemplateUri%20matches%7769cae0-b680-435b-9b87-9b864c81657fsort=name:asc"
+	Members     []StorageVolume `json:"members,omitempty"`     // "members":[]
 }
 
-func (c *OVClient) GetStorageVolumeByName(name string) (StorageVolumeV3, error) {
+func (c *OVClient) GetStorageVolumeByName(name string) (StorageVolume, error) {
 	var (
-		sVol StorageVolumeV3
+		sVol StorageVolume
 	)
 	sVols, err := c.GetStorageVolumes(fmt.Sprintf("name matches '%s'", name), "name:asc")
 	if sVols.Total > 0 {
@@ -116,11 +135,11 @@ func (c *OVClient) GetStorageVolumeByName(name string) (StorageVolumeV3, error) 
 	}
 }
 
-func (c *OVClient) GetStorageVolumes(filter string, sort string) (StorageVolumesListV3, error) {
+func (c *OVClient) GetStorageVolumes(filter string, sort string) (StorageVolumesList, error) {
 	var (
 		uri   = "/rest/storage-volumes"
 		q     map[string]interface{}
-		sVols StorageVolumesListV3
+		sVols StorageVolumesList
 	)
 	q = make(map[string]interface{})
 	if len(filter) > 0 {
@@ -151,7 +170,7 @@ func (c *OVClient) GetStorageVolumes(filter string, sort string) (StorageVolumes
 	return sVols, nil
 }
 
-func (c *OVClient) CreateStorageVolume(sVol StorageVolumeV3) error {
+func (c *OVClient) CreateStorageVolume(sVol StorageVolume) error {
 	log.Infof("Initializing creation of storage volume for %s.", sVol.Name)
 	var (
 		uri = "/rest/storage-volumes"
@@ -190,7 +209,7 @@ func (c *OVClient) CreateStorageVolume(sVol StorageVolumeV3) error {
 
 func (c *OVClient) DeleteStorageVolume(name string) error {
 	var (
-		sVol StorageVolumeV3
+		sVol StorageVolume
 		err  error
 		t    *Task
 		uri  string
@@ -235,7 +254,7 @@ func (c *OVClient) DeleteStorageVolume(name string) error {
 	return nil
 }
 
-func (c *OVClient) UpdateStorageVolume(sVol StorageVolumeV3) error {
+func (c *OVClient) UpdateStorageVolume(sVol StorageVolume) error {
 	log.Infof("Initializing update of storage volume for %s.", sVol.Name)
 	var (
 		uri = sVol.URI.String()
