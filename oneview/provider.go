@@ -68,6 +68,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
+			"oneview_deployment_plan":         dataSourceDeploymentPlan(),
 			"oneview_fc_network":              dataSourceFCNetwork(),
 			"oneview_enclosure":               dataSourceEnclosure(),
 			"oneview_ethernet_network":        dataSourceEthernetNetwork(),
@@ -87,6 +88,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"oneview_deployment_plan":            resourceDeploymentPlan(),
 			"oneview_server_profile":             resourceServerProfile(),
 			"oneview_enclosure":                  resourceEnclosure(),
 			"oneview_enclosure_group":            resourceEnclosureGroup(),

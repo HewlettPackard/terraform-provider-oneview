@@ -2,10 +2,14 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 # [v1.0.2] (UnReleased)
+
+This version supports OneView appliances with version 4.2 using the OneView REST API version 1000.
+
 - Support for Update Compliance in Logical Interconnect.
 - Usecase for synergy infrastructure provisioning with Network.
 
 ### Oneview Features supported
+- Deployment Plan
 - Network Set
 
 # [v1.0.1]
