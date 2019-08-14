@@ -118,7 +118,7 @@ resource "oneview_deployment_plan" "dp" {
 		visible = true
 	},
 	]
-}*/
+}
 
 // Test for data source
 /*data "oneview_deployment_plan" "deployment_plan" {

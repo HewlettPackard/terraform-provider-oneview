@@ -9,8 +9,10 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Usecase for synergy infrastructure provisioning with Network.
 
 ### Oneview Features supported
-- Deployment Plan
 - Network Set
+
+### Image Streamer Features supported
+- Deployment Plan
 
 # [v1.0.1]
 ### Notes
