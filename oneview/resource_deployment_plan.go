@@ -106,8 +106,7 @@ func resourceDeploymentPlan() *schema.Resource {
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "OEDeploymentPlanV5",
+				Required: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -162,14 +161,6 @@ func resourceDeploymentPlanCreate(d *schema.ResourceData, meta interface{}) erro
 			}
 
 			customAttributes = append(customAttributes, customAttribute)
-			/*customAttributes = append(customAttributes, i3s.CustomAttribute{
-			Constraints: item["contraints"].(string),
-			Description: item["description"].(string),
-			Editable:    item["editable"].(bool),
-			ID:	     item["id"].(string),
-			Name:	     item["Name"].(string),
-			Type:	     item["Type"].(string),
-			Visible:     item["visible"].(bool)})*/
 		}
 		deploymentPlan.CustomAttributes = customAttributes
 	}

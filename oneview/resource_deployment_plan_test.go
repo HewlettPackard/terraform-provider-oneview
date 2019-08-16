@@ -96,4 +96,5 @@ var testAccDeploymentPlan = `resource "oneview-deployment_plan" "test" {
     count = 1
     name = "terraform deployment plan"
     oe_build_plan_uri ="rest/build-plans/S8T45F"
+    type = "OEDeploymentPlanV5"
   }`

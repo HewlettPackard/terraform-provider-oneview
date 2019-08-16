@@ -14,6 +14,7 @@ resource "oneview_deployment_plan" "dp" {
 	description = "Testing creation of Deployment Plan"
 	oe_build_plan_uri = "/rest/build-plans/1cfc2cc7-85c7-4db8-8213-854c0bfa3ff7"
 	hp_provided = false
+	type = "OEDeploymentPlanV5"
 	custom_attributes = [
 	{
 		constraints = "{\"options\":[\"English (United States)\",\"French (France)\",\"German (Germany)\",\"Japanese (Japan)\",\"Arabic (Saudi Arabia)\",\"Chinese (PRC)\",\"Korean (Korea)\",\"Portuguese (Brazil)\",\"Russian (Russia)\"]}"
