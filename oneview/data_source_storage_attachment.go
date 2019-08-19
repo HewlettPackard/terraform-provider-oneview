@@ -105,23 +105,24 @@ func dataSourceStorageAttachmentRead(d *schema.ResourceData, meta interface{}) e
 	config := meta.(*Config)
 	id := d.Get("name").(string)
 
-	storageAttachment, err := config.ovClient.GetStorageAttachments("", "", "", "")
-	if err != nil || storageAttachment.Members[0].URI.IsNil() {
+	storageAttachment, err := config.ovClient.GetStorageAttachmentByName(id)
+	if err != nil || storageAttachment.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
 
 	d.SetId(id)
-	d.Set("category", storageAttachment.Members[0].Category)
-	d.Set("eTag", storageAttachment.Members[0].ETAG)
-	d.Set("name", storageAttachment.Members[0].Name)
-	d.Set("description", storageAttachment.Members[0].Description.String())
-	d.Set("state", storageAttachment.Members[0].State)
-	d.Set("status", storageAttachment.Members[0].Status)
-	d.Set("type", storageAttachment.Members[0].Type)
-	d.Set("uri", storageAttachment.Members[0].URI.String())
-	d.Set("storage_system_uri", storageAttachment.Members[0].StorageSystemUri.String())
-	d.Set("storage_volume_uri", storageAttachment.Members[0].StorageVolumeUri.String())
+	d.Set("category", storageAttachment.Category)
+	d.Set("eTag", storageAttachment.ETAG)
+	d.Set("name", storageAttachment.Name)
+	d.Set("description", storageAttachment.Description.String())
+	d.Set("state", storageAttachment.State)
+	d.Set("status", storageAttachment.Status)
+	d.Set("eTag", storageAttachment.ETAG)
+	d.Set("type", storageAttachment.Type)
+	d.Set("uri", storageAttachment.URI.String())
+	d.Set("storage_system_uri", storageAttachment.StorageSystemUri.String())
+	d.Set("storage_volume_uri", storageAttachment.StorageVolumeUri.String())
 
 	rawpaths := storageAttachment.Members[0].Paths
 	paths := make([]map[string]interface{}, 0, len(rawpaths))
