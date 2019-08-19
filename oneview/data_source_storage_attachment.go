@@ -124,7 +124,7 @@ func dataSourceStorageAttachmentRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("storage_system_uri", storageAttachment.StorageSystemUri.String())
 	d.Set("storage_volume_uri", storageAttachment.StorageVolumeUri.String())
 
-	rawpaths := storageAttachment.Members[0].Paths
+	rawpaths := storageAttachment.Paths
 	paths := make([]map[string]interface{}, 0, len(rawpaths))
 	for _, path := range rawpaths {
 		paths = append(paths, map[string]interface{}{
@@ -135,7 +135,7 @@ func dataSourceStorageAttachmentRead(d *schema.ResourceData, meta interface{}) e
 	}
 	d.Set("paths", paths)
 
-	rawhost := storageAttachment.Members[0].Host
+	rawhost := storageAttachment.Host
 	hosts := make([]map[string]interface{}, 0)
 	hosts = append(hosts, map[string]interface{}{
 		"name": rawhost.Name,
