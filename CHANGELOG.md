@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Oneview Features supported
 - Network Set
+- Storage Volume Attachment
 
 # [v1.0.1]
 ### Notes
