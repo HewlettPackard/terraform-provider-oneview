@@ -185,7 +185,7 @@ func resourceStorageSystem() *schema.Resource {
 func resourceStorageSystemCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	storageSystem := ov.StorageSystemV4{
+	storageSystem := ov.StorageSystem{
 		Hostname: d.Get("hostname").(string),
 		Username: d.Get("username").(string),
 		Password: d.Get("password").(string),
@@ -280,7 +280,7 @@ func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	storageSystem := ov.StorageSystemV4{
+	storageSystem := ov.StorageSystem{
 		Hostname: d.Get("hostname").(string),
 		URI:      utils.NewNstring(d.Get("uri").(string)),
 		Name:     d.Get("name").(string),
