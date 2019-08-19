@@ -245,6 +245,9 @@ func (c *OVClient) UpdateLogicalEnclosure(logEn LogicalEnclosure) error {
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
+	// reset query
+	c.SetQueryString(make(map[string]interface{}))
+
 	t = t.NewProfileTask(c)
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, logEn)
@@ -257,6 +260,45 @@ func (c *OVClient) UpdateLogicalEnclosure(logEn LogicalEnclosure) error {
 	}
 
 	log.Debugf("Response update LogicalEnclosure %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *OVClient) UpdateFromGroupLogicalEnclosure(logEn LogicalEnclosure) error {
+	log.Infof("Initializing updateFromGroup of logical enclosure for %s.", logEn.Name)
+	var (
+		uri = logEn.URI.String() + "/updateFromGroup"
+		t   *Task
+	)
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	// reset query
+	c.SetQueryString(make(map[string]interface{}))
+
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Debugf("REST : %s \n %+v\n", uri, nil)
+	log.Debugf("task -> %+v", t)
+	data, err := c.RestAPICall(rest.PUT, uri, nil)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error submitting updateFromGroup logical enclosure request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response updateFromGroup LogicalEnclosure %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
