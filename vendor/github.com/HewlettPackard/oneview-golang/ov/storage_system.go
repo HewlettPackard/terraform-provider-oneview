@@ -21,7 +21,7 @@ import (
 	"github.com/docker/machine/libmachine/log"
 )
 
-type StorageSystemV4 struct {
+type StorageSystem struct {
 	Hostname                              string                                 `json:"hostname,omitempty"`
 	Username                              string                                 `json:"username,omitempty"`
 	Password                              string                                 `json:"password,omitempty"`
@@ -58,10 +58,28 @@ type PortDeviceSpecificAttributes struct {
 }
 
 type StorageSystemDeviceSpecificAttributes struct {
-	Firmware      string         `json:"firmware,omitempty"`
-	Model         string         `json:"model,omitempty"`
-	ManagedPools  []ManagedPools `json:"managedPools,omitempty"`
-	ManagedDomain string         `json:"managedDomain,omitempty"`
+	Firmware                  string                `json:"firmware,omitempty"`
+	Model                     string                `json:"model,omitempty"`
+	ManagedPools              []ManagedPools        `json:"managedPools,omitempty"`
+	ManagedDomain             string                `json:"managedDomain,omitempty"`
+	DefaultEncryptionCipher   string                `json:"defaultEncryptionCipher,omitempty"`
+	IsDefaultEncryptionForced bool                  `json:"isDefaultEncryptionForced,omitempty"`
+	PerformancePolicies       []PerformancePolicies `json:"performancePolicies,omitempty"`
+	ProtectionTemplates       []ProtectionTemplates `json:"protectionTemplates,omitempty"`
+	SoftwareVersion           string                `json:"softwareVersion,omitempty"`
+}
+
+type PerformancePolicies struct {
+	ApplicationCategory string `json:"applicationCategory,omitempty"`
+	BlockSize           int    `json:",blockSize,omitempty"`
+	Name                string `json:"name,omitempty"`
+	IsCompressed        bool   `json:"isCompressed,omitempty"`
+	SpacePolicy         string `json:"spacePolicy,omitempty"`
+}
+
+type ProtectionTemplates struct {
+	AppSync string `json:"appSync,omitempty"`
+	Name    string `json:"name,omitempty"`
 }
 
 type ManagedPools struct {
@@ -73,14 +91,14 @@ type ManagedPools struct {
 	Totalcapacity string `json:"totalCapacity,omitempty"`
 }
 
-type StorageSystemsListV4 struct {
-	Total       int               `json:"total,omitempty"`       // "total": 1,
-	Count       int               `json:"count,omitempty"`       // "count": 1,
-	Start       int               `json:"start,omitempty"`       // "start": 0,
-	PrevPageURI utils.Nstring     `json:"prevPageUri,omitempty"` // "prevPageUri": null,
-	NextPageURI utils.Nstring     `json:"nextPageUri,omitempty"` // "nextPageUri": null,
-	URI         utils.Nstring     `json:"uri,omitempty"`         // "uri": "/rest/storage-systems"
-	Members     []StorageSystemV4 `json:"members,omitempty"`     // "members":[]
+type StorageSystemsList struct {
+	Total       int             `json:"total,omitempty"`       // "total": 1,
+	Count       int             `json:"count,omitempty"`       // "count": 1,
+	Start       int             `json:"start,omitempty"`       // "start": 0,
+	PrevPageURI utils.Nstring   `json:"prevPageUri,omitempty"` // "prevPageUri": null,
+	NextPageURI utils.Nstring   `json:"nextPageUri,omitempty"` // "nextPageUri": null,
+	URI         utils.Nstring   `json:"uri,omitempty"`         // "uri": "/rest/storage-systems"
+	Members     []StorageSystem `json:"members,omitempty"`     // "members":[]
 }
 
 type ReachablePortsList struct {
@@ -98,9 +116,26 @@ type ReachablePorts struct {
 	ReachableNetworks utils.Nstring `json:"reachableNetworks,omitempty"`
 }
 
-func (c *OVClient) GetStorageSystemByName(name string) (StorageSystemV4, error) {
+type VolumeSetList struct {
+	Category    string        `json:"category,omitempty"`
+	Members     []VolumeSet   `json:"members,omitempty"`
+	Total       int           `json:"total,omitempty"`
+	Count       int           `json:"count,omitempty"`
+	Start       int           `json:"start,omitempty"`
+	PrevPageURI utils.Nstring `json:"prevPageUri,omitempty"`
+	NextPageURI utils.Nstring `json:"nextPageUri,omitempty"`
+	URI         utils.Nstring `json:"uri,omitempty"`
+}
+
+type VolumeSet struct {
+	TotalVolumes int      `json:"totalVolumes,omitempty"`
+	VolumeURIs   []string `json:"volumeUris,omitempty"`
+	State        string   `json:"state,omitempty"`
+}
+
+func (c *OVClient) GetStorageSystemByName(name string) (StorageSystem, error) {
 	var (
-		sSystem StorageSystemV4
+		sSystem StorageSystem
 	)
 	sSystems, err := c.GetStorageSystems(fmt.Sprintf("name matches '%s'", name), "name:asc")
 	if sSystems.Total > 0 {
@@ -110,11 +145,11 @@ func (c *OVClient) GetStorageSystemByName(name string) (StorageSystemV4, error) 
 	}
 }
 
-func (c *OVClient) GetStorageSystems(filter string, sort string) (StorageSystemsListV4, error) {
+func (c *OVClient) GetStorageSystems(filter string, sort string) (StorageSystemsList, error) {
 	var (
 		uri     = "/rest/storage-systems"
 		q       map[string]interface{}
-		sSystem StorageSystemsListV4
+		sSystem StorageSystemsList
 	)
 	q = make(map[string]interface{})
 	if len(filter) > 0 {
@@ -145,7 +180,7 @@ func (c *OVClient) GetStorageSystems(filter string, sort string) (StorageSystems
 	return sSystem, nil
 }
 
-func (c *OVClient) CreateStorageSystem(sSystem StorageSystemV4) error {
+func (c *OVClient) CreateStorageSystem(sSystem StorageSystem) error {
 	log.Infof("Initializing creation of storage volume for %s.", sSystem.Name)
 	var (
 		uri = "/rest/storage-systems"
@@ -184,7 +219,7 @@ func (c *OVClient) CreateStorageSystem(sSystem StorageSystemV4) error {
 
 func (c *OVClient) DeleteStorageSystem(name string) error {
 	var (
-		sSystem StorageSystemV4
+		sSystem StorageSystem
 		err     error
 		t       *Task
 		uri     string
@@ -229,7 +264,7 @@ func (c *OVClient) DeleteStorageSystem(name string) error {
 	return nil
 }
 
-func (c *OVClient) UpdateStorageSystem(sSystem StorageSystemV4) error {
+func (c *OVClient) UpdateStorageSystem(sSystem StorageSystem) error {
 	log.Infof("Initializing update of storage volume for %s.", sSystem.Name)
 	var (
 		uri = sSystem.URI.String()
@@ -283,4 +318,24 @@ func (c *OVClient) GetReachablePorts(uri utils.Nstring) (ReachablePortsList, err
 		return reachable_ports, err
 	}
 	return reachable_ports, nil
+}
+
+func (c *OVClient) GetVolumeSets(uri utils.Nstring) (VolumeSetList, error) {
+	var (
+		volume_sets VolumeSetList
+		main_uri    = uri.String()
+	)
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	main_uri = main_uri + "/storage-volume-sets"
+	data, err := c.RestAPICall(rest.GET, main_uri, nil)
+	if err != nil {
+		log.Errorf("Error in getting volume sets: %s", err)
+		return volume_sets, err
+	}
+	log.Debugf("Volume Sets %s", data)
+	if err := json.Unmarshal([]byte(data), &volume_sets); err != nil {
+		return volume_sets, err
+	}
+	return volume_sets, nil
 }

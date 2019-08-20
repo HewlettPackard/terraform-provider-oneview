@@ -20,7 +20,7 @@ import (
 )
 
 func TestAccStorageSystem_1(t *testing.T) {
-	var storageSystem ov.StorageSystemV4
+	var storageSystem ov.StorageSystem
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -56,7 +56,7 @@ func TestAccStorageSystem_1(t *testing.T) {
 	})
 }
 
-func testAccCheckStorageSystemExists(n string, storageSystem *ov.StorageSystemV4) resource.TestCheckFunc {
+func testAccCheckStorageSystemExists(n string, storageSystem *ov.StorageSystem) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
