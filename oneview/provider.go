@@ -81,6 +81,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_enclosure_group":         dataSourceEnclosureGroup(),
 			"oneview_server_profile":          dataSourceServerProfile(),
 			"oneview_server_profile_template": dataSourceServerProfileTemplate(),
+			"oneview_storage_pool":            dataSourceStoragePool(),
 			"oneview_storage_system":          dataSourceStorageSystem(),
 			"oneview_uplink_set":              dataSourceUplinkSet(),
 			"oneview_network_set":             dataSourceNetworkSet(),
@@ -103,6 +104,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_uplink_set":                 resourceUplinkSet(),
 			"oneview_i3s_plan":                   resourceI3SPlan(),
 			"oneview_logical_enclosure":          resourceLogicalEnclosure(),
+			"oneview_storage_pool":               resourceStoragePool(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
