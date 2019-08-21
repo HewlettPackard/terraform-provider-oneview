@@ -82,6 +82,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_server_profile":          dataSourceServerProfile(),
 			"oneview_server_profile_template": dataSourceServerProfileTemplate(),
 			"oneview_storage_pool":            dataSourceStoragePool(),
+			"oneview_storage_attachment":      dataSourceStorageAttachment(),
 			"oneview_storage_system":          dataSourceStorageSystem(),
 			"oneview_uplink_set":              dataSourceUplinkSet(),
 			"oneview_network_set":             dataSourceNetworkSet(),
