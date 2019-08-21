@@ -84,11 +84,11 @@ func dataSourceStoragePool() *schema.Resource {
 						},
 						"capacity_limit": {
 							Type:     schema.TypeString,
-							Required: true,
+							Computed: true,
 						},
 						"device_speed": {
 							Type:     schema.TypeString,
-							Required: true,
+							Computed: true,
 						},
 						"domain": {
 							Type:     schema.TypeString,
