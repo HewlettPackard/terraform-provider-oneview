@@ -11,6 +11,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 ### Oneview Features supported
 - Network Set
 - Storage System
+- Storage volume attachment
 
 # [v1.0.1]
 ### Notes
