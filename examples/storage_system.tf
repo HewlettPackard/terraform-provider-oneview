@@ -7,53 +7,38 @@ provider "oneview" {
         ov_ifmatch = "*"
 }
 
-
 resource "oneview_storage_system" "ss_inst" {
         hostname = "<hostname>"
-        username = "<username>"
+        username = "<user>"
         password = "<password>"
-        family   = "StoreServ"
+        family   = "<family>"
 }
 
+
+
+/*
 // Uncomment the following resource to update.
-/*resource "oneview_storage_system" "ss_inst"{
+resource "oneview_storage_system" "ss_inst"{
         credentials = [
         {
-                username = "<username>"
-                password = "<password>"
+		username = "<user>"
+	        password = "<password>"
         }
         ]
         hostname = "<hostname>"
-        name = "ThreePAR-2"
+        name = "<name>"
         ports = [
         {
-                id = "ea0b2d3d-098c-4f95-ac08-aa6100a80de7"
-                mode = "AutoSelectExpectedSan"
-                partner_port = "1:1:1"
-        },
-        {
-                id = "5a1469d8-a925-4b9a-a87b-aa6100a80de7"
-                mode = "AutoSelectExpectedSan"
-                partner_port = "1:1:2"
-        },
-        {
-                id = "4f55584b-2abb-47f5-95cc-aa6100a80de7"
-                mode = "AutoSelectExpectedSan"
-                partner_port = "1:1:3"
-        },
-	]
-	managed_pool = []
-        storage_system_device_specific_attributes = [
-        {
-                managed_domain = "TestDomain"
-                firmware = "3.2.1.292"
-                model = "HP_3PAR 7200"
+                mode = "<mode>"
+                id= "<id>"
         }
         ]
-        eTag = "10"
+        managed_pool = []
+        eTag = "--"
         description = "TestStorageSystem"
-        uri = "/rest/storage-systems/TXQ1010307"
-}*/
+        uri = "/rest/storage-systems/<id>"
+}
+*/
 
 /* Testing the data source
 data "oneview_storage_system" "storage_system" {
