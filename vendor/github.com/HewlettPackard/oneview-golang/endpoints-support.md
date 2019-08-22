@@ -182,9 +182,10 @@
 |     **Switch Types**                                                                                                                              |
 |<sub>/rest/switch-types</sub>                                                            | GET      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |
 |<sub>/rest/switch-types/{id}</sub>                                                       | GET      | :white_check_mark:   | :white_check_mark:   | :heavy_multiplication_x:   |
-|     **Storage Volume Attachments**                                                                                                                                   |
-|<sub>/rest/storage-volume-attachments</sub>                                              | GET      | :heavy_multiplication_x:  | :heavy_multiplication_x: | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   | 
-|<sub>/rest/storage-volume-attachments/{id}</sub>                                         | GET      | :heavy_multiplication_x:  | :heavy_multiplication_x: | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   |
+|     **Storage Volume Attachments**
+
+|<sub>/rest/storage-volume-attachments</sub>                                              | GET      | :heavy_multiplication_x:  | :heavy_multiplication_x: | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   | 
+|<sub>/rest/storage-volume-attachments/{id}</sub>                                         | GET      | :heavy_multiplication_x:  | :heavy_multiplication_x: | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   |
 |     **Tasks**                                                                                                                                     |
 |<sub>/rest/tasks</sub>                                                                   | GET      | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   |
 |     **Version**                                                                                                                                   |

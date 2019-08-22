@@ -15,6 +15,9 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Storage system
 - Storage volume attachment
 
+### Image Streamer Features supported
+- Deployment Plan
+
 # [v1.0.1]
 ### Notes
 - Patch changes to sever profile to include boot order fixes.

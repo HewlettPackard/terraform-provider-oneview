@@ -88,6 +88,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"oneview_deployment_plan":            resourceDeploymentPlan(),
 			"oneview_server_profile":             resourceServerProfile(),
 			"oneview_enclosure":                  resourceEnclosure(),
 			"oneview_enclosure_group":            resourceEnclosureGroup(),
