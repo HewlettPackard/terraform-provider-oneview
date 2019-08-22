@@ -13,6 +13,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Logical enclosure
 - Network set
 - Storage system
+- Storage volume attachment
 
 # [v1.0.1]
 ### Notes
