@@ -193,7 +193,6 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}) ([
 		if resp.Header["Location"] != nil {
 			data = []byte(`{"URI":"` + resp.Header["Location"][0] + `"}`)
 		}
-
 	}
 	return data, nil
 }
