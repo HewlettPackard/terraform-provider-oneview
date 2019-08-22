@@ -25,7 +25,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage system
 - Storage volume
 - Storage volume attachment
-- Storage volume template
 
 # [v1.0.0] (2019-02-07)
 ### Notes
