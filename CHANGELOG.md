@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Usecase for synergy infrastructure provisioning with Network.
 
 ### Oneview Features supported
+- FC network
 - Network Set
 
 # [v1.0.1]
