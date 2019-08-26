@@ -37,7 +37,7 @@ type LogicalInterconnectGroup struct {
 	Status                  string                   `json:"status,omitempty"`                 // "status": "Critical",
 	TelemetryConfiguration  *TelemetryConfiguration  `json:"telemetryConfiguration,omitempty"` // "telemetryConfiguration": {...},
 	Type                    string                   `json:"type"`                             // "type": "logical-interconnect-groupsV3",
-	UplinkSets              []UplinkSets             `json:"uplinkSets,omitempty"`             // "uplinkSets": {...},
+	UplinkSets              []UplinkSets             `json:"uplinkSets"`                       // "uplinkSets": {...},
 	URI                     utils.Nstring            `json:"uri,omitempty"`                    // "uri": "/rest/logical-interconnect-groups/e2f0031b-52bd-4223-9ac1-d91cb519d548",
 }
 
