@@ -12,6 +12,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 
 ### Oneview Features supported
 - Ethernet network
+- FC network
 - Logical enclosure
 - Network set
 - Storage system
