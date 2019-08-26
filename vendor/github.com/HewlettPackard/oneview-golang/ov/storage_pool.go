@@ -11,38 +11,68 @@ import (
 // The Marshal() will omit the bool attibutes below if they are false.
 // Please remove the omitempty option and use it as and when required.
 
-type StoragePoolV3 struct {
-	Category                 string                    `json:"category,omitempty"`
-	Created                  string                    `json:"created,omitempty"`
-	Description              utils.Nstring             `json:"description,omitempty"`
-	ETAG                     string                    `json:"eTag,omitempty"`
-	Name                     string                    `json:"name,omitempty"`
-	State                    string                    `json:"state,omitempty"`
-	Status                   string                    `json:"status,omitempty"`
-	Type                     string                    `json:"type,omitempty"`
-	URI                      utils.Nstring             `json:"uri,omitempty"`
-	AllocatedCapacity        string                    `json:"allocatedCapacity,omitempty"`
-	InitialScopeUris         utils.Nstring             `json:"initialScopeUris,omitempty"`
-	DeviceSpecificAttributes *DeviceSpecificAttributes `json:"deviceSpecificAttributes,omitempty"`
-	StorageSystemUri         utils.Nstring             `json:"storageSystemUri,omitempty"`
-	TotalCapacity            string                    `json:"totalCapacity,omitempty"`
-	FreeCapacity             string                    `json:"freeCapacity,omitempty"`
-	IsManaged                bool                      `json:"isManaged"`
+type StoragePool struct {
+	Category                 string                               `json:"category,omitempty"`
+	Created                  string                               `json:"created,omitempty"`
+	Description              utils.Nstring                        `json:"description"`
+	ETAG                     string                               `json:"eTag,omitempty"`
+	Name                     string                               `json:"name,omitempty"`
+	State                    string                               `json:"state,omitempty"`
+	Status                   string                               `json:"status,omitempty"`
+	Type                     string                               `json:"type,omitempty"`
+	URI                      utils.Nstring                        `json:"uri,omitempty"`
+	AllocatedCapacity        string                               `json:"allocatedCapacity,omitempty"`
+	InitialScopeUris         utils.Nstring                        `json:"initialScopeUris,omitempty"`
+	DeviceSpecificAttributes *DeviceSpecificAttributesStoragePool `json:"deviceSpecificAttributes,omitempty"`
+	StorageSystemUri         utils.Nstring                        `json:"storageSystemUri,omitempty"`
+	TotalCapacity            string                               `json:"totalCapacity,omitempty"`
+	FreeCapacity             string                               `json:"freeCapacity,omitempty"`
+	IsManaged                bool                                 `json:"isManaged"`
 }
 
-type StoragePoolsListV3 struct {
-	Total       int             `json:"total,omitempty"`       // "total": 1,
-	Count       int             `json:"count,omitempty"`       // "count": 1,
-	Start       int             `json:"start,omitempty"`       // "start": 0,
-	PrevPageURI utils.Nstring   `json:"prevPageUri,omitempty"` // "prevPageUri": null,
-	NextPageURI utils.Nstring   `json:"nextPageUri,omitempty"` // "nextPageUri": null,
-	URI         utils.Nstring   `json:"uri,omitempty"`         // "uri": "/rest/storage-pools?filter=connectionTemplateUri%20matches%7769cae0-b680-435b-9b87-9b864c81657fsort=name:asc"
-	Members     []StoragePoolV3 `json:"members,omitempty"`     // "members":[]
+type DeviceSpecificAttributesStoragePool struct {
+	DeviceID               string                `json:"deviceId,omitempty"`
+	Folders                []Folders             `json:"folders,omitempty"`
+	IsDeduplicationCapable bool                  `json:"isDeduplicationCapable,omitempty"`
+	AllocatedCapacity      *AllocatedCapacity    `json:"allocatedCapacity,omitempty"`
+	CapacityLimit          string                `json:"capacityLimit,omitempty"`
+	CapacityWarningLimit   string                `json:"capacityWarningLimit,omitempty"`
+	DeviceSpeed            string                `json:"deviceSpeed,omitempty"`
+	Domain                 string                `json:"domain,omitempty"`
+	SupportedRaidLevel     string                `json:"supportedRaidLevel,omitempty"`
+	Uuid                   string                `json:"uuid,omitempty"`
+	VolumeCreationSpace    []VolumeCreationSpace `json:"volumeCreationSpace,omitempty"`
 }
 
-func (c *OVClient) GetStoragePoolByName(name string) (StoragePoolV3, error) {
+type Folders struct {
+	ID   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+type AllocatedCapacity struct {
+	SnapshotAllocatedCapacity string `json:"snapshotAllocatedCapacity,omitempty"`
+	TotalAllocatedCapacity    string `json:"totalAllocatedCapacity,omitempty"`
+	VolumeAllocatedCapacity   string `json:"volumeAllocatedCapacity,omitempty"`
+}
+
+type VolumeCreationSpace struct {
+	AvailableSpace   int `json:"availableSpace,omitempty"`
+	ReplicationLevel int `json:"replicationLevel,omitempty"`
+}
+
+type StoragePoolsList struct {
+	Total       int           `json:"total,omitempty"`       // "total": 1,
+	Count       int           `json:"count,omitempty"`       // "count": 1,
+	Start       int           `json:"start,omitempty"`       // "start": 0,
+	PrevPageURI utils.Nstring `json:"prevPageUri,omitempty"` // "prevPageUri": null,
+	NextPageURI utils.Nstring `json:"nextPageUri,omitempty"` // "nextPageUri": null,
+	URI         utils.Nstring `json:"uri,omitempty"`         // "uri": "/rest/storage-pools?filter=connectionTemplateUri%20matches%7769cae0-b680-435b-9b87-9b864c81657fsort=name:asc"
+	Members     []StoragePool `json:"members,omitempty"`     // "members":[]
+}
+
+func (c *OVClient) GetStoragePoolByName(name string) (StoragePool, error) {
 	var (
-		sPool StoragePoolV3
+		sPool StoragePool
 	)
 	sPools, err := c.GetStoragePools(fmt.Sprintf("name matches '%s'", name), "name:asc", "", "")
 	if sPools.Total > 0 {
@@ -52,11 +82,11 @@ func (c *OVClient) GetStoragePoolByName(name string) (StoragePoolV3, error) {
 	}
 }
 
-func (c *OVClient) GetStoragePools(filter string, sort string, start string, count string) (StoragePoolsListV3, error) {
+func (c *OVClient) GetStoragePools(filter string, sort string, start string, count string) (StoragePoolsList, error) {
 	var (
 		uri    = "/rest/storage-pools"
 		q      map[string]interface{}
-		sPools StoragePoolsListV3
+		sPools StoragePoolsList
 	)
 	q = make(map[string]interface{})
 	if len(filter) > 0 {
@@ -95,7 +125,7 @@ func (c *OVClient) GetStoragePools(filter string, sort string, start string, cou
 	return sPools, nil
 }
 
-func (c *OVClient) UpdateStoragePool(sPool StoragePoolV3) error {
+func (c *OVClient) UpdateStoragePool(sPool StoragePool) error {
 	log.Infof("Initializing update of storage volume for %s.", sPool.Name)
 	var (
 		uri = sPool.URI.String()

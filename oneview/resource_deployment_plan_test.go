@@ -1,4 +1,4 @@
-// (C) Copyright 2019 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -13,42 +13,33 @@ package oneview
 
 import (
 	"fmt"
-	"github.com/HewlettPackard/oneview-golang/ov"
+	"testing"
+
+	"github.com/HewlettPackard/oneview-golang/i3s"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"testing"
 )
 
-func TestAccStorageSystem_1(t *testing.T) {
-	var storageSystem ov.StorageSystem
+func TestAccDeploymentPlan_1(t *testing.T) {
+	var deploymentPlan i3s.DeploymentPlan
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckStorageSystemDestroy,
+		CheckDestroy: testAccCheckDeploymentPlanDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccStorageSystem,
+				Config: testAccDeploymentPlan,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckStorageSystemExists(
-						"oneview_storage_system.test", &storageSystem),
+					testAccCheckDeploymentPlanExists(
+						"oneview-deployment_plan.test", &deploymentPlan),
 					resource.TestCheckResourceAttr(
-						"oneview_storage_system.test", "name", "Terraform le 1",
+						"oneview-deployment_plan.test", "name", "terraform deployment plan",
 					),
 				),
 			},
 			{
-				Config: testAccStorageSystemUpdated,
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckStorageSystemExists(
-						"oneview_storage_system.test", &storageSystem),
-					resource.TestCheckResourceAttr(
-						"oneview_storage_system.test", "name", "Terraform le 2",
-					),
-				),
-			},
-			{
-				ResourceName:      testAccStorageSystem,
+				ResourceName:      testAccDeploymentPlan,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -56,7 +47,7 @@ func TestAccStorageSystem_1(t *testing.T) {
 	})
 }
 
-func testAccCheckStorageSystemExists(n string, storageSystem *ov.StorageSystem) resource.TestCheckFunc {
+func testAccCheckDeploymentPlanExists(n string, deploymentPlan *i3s.DeploymentPlan) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -72,41 +63,38 @@ func testAccCheckStorageSystemExists(n string, storageSystem *ov.StorageSystem) 
 			return err
 		}
 
-		testStorageSystem, err := config.ovClient.GetStorageSystemByName(rs.Primary.ID)
+		testDeploymentPlan, err := config.i3sClient.GetDeploymentPlanByName(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
-		if testStorageSystem.Name != rs.Primary.ID {
+		if testDeploymentPlan.Name != rs.Primary.ID {
 			return fmt.Errorf("Instance not found")
 		}
-		*storageSystem = testStorageSystem
+		*deploymentPlan = testDeploymentPlan
 		return nil
 	}
 }
 
-func testAccCheckStorageSystemDestroy(s *terraform.State) error {
+func testAccCheckDeploymentPlanDestroy(s *terraform.State) error {
 	config := testAccProvider.Meta().(*Config)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "oneview_storage_system" {
+		if rs.Type != "oneview-deployment_plan" {
 			continue
 		}
 
-		testNet, _ := config.ovClient.GetStorageSystemByName(rs.Primary.ID)
+		testLig, _ := config.i3sClient.GetDeploymentPlanByName(rs.Primary.ID)
 
-		if testNet.Name != "" {
-			return fmt.Errorf("NetworkSet still exists")
+		if testLig.Name != "" {
+			return fmt.Errorf("DeploymenttPlan still exists")
 		}
 	}
 
 	return nil
 }
 
-var testAccStorageSystem = `
-  resource "oneview_storage_system" "test" {
-    name = "Terraform le 1"
-  }`
-
-var testAccStorageSystemUpdated = `
-  resource "oneview_storage_system" "test" {
-    name = "Terraform le 2"
+var testAccDeploymentPlan = `resource "oneview-deployment_plan" "test" {
+    count = 1
+    name = "terraform deployment plan"
+    oe_build_plan_uri ="rest/build-plans/S8T45F"
+    type = "OEDeploymentPlanV5"
   }`
