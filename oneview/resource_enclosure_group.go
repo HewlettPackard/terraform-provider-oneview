@@ -109,7 +109,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"port_mapping_count": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"port_mappings": {
 				Optional: true,

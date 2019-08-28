@@ -11,8 +11,10 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Usecase for synergy infrastructure provisioning with Network.
 
 ### Oneview Features supported
+- Enclosure Group
 - Ethernet network
 - FC network
+- Interconnect Type
 - Logical enclosure
 - Network set
 - Storage system
