@@ -13,11 +13,10 @@ package oneview
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	//"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"io/ioutil"
 )
 
 func resourceStorageVolumeTemplate() *schema.Resource {
@@ -37,7 +36,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 			},
 			"compatible_storage_systems_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -53,7 +52,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -62,7 +61,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 
 			"state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -71,11 +70,11 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"initial_scope_uris": {
 				Optional: true,
@@ -99,7 +98,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 			},
 			"uuid": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"family": {
 				Type:     schema.TypeString,
@@ -108,14 +107,14 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 			"tp_name": {
 				Optional: true,
 				Type:     schema.TypeSet,
-				//MaxItems: 1,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -180,7 +179,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -215,6 +214,10 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 								Type: schema.TypeString,
 							},
 							Set: schema.HashString,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"default": {
 							Type:     schema.TypeString,
@@ -241,7 +244,68 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
+							Optional: true,
+							Type:     schema.TypeString,
+						},
+						"meta_create_only": {
+							Optional: true,
+							Type:     schema.TypeBool,
+						},
+						"type": {
+							Optional: true,
+							Type:     schema.TypeString,
+						},
+						"title": {
+							Optional: true,
+							Type:     schema.TypeString,
+						},
+						"required": {
+							Optional: true,
+							Type:     schema.TypeBool,
+						},
+						"enum": {
+							Optional: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Set: schema.HashString,
+						},
+						"default": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"minimum": {
+							Optional: true,
+							Type:     schema.TypeInt,
+						},
+						"maximum": {
+							Optional: true,
+							Type:     schema.TypeInt,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"format": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"tp_provisioning_type": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"meta_locked": {
+							Optional: true,
+							Type:     schema.TypeBool,
+						},
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -278,12 +342,16 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Set: schema.HashString,
 						},
 						"default": {
-							Type:     schema.TypeInt,
+							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"minimum": {
 							Optional: true,
 							Type:     schema.TypeInt,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"format": {
 							Type:     schema.TypeString,
@@ -292,7 +360,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 					},
 				},
 			},
-			"tp_provisioning_type": {
+			"tp_snapshot_pool": {
 				Optional: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
@@ -302,7 +370,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -337,6 +405,10 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 								Type: schema.TypeString,
 							},
 							Set: schema.HashString,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"default": {
 							Type:     schema.TypeString,
@@ -363,7 +435,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -383,14 +455,6 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"min_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
-						"max_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"enum": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -400,10 +464,18 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Set: schema.HashString,
 						},
 						"default": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"description": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"minimum": {
+							Optional: true,
+							Type:     schema.TypeInt,
+						},
+						"maximum": {
 							Optional: true,
 							Type:     schema.TypeInt,
 						},
@@ -424,7 +496,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -444,14 +516,6 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"min_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
-						"max_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"enum": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -464,9 +528,9 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"minimum": {
+						"description": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Type:     schema.TypeInt,
 						},
 						"format": {
 							Type:     schema.TypeString,
@@ -485,7 +549,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -505,14 +569,6 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"min_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
-						"max_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"enum": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -525,11 +581,11 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"minimum": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"format": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -546,7 +602,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -566,14 +622,6 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"min_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
-						"max_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"enum": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -586,11 +634,11 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"minimum": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"format": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -607,7 +655,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -627,14 +675,6 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"min_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
-						"max_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"enum": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -644,14 +684,22 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Set: schema.HashString,
 						},
 						"default": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeInt,
 							Optional: true,
 						},
 						"minimum": {
 							Optional: true,
 							Type:     schema.TypeInt,
 						},
+						"maximum": {
+							Optional: true,
+							Type:     schema.TypeInt,
+						},
 						"format": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -668,7 +716,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -716,6 +764,10 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -729,7 +781,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -766,6 +818,10 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Set: schema.HashString,
 						},
 						"default": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -790,7 +846,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -835,6 +891,10 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Type:     schema.TypeInt,
 						},
 						"format": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -851,7 +911,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -896,6 +956,10 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Type:     schema.TypeInt,
 						},
 						"format": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -912,7 +976,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -960,6 +1024,10 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -973,7 +1041,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -993,14 +1061,6 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"min_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
-						"max_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"enum": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -1009,13 +1069,13 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							},
 							Set: schema.HashString,
 						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"default": {
 							Type:     schema.TypeBool,
 							Optional: true,
-						},
-						"minimum": {
-							Optional: true,
-							Type:     schema.TypeInt,
 						},
 						"format": {
 							Type:     schema.TypeString,
@@ -1034,7 +1094,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -1054,14 +1114,6 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"min_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
-						"max_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"enum": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -1074,9 +1126,9 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"minimum": {
+						"description": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Type:     schema.TypeInt,
 						},
 						"format": {
 							Type:     schema.TypeString,
@@ -1095,7 +1147,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -1130,6 +1182,10 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 								Type: schema.TypeString,
 							},
 							Set: schema.HashString,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"default": {
 							Type:     schema.TypeString,
@@ -1156,7 +1212,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"meta_semanctic_type": {
+						"meta_semantic_type": {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
@@ -1176,14 +1232,6 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeBool,
 						},
-						"min_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
-						"max_length": {
-							Optional: true,
-							Type:     schema.TypeInt,
-						},
 						"enum": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -1192,13 +1240,13 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 							},
 							Set: schema.HashString,
 						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"default": {
 							Type:     schema.TypeBool,
 							Optional: true,
-						},
-						"minimum": {
-							Optional: true,
-							Type:     schema.TypeInt,
 						},
 						"format": {
 							Type:     schema.TypeString,
@@ -1229,17 +1277,13 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 	}
 
 	properties := make([]ov.TemplateProperties, 1)
-	name_item := ov.TemplatePropertyDatatypeStruct{}
 	if val, ok := d.GetOk("tp_name"); ok {
+		name_item := ov.TemplatePropertyDatatypeStructString{}
 		rawName := val.(*schema.Set).List()
-		name := make([]ov.TemplatePropertyDatatypeStruct, 1)
 		for _, rawData := range rawName {
 			item := rawData.(map[string]interface{})
-			//			name_item := ov.TemplatePropertyDatatypeStruct{}
 			meta := ov.Meta{}
 
-			b := []byte(item["type"].(string) + "::" + item["title"].(string))
-			ioutil.WriteFile("fields.txt", b, 0644)
 			if item["type"] != nil {
 				name_item.Type = item["type"].(string)
 			}
@@ -1273,8 +1317,8 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			if item["meta_create_only"] != nil {
 				meta.CreateOnly = item["meta_create_only"].(bool)
 			}
-			if item["meta_semanctic_type"] != nil {
-				meta.SemanticType = item["meta_semanctic_type"].(string)
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
@@ -1284,17 +1328,974 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 				}
 				name_item.Enum = enums
 			}
-			//if meta != nil {
 			name_item.Meta = &meta
-			//}
-			file, _ := json.MarshalIndent(name_item, "", " ")
-			ioutil.WriteFile("name_item.txt", file, 0644)
-			name = append(name, name_item)
 
 		}
-		properties[0].Name = &name_item //&name[0]
-		file, _ := json.MarshalIndent(properties[0], "", " ")
-		ioutil.WriteFile("name_o.txt", file, 0644)
+		properties[0].Name = &name_item
+	}
+
+	//Storage Pool
+	if val, ok := d.GetOk("tp_storage_pool"); ok {
+		rawStoragePool := val.(*schema.Set).List()
+		sp_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawStoragePool {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				sp_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				sp_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				sp_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				sp_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				sp_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				sp_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				sp_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				sp_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				sp_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				sp_item.Enum = enums
+			}
+			sp_item.Meta = &meta
+		}
+		properties[0].StoragePool = &sp_item
+	}
+
+	// Size
+	if val, ok := d.GetOk("tp_size"); ok {
+		rawSize := val.(*schema.Set).List()
+		size_item := ov.TemplatePropertyDatatypeStructInt{}
+		for _, rawData := range rawSize {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				size_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				size_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				size_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				size_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				size_item.Default = item["default"].(int)
+			}
+			if item["minimum"] != nil {
+				size_item.Minimum = item["minimum"].(int)
+			}
+			if item["maximum"] != nil {
+				size_item.Maximum = item["maximum"].(int)
+			}
+			if item["format"] != nil {
+				size_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				size_item.Enum = enums
+			}
+			size_item.Meta = &meta
+		}
+		properties[0].Size = &size_item
+	}
+
+	// Provisioning type
+	if val, ok := d.GetOk("tp_provisioning_type"); ok {
+		rawPT := val.(*schema.Set).List()
+		pt_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawPT {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				pt_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				pt_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				pt_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				pt_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				pt_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				pt_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				pt_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				pt_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				pt_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				pt_item.Enum = enums
+			}
+			pt_item.Meta = &meta
+		}
+		properties[0].ProvisioningType = &pt_item
+	}
+
+	//Snapshot Pool
+	if val, ok := d.GetOk("tp_snapshot_pool"); ok {
+		rawStoragePool := val.(*schema.Set).List()
+		sp_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawStoragePool {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				sp_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				sp_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				sp_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				sp_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				sp_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				sp_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				sp_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				sp_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				sp_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				sp_item.Enum = enums
+			}
+			sp_item.Meta = &meta
+		}
+		properties[0].SnapshotPool = &sp_item
+	}
+
+	//DataTransferLimit
+	if val, ok := d.GetOk("tp_data_transfer_limit"); ok {
+		rawDTL := val.(*schema.Set).List()
+		stl_item := ov.TemplatePropertyDatatypeStructInt{}
+		for _, rawData := range rawDTL {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				stl_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				stl_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				stl_item.Required = item["required"].(bool)
+			}
+			if item["maximum"] != nil {
+				stl_item.Maximum = item["maximum"].(int)
+			}
+			if item["description"] != nil {
+				stl_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				stl_item.Default = item["default"].(int)
+			}
+			if item["minimum"] != nil {
+				stl_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				stl_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				stl_item.Enum = enums
+			}
+			stl_item.Meta = &meta
+		}
+		properties[0].DataTransferLimit = &stl_item
+	}
+
+	//IsDeduplicated
+	if val, ok := d.GetOk("tp_is_deduplicated"); ok {
+		rawIDD := val.(*schema.Set).List()
+		idd_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIDD {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				idd_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				idd_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				idd_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				idd_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				idd_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				idd_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				idd_item.Enum = enums
+			}
+			idd_item.Meta = &meta
+		}
+		properties[0].IsDeduplicated = &idd_item
+	}
+
+	//IsEncrypted
+	if val, ok := d.GetOk("tp_is_encrypted"); ok {
+		rawIE := val.(*schema.Set).List()
+		ie_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIE {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				ie_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				ie_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				ie_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				ie_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				ie_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				ie_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				ie_item.Enum = enums
+			}
+			ie_item.Meta = &meta
+		}
+		properties[0].IsEncrypted = &ie_item
+	}
+
+	//IsPinned
+
+	if val, ok := d.GetOk("tp_is_pinned"); ok {
+		rawIsPinned := val.(*schema.Set).List()
+		ip_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIsPinned {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				ip_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				ip_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				ip_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				ip_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				ip_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				ip_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				ip_item.Enum = enums
+			}
+			ip_item.Meta = &meta
+		}
+		properties[0].IsPinned = &ip_item
+	}
+
+	//IopsLimit
+	if val, ok := d.GetOk("tp_iops_limit"); ok {
+		rawIopsLimit := val.(*schema.Set).List()
+		il_item := ov.TemplatePropertyDatatypeStructInt{}
+		for _, rawData := range rawIopsLimit {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				il_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				il_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				il_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				il_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				il_item.Default = item["default"].(int)
+			}
+			if item["minimum"] != nil {
+				il_item.Minimum = item["minimum"].(int)
+			}
+			if item["maximum"] != nil {
+				il_item.Maximum = item["maximum"].(int)
+			}
+			if item["format"] != nil {
+				il_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				il_item.Enum = enums
+			}
+			il_item.Meta = &meta
+		}
+		properties[0].IopsLimit = &il_item
+	}
+
+	//Folder
+	if val, ok := d.GetOk("tp_folder"); ok {
+		rawFolder := val.(*schema.Set).List()
+		folder_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawFolder {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				folder_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				folder_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				folder_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				folder_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				folder_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				folder_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				folder_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				folder_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				folder_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				folder_item.Enum = enums
+			}
+			folder_item.Meta = &meta
+		}
+		properties[0].Folder = &folder_item
+	}
+
+	//TemplateVersion
+	if val, ok := d.GetOk("tp_template_version"); ok {
+		rawTV := val.(*schema.Set).List()
+		templateVersion_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawTV {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				templateVersion_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				templateVersion_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				templateVersion_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				templateVersion_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				templateVersion_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				templateVersion_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				templateVersion_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				templateVersion_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				templateVersion_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				templateVersion_item.Enum = enums
+			}
+			templateVersion_item.Meta = &meta
+		}
+		properties[0].TemplateVersion = &templateVersion_item
+	}
+
+	//PerformancePolicy
+	if val, ok := d.GetOk("tp_performance_policy"); ok {
+		rawPP := val.(*schema.Set).List()
+		pp_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawPP {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				pp_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				pp_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				pp_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				pp_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				pp_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				pp_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				pp_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				pp_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				pp_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				pp_item.Enum = enums
+			}
+			pp_item.Meta = &meta
+		}
+		properties[0].PerformancePolicy = &pp_item
+	}
+
+	//VolumetSet
+	if val, ok := d.GetOk("tp_volume_set"); ok {
+		rawVS := val.(*schema.Set).List()
+		vs_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawVS {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				vs_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				vs_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				vs_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				vs_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				vs_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				vs_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				vs_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				vs_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				vs_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				vs_item.Enum = enums
+			}
+			vs_item.Meta = &meta
+		}
+		properties[0].VolumetSet = &vs_item
+	}
+
+	//Description
+	if val, ok := d.GetOk("tp_description"); ok {
+		rawDesc := val.(*schema.Set).List()
+		desc_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawDesc {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				desc_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				desc_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				desc_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				desc_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				desc_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				desc_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				desc_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				desc_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				desc_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				desc_item.Enum = enums
+			}
+			desc_item.Meta = &meta
+		}
+		properties[0].Description = &desc_item
+	}
+
+	//IsAdaptiveOptimizationEnabled
+	if val, ok := d.GetOk("tp_is_adaptive_optimization_enabled"); ok {
+		rawIAOE := val.(*schema.Set).List()
+		iaoe_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIAOE {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				iaoe_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				iaoe_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				iaoe_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				iaoe_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				iaoe_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				iaoe_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				iaoe_item.Enum = enums
+			}
+			iaoe_item.Meta = &meta
+		}
+		properties[0].IsAdaptiveOptimizationEnabled = &iaoe_item
+	}
+
+	//IsCompressed
+	if val, ok := d.GetOk("tp_is_compressed"); ok {
+		rawIC := val.(*schema.Set).List()
+		ic_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIC {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				ic_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				ic_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				ic_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				ic_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				ic_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				ic_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				ic_item.Enum = enums
+			}
+			ic_item.Meta = &meta
+		}
+		properties[0].IsCompressed = &ic_item
+	}
+
+	//DataProtectionLevel
+	if val, ok := d.GetOk("tp_data_protection_level"); ok {
+		rawDPL := val.(*schema.Set).List()
+		dpl_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawDPL {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				dpl_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				dpl_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				dpl_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				dpl_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				dpl_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				dpl_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				dpl_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				dpl_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				dpl_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				dpl_item.Enum = enums
+			}
+			dpl_item.Meta = &meta
+		}
+		properties[0].DataProtectionLevel = &dpl_item
+	}
+
+	//IsShareable
+	if val, ok := d.GetOk("tp_is_shareable"); ok {
+		rawIS := val.(*schema.Set).List()
+		is_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIS {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				is_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				is_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				is_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				is_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				is_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				is_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				is_item.Enum = enums
+			}
+			is_item.Meta = &meta
+		}
+		properties[0].IsShareable = &is_item
 	}
 
 	template.TemplateProperties = &properties[0]
@@ -1314,11 +2315,6 @@ func resourceStorageVolumeTemplateRead(d *schema.ResourceData, meta interface{})
 	config := meta.(*Config)
 
 	template, err := config.ovClient.GetStorageVolumeTemplateByName(d.Id())
-	//	file,_ := json.MarshalIndent(template, "", " ")
-	//	ioutil.WriteFile("in.txt", file, 0644)
-
-	//bb := []byte(err.Error())
-	//	ioutil.WriteFile("err.txt",bb, 0644)
 	if err != nil {
 		d.SetId("")
 		return nil
@@ -1344,60 +2340,47 @@ func resourceStorageVolumeTemplateRead(d *schema.ResourceData, meta interface{})
 
 	if template.TemplateProperties != nil {
 		item := template.TemplateProperties.Name
-		name := make([]map[string]interface{}, 0)
-		//for _,item := range rawName {
+		name := make([]map[string]interface{}, 0, 1)
 		var meta_create_only, meta_locked, required bool
-		var meta_semanctic_type, title, description, tp_type, tp_default, format string
+		var meta_semantic_type, title, description, tp_type, tp_default, format string
 		var enums []string
 		var max_length, min_length, minimum int
 
 		if item.Meta != nil {
 			if len(item.Meta.SemanticType) != 0 {
-				meta_semanctic_type = item.Meta.SemanticType
+				meta_semantic_type = item.Meta.SemanticType
 			}
 			meta_create_only = item.Meta.CreateOnly
 			meta_locked = item.Meta.Locked
 		}
-		if len(item.Type) != 0 {
-			tp_type = item.Type
-		}
-		if len(item.Title) != 0 {
-			title = item.Title
-		}
+		tp_type = item.Type
+		title = item.Title
 		required = item.Required
 		max_length = item.Maxlength
 		min_length = item.Minlength
 		minimum = item.Minimum
-		//if item.Description != nil  {
 		description = item.Description.String()
-		//}
-		if item.Enum != nil {
-			enums = item.Enum
-		}
-		if len(item.Default) != 0 {
-			tp_default = item.Default
-		}
-		if len(item.Format) != 0 {
-			format = item.Format
-		}
+		enums = item.Enum
+		tp_default = item.Default
+		format = item.Format
+
 		name = append(name, map[string]interface{}{
-			"meta_create_only":    meta_create_only,
-			"meta_locked":         meta_locked,
-			"meta_semanctic_type": meta_semanctic_type,
-			"type":                tp_type,
-			"title":               title,
-			"required":            required,
-			"max_length":          max_length,
-			"min_length":          min_length,
-			"description":         description,
-			"enum":                enums,
-			"default":             tp_default,
-			"minimum":             minimum,
-			"format":              format})
+			"meta_create_only":   meta_create_only,
+			"meta_locked":        meta_locked,
+			"meta_semantic_type": meta_semantic_type,
+			"type":               tp_type,
+			"title":              title,
+			"required":           required,
+			"max_length":         max_length,
+			"min_length":         min_length,
+			"description":        description,
+			"enum":               enums,
+			"default":            tp_default,
+			"minimum":            minimum,
+			"format":             format,
+		})
 		file, _ := json.MarshalIndent(name, "", " ")
 		ioutil.WriteFile("name_check.txt", file, 0644)
-		b := []byte("Enetered if")
-		ioutil.WriteFile("ifcond.txt", b, 0644)
 		d.Set("tp_name", name)
 		file, _ = json.MarshalIndent(d.Get("tp_name"), "", " ")
 		ioutil.WriteFile("ifcond1.txt", file, 0644)
@@ -1407,9 +2390,1075 @@ func resourceStorageVolumeTemplateRead(d *schema.ResourceData, meta interface{})
 }
 
 func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	config := meta.(*Config)
+
+	template := ov.StorageVolumeTemplate{
+		Name: d.Get("name").(string),
+		ETAG: d.Get("eTag").(string),
+		URI:  utils.NewNstring(d.Get("uri").(string))}
+
+	if val, ok := d.GetOk("description"); ok {
+		template.Description = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk("scopes_uri"); ok {
+		template.ScopesURI = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk("family"); ok {
+		template.Family = val.(string)
+	}
+
+	if val, ok := d.GetOk("is_root"); ok {
+		template.IsRoot = val.(bool)
+	}
+
+	if val, ok := d.GetOk("storage_pool_uri"); ok {
+		template.StoragePoolUri = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk("root_template_uri"); ok {
+		template.RootTemplateUri = utils.NewNstring(val.(string))
+	}
+
+	properties := make([]ov.TemplateProperties, 1)
+	if val, ok := d.GetOk("tp_name"); ok {
+		name_item := ov.TemplatePropertyDatatypeStructString{}
+		rawName := val.(*schema.Set).List()
+		for _, rawData := range rawName {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				name_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				name_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				name_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				name_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				name_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				name_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				name_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				name_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				name_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				name_item.Enum = enums
+			}
+			name_item.Meta = &meta
+		}
+		properties[0].Name = &name_item
+	}
+
+	//Storage Pool
+	if val, ok := d.GetOk("tp_storage_pool"); ok {
+		rawStoragePool := val.(*schema.Set).List()
+		sp_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawStoragePool {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				sp_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				sp_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				sp_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				sp_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				sp_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				sp_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				sp_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				sp_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				sp_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				sp_item.Enum = enums
+			}
+			sp_item.Meta = &meta
+		}
+		properties[0].StoragePool = &sp_item
+	}
+
+	// Size
+	if val, ok := d.GetOk("tp_size"); ok {
+		rawSize := val.(*schema.Set).List()
+		size_item := ov.TemplatePropertyDatatypeStructInt{}
+		for _, rawData := range rawSize {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				size_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				size_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				size_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				size_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				size_item.Default = item["default"].(int)
+			}
+			if item["minimum"] != nil {
+				size_item.Minimum = item["minimum"].(int)
+			}
+			if item["maximum"] != nil {
+				size_item.Maximum = item["maximum"].(int)
+			}
+			if item["format"] != nil {
+				size_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				size_item.Enum = enums
+			}
+			size_item.Meta = &meta
+		}
+		properties[0].Size = &size_item
+	}
+
+	// Provisioning type
+	if val, ok := d.GetOk("tp_provisioning_type"); ok {
+		rawPT := val.(*schema.Set).List()
+		pt_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawPT {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				pt_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				pt_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				pt_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				pt_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				pt_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				pt_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				pt_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				pt_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				pt_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				pt_item.Enum = enums
+			}
+			pt_item.Meta = &meta
+		}
+		properties[0].ProvisioningType = &pt_item
+	}
+
+	//Snapshot Pool
+	if val, ok := d.GetOk("tp_snapshot_pool"); ok {
+		rawStoragePool := val.(*schema.Set).List()
+		sp_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawStoragePool {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				sp_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				sp_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				sp_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				sp_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				sp_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				sp_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				sp_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				sp_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				sp_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				sp_item.Enum = enums
+			}
+			sp_item.Meta = &meta
+		}
+		properties[0].SnapshotPool = &sp_item
+	}
+
+	//DataTransferLimit
+	if val, ok := d.GetOk("tp_data_transfer_limit"); ok {
+		rawDTL := val.(*schema.Set).List()
+		stl_item := ov.TemplatePropertyDatatypeStructInt{}
+		for _, rawData := range rawDTL {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				stl_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				stl_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				stl_item.Required = item["required"].(bool)
+			}
+			if item["maximum"] != nil {
+				stl_item.Maximum = item["maximum"].(int)
+			}
+			if item["description"] != nil {
+				stl_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				stl_item.Default = item["default"].(int)
+			}
+			if item["minimum"] != nil {
+				stl_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				stl_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				stl_item.Enum = enums
+			}
+			stl_item.Meta = &meta
+		}
+		properties[0].DataTransferLimit = &stl_item
+	}
+
+	//IsDeduplicated
+	if val, ok := d.GetOk("tp_is_deduplicated"); ok {
+		rawIDD := val.(*schema.Set).List()
+		idd_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIDD {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				idd_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				idd_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				idd_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				idd_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				idd_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				idd_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				idd_item.Enum = enums
+			}
+			idd_item.Meta = &meta
+		}
+		properties[0].IsDeduplicated = &idd_item
+	}
+
+	//IsEncrypted
+	if val, ok := d.GetOk("tp_is_encrypted"); ok {
+		rawIE := val.(*schema.Set).List()
+		ie_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIE {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				ie_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				ie_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				ie_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				ie_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				ie_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				ie_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				ie_item.Enum = enums
+			}
+			ie_item.Meta = &meta
+		}
+		properties[0].IsEncrypted = &ie_item
+	}
+
+	//IsPinned
+
+	if val, ok := d.GetOk("tp_is_pinned"); ok {
+		rawIsPinned := val.(*schema.Set).List()
+		ip_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIsPinned {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				ip_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				ip_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				ip_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				ip_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				ip_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				ip_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				ip_item.Enum = enums
+			}
+			ip_item.Meta = &meta
+		}
+		properties[0].IsPinned = &ip_item
+	}
+
+	//IopsLimit
+	if val, ok := d.GetOk("tp_iops_limit"); ok {
+		rawIopsLimit := val.(*schema.Set).List()
+		il_item := ov.TemplatePropertyDatatypeStructInt{}
+		for _, rawData := range rawIopsLimit {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				il_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				il_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				il_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				il_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				il_item.Default = item["default"].(int)
+			}
+			if item["minimum"] != nil {
+				il_item.Minimum = item["minimum"].(int)
+			}
+			if item["maximum"] != nil {
+				il_item.Maximum = item["maximum"].(int)
+			}
+			if item["format"] != nil {
+				il_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				il_item.Enum = enums
+			}
+			il_item.Meta = &meta
+		}
+		properties[0].IopsLimit = &il_item
+	}
+
+	//Folder
+	if val, ok := d.GetOk("tp_folder"); ok {
+		rawFolder := val.(*schema.Set).List()
+		folder_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawFolder {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				folder_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				folder_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				folder_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				folder_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				folder_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				folder_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				folder_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				folder_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				folder_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				folder_item.Enum = enums
+			}
+			folder_item.Meta = &meta
+		}
+		properties[0].Folder = &folder_item
+	}
+
+	//TemplateVersion
+	if val, ok := d.GetOk("tp_template_version"); ok {
+		rawTV := val.(*schema.Set).List()
+		templateVersion_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawTV {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				templateVersion_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				templateVersion_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				templateVersion_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				templateVersion_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				templateVersion_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				templateVersion_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				templateVersion_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				templateVersion_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				templateVersion_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				templateVersion_item.Enum = enums
+			}
+			templateVersion_item.Meta = &meta
+		}
+		properties[0].TemplateVersion = &templateVersion_item
+	}
+
+	//PerformancePolicy
+	if val, ok := d.GetOk("tp_performance_policy"); ok {
+		rawPP := val.(*schema.Set).List()
+		pp_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawPP {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				pp_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				pp_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				pp_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				pp_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				pp_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				pp_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				pp_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				pp_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				pp_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				pp_item.Enum = enums
+			}
+			pp_item.Meta = &meta
+		}
+		properties[0].PerformancePolicy = &pp_item
+	}
+
+	//VolumetSet
+	if val, ok := d.GetOk("tp_volume_set"); ok {
+		rawVS := val.(*schema.Set).List()
+		vs_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawVS {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				vs_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				vs_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				vs_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				vs_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				vs_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				vs_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				vs_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				vs_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				vs_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				vs_item.Enum = enums
+			}
+			vs_item.Meta = &meta
+		}
+		properties[0].VolumetSet = &vs_item
+	}
+
+	//Description
+	if val, ok := d.GetOk("tp_description"); ok {
+		rawDesc := val.(*schema.Set).List()
+		desc_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawDesc {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				desc_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				desc_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				desc_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				desc_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				desc_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				desc_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				desc_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				desc_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				desc_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				desc_item.Enum = enums
+			}
+			desc_item.Meta = &meta
+		}
+		properties[0].Description = &desc_item
+	}
+
+	//IsAdaptiveOptimizationEnabled
+	if val, ok := d.GetOk("tp_is_adaptive_optimization_enabled"); ok {
+		rawIAOE := val.(*schema.Set).List()
+		iaoe_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIAOE {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				iaoe_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				iaoe_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				iaoe_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				iaoe_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				iaoe_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				iaoe_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				iaoe_item.Enum = enums
+			}
+			iaoe_item.Meta = &meta
+		}
+		properties[0].IsAdaptiveOptimizationEnabled = &iaoe_item
+	}
+
+	//IsCompressed
+	if val, ok := d.GetOk("tp_is_compressed"); ok {
+		rawIC := val.(*schema.Set).List()
+		ic_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIC {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				ic_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				ic_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				ic_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				ic_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				ic_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				ic_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				ic_item.Enum = enums
+			}
+			ic_item.Meta = &meta
+		}
+		properties[0].IsCompressed = &ic_item
+	}
+
+	//DataProtectionLevel
+	if val, ok := d.GetOk("tp_data_protection_level"); ok {
+		rawDPL := val.(*schema.Set).List()
+		dpl_item := ov.TemplatePropertyDatatypeStructString{}
+		for _, rawData := range rawDPL {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				dpl_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				dpl_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				dpl_item.Required = item["required"].(bool)
+			}
+			if item["max_length"] != nil {
+				dpl_item.Maxlength = item["max_length"].(int)
+			}
+			if item["min_length"] != nil {
+				dpl_item.Minlength = item["min_length"].(int)
+			}
+			if item["description"] != nil {
+				dpl_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				dpl_item.Default = item["default"].(string)
+			}
+			if item["minimum"] != nil {
+				dpl_item.Minimum = item["minimum"].(int)
+			}
+			if item["format"] != nil {
+				dpl_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				dpl_item.Enum = enums
+			}
+			dpl_item.Meta = &meta
+		}
+		properties[0].DataProtectionLevel = &dpl_item
+	}
+
+	//IsShareable
+	if val, ok := d.GetOk("tp_is_shareable"); ok {
+		rawIS := val.(*schema.Set).List()
+		is_item := ov.TemplatePropertyDatatypeStructBool{}
+		for _, rawData := range rawIS {
+			item := rawData.(map[string]interface{})
+			meta := ov.Meta{}
+
+			if item["type"] != nil {
+				is_item.Type = item["type"].(string)
+			}
+			if item["title"] != nil {
+				is_item.Title = item["title"].(string)
+			}
+			if item["required"] != nil {
+				is_item.Required = item["required"].(bool)
+			}
+			if item["description"] != nil {
+				is_item.Description = utils.Nstring(item["description"].(string))
+			}
+			if item["default"] != nil {
+				is_item.Default = item["default"].(bool)
+			}
+			if item["format"] != nil {
+				is_item.Format = item["format"].(string)
+			}
+			if item["meta_locked"] != nil {
+				meta.Locked = item["meta_locked"].(bool)
+			}
+			if item["meta_create_only"] != nil {
+				meta.CreateOnly = item["meta_create_only"].(bool)
+			}
+			if item["meta_semantic_type"] != nil {
+				meta.SemanticType = item["meta_semantic_type"].(string)
+			}
+			if item["enum"] != nil {
+				rawEnums := item["enum"].(*schema.Set).List()
+				enums := make([]string, len(rawEnums))
+				for i, rawData := range rawEnums {
+					enums[i] = rawData.(string)
+				}
+				is_item.Enum = enums
+			}
+			is_item.Meta = &meta
+		}
+		properties[0].IsShareable = &is_item
+	}
+
+	template.TemplateProperties = &properties[0]
+
+	err := config.ovClient.UpdateStorageVolumeTemplate(template)
+	d.SetId(d.Get("name").(string))
+	if err != nil {
+		d.SetId("")
+		return err
+	}
+	return resourceStorageVolumeTemplateRead(d, meta)
 }
 
 func resourceStorageVolumeTemplateDelete(d *schema.ResourceData, meta interface{}) error {
+	config := meta.(*Config)
+
+	err := config.ovClient.DeleteStorageVolumeTemplate(d.Get("name").(string))
+	if err != nil {
+		return err
+	}
 	return nil
 }
