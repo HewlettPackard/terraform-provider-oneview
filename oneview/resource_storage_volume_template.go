@@ -17,6 +17,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
 	"io/ioutil"
+	"reflect"
 )
 
 func resourceStorageVolumeTemplate() *schema.Resource {
@@ -237,7 +238,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 			"tp_size": {
 				Optional: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
+				//MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -2340,50 +2341,55 @@ func resourceStorageVolumeTemplateRead(d *schema.ResourceData, meta interface{})
 
 	if template.TemplateProperties != nil {
 		item := template.TemplateProperties.Name
-		name := make([]map[string]interface{}, 0, 1)
-		var meta_create_only, meta_locked, required bool
-		var meta_semantic_type, title, description, tp_type, tp_default, format string
-		var enums []string
-		var max_length, min_length, minimum int
-
-		if item.Meta != nil {
-			if len(item.Meta.SemanticType) != 0 {
-				meta_semantic_type = item.Meta.SemanticType
-			}
-			meta_create_only = item.Meta.CreateOnly
-			meta_locked = item.Meta.Locked
-		}
-		tp_type = item.Type
-		title = item.Title
-		required = item.Required
-		max_length = item.Maxlength
-		min_length = item.Minlength
-		minimum = item.Minimum
-		description = item.Description.String()
-		enums = item.Enum
-		tp_default = item.Default
-		format = item.Format
+		name := make([]map[string]interface{}, 0)
 
 		name = append(name, map[string]interface{}{
-			"meta_create_only":   meta_create_only,
-			"meta_locked":        meta_locked,
-			"meta_semantic_type": meta_semantic_type,
-			"type":               tp_type,
-			"title":              title,
-			"required":           required,
-			"max_length":         max_length,
-			"min_length":         min_length,
-			"description":        description,
-			"enum":               enums,
-			"default":            tp_default,
-			"minimum":            minimum,
-			"format":             format,
-		})
+			"meta_create_only":   item.Meta.CreateOnly,//meta_create_only,
+			"meta_locked":        item.Meta.Locked,//meta_locked,
+			"meta_semantic_type": item.Meta.SemanticType,//meta_semantic_type,
+			"type":               item.Type,//tp_type,
+			"title":              item.Title,//title,
+			"required":           item.Required,//required,
+			"max_length":         item.Maxlength,//max_length,
+			"min_length":         item.Minlength,//min_length,
+			"description":        item.Description,//description,
+			"enum":               item.Enum,//enums,
+			"default":            item.Default,//tp_default,
+			"minimum":            item.Minimum,//minimum,
+			"format":             item.Format})//format})
+		x := []byte("Reached")
+		ioutil.WriteFile("sample.txt",x, 0644)
+
 		file, _ := json.MarshalIndent(name, "", " ")
 		ioutil.WriteFile("name_check.txt", file, 0644)
 		d.Set("tp_name", name)
-		file, _ = json.MarshalIndent(d.Get("tp_name"), "", " ")
-		ioutil.WriteFile("ifcond1.txt", file, 0644)
+
+		tp_name_type := "tp_name Type:: "+reflect.TypeOf(d.Get("tp_name")).String()
+		bb := []byte(tp_name_type)
+		ioutil.WriteFile("tp_name.txt", bb, 0644)
+
+		type_name := "Name Type: "+reflect.TypeOf(name).String()
+		bb = []byte(type_name)
+		ioutil.WriteFile("type_name.txt", bb, 0644)
+
+		ite := template.TemplateProperties.Size
+                size := make([]map[string]interface{}, 0)
+
+                size = append(size, map[string]interface{}{
+                        "meta_create_only":   ite.Meta.CreateOnly,
+                        "meta_locked":        ite.Meta.Locked,
+                        "meta_semantic_type": ite.Meta.SemanticType,
+                        "type":               ite.Type,
+                        "title":              ite.Title,
+                        "required":           ite.Required,
+                        "description":        ite.Description,
+                        "enum":               ite.Enum,
+                        "default":            ite.Default,
+                        "minimum":            ite.Minimum,
+                        "maximum":            ite.Maximum,
+                        "format":             ite.Format})
+		d.Set("tp_size", size)
+
 	}
 
 	return nil
