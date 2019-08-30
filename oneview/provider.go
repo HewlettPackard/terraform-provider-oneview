@@ -85,6 +85,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_storage_system":             dataSourceStorageSystem(),
 			"oneview_uplink_set":                 dataSourceUplinkSet(),
 			"oneview_network_set":                dataSourceNetworkSet(),
+			"oneview_storage_volume_template":    dataSourceStorageVolumeTemplate(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
