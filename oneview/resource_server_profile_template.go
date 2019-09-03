@@ -154,6 +154,219 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Default:  "Virtual",
 				ForceNew: true,
 			},
+			"firmware": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"force_install_firmware": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"firmware_baseline_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"manage_firmware": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"firmware_install_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"local_storage": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_local_storage": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"initialize": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"logical_drives": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"bootable": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"raid_level": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"san_storage": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"host_os_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"manage_san_storage": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"server_hardware_type_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"server_hardware_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"serial_number": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			// schema for ov.SanStorage.VolumeAttachments
+			"volume_attachments": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"lun": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"lun_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"permanent": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"volume_storage_pool_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_storage_system_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_shareable": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"volume_description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_provision_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_provisioned_capacity_bytes": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			// schema for ov.SanStorage.VolumeAttachments.StoragePath
+			"storage_paths": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"storage_target_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"is_enabled": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"connection_id": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+					},
+				},
+			},
+			// schema for ov.SanStorage.VolumeAttachments.StoragePath.StorageTarget
+			"storage_targets": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
+			},
+			"os_deployment_settings": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"os_deployment_plan_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_volume_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"os_custom_attributes": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"value": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -226,6 +439,129 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			initialScopeUris[i] = utils.Nstring(raw.(string))
 		}
 		serverProfileTemplate.InitialScopeUris = initialScopeUris
+	}
+
+	// Get firmware details
+	rawFirmware := d.Get("firmware").(*schema.Set).List()
+	firmware := ov.FirmwareOption{}
+	for _, raw := range rawFirmware {
+		firmwareItem := raw.(map[string]interface{})
+		firmware = ov.FirmwareOption{
+			ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
+			FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+			ManageFirmware:       firmwareItem["manage_firmware"].(bool),
+			FirmwareOptionv200: ov.FirmwareOptionv200{
+				FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
+			},
+		}
+	}
+	serverProfileTemplate.Firmware = firmware
+
+	// Get local storage data if provided
+	rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+	localStorage := ov.LocalStorageOptions{}
+	for _, raw := range rawLocalStorage {
+		localStorageItem := raw.(map[string]interface{})
+		localStorage = ov.LocalStorageOptions{
+			ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+			Initialize:         localStorageItem["initialize"].(bool),
+		}
+	}
+	serverProfileTemplate.LocalStorage = localStorage
+
+	rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
+	logicalDrives := make([]ov.LogicalDrive, 0)
+	for _, rawLogicalDrive := range rawLogicalDrives {
+		logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+		logicalDrives = append(logicalDrives, ov.LogicalDrive{
+			Bootable:  logicalDrivesItem["bootable"].(bool),
+			RaidLevel: logicalDrivesItem["raid_level"].(string),
+		})
+	}
+	serverProfileTemplate.LocalStorage.LogicalDrives = logicalDrives
+
+	// get SAN storage data if provided
+	rawSanStorage := d.Get("san_storage").(*schema.Set).List()
+	sanStorage := ov.SanStorageOptions{}
+	for _, raw := range rawSanStorage {
+		sanStorageItem := raw.(map[string]interface{})
+		sanStorage = ov.SanStorageOptions{
+			HostOSType:            sanStorageItem["host_os_type"].(string),
+			ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
+			ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
+			ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
+			SerialNumber:          sanStorageItem["serial_number"].(string),
+			Type:                  sanStorageItem["type"].(string),
+			URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
+		}
+	}
+	serverProfileTemplate.SanStorage = sanStorage
+
+	// Get volume attachment data for san storage
+	rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+	volumeAttachments := make([]ov.VolumeAttachment, 0)
+	for _, rawVolumeAttachment := range rawVolumeAttachments {
+		volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
+			Permanent:                      volumeAttachmentItem["permanent"].(bool),
+			LUN:                            volumeAttachmentItem["lun"].(string),
+			LUNType:                        volumeAttachmentItem["lun_type"].(string),
+			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
+			VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
+			VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
+			VolumeShareable:                volumeAttachmentItem["volume_shareable"].(bool),
+			VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
+			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
+			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
+			VolumeName:                     volumeAttachmentItem["volume_name"].(string),
+		})
+	}
+	serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
+
+	// Get storage paths for volume attachments
+	rawStoragePaths := d.Get("storage_paths").(*schema.Set).List()
+	storagePaths := make([]ov.StoragePath, 0)
+	for _, rawStoragePath := range rawStoragePaths {
+		storagePathItem := rawStoragePath.(map[string]interface{})
+		storagePaths = append(storagePaths, ov.StoragePath{
+			IsEnabled:         storagePathItem["is_enabled"].(bool),
+			Status:            storagePathItem["status"].(string),
+			ConnectionID:      storagePathItem["connection_id"].(int),
+			StorageTargetType: storagePathItem["storage_target_type"].(string),
+		})
+	}
+	serverProfileTemplate.SanStorage.VolumeAttachments.StoragePaths = storagePaths
+
+	// Get Storage targets for storage paths
+	if val, ok := d.GetOk("storage_targets"); ok {
+		storageTargetsOrder := val.(*schema.Set).List()
+		storageTargets := make([]string, len(storageTargetsOrder))
+		for i, raw := range storageTargetsOrder {
+			storageTargets[i] = raw.(string)
+		}
+		serverProfileTemplate.SanStorage.VolumeAttachments.StoragePaths.StorageTargets = storageTargets
+	}
+
+	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+	osDeploySetting := ov.OSDeploymentSettings{}
+	for _, raw := range rawOsDeploySetting {
+		osDeploySettingItem := raw.(map[string]interface{})
+		osDeploySetting = ov.OSDeploymentSettings{
+			OSDeploymentPlanUri: utils.NewNstring(osDeploySettingItem["os_deployment_plan_uri"].(string)),
+			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
+		}
+	}
+	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
+
+	rawOsCustomAttributes := d.Get("os_custom_attributes").(*schema.Set).List()
+	osCustomAttributes := make(ov.OSCustomAttribute, 0)
+	for _, rawCustomAttrib := range rawOsCustomAttributes {
+		customAttribItem := rawCustomAttrib.(map[string]interface{})
+		osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+			Name:  customAttribItem["name"].(string),
+			Value: customAttribItem["value"](string),
+		})
+		serverProfileTemplate.OSDeploymentSettings.OSCustomAttributes = osCustomAttributes
 	}
 
 	sptError := config.ovClient.CreateProfileTemplate(serverProfileTemplate)
@@ -353,6 +689,79 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.Boot.ManageBoot = true
 		serverProfileTemplate.Boot.Order = bootOrder
 	}
+
+	rawFirmware := d.Get("firmware").(*schema.Set).List()
+	firmware := ov.FirmwareOption{}
+	for _, raw := range rawFirmware {
+		firmwareItem := raw.(map[string]interface{})
+		firmware = ov.FirmwareOption{
+			ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
+			FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+			ManageFirmware:       firmwareItem["manage_firmware"].(bool),
+			FirmwareOptionv200: ov.FirmwareOptionv200{
+				FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
+			},
+		}
+	}
+	serverProfileTemplate.Firmware = firmware
+
+	rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+	localStorage := ov.LocalStorageOptions{}
+	for _, raw := range rawLocalStorage {
+		localStorageItem := raw.(map[string]interface{})
+		localStorage = ov.LocalStorageOptions{
+			ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+			Initialize:         localStorageItem["initialize"].(bool),
+		}
+	}
+	serverProfileTemplate.LocalStorage = localStorage
+
+	rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
+	logicalDrives := make([]ov.LogicalDrive, 0)
+	for _, rawLogicalDrive := range rawLogicalDrives {
+		logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+		logicalDrives = append(logicalDrives, ov.LogicalDrive{
+			Bootable:  logicalDrivesItem["bootable"].(bool),
+			RaidLevel: logicalDrivesItem["raid_level"].(string),
+		})
+	}
+	serverProfileTemplate.LocalStorage.LogicalDrives = logicalDrives
+
+	rawSanStorage := d.Get("san_storage").(*schema.Set).List()
+	sanStorage := ov.SanStorageOptions{}
+	for _, raw := range rawSanStorage {
+		sanStorageItem := raw.(map[string]interface{})
+		sanStorage = ov.SanStorageOptions{
+			HostOSType:            sanStorageItem["host_os_type"].(string),
+			ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
+			ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
+			ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
+			SerialNumber:          sanStorageItem["serial_number"].(string),
+			Type:                  sanStorageItem["type"].(string),
+			URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
+		}
+	}
+	serverProfileTemplate.SanStorage = sanStorage
+
+	rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+	volumeAttachments := make([]ov.VolumeAttachment, 0)
+	for _, rawVolumeAttachment := range rawVolumeAttachments {
+		volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
+			Permanent:                      volumeAttachmentItem["permanent"].(bool),
+			LUN:                            volumeAttachmentItem["lun"].(string),
+			LUNType:                        volumeAttachmentItem["lun_type"].(string),
+			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
+			VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
+			VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
+			VolumeShareable:                volumeAttachmentItem["volume_shareable"].(bool),
+			VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
+			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
+			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
+			VolumeName:                     volumeAttachmentItem["volume_name"].(string),
+		})
+	}
+	serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
 
 	err = config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
 	if err != nil {
