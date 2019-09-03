@@ -550,25 +550,6 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
 	osDeploySetting := ov.OSDeploymentSettings{}
 	for _, raw := range rawOsDeploySetting {
-		/*		osDeploySettingItem := raw.(map[string]interface{})
-
-				osCustomAttributes := make([]ov.OSCustomAttribute, 0)
-				if osDeploySettingItem["os_custom_attributes"] != nil {
-					rawOsCustomAttributes := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
-					for _, rawCustomAttrib := range rawOsCustomAttributes {
-						customAttribItem := rawCustomAttrib.(map[string]interface{})
-						osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-							Name:  customAttribItem["name"].(string),
-							Value: customAttribItem["value"].(string),
-						})
-					}
-				}
-
-				osDeploySetting = ov.OSDeploymentSettings{
-					OSDeploymentPlanUri: utils.NewNstring(osDeploySettingItem["os_deployment_plan_uri"].(string)),
-					OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
-					OSCustomAttributes:  osCustomAttributes,
-				}*/
 		osDeploySettingItem := raw.(map[string]interface{})
 		osDeploymentPlan, err := config.i3sClient.GetDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
 		if err != nil {
