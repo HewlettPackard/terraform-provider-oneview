@@ -299,40 +299,38 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"storage_paths": {
+							Optional: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"status": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"storage_target_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"is_enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"connection_id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"storage_targets": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
+								},
+							},
+						},
 					},
 				},
-			},
-			// schema for ov.SanStorage.VolumeAttachments.StoragePath
-			"storage_paths": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"storage_target_type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"is_enabled": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"connection_id": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-					},
-				},
-			},
-			// schema for ov.SanStorage.VolumeAttachments.StoragePath.StorageTarget
-			"storage_targets": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
 			},
 			"os_deployment_settings": {
 				Optional: true,
@@ -348,21 +346,21 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-					},
-				},
-			},
-			"os_custom_attributes": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
+						"os_custom_attributes": {
 							Optional: true,
-						},
-						"value": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"value": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -500,8 +498,37 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	// Get volume attachment data for san storage
 	rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
 	volumeAttachments := make([]ov.VolumeAttachment, 0)
+
 	for _, rawVolumeAttachment := range rawVolumeAttachments {
 		volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+
+		// get volumeAttachemts.storagepaths
+		storagePaths := make([]ov.StoragePath, 0)
+		if volumeAttachmentItem["storage_paths"] != nil {
+			rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+
+			for _, rawStoragePath := range rawStoragePaths {
+				storagePathItem := rawStoragePath.(map[string]interface{})
+
+				// get volumeAttachemts.storagepaths.storageTargets
+				storageTargets := make([]string, 0)
+				if storagePathItem["storage_targets"] != nil {
+					rawStorageTargets := storagePathItem["storage_targets"].(*schema.Set).List()
+					for _, raw := range rawStorageTargets {
+						storageTargets = append(storageTargets, raw.(string))
+					}
+				}
+
+				storagePaths = append(storagePaths, ov.StoragePath{
+					IsEnabled:         storagePathItem["is_enabled"].(bool),
+					Status:            storagePathItem["status"].(string),
+					ConnectionID:      storagePathItem["connection_id"].(int),
+					StorageTargetType: storagePathItem["storage_target_type"].(string),
+					StorageTargets:    storageTargets,
+				})
+			}
+		}
+
 		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
 			Permanent:                      volumeAttachmentItem["permanent"].(bool),
 			LUN:                            volumeAttachmentItem["lun"].(string),
@@ -514,55 +541,35 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
 			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
 			VolumeName:                     volumeAttachmentItem["volume_name"].(string),
+			StoragePaths:                   storagePaths,
 		})
 	}
 	serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
-
-	// Get storage paths for volume attachments
-	rawStoragePaths := d.Get("storage_paths").(*schema.Set).List()
-	storagePaths := make([]ov.StoragePath, 0)
-	for _, rawStoragePath := range rawStoragePaths {
-		storagePathItem := rawStoragePath.(map[string]interface{})
-		storagePaths = append(storagePaths, ov.StoragePath{
-			IsEnabled:         storagePathItem["is_enabled"].(bool),
-			Status:            storagePathItem["status"].(string),
-			ConnectionID:      storagePathItem["connection_id"].(int),
-			StorageTargetType: storagePathItem["storage_target_type"].(string),
-		})
-	}
-	serverProfileTemplate.SanStorage.VolumeAttachments.StoragePaths = storagePaths
-
-	// Get Storage targets for storage paths
-	if val, ok := d.GetOk("storage_targets"); ok {
-		storageTargetsOrder := val.(*schema.Set).List()
-		storageTargets := make([]string, len(storageTargetsOrder))
-		for i, raw := range storageTargetsOrder {
-			storageTargets[i] = raw.(string)
-		}
-		serverProfileTemplate.SanStorage.VolumeAttachments.StoragePaths.StorageTargets = storageTargets
-	}
 
 	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
 	osDeploySetting := ov.OSDeploymentSettings{}
 	for _, raw := range rawOsDeploySetting {
 		osDeploySettingItem := raw.(map[string]interface{})
+
+		osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+		if osDeploySettingItem["os_custom_attributes"] != nil {
+			rawOsCustomAttributes := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+			for _, rawCustomAttrib := range rawOsCustomAttributes {
+				customAttribItem := rawCustomAttrib.(map[string]interface{})
+				osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+					Name:  customAttribItem["name"].(string),
+					Value: customAttribItem["value"].(string),
+				})
+			}
+		}
+
 		osDeploySetting = ov.OSDeploymentSettings{
 			OSDeploymentPlanUri: utils.NewNstring(osDeploySettingItem["os_deployment_plan_uri"].(string)),
 			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
+			OSCustomAttributes:  osCustomAttributes,
 		}
 	}
 	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
-
-	rawOsCustomAttributes := d.Get("os_custom_attributes").(*schema.Set).List()
-	osCustomAttributes := make(ov.OSCustomAttribute, 0)
-	for _, rawCustomAttrib := range rawOsCustomAttributes {
-		customAttribItem := rawCustomAttrib.(map[string]interface{})
-		osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-			Name:  customAttribItem["name"].(string),
-			Value: customAttribItem["value"](string),
-		})
-		serverProfileTemplate.OSDeploymentSettings.OSCustomAttributes = osCustomAttributes
-	}
 
 	sptError := config.ovClient.CreateProfileTemplate(serverProfileTemplate)
 	d.SetId(d.Get("name").(string))
