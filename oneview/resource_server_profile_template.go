@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -338,7 +339,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"os_deployment_plan_uri": {
+						"os_deployment_plan_name": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -346,7 +347,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"os_custom_attributes": {
+						/*"os_custom_attributes": {
 							Optional: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
@@ -361,7 +362,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 								},
 							},
-						},
+						},*/
 					},
 				},
 			},
@@ -549,22 +550,46 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
 	osDeploySetting := ov.OSDeploymentSettings{}
 	for _, raw := range rawOsDeploySetting {
+		/*		osDeploySettingItem := raw.(map[string]interface{})
+
+				osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+				if osDeploySettingItem["os_custom_attributes"] != nil {
+					rawOsCustomAttributes := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+					for _, rawCustomAttrib := range rawOsCustomAttributes {
+						customAttribItem := rawCustomAttrib.(map[string]interface{})
+						osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+							Name:  customAttribItem["name"].(string),
+							Value: customAttribItem["value"].(string),
+						})
+					}
+				}
+
+				osDeploySetting = ov.OSDeploymentSettings{
+					OSDeploymentPlanUri: utils.NewNstring(osDeploySettingItem["os_deployment_plan_uri"].(string)),
+					OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
+					OSCustomAttributes:  osCustomAttributes,
+				}*/
 		osDeploySettingItem := raw.(map[string]interface{})
+		osDeploymentPlan, err := config.i3sClient.GetDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+		if err != nil {
+			return err
+		}
+		if osDeploymentPlan.URI == "" {
+			return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+		}
 
 		osCustomAttributes := make([]ov.OSCustomAttribute, 0)
-		if osDeploySettingItem["os_custom_attributes"] != nil {
-			rawOsCustomAttributes := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
-			for _, rawCustomAttrib := range rawOsCustomAttributes {
-				customAttribItem := rawCustomAttrib.(map[string]interface{})
+		if osDeploymentPlan.CustomAttributes != nil {
+			for _, rawCustomAttrib := range osDeploymentPlan.CustomAttributes {
 				osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-					Name:  customAttribItem["name"].(string),
-					Value: customAttribItem["value"].(string),
+					Name:  rawCustomAttrib.Name,
+					Value: rawCustomAttrib.Value,
 				})
 			}
 		}
 
 		osDeploySetting = ov.OSDeploymentSettings{
-			OSDeploymentPlanUri: utils.NewNstring(osDeploySettingItem["os_deployment_plan_uri"].(string)),
+			OSDeploymentPlanUri: osDeploymentPlan.URI,
 			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
 			OSCustomAttributes:  osCustomAttributes,
 		}
