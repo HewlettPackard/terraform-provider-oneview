@@ -106,7 +106,8 @@ func Provider() terraform.ResourceProvider {
 			"oneview_uplink_set":                 resourceUplinkSet(),
 			"oneview_i3s_plan":                   resourceI3SPlan(),
 			"oneview_logical_enclosure":          resourceLogicalEnclosure(),
-			"oneview_storage_volume_template":    resourceStorageVolumeTemplate(),
+			"oneview_storage_pool":               resourceStoragePool(),
+      "oneview_storage_volume_template":    resourceStorageVolumeTemplate(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
