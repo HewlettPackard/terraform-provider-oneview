@@ -16,6 +16,8 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"io/ioutil"
+	"encoding/json"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
@@ -574,8 +576,19 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
 			OSCustomAttributes:  osCustomAttributes,
 		}
+		x,_ := json.MarshalIndent(osCustomAttributes,""," ")
+		ioutil.WriteFile("sample.txt",x,0644)
+
+		y,_ := json.MarshalIndent(serverProfileTemplate,"", " ")
+		ioutil.WriteFile("Sample222.txt",y,0644)
+
+
 	}
+
 	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
+
+	y,_ := json.MarshalIndent(serverProfileTemplate, "", " ")
+	ioutil.WriteFile("sample2.txt",y,0644)
 
 	sptError := config.ovClient.CreateProfileTemplate(serverProfileTemplate)
 	d.SetId(d.Get("name").(string))
