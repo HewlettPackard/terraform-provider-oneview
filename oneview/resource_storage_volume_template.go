@@ -2239,7 +2239,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 				rawEnums := item["enum"].(*schema.Set).List()
 				enums := make([]string, len(rawEnums))
 				for _, rawData := range rawEnums {
-					enums = append(enums,rawData.(string))
+					enums = append(enums, rawData.(string))
 				}
 				dpl_item.Enum = enums
 			}
