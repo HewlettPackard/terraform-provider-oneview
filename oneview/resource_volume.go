@@ -13,8 +13,8 @@ package oneview
 
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceVolume() *schema.Resource {
@@ -109,7 +109,6 @@ func resourceVolume() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-
 					},
 				},
 			},
@@ -195,22 +194,25 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 	volume := ov.StorageVolume{}
 
 	properties := d.Get("properties").(*schema.Set).List()[0].(map[string]interface{})
-	
 	volumeProperties := ov.Properties{
-		Storagepool:                       utils.NewNstring(properties["storage_pool"].(string)),
-		Name:                          d.Get("name").(string),
-		Size:                      properties["size"].(int),
-		ProvisioningType:             properties["provisioning_type"].(string),
-		DataTransferLimit: properties["data_transfer_limit"].(int),
+		Storagepool:         utils.NewNstring(properties["storage_pool"].(string)),
+		Name:                d.Get("name").(string),
+		Size:                properties["size"].(int),
+		ProvisioningType:    properties["provisioning_type"].(string),
+		DataTransferLimit:   properties["data_transfer_limit"].(int),
 		DataProtectionLevel: properties["data_protection_level"].(string),
-		IsDeduplicated:     properties["is_deduplicated"].(bool),
-		IsEncrypted:     properties["is_encrypted"].(bool),
-		IsPinned:     properties["is_pinned"].(bool),
-		IsCompressed:     properties["is_compressed"].(bool),
+		IsDeduplicated:      properties["is_deduplicated"].(bool),
+		IsEncrypted:         properties["is_encrypted"].(bool),
+		IsPinned:            properties["is_pinned"].(bool),
+		IsCompressed:        properties["is_compressed"].(bool),
 	}
 	volume.Properties = &volumeProperties
 	volume.TemplateURI = utils.NewNstring(d.Get("template_uri").(string))
-	volume.IsPermanent = d.Get("is_permanent").(bool)
+
+	if value, exist := d.GetOk("is_permanent"); exist {
+		val := value.(bool)
+		volume.IsPermanent = &val
+	}
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawInitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
@@ -253,9 +255,9 @@ func resourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 
 	deviceSpecificAttributesTemplates := make([]map[string]interface{}, 0, 1)
 	deviceSpecificAttributesTemplates = append(deviceSpecificAttributesTemplates, map[string]interface{}{
-		"copy_state":     storageVolume.DeviceSpecificAttributes.CopyState,
+		"copy_state":        storageVolume.DeviceSpecificAttributes.CopyState,
 		"is_compressed":     storageVolume.DeviceSpecificAttributes.IsCompressed,
-		"is_deduplicated":          storageVolume.DeviceSpecificAttributes.IsDeduplicated,
+		"is_deduplicated":   storageVolume.DeviceSpecificAttributes.IsDeduplicated,
 		"snapshot_pool_uri": storageVolume.DeviceSpecificAttributes.SnapshotPoolUri.String(),
 	})
 
@@ -282,27 +284,35 @@ func resourceVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	volume := ov.StorageVolume{}
+	isPermanent := d.Get("is_permanent").(bool)
+	isShareable := d.Get("is_shareable").(bool)
 
 	properties := d.Get("properties").(*schema.Set).List()[0].(map[string]interface{})
 	volume.Name = d.Get("name").(string)
 	volume.ProvisioningTypeForUpdate = properties["provisioning_type"].(string)
 	volume.Description = utils.NewNstring(d.Get("description").(string))
-	volume.IsPermanent = d.Get("is_permanent").(bool)
+	volume.IsPermanent = &isPermanent
 	volume.URI = utils.NewNstring(d.Get("uri").(string))
-	volume.IsShareable = d.Get("is_shareable").(bool)
+	volume.IsShareable = &isShareable
 
 	deviceSpecificAttributesTemplate := d.Get("device_specific_attributes").(*schema.Set).List()[0].(map[string]interface{})
 
 	deviceSpecificAttributes := ov.DeviceSpecificAttributes{
-		CopyState : deviceSpecificAttributesTemplate["copy_state"].(string),
-		IsCompressed : deviceSpecificAttributesTemplate["is_compressed"].(bool),
-		IsDeduplicated : deviceSpecificAttributesTemplate["is_deduplicated"].(bool),
-		SnapshotPoolUri : utils.NewNstring(deviceSpecificAttributesTemplate["snapshot_pool_uri"].(string)),
+		CopyState:      deviceSpecificAttributesTemplate["copy_state"].(string),
+		IsCompressed:   deviceSpecificAttributesTemplate["is_compressed"].(bool),
+		IsDeduplicated: deviceSpecificAttributesTemplate["is_deduplicated"].(bool),
+	}
+	if val, exist := deviceSpecificAttributesTemplate["snapshot_pool_uri"]; exist {
+		if val.(string) != "null" {
+			deviceSpecificAttributes.SnapshotPoolUri = utils.NewNstring(val.(string))
+		}
 	}
 	volume.DeviceSpecificAttributes = &deviceSpecificAttributes
 	volume.Category = d.Get("category").(string)
 	volume.Type = d.Get("type").(string)
 	volume.ETAG = d.Get("eTag").(string)
+	volume.ProvisionedCapacity = d.Get("provisioned_capacity").(string)
+	volume.TemplateVersion = d.Get("template_version").(string)
 
 	err := config.ovClient.UpdateStorageVolume(volume)
 	d.SetId(d.Get("name").(string))
@@ -314,7 +324,6 @@ func resourceVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	return resourceVolumeRead(d, meta)
 }
-
 
 func resourceVolumeDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)

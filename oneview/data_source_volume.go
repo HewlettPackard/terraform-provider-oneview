@@ -129,7 +129,18 @@ func dataSourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(d.Get("name").(string))
 	d.Set("category", storageVolume.Category)
 	d.Set("description", storageVolume.Description)
-	d.Set("device_specific_attributes", storageVolume.DeviceSpecificAttributes)
+	d.Set("allocated_capacity", storageVolume.AllocatedCapacity)
+	d.Set("device_volume_name", storageVolume.DeviceVolumeName)
+
+	deviceSpecificAttributesTemplates := make([]map[string]interface{}, 0, 1)
+	deviceSpecificAttributesTemplates = append(deviceSpecificAttributesTemplates, map[string]interface{}{
+		"copy_state":        storageVolume.DeviceSpecificAttributes.CopyState,
+		"is_compressed":     storageVolume.DeviceSpecificAttributes.IsCompressed,
+		"is_deduplicated":   storageVolume.DeviceSpecificAttributes.IsDeduplicated,
+		"snapshot_pool_uri": storageVolume.DeviceSpecificAttributes.SnapshotPoolUri.String(),
+	})
+
+	d.Set("device_specific_attributes", &deviceSpecificAttributesTemplates)
 	d.Set("eTag", storageVolume.ETAG)
 	d.Set("is_permanent", storageVolume.IsPermanent)
 	d.Set("is_shareable", storageVolume.IsShareable)
@@ -137,7 +148,7 @@ func dataSourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("provisioned_capacity", storageVolume.ProvisionedCapacity)
 	d.Set("provisioning_type", storageVolume.ProvisioningTypeForUpdate)
 	d.Set("requesting_refresh", storageVolume.RequestingRefresh)
-	d.Set("storage_pool_uri", storageVolume.StorageSystemUri.String())
+	d.Set("storage_pool_uri", storageVolume.StoragePoolUri.String())
 	d.Set("template_version", storageVolume.TemplateVersion)
 	d.Set("type", storageVolume.Type)
 	d.Set("uri", storageVolume.URI.String())
