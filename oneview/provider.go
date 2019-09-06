@@ -87,6 +87,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_uplink_set":                 dataSourceUplinkSet(),
 			"oneview_network_set":                dataSourceNetworkSet(),
 			"oneview_storage_volume_template":    dataSourceStorageVolumeTemplate(),
+			"oneview_volume":                     dataSourceVolume(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -109,6 +110,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_logical_enclosure":          resourceLogicalEnclosure(),
 			"oneview_storage_pool":               resourceStoragePool(),
 			"oneview_storage_volume_template":    resourceStorageVolumeTemplate(),
+			"oneview_volume":                     resourceVolume(),
 		},
 		ConfigureFunc: providerConfigure,
 	}

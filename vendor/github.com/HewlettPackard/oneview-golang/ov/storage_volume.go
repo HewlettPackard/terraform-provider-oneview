@@ -24,16 +24,16 @@ type StorageVolume struct {
 	DeviceVolumeName          string                    `json:"deviceVolumeName,omitempty"`
 	RequestingRefresh         bool                      `json:"requestingRefresh,omitempty"`
 	AllocatedCapacity         string                    `json:"allocatedCapacity,omitempty"`
-	InitialScopeUris          utils.Nstring             `json:"initialScopeUris,omitempty"`
+	InitialScopeUris          []utils.Nstring           `json:"initialScopeUris,omitempty"`
 	DeviceSpecificAttributes  *DeviceSpecificAttributes `json:"deviceSpecificAttributes,omitempty"`
 	VolumeTemplateUri         utils.Nstring             `json:"volumeTemplateUri,omitempty"`
-	IsShareable               bool                      `json:"isShareable,omitempty"`
+	IsShareable               *bool                     `json:"isShareable,omitempty"`
 	StoragePoolUri            utils.Nstring             `json:"storagePoolUri,omitempty"`
 	StorageSystemUri          utils.Nstring             `json:"storageSystemUri,omitempty"`
 	ProvisionedCapacity       string                    `json:"provisionedCapacity,omitempty"`
 	Properties                *Properties               `json:"properties,omitempty"`
 	TemplateURI               utils.Nstring             `json:"templateURI,omitempty"`
-	IsPermanent               bool                      `json:"isPermanent,omitempty"`
+	IsPermanent               *bool                     `json:"isPermanent,omitempty"`
 	ProvisioningTypeForUpdate string                    `json:"provisioningType,omitempty"`
 	TemplateVersion           string                    `json:"templateVersion,omitempty"`
 	//	Wwn										string				`json:""`
@@ -87,6 +87,7 @@ type Properties struct {
 	IsEncrypted         bool          `json:"isEncrypted,omitempty"`
 	IsPinned            bool          `json:"isPinned,omitempty"`
 	IsCompressed        bool          `json:"isCompressed,omitempty"`
+	IsShareable         bool          `json:"isShareable,omitempty"`
 	DataProtectionLevel string        `json:"dataProtectionLevel,omitempty"`
 }
 
