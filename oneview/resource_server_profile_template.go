@@ -911,7 +911,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.Boot.ManageBoot = true
 		serverProfileTemplate.Boot.Order = bootOrder
 	}
-	
+
 	rawFirmware := d.Get("firmware").(*schema.Set).List()
 	firmware := ov.FirmwareOption{}
 	for _, raw := range rawFirmware {
@@ -1053,7 +1053,6 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 
 	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
-
 
 	err = config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
 	if err != nil {
