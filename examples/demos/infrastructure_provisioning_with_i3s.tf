@@ -1,10 +1,10 @@
 provider "oneview" {
-	ov_username = "gireesan"
-	ov_password = "P@ssw0rd!"
-	ov_endpoint = "https://10.50.4.100"
-	i3s_endpoint = "https://10.50.4.106"	
+	ov_username = <ov-username>
+	ov_password = <ov-password>
+	ov_endpoint = <ov-endpoint>
+	i3s_endpoint = <i3s-endpoint>
 	ov_sslverify = false
-	ov_apiversion = 1000
+	ov_apiversion = <ov-api-version>
 	ov_ifmatch = "*"
 }
 
