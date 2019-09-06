@@ -846,15 +846,61 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	networks := make([]ov.Connection, 0)
 	for _, rawNet := range rawNetwork {
 		rawNetworkItem := rawNet.(map[string]interface{})
+
+		bootOptions := ov.BootOption{}
+		if rawNetworkItem["boot"] != nil {
+			rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+			for _, rawBoot := range rawBoots {
+				bootItem := rawBoot.(map[string]interface{})
+
+				iscsi := ov.BootIscsi{}
+				if bootItem["iscsi"] != nil {
+					rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+					for _, rawIscsi := range rawIscsis {
+						rawIscsiItem := rawIscsi.(map[string]interface{})
+						iscsi = ov.BootIscsi{
+							ChapLevel:            rawIscsiItem["chap_level"].(string),
+							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
+							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+							InitiatorNameSource:  rawIscsiItem["initiator_name_source"].(string),
+							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
+							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+						}
+					}
+				}
+
+				bootOptions = ov.BootOption{
+					Priority:         bootItem["priority"].(string),
+					EthernetBootType: bootItem["ethernet_boot_type"].(string),
+					BootVolumeSource: bootItem["boot_volume_source"].(string),
+					Iscsi:            &iscsi,
+				}
+			}
+		}
+
+		ipv4 := ov.Ipv4Option{}
+		if rawNetworkItem["ipv4"] != nil {
+			rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+			for _, rawIpv4 := range rawIpv4s {
+				rawIpv4Item := rawIpv4.(map[string]interface{})
+				ipv4 = ov.Ipv4Option{
+					Gateway:         rawIpv4Item["gateway"].(string),
+					IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+				}
+			}
+		}
+
 		networks = append(networks, ov.Connection{
+			ID:            rawNetworkItem["id"].(int),
 			Name:          rawNetworkItem["name"].(string),
 			FunctionType:  rawNetworkItem["function_type"].(string),
 			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
 			PortID:        rawNetworkItem["port_id"].(string),
 			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+			Ipv4:          &ipv4,
+			Boot:          &bootOptions,
 		})
 	}
-	serverProfileTemplate.Connections = networks
 
 	if val, ok := d.GetOk("boot_order"); ok {
 		rawBootOrder := val.(*schema.Set).List()
@@ -865,7 +911,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.Boot.ManageBoot = true
 		serverProfileTemplate.Boot.Order = bootOrder
 	}
-
+	
 	rawFirmware := d.Get("firmware").(*schema.Set).List()
 	firmware := ov.FirmwareOption{}
 	for _, raw := range rawFirmware {
@@ -881,6 +927,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.Firmware = firmware
 
+	// Get local storage data if provided
 	rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
 	localStorage := ov.LocalStorageOptions{}
 	for _, raw := range rawLocalStorage {
@@ -903,6 +950,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.LocalStorage.LogicalDrives = logicalDrives
 
+	// get SAN storage data if provided
 	rawSanStorage := d.Get("san_storage").(*schema.Set).List()
 	sanStorage := ov.SanStorageOptions{}
 	for _, raw := range rawSanStorage {
@@ -919,12 +967,44 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.SanStorage = sanStorage
 
+	// Get volume attachment data for san storage
 	rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
 	volumeAttachments := make([]ov.VolumeAttachment, 0)
+
 	for _, rawVolumeAttachment := range rawVolumeAttachments {
 		volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+
+		// get volumeAttachemts.storagepaths
+		storagePaths := make([]ov.StoragePath, 0)
+		if volumeAttachmentItem["storage_paths"] != nil {
+			rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+
+			for _, rawStoragePath := range rawStoragePaths {
+				storagePathItem := rawStoragePath.(map[string]interface{})
+
+				// get volumeAttachemts.storagepaths.storageTargets
+				storageTargets := make([]string, 0)
+				if storagePathItem["storage_targets"] != nil {
+					rawStorageTargets := storagePathItem["storage_targets"].(*schema.Set).List()
+					for _, raw := range rawStorageTargets {
+						storageTargets = append(storageTargets, raw.(string))
+					}
+				}
+
+				storagePaths = append(storagePaths, ov.StoragePath{
+					IsEnabled:         storagePathItem["is_enabled"].(bool),
+					Status:            storagePathItem["status"].(string),
+					ConnectionID:      storagePathItem["connection_id"].(int),
+					StorageTargetType: storagePathItem["storage_target_type"].(string),
+					TargetSelector:    storagePathItem["target_selector"].(string),
+					StorageTargets:    storageTargets,
+				})
+			}
+		}
+
 		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
 			Permanent:                      volumeAttachmentItem["permanent"].(bool),
+			ID:                             volumeAttachmentItem["id"].(int),
 			LUN:                            volumeAttachmentItem["lun"].(string),
 			LUNType:                        volumeAttachmentItem["lun_type"].(string),
 			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
@@ -935,9 +1015,45 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
 			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
 			VolumeName:                     volumeAttachmentItem["volume_name"].(string),
+			StoragePaths:                   storagePaths,
+			BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
 		})
 	}
 	serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
+
+	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+	osDeploySetting := ov.OSDeploymentSettings{}
+	for _, raw := range rawOsDeploySetting {
+		osDeploySettingItem := raw.(map[string]interface{})
+		osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+		if err != nil {
+			return err
+		}
+		if osDeploymentPlan.URI == "" {
+			return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+		}
+
+		osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+		if osDeploySettingItem["os_custom_attributes"] != nil {
+			rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+			for _, rawDeploySetting := range rawOsDeploySettings {
+				rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+				osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+					Name:  rawOsDeploySetting["name"].(string),
+					Value: rawOsDeploySetting["value"].(string),
+				})
+			}
+		}
+
+		osDeploySetting = ov.OSDeploymentSettings{
+			OSDeploymentPlanUri: osDeploymentPlan.URI,
+			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
+			OSCustomAttributes:  osCustomAttributes,
+		}
+	}
+
+	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
+
 
 	err = config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
 	if err != nil {
