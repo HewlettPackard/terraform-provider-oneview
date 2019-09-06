@@ -31,7 +31,7 @@ func TestAccVolume_1(t *testing.T) {
 			{
 				Config: testAccUplinkSet,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckUplinkSetExists(
+					testAccCheckVolumeExists(
 						"oneview_volume.test", &volume),
 					resource.TestCheckResourceAttr(
 						"oneview_volume.test", "name", "terraform volume",
@@ -75,7 +75,7 @@ func testAccCheckVolumeExists(n string, volume *ov.StorageVolume) resource.TestC
 	}
 }
 
-func testAccCheckUplinkSetDestroy(s *terraform.State) error {
+func testAccCheckVolumeDestroy(s *terraform.State) error {
 	config := testAccProvider.Meta().(*Config)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "oneview_volume" {
