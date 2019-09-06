@@ -51,11 +51,11 @@ func resourceVolume() *schema.Resource {
 						},
 						"is_compressed": {
 							Type:     schema.TypeBool,
-							Computed: true,
+							Optional: true,
 						},
 						"is_deduplicated": {
 							Type:     schema.TypeBool,
-							Computed: true,
+							Optional: true,
 						},
 						"snapshot_pool_uri": {
 							Type:     schema.TypeString,
@@ -130,7 +130,7 @@ func resourceVolume() *schema.Resource {
 			},
 			"provisioned_capacity": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"provisioning_type": {
 				Type:     schema.TypeString,
@@ -142,7 +142,7 @@ func resourceVolume() *schema.Resource {
 			},
 			"requesting_refresh": {
 				Type:     schema.TypeBool,
-				Computed: true,
+				Optional: true,
 			},
 			"template_uri": {
 				Type:     schema.TypeString,

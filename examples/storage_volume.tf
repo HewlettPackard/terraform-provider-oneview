@@ -20,6 +20,7 @@ resource "oneview_volume" "volume" {
   name = "testvol"
   description = "Test Volume"
   initial_scope_uris = ["/rest/scopes/4dff2b83-edb0-4629-a002-4a6a18951115"]
+  provisioned_capacity = "268435456"
 }
 
 /* Datasource
