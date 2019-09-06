@@ -12,7 +12,6 @@
 package oneview
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -738,7 +737,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		}
 	}
 
-	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
+	serverProfileTemplate.OSDeploymentSettings = &osDeploySetting
 
 	sptError := config.ovClient.CreateProfileTemplate(serverProfileTemplate)
 	d.SetId(d.Get("name").(string))
@@ -1052,7 +1051,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		}
 	}
 
-	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
+	serverProfileTemplate.OSDeploymentSettings = &osDeploySetting
 
 	err = config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
 	if err != nil {

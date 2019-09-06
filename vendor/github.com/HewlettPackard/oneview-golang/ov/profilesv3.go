@@ -45,9 +45,9 @@ type BootOptionV3 struct {
 }
 
 type ServerProfilev300 struct {
-	IscsiInitiatorName     string               `json:"iscsiInitiatorName,omitempty"`     // "iscsiInitiatorName": "name of iscsi initiator name",
-	IscsiInitiatorNameType string               `json:"iscsiInitiatorNameType,omitempty"` // "iscsiInitiatorNameType": "UserDefined",
-	OSDeploymentSettings   OSDeploymentSettings `json:"osDeploymentSettings,omitempty"`   // "osDeploymentSettings": {...},
+	IscsiInitiatorName     string                `json:"iscsiInitiatorName,omitempty"`     // "iscsiInitiatorName": "name of iscsi initiator name",
+	IscsiInitiatorNameType string                `json:"iscsiInitiatorNameType,omitempty"` // "iscsiInitiatorNameType": "UserDefined",
+	OSDeploymentSettings   *OSDeploymentSettings `json:"osDeploymentSettings,omitempty"`   // "osDeploymentSettings": {...},
 }
 
 type OSDeploymentSettings struct {
