@@ -9,7 +9,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Support for Update Group in Logical Enclosure.
 - Support for Update Compliance in Logical Interconnect.
 - Usecase for synergy infrastructure provisioning with Network.
-- Usecase for synergy infrastructure proviosiong with i3s.
+- Usecase for synergy infrastructure provisioning with i3s.
 
 ### Oneview Features supported
 - Enclosure Group
