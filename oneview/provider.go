@@ -78,6 +78,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_scope":                      dataSourceScope(),
 			"oneview_server_hardware":            dataSourceServerHardware(),
 			"oneview_server_hardware_type":       dataSourceServerHardwareType(),
+			"oneview_storage_attachment":         dataSourceStorageAttachment(),
 			"oneview_logical_enclosure":          dataSourceLogicalEnclosure(),
 			"oneview_enclosure_group":            dataSourceEnclosureGroup(),
 			"oneview_server_profile":             dataSourceServerProfile(),
