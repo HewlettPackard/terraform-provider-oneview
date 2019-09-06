@@ -12,12 +12,11 @@
 package oneview
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	"io/ioutil"
-	"encoding/json"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
@@ -61,6 +60,34 @@ func resourceServerProfileTemplate() *schema.Resource {
 					},
 				},
 			},
+			"bios_option": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_bios": {
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+						"overridden_settings": {
+							Optional: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"id": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"value": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"network": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -91,7 +118,76 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"id": {
 							Type:     schema.TypeInt,
-							Computed: true,
+							Optional: true,
+						},
+						"boot": {
+							Optional: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"priority": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"ethernet_boot_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"boot_volume_source": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"iscsi": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"chap_level": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"first_boot_target_ip": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"first_boot_target_port": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"initiator_name_source": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"second_boot_target_ip": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"second_boot_target_port": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						"ipv4": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"gateway": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"ip_address_source": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -258,11 +354,19 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
 						"lun": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
 						"lun_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"boot_volume_priority": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -315,6 +419,10 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
+									"target_selector": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 									"is_enabled": {
 										Type:     schema.TypeBool,
 										Optional: true,
@@ -349,7 +457,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						/*"os_custom_attributes": {
+						"os_custom_attributes": {
 							Optional: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
@@ -364,7 +472,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 								},
 							},
-						},*/
+						},
 					},
 				},
 			},
@@ -401,12 +509,59 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	networks := make([]ov.Connection, 0)
 	for _, rawNet := range rawNetwork {
 		rawNetworkItem := rawNet.(map[string]interface{})
+
+		bootOptions := ov.BootOption{}
+		if rawNetworkItem["boot"] != nil {
+			rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+			for _, rawBoot := range rawBoots {
+				bootItem := rawBoot.(map[string]interface{})
+
+				iscsi := ov.BootIscsi{}
+				if bootItem["iscsi"] != nil {
+					rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+					for _, rawIscsi := range rawIscsis {
+						rawIscsiItem := rawIscsi.(map[string]interface{})
+						iscsi = ov.BootIscsi{
+							ChapLevel:            rawIscsiItem["chap_level"].(string),
+							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
+							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+							InitiatorNameSource:  rawIscsiItem["initiator_name_source"].(string),
+							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
+							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+						}
+					}
+				}
+
+				bootOptions = ov.BootOption{
+					Priority:         bootItem["priority"].(string),
+					EthernetBootType: bootItem["ethernet_boot_type"].(string),
+					BootVolumeSource: bootItem["boot_volume_source"].(string),
+					Iscsi:            &iscsi,
+				}
+			}
+		}
+
+		ipv4 := ov.Ipv4Option{}
+		if rawNetworkItem["ipv4"] != nil {
+			rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+			for _, rawIpv4 := range rawIpv4s {
+				rawIpv4Item := rawIpv4.(map[string]interface{})
+				ipv4 = ov.Ipv4Option{
+					Gateway:         rawIpv4Item["gateway"].(string),
+					IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+				}
+			}
+		}
+
 		networks = append(networks, ov.Connection{
+			ID:            rawNetworkItem["id"].(int),
 			Name:          rawNetworkItem["name"].(string),
 			FunctionType:  rawNetworkItem["function_type"].(string),
 			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
 			PortID:        rawNetworkItem["port_id"].(string),
 			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+			Ipv4:          &ipv4,
+			Boot:          &bootOptions,
 		})
 	}
 	if val, ok := d.GetOk("manage_connections"); ok {
@@ -527,6 +682,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					Status:            storagePathItem["status"].(string),
 					ConnectionID:      storagePathItem["connection_id"].(int),
 					StorageTargetType: storagePathItem["storage_target_type"].(string),
+					TargetSelector:    storagePathItem["target_selector"].(string),
 					StorageTargets:    storageTargets,
 				})
 			}
@@ -534,6 +690,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
 			Permanent:                      volumeAttachmentItem["permanent"].(bool),
+			ID:                             volumeAttachmentItem["id"].(int),
 			LUN:                            volumeAttachmentItem["lun"].(string),
 			LUNType:                        volumeAttachmentItem["lun_type"].(string),
 			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
@@ -545,6 +702,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
 			VolumeName:                     volumeAttachmentItem["volume_name"].(string),
 			StoragePaths:                   storagePaths,
+			BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
 		})
 	}
 	serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
@@ -553,7 +711,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	osDeploySetting := ov.OSDeploymentSettings{}
 	for _, raw := range rawOsDeploySetting {
 		osDeploySettingItem := raw.(map[string]interface{})
-		osDeploymentPlan, err := config.i3sClient.GetDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+		osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
 		if err != nil {
 			return err
 		}
@@ -562,11 +720,13 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		}
 
 		osCustomAttributes := make([]ov.OSCustomAttribute, 0)
-		if osDeploymentPlan.CustomAttributes != nil {
-			for _, rawCustomAttrib := range osDeploymentPlan.CustomAttributes {
+		if osDeploySettingItem["os_custom_attributes"] != nil {
+			rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+			for _, rawDeploySetting := range rawOsDeploySettings {
+				rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
 				osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-					Name:  rawCustomAttrib.Name,
-					Value: rawCustomAttrib.Value,
+					Name:  rawOsDeploySetting["name"].(string),
+					Value: rawOsDeploySetting["value"].(string),
 				})
 			}
 		}
@@ -576,19 +736,9 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
 			OSCustomAttributes:  osCustomAttributes,
 		}
-		x,_ := json.MarshalIndent(osCustomAttributes,""," ")
-		ioutil.WriteFile("sample.txt",x,0644)
-
-		y,_ := json.MarshalIndent(serverProfileTemplate,"", " ")
-		ioutil.WriteFile("Sample222.txt",y,0644)
-
-
 	}
 
 	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
-
-	y,_ := json.MarshalIndent(serverProfileTemplate, "", " ")
-	ioutil.WriteFile("sample2.txt",y,0644)
 
 	sptError := config.ovClient.CreateProfileTemplate(serverProfileTemplate)
 	d.SetId(d.Get("name").(string))
