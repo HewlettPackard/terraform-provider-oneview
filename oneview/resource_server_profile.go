@@ -82,6 +82,39 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
+			"os_deployment_settings": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"os_deployment_plan_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_volume_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_custom_attributes": {
+							Optional: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"value": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -116,6 +149,41 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
+
+	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+	osDeploySetting := ov.OSDeploymentSettings{}
+	for _, raw := range rawOsDeploySetting {
+		osDeploySettingItem := raw.(map[string]interface{})
+		osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+
+		if err != nil {
+			return err
+		}
+
+		if osDeploymentPlan.URI == "" {
+			return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+		}
+
+		osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+		if osDeploySettingItem["os_custom_attributes"] != nil {
+			rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+			for _, rawDeploySetting := range rawOsDeploySettings {
+				rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+
+				osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+					Name:  rawOsDeploySetting["name"].(string),
+					Value: rawOsDeploySetting["value"].(string),
+				})
+			}
+		}
+
+		osDeploySetting = ov.OSDeploymentSettings{
+			OSDeploymentPlanUri: osDeploymentPlan.URI,
+			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
+			OSCustomAttributes:  osCustomAttributes,
+		}
+	}
+	serverProfile.OSDeploymentSettings = &osDeploySetting
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
@@ -189,6 +257,40 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		}
 		serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 	}
+
+	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+	osDeploySetting := ov.OSDeploymentSettings{}
+	for _, raw := range rawOsDeploySetting {
+		osDeploySettingItem := raw.(map[string]interface{})
+		osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+
+		if err != nil {
+			return err
+		}
+
+		if osDeploymentPlan.URI == "" {
+			return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+		}
+
+		osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+		if osDeploySettingItem["os_custom_attributes"] != nil {
+			rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+			for _, rawDeploySetting := range rawOsDeploySettings {
+				rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+
+				osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+					Name:  rawOsDeploySetting["name"].(string),
+					Value: rawOsDeploySetting["value"].(string),
+				})
+			}
+		}
+		osDeploySetting = ov.OSDeploymentSettings{
+			OSDeploymentPlanUri: osDeploymentPlan.URI,
+			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
+			OSCustomAttributes:  osCustomAttributes,
+		}
+	}
+	serverProfile.OSDeploymentSettings = &osDeploySetting
 
 	err := config.ovClient.UpdateServerProfile(serverProfile)
 	if err != nil {
