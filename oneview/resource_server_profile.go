@@ -82,6 +82,31 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
+			"os_deployment_settings": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"os_custom_attributes": {
+							Optional: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"value": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -115,6 +140,36 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			return errors.New("Server Hardware must be powered off to assign to the server profile")
 		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
+	}
+
+	if val, ok := d.GetOk("os_deployment_settings"); ok {
+		rawOsDeploySetting := val.(*schema.Set).List()
+		for _, raw := range rawOsDeploySetting {
+			osDeploySettingItem := raw.(map[string]interface{})
+
+			osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+			if osDeploySettingItem["os_custom_attributes"] != nil {
+				rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+				for _, rawDeploySetting := range rawOsDeploySettings {
+					rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+
+					osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+						Name:  rawOsDeploySetting["name"].(string),
+						Value: rawOsDeploySetting["value"].(string),
+					})
+				}
+			}
+
+			// If Name already imported from SPT, overwrite its value from SP
+			for _, temp1 := range osCustomAttributes {
+				for j, temp2 := range serverProfile.OSDeploymentSettings.OSCustomAttributes {
+					if temp1.Name == temp2.Name {
+						serverProfile.OSDeploymentSettings.OSCustomAttributes[j].Value = temp1.Value
+					}
+				}
+			}
+
+		}
 	}
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
@@ -188,6 +243,36 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			return err
 		}
 		serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
+	}
+
+	if val, ok := d.GetOk("os_deployment_settings"); ok {
+		rawOsDeploySetting := val.(*schema.Set).List()
+		for _, raw := range rawOsDeploySetting {
+			osDeploySettingItem := raw.(map[string]interface{})
+
+			osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+			if osDeploySettingItem["os_custom_attributes"] != nil {
+				rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+				for _, rawDeploySetting := range rawOsDeploySettings {
+					rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+
+					osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+						Name:  rawOsDeploySetting["name"].(string),
+						Value: rawOsDeploySetting["value"].(string),
+					})
+				}
+			}
+
+			// If Name already imported from SPT, overwrite its value from SP
+			for _, temp1 := range osCustomAttributes {
+				for j, temp2 := range serverProfile.OSDeploymentSettings.OSCustomAttributes {
+					if temp1.Name == temp2.Name {
+						serverProfile.OSDeploymentSettings.OSCustomAttributes[j].Value = temp1.Value
+					}
+				}
+			}
+
+		}
 	}
 
 	err := config.ovClient.UpdateServerProfile(serverProfile)
