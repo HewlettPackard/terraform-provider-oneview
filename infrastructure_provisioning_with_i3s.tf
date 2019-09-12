@@ -14,6 +14,49 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 	enclosure_group = "SYN03_EC"
 	server_hardware_type = "DL380p Gen8 1 (new name)"
 	network = [{
+		id = 1
+		name = "Deployment Network A"
+		function_type = "Ethernet"
+		network_uri = "/rest/ethernet-networks/29af1597-7f2e-45d8-aaed-ee1be6c42ae2"
+		port_id = "Mezz 3:1-a"
+		boot = {
+			priority = "Primary"
+			ethernet_boot_type = "iSCSI"
+			boot_volume_source = "UserDefined"
+			iscsi = {
+				initiator_name_source="ProfileInitiatorName"
+				chap_level="None"
+				}
+			}
+		ipv4 = {
+			ip_address_source = "SubnetPool"
+			}
+		},
+		{
+		id = 2
+		name = "Deployment Network B"
+		function_type = "Ethernet"
+		network_uri = "/rest/ethernet-networks/29af1597-7f2e-45d8-aaed-ee1be6c42ae2"
+		port_id = "Mezz 3:2-a"
+		boot = {
+			priority = "Secondary"
+			ethernet_boot_type = "iSCSI"
+			boot_volume_source = "UserDefined"
+			iscsi = { 
+				initiator_name_source="ProfileInitiatorName"
+				chap_level="None"
+				}
+			}
+		ipv4 = {
+			ip_address_source = "Subnetpool"
+			}
+		}]
+	os_deployment_settings = {
+		os_custom_attributes = [{
+			name="HostName"
+			value="rheltest"
+		},
+		{
 		id = 3
 		name = "fc01"
 		function_type = "FibreChannel"
@@ -97,59 +140,8 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 			target_selector = "Auto"
 			storage_targets = []
 			}]
-	}]	
-}
-
-
-resource "oneview_server_profile" "SP" {
-	name = "TestSpTerraform"
-	hardware_name = "SYN03_Frame1, bay 3"
-	type = "ServerProfileV10"
-	template = "${oneview_server_profile_template.ServerProfileTemplate.name}"
-	network = [{
-		id = 1
-		name = "Deployment Network A"
-		function_type = "Ethernet"
-		network_uri = "/rest/ethernet-networks/29af1597-7f2e-45d8-aaed-ee1be6c42ae2"
-		port_id = "Mezz 3:1-a"
-		boot = {
-			priority = "Primary"
-			ethernet_boot_type = "iSCSI"
-			boot_volume_source = "UserDefined"
-			iscsi = {
-				initiator_name_source="ProfileInitiatorName"
-				chap_level="None"
-				}
-			}
-		ipv4 = {
-			ip_address_source = "SubnetPool"
-			}
-		},
-		{
-		id = 2
-		name = "Deployment Network B"
-		function_type = "Ethernet"
-		network_uri = "/rest/ethernet-networks/29af1597-7f2e-45d8-aaed-ee1be6c42ae2"
-		port_id = "Mezz 3:2-a"
-		boot = {
-			priority = "Secondary"
-			ethernet_boot_type = "iSCSI"
-			boot_volume_source = "UserDefined"
-			iscsi = { 
-				initiator_name_source="ProfileInitiatorName"
-				chap_level="None"
-				}
-			}
-		ipv4 = {
-			ip_address_source = "Subnetpool"
-			}
-		}]
-	os_deployment_settings = {
-		os_custom_attributes = [{
-			name="HostName"
-			value="rheltest"
-		}]
-	}
+	}]
+	
 	os_deployment_settings = {
 		os_deployment_plan_name = "RHEL"
 		os_custom_attributes = [{
@@ -238,6 +230,20 @@ resource "oneview_server_profile" "SP" {
             name="TotalMgmtNICs"
             value="1" 	        }]
 
+	}
+}
+
+
+resource "oneview_server_profile" "SP" {
+	name = "TestSpTerraform"
+	hardware_name = "SYN03_Frame1, bay 3"
+	type = "ServerProfileV10"
+	template = "${oneview_server_profile_template.ServerProfileTemplate.name}"
+	os_deployment_settings = {
+		os_custom_attributes = [{
+			name="HostName"
+			value="rheltest"
+		}]
 	}
 	depends_on = ["oneview_server_profile_template.ServerProfileTemplate"]
 }
