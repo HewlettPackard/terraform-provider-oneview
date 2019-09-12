@@ -136,6 +136,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 			storage_targets = []
 			}]
 	}]
+	
 	os_deployment_settings = {
 		os_deployment_plan_name = "RHEL"
 		os_custom_attributes = [{
@@ -151,9 +152,9 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
             value="10"
           
          },
-         { 
-            name="HostName"
-            value="rhel7601"},
+	 {
+	   name="HostName"
+	  value="rhel7601"},
          { 
             name="LogicalVolumeGroupName"
             value="new_vol_group"},
@@ -233,5 +234,11 @@ resource "oneview_server_profile" "SP" {
 	hardware_name = "SYN03_Frame1, bay 3"
 	type = "ServerProfileV10"
 	template = "${oneview_server_profile_template.ServerProfileTemplate.name}"
+	os_deployment_settings = {
+		os_custom_attributes = [{
+			name="HostName"
+			value="rheltest"
+		}]
+	}
 	depends_on = ["oneview_server_profile_template.ServerProfileTemplate"]
 }
