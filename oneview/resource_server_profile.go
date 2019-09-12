@@ -177,10 +177,17 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			}
 		}
 
+		for _, temp1 := range osCustomAttributes {
+			for j, temp2 := range serverProfile.OSDeploymentSettings.OSCustomAttributes {
+				if temp1.Name == temp2.Name {
+					serverProfile.OSDeploymentSettings.OSCustomAttributes[j].Value = temp1.Value
+				}
+			}
+		}
+
 		osDeploySetting = ov.OSDeploymentSettings{
 			OSDeploymentPlanUri: osDeploymentPlan.URI,
 			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
-			OSCustomAttributes:  osCustomAttributes,
 		}
 	}
 	serverProfile.OSDeploymentSettings = &osDeploySetting
