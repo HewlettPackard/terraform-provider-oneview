@@ -50,11 +50,6 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 		ipv4 = {
 			ip_address_source = "Subnetpool"
 			}
-		}]
-	os_deployment_settings = {
-		os_custom_attributes = [{
-			name="HostName"
-			value="rheltest"
 		},
 		{
 		id = 3
