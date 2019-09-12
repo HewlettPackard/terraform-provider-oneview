@@ -58,3 +58,5 @@ In addition to the arguments listed above, the following computed attributes are
 * `ilo_ip` - The ILO ip address that is managing the server.
 
 * `hardware_uri` - The URI of the hardware the server is provisioned on.
+
+* `os_deployment_settings` - (Optional) OS Deployment settings applicable when deployment is invoked through a server profile.
