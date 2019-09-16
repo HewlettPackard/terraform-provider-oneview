@@ -155,16 +155,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
 
-	if d.Get("power_state").(string) == "on" {
-		if err := serverHardware.PowerOn(); err != nil {
-			return err
-		}
-	} else if d.Get("power_state").(string) == "off" {
-		if err := serverHardware.PowerOff(); err != nil {
-			return err
-		}
-	}
-
 	if val, ok := d.GetOk("os_deployment_settings"); ok {
 		rawOsDeploySetting := val.(*schema.Set).List()
 		for _, raw := range rawOsDeploySetting {
@@ -201,6 +191,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		d.SetId("")
 		return err
+	} else if d.Get("power_state").(string) == "on" {
+		if err := serverHardware.PowerOn(); err != nil {
+			return err
+		}
 	}
 
 	return resourceServerProfileRead(d, meta)
@@ -249,8 +243,10 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		URI:  utils.NewNstring(d.Get("uri").(string)),
 	}
 
+	var serverHardware ov.ServerHardware
 	if val, ok := d.GetOk("hardware_name"); ok {
-		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
+		var err error
+		serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
 		if err != nil {
 			return err
 		}
