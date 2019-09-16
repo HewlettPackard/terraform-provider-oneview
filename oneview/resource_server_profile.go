@@ -82,6 +82,17 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
+			"power_state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: func(v interface{}, k string) (warning []string, errors []error) {
+					val := v.(string)
+					if val != "on" && val != "off" {
+						errors = append(errors, fmt.Errorf("%q must be 'on' or 'off'", k))
+					}
+					return
+				},
+			},
 			"os_deployment_settings": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -131,8 +142,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	serverProfile.Type = d.Get("type").(string)
 	serverProfile.Name = d.Get("name").(string)
 
+	var serverHardware ov.ServerHardware
 	if val, ok := d.GetOk("hardware_name"); ok {
-		serverHardware, err := config.ovClient.GetServerHardwareByName(val.(string))
+		var err error
+		serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
 		if err != nil {
 			return err
 		}
@@ -140,6 +153,12 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			return errors.New("Server Hardware must be powered off to assign to the server profile")
 		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
+	}
+
+	if d.Get("power_state").(string) == "on" {
+		if err := serverHardware.PowerOn(); err != nil {
+			return err
+		}
 	}
 
 	if val, ok := d.GetOk("os_deployment_settings"); ok {
