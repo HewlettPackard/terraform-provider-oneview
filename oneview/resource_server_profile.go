@@ -159,6 +159,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		if err := serverHardware.PowerOn(); err != nil {
 			return err
 		}
+	} else if d.Get("power_state").(string) == "off" {
+		if err := serverHardware.PowerOff(); err != nil {
+			return err
+		}
 	}
 
 	if val, ok := d.GetOk("os_deployment_settings"); ok {
