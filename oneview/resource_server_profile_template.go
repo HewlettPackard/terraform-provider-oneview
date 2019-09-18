@@ -430,11 +430,25 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeInt,
 										Optional: true,
 									},
-									"storage_targets": {
+									"targets": {
 										Type:     schema.TypeSet,
 										Optional: true,
-										Elem:     &schema.Schema{Type: schema.TypeString},
-										Set:      schema.HashString,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"ip_address": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"tcp_port": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+											},
+										},
 									},
 								},
 							},
@@ -667,13 +681,18 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			for _, rawStoragePath := range rawStoragePaths {
 				storagePathItem := rawStoragePath.(map[string]interface{})
 
-				// get volumeAttachemts.storagepaths.storageTargets
-				storageTargets := make([]string, 0)
-				if storagePathItem["storage_targets"] != nil {
-					rawStorageTargets := storagePathItem["storage_targets"].(*schema.Set).List()
+				// get volumeAttachemts.storagepaths.targets
+				targets := make([]ov.Target, 0)
+				if storagePathItem["targets"] != nil {
+					rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
 					for _, raw := range rawStorageTargets {
-						storageTargets = append(storageTargets, raw.(string))
+						targets = append(targets, ov.Target{
+							IpAddress: storagePathItem["ip_address"].(string),
+							Name:      storagePathItem["name"].(string),
+							TcpPort:   storagePathItem["tcp_port"].(int),
+						})
 					}
+
 				}
 
 				storagePaths = append(storagePaths, ov.StoragePath{
@@ -682,7 +701,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					ConnectionID:      storagePathItem["connection_id"].(int),
 					StorageTargetType: storagePathItem["storage_target_type"].(string),
 					TargetSelector:    storagePathItem["target_selector"].(string),
-					StorageTargets:    storageTargets,
+					Targets:           targets,
 				})
 			}
 		}
@@ -981,12 +1000,16 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			for _, rawStoragePath := range rawStoragePaths {
 				storagePathItem := rawStoragePath.(map[string]interface{})
 
-				// get volumeAttachemts.storagepaths.storageTargets
-				storageTargets := make([]string, 0)
-				if storagePathItem["storage_targets"] != nil {
-					rawStorageTargets := storagePathItem["storage_targets"].(*schema.Set).List()
+				// get volumeAttachemts.storagepaths.targets
+				targets := make([]ov.Target, 0)
+				if storagePathItem["targets"] != nil {
+					rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
 					for _, raw := range rawStorageTargets {
-						storageTargets = append(storageTargets, raw.(string))
+						targets = append(targets, ov.Target{
+							IpAddress: storagePathItem["ip_address"].(string),
+							Name:      storagePathItem["name"].(string),
+							TcpPort:   storagePathItem["tcp_port"].(int),
+						})
 					}
 				}
 
@@ -996,7 +1019,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					ConnectionID:      storagePathItem["connection_id"].(int),
 					StorageTargetType: storagePathItem["storage_target_type"].(string),
 					TargetSelector:    storagePathItem["target_selector"].(string),
-					StorageTargets:    storageTargets,
+					Targets:           targets,
 				})
 			}
 		}
