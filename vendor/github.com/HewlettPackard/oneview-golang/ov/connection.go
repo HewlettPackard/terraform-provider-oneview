@@ -33,12 +33,11 @@ type Ipv4Option struct {
 }
 
 type BootIscsi struct {
-	ChapLevel            string `json:"chapLevel,omitempty"`
+	Chaplevel            string `json:"chapLevel,omitempty"`
 	FirstBootTargetIp    string `json:"firstBootTargetIp,omitempty"`
 	FirstBootTargetPort  string `json:"firstBootTargetPort,omitempty"`
 	SecondBootTargetIp   string `json:"secondBootTargetIp,omitempty"`
 	SecondBootTargetPort string `json:"secondBootTargetPort,omitempty"`
-	InitiatorNameSource  string `json:"initiatorNameSource,omitempty"`
 }
 
 // BootOption -

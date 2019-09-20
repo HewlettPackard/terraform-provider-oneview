@@ -52,8 +52,14 @@ type StoragePath struct {
 	IsEnabled         bool     `json:"isEnabled"`                   // isEnabled (required), Identifies whether the storage path is enabled.
 	Status            string   `json:"status,omitempty"`            // status (read only), The overall health status of the storage path.
 	StorageTargetType string   `json:"storageTargetType,omitempty"` // storageTargetType ('Auto', 'TargetPorts')
-	StorageTargets    []string `json:"targets,omitempty"`           // only set when storageTargetType is TargetPorts
+	Targets           []Target `json:"targets,omitempty"`           // only set when storageTargetType is TargetPorts
 	TargetSelector    string   `json:"targetSelector,omitempty"`
+}
+
+type Target struct {
+	IpAddress string `json:"IpAddress,omitempty"`
+	Name      string `json:"name,omitempty"`
+	TcpPort   int    `json:"tcpPort,omitempty"`
 }
 
 // Clone -
@@ -62,7 +68,7 @@ func (c StoragePath) Clone() StoragePath {
 		ConnectionID:      c.ConnectionID,
 		IsEnabled:         c.IsEnabled,
 		StorageTargetType: c.StorageTargetType,
-		StorageTargets:    c.StorageTargets,
+		Targets:           c.Targets,
 	}
 }
 
@@ -72,7 +78,7 @@ type VolumeAttachment struct {
 	ID                             int           `json:"id,omitempty"`        // id, The ID of the attached storage volume.
 	LUN                            string        `json:"lun,omitempty"`       // lun, The logical unit number.
 	LUNType                        string        `json:"lunType,omitempty"`   // lunType(required), The logical unit number type: Auto or Manual.
-	Permanent                      bool          `json:"permanent,omitempty"` // permanent, If true, indicates that the volume will persist when the profile is deleted. If false, then the volume will be deleted when the profile is deleted.
+	Permanent                      *bool         `json:"permanent,omitempty"` // permanent, If true, indicates that the volume will persist when the profile is deleted. If false, then the volume will be deleted when the profile is deleted.
 	BootVolumePriority             string        `json:"bootVolumePriority,omitempty"`
 	State                          string        `json:"state,omitempty"`                          // state(read only), current state of the attachment
 	Status                         string        `json:"status,omitempty"`                         // status(read only), The current status of the attachment.
@@ -81,7 +87,7 @@ type VolumeAttachment struct {
 	VolumeName                     string        `json:"volumeName,omitempty"`                     // The name of the volume. This attribute is required when creating a volume.
 	VolumeProvisionType            string        `json:"volumeProvisionType,omitempty"`            // The provisioning type of the new volume: Thin or Thick. This attribute is required when creating a volume.
 	VolumeProvisionedCapacityBytes string        `json:"volumeProvisionedCapacityBytes,omitempty"` // The requested provisioned capacity of the storage volume in bytes. This attribute is required when creating a volume.
-	VolumeShareable                bool          `json:"volumeShareable,omitempty"`                // Identifies whether the storage volume is shared or private. If false, then the volume will be private. If true, then the volume will be shared. This attribute is required when creating a volume.
+	VolumeShareable                *bool         `json:"volumeShareable,omitempty"`                // Identifies whether the storage volume is shared or private. If false, then the volume will be private. If true, then the volume will be shared. This attribute is required when creating a volume.
 	VolumeStoragePoolURI           utils.Nstring `json:"volumeStoragePoolUri,omitempty"`           // The URI of the storage pool associated with this volume attachment's volume. Use GET /rest/server-profiles/available-storage-systems to retrieve the URI of the storage pool associated with a volume.
 	VolumeStorageSystemURI         utils.Nstring `json:"volumeStorageSystemUri,omitempty"`         // The URI of the storage system associated with this volume attachment. Use GET /rest/server-profiles/available-storage-systems to retrieve the URI of the storage system associated with a volume.
 	VolumeURI                      utils.Nstring `json:"volumeUri,omitempty"`                      // The URI of the storage volume associated with this volume attachment. Use GET /rest/server-profiles/available-storage-systems to retrieve the URIs of available storage volumes.
