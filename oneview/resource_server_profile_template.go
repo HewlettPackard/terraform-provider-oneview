@@ -704,7 +704,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				})
 			}
 		}
-		
+
 		tempPermanent := volumeAttachmentItem["permanent"].(bool)
 		tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
 		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
