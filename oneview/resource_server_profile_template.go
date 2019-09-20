@@ -535,10 +535,9 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					for _, rawIscsi := range rawIscsis {
 						rawIscsiItem := rawIscsi.(map[string]interface{})
 						iscsi = ov.BootIscsi{
-							ChapLevel:            rawIscsiItem["chap_level"].(string),
+							Chaplevel:            rawIscsiItem["chap_level"].(string),
 							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
 							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
-							InitiatorNameSource:  rawIscsiItem["initiator_name_source"].(string),
 							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
 							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 						}
@@ -685,14 +684,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				targets := make([]ov.Target, 0)
 				if storagePathItem["targets"] != nil {
 					rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
-					for _, raw := range rawStorageTargets {
+					for _, rawStorageTarget := range rawStorageTargets {
+						storageTargetItem := rawStorageTarget.(map[string]interface{})
 						targets = append(targets, ov.Target{
-							IpAddress: storagePathItem["ip_address"].(string),
-							Name:      storagePathItem["name"].(string),
-							TcpPort:   storagePathItem["tcp_port"].(int),
+							IpAddress: storageTargetItem["ip_address"].(string),
+							Name:      storageTargetItem["name"].(string),
+							TcpPort:   storageTargetItem["tcp_port"].(int),
 						})
 					}
-
 				}
 
 				storagePaths = append(storagePaths, ov.StoragePath{
@@ -705,16 +704,18 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				})
 			}
 		}
-
+		
+		tempPermanent := volumeAttachmentItem["permanent"].(bool)
+		tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
 		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-			Permanent:                      volumeAttachmentItem["permanent"].(bool),
+			Permanent:                      &tempPermanent,
 			ID:                             volumeAttachmentItem["id"].(int),
 			LUN:                            volumeAttachmentItem["lun"].(string),
 			LUNType:                        volumeAttachmentItem["lun_type"].(string),
 			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
 			VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 			VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-			VolumeShareable:                volumeAttachmentItem["volume_shareable"].(bool),
+			VolumeShareable:                &tempVolumeShareable,
 			VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
 			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
 			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
@@ -877,10 +878,9 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					for _, rawIscsi := range rawIscsis {
 						rawIscsiItem := rawIscsi.(map[string]interface{})
 						iscsi = ov.BootIscsi{
-							ChapLevel:            rawIscsiItem["chap_level"].(string),
+							Chaplevel:            rawIscsiItem["chap_level"].(string),
 							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
 							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
-							InitiatorNameSource:  rawIscsiItem["initiator_name_source"].(string),
 							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
 							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 						}
@@ -1004,11 +1004,12 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				targets := make([]ov.Target, 0)
 				if storagePathItem["targets"] != nil {
 					rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
-					for _, raw := range rawStorageTargets {
+					for _, rawStorageTarget := range rawStorageTargets {
+						storageTargetItem := rawStorageTarget.(map[string]interface{})
 						targets = append(targets, ov.Target{
-							IpAddress: storagePathItem["ip_address"].(string),
-							Name:      storagePathItem["name"].(string),
-							TcpPort:   storagePathItem["tcp_port"].(int),
+							IpAddress: storageTargetItem["ip_address"].(string),
+							Name:      storageTargetItem["name"].(string),
+							TcpPort:   storageTargetItem["tcp_port"].(int),
 						})
 					}
 				}
@@ -1024,15 +1025,17 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 		}
 
+		tempPermanent := volumeAttachmentItem["permanent"].(bool)
+		tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
 		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-			Permanent:                      volumeAttachmentItem["permanent"].(bool),
+			Permanent:                      &tempPermanent,
 			ID:                             volumeAttachmentItem["id"].(int),
 			LUN:                            volumeAttachmentItem["lun"].(string),
 			LUNType:                        volumeAttachmentItem["lun_type"].(string),
 			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
 			VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 			VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-			VolumeShareable:                volumeAttachmentItem["volume_shareable"].(bool),
+			VolumeShareable:                &tempVolumeShareable,
 			VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
 			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
 			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
