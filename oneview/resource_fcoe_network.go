@@ -86,6 +86,19 @@ func resourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"scopesUri": {
+				Optional: true,
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 		},
 	}
 }
@@ -98,7 +111,14 @@ func resourceFCoENetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		VlanId: d.Get("vlanId").(int),
 		Type:   d.Get("type").(string),
 	}
-
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		rawInitialScopeUris := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		for i, raw := range rawInitialScopeUris {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		fcoeNet.InitialScopeUris = initialScopeUris
+	}
 	fcoeNetError := config.ovClient.CreateFCoENetwork(fcoeNet)
 	d.SetId(d.Get("name").(string))
 	if fcoeNetError != nil {
@@ -111,11 +131,12 @@ func resourceFCoENetworkCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	fcoeNet, fcoeNetError := config.ovClient.GetFCoENetworkByName(d.Get("name").(string))
+	fcoeNet, fcoeNetError := config.ovClient.GetFCoENetworkByName(d.Id())
 	if fcoeNetError != nil || fcoeNet.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
+	d.Set("vlanId", fcoeNet.VlanId)
 	d.Set("created", fcoeNet.Created)
 	d.Set("modified", fcoeNet.Modified)
 	d.Set("uri", fcoeNet.URI.String())
@@ -127,7 +148,8 @@ func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("eTag", fcoeNet.ETAG)
 	d.Set("managedSanUri", fcoeNet.ManagedSanUri)
 	d.Set("description", fcoeNet.Description)
-
+	d.Set("scopesUri", fcoeNet.ScopesUri.String())
+	d.Set("initial_scope_uris", fcoeNet.InitialScopeUris)
 	return nil
 }
 

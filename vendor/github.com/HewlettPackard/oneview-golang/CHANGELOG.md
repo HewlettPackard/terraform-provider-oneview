@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Enclosure group
 - Ethernet Network
 - FC Network
+- FCoE Network
 - Interconnect type
 - Logical enclosure
 - Scope

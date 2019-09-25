@@ -69,6 +69,7 @@ func Provider() terraform.ResourceProvider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"oneview_fc_network":                 dataSourceFCNetwork(),
+			"oneview_fcoe_network":               dataSourceFCoENetwork(),
 			"oneview_enclosure":                  dataSourceEnclosure(),
 			"oneview_ethernet_network":           dataSourceEthernetNetwork(),
 			"oneview_interconnect_type":          dataSourceInterconnectType(),
