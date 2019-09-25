@@ -16,7 +16,7 @@ import (
 	"testing"
 )
 
-func TestAccFCNetwork_2(t *testing.T) {
+func TestAccFCoENetwork_2(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -25,7 +25,7 @@ func TestAccFCNetwork_2(t *testing.T) {
 			{
 				Config: testAccFCoENetworkData,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("oneview_fcoe_network.test", "vlan_id", 201),
+					resource.TestCheckResourceAttr("oneview_fcoe_network.test", "vlan_id", "201"),
 					resource.TestCheckResourceAttr("oneview_fcoe_network.test", "name", "TestFCoENetwork"),
 				),
 			},
