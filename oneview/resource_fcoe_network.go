@@ -114,8 +114,8 @@ func resourceFCoENetworkCreate(d *schema.ResourceData, meta interface{}) error {
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawInitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-		for i, raw := range rawInitialScopeUris {
-			initialScopeUris[i] = utils.Nstring(raw.(string))
+		for _, rawData := range rawinitialScopeUris {
+			initialScopeUris = append(initialScopeUris, utils.Nstring(rawData.(string)))
 		}
 		fcoeNet.InitialScopeUris = initialScopeUris
 	}
