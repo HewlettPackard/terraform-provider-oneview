@@ -1,7 +1,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.0.2] (UnReleased)
+# [v1.1.0] (UnReleased)
 
 ### Notes
 This version supports OneView appliances with version 4.2 using the OneView REST API version 1000.
@@ -15,6 +15,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Enclosure Group
 - Ethernet network
 - FC network
+- FCoE network
 - Interconnect Type
 - Logical enclosure
 - Network set
@@ -31,11 +32,11 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 ### Notes
 - Patch changes to sever profile to include boot order fixes.
 - Usecase for infrasructure provisioning without storage and image streamer
-  
+
 # [v1.0.0]
 ### Notes
-  This is the first release of the OneView modules in Terraform and it adds support to core features listed below. 
-  This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800. 
+  This is the first release of the OneView modules in Terraform and it adds support to core features listed below.
+  This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800.
 
 ### Major changes:
 - Support for Go 1.11  
