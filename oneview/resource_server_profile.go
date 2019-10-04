@@ -203,7 +203,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	serverProfile, err := config.ovClient.GetProfileByName(d.Get("name").(string))
+	serverProfile, err := config.ovClient.GetProfileByName(d.Id())
 	if err != nil || serverProfile.URI.IsNil() {
 		d.SetId("")
 		return nil
