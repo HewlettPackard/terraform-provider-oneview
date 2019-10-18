@@ -729,15 +729,17 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 		}
 
+		tempPermanent := volumeAttachmentItem["permanent"].(bool)
+		tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
 		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-			Permanent:                      volumeAttachmentItem["permanent"].(bool),
+			Permanent:                      &tempPermanent,
 			ID:                             volumeAttachmentItem["id"].(int),
 			LUN:                            volumeAttachmentItem["lun"].(string),
 			LUNType:                        volumeAttachmentItem["lun_type"].(string),
 			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
 			VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 			VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-			VolumeShareable:                volumeAttachmentItem["volume_shareable"].(bool),
+			VolumeShareable:                &tempVolumeShareable,
 			VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
 			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
 			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
