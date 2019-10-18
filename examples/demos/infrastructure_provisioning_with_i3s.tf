@@ -108,10 +108,24 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 		firmware_install_type = "FirmwareAndOSDrivers"
 	}
 	bios_option = {
-		manage_bios = false
-		overridden_settings = []
+		manage_bios = true
+		overridden_settings = [
+			{ id = "UsbControl"
+			value = "UsbEnabled"},
+			{ id = "PowerRegulator"
+			value = "StaticHighPerf"},
+			{ id = "CollabPowerControl"
+			value = "Disabled"},
+			{ id = "EnergyPerfBias"
+			value = "MaxPerf"},
+			{ id = "MinProcIdlePkgState"
+			value = "NoState" },
+			{ id = "NumaGroupSizeOpt"
+			value = "Clustered" },
+			{ id = "MinProcIdlePower"
+			value = "NoCStates"
+			}]
 	}
-
 	san_storage = {
 		host_os_type = "Windows 2012 / WS2012 R2"
 		manage_san_storage = true
