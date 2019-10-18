@@ -600,6 +600,30 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 	}
 
+	if val, ok := d.GetOk("bios_option"); ok {
+		rawBiosOption := val.(*schema.Set).List()
+		biosOption := ov.BiosOption{}
+		for _, raw := range rawBiosOption {
+			rawBiosItem := raw.(map[string]interface{})
+
+			overriddenSettings := make([]ov.BiosSettings, 0)
+			rawOverriddenSetting := rawBiosItem["overridden_settings"].(*schema.Set).List()
+
+			for _, raw2 := range rawOverriddenSetting {
+				rawOverriddenSettingItem := raw2.(map[string]interface{})
+				overriddenSettings = append(overriddenSettings, ov.BiosSettings{
+					ID:    rawOverriddenSettingItem["id"].(string),
+					Value: rawOverriddenSettingItem["value"].(string),
+				})
+			}
+			biosOption = ov.BiosOption{
+				ManageBios:         rawBiosItem["manage_bios"].(bool),
+				OverriddenSettings: overriddenSettings,
+			}
+		}
+		serverProfileTemplate.Bios = &biosOption
+	}
+
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		initialScopeUrisOrder := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
@@ -705,17 +729,15 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 		}
 
-		tempPermanent := volumeAttachmentItem["permanent"].(bool)
-		tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
 		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-			Permanent:                      &tempPermanent,
+			Permanent:                      volumeAttachmentItem["permanent"].(bool),
 			ID:                             volumeAttachmentItem["id"].(int),
 			LUN:                            volumeAttachmentItem["lun"].(string),
 			LUNType:                        volumeAttachmentItem["lun_type"].(string),
 			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
 			VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 			VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-			VolumeShareable:                &tempVolumeShareable,
+			VolumeShareable:                volumeAttachmentItem["volume_shareable"].(bool),
 			VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
 			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
 			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
