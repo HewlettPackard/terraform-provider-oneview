@@ -21,6 +21,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Logical enclosure
 - Network set
 - Server hardware
+- Server hardware type
 - Storage pool
 - Storage system
 - Storage volume
