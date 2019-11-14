@@ -989,9 +989,9 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	update_type := d.Get("update_type").(string)
+	updateType := d.Get("update_type").(string)
 
-	if update_type == "patch" {
+	if updateType == "patch" {
 		serverProfile := ov.ServerProfile{
 			Name: d.Get("name").(string),
 			Type: d.Get("type").(string),
@@ -1016,7 +1016,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
-	if update_type == "put" {
+	if updateType == "put" {
 		serverProfile := ov.ServerProfile{
 			Type: d.Get("type").(string),
 			Name: d.Get("name").(string),
