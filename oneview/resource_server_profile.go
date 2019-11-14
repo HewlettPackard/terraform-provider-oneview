@@ -1002,9 +1002,10 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		options := make([]ov.Options, len(rawOptions))
 		for i, rawData := range rawOptions {
 			option := rawData.(map[string]interface{})
-			options[i] = ov.Options{option["op"].(string),
-				option["path"].(string),
-				option["value"].(string)}
+			options[i] = ov.Options{
+				Op:    option["op"].(string),
+				Path:  option["path"].(string),
+				Value: option["value"].(string)}
 		}
 
 		error := config.ovClient.PatchServerProfile(serverProfile, options)
