@@ -505,21 +505,21 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"options": {
 				Optional: true,
-				Type:	  schema.TypeSet,
-				Elem:     &schema.Resource{
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"op": {
 							Required: true,
-							Type:    schema.TypeString,
+							Type:     schema.TypeString,
 						},
 						"path": {
-                                                        Required: true,
-                                                        Type:    schema.TypeString,
-                                                },
+							Required: true,
+							Type:     schema.TypeString,
+						},
 						"value": {
-                                                        Required: true,
-                                                        Type:    schema.TypeString,
-                                                },
+							Required: true,
+							Type:     schema.TypeString,
+						},
 					},
 				},
 			},
@@ -1003,8 +1003,8 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		for i, rawData := range rawOptions {
 			option := rawData.(map[string]interface{})
 			options[i] = ov.Options{option["op"].(string),
-						option["path"].(string),
-						option["value"].(string)}
+				option["path"].(string),
+				option["value"].(string)}
 		}
 
 		error := config.ovClient.PatchServerProfile(serverProfile, options)
