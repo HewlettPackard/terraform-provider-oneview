@@ -3,7 +3,7 @@ provider "oneview" {
 	ov_password = "<password>"
 	ov_endpoint = "<endpoint>"
 	ov_sslverify = false
-	ov_apiversion = 800
+	ov_apiversion = 1000
 }
 
 data "oneview_interconnect" "interconnect" {

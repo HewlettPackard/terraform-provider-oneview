@@ -16,6 +16,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Ethernet network
 - FC network
 - FCoE network
+- Interconnect
 - Interconnect Type
 - Logical enclosure
 - Network set
