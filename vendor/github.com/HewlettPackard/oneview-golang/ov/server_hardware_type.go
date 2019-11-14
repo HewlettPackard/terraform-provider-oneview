@@ -71,7 +71,9 @@ type BiosSetting struct {
 }
 
 type StorageCapability struct {
+	ConotrollerCapabilities    []string `json:"controllerCapabilities,omitempty"`     // "controllerCapabilities":{}
 	ControllerModes            []string `json:"controllerModes,omitempty"`            // "controllerModes":{}
+	DedicatedSpareSupported    bool     `json:"dedicatedSpareSupported,omitempty"`    // "dedicatedSpareSupported":false
 	DriveTechnologies          []string `json:"driveTechnologies,omitempty"`          // "driveTechnologies":{}
 	DriveWriteCacheSupported   bool     `json:"driveWriteCacheSupported,omitempty"`   // "driveWriteCacheSupported":false
 	MaximumDrives              int      `json:"maximumDrives,omitempty"`              // "maximumDrives":5
@@ -96,7 +98,7 @@ type ServerHardwareType struct {
 	Name                string             `json:"name,omitempty"`                // "name": "ServerHardware 1",
 	PxeBootPolicies     []string           `json:"pxeBootPolicies,omitempty"`     // "pxeBootPolicies":{},
 	StorageCapabilities *StorageCapability `json:"storageCapabilities,omitempty"` // "storageCapabilities":{..,},
-	Type                string             `json:"type,omitempty"`                // "type": "server-hardware-type-4",
+	Type                string             `json:"type,omitempty"`                // "type": "server-hardware-type-10",
 	URI                 utils.Nstring      `json:"uri,omitempty"`                 // "uri": "/rest/server-hardware-types/e2f0031b-52bd-4223-9ac1-d91cb519d548"
 	UefiClass           string             `json:"uefiClass,omitempty"`           // "uefiClass":"2"
 }

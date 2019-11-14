@@ -72,30 +72,33 @@ func (h HardwareState) Equal(s string) bool {
 // ServerHardware get server hardware from ov
 type ServerHardware struct {
 	ServerHardwarev200
-	AssetTag              string        `json:"assetTag,omitempty"`              // "assetTag": "[Unknown]",
-	Category              string        `json:"category,omitempty"`              // "category": "server-hardware",
-	Created               string        `json:"created,omitempty"`               // "created": "2015-08-14T21:02:01.537Z",
-	Description           utils.Nstring `json:"description,omitempty"`           // "description": null,
-	ETAG                  string        `json:"eTag,omitempty"`                  // "eTag": "1441147370086",
-	FormFactor            string        `json:"formFactor,omitempty"`            // "formFactor": "HalfHeight",
-	LicensingIntent       string        `json:"licensingIntent,omitempty"`       // "licensingIntent": "OneView",
-	LocationURI           utils.Nstring `json:"locationUri,omitempty"`           // "locationUri": "/rest/enclosures/092SN51207RR",
-	MemoryMb              int           `json:"memoryMb,omitempty"`              // "memoryMb": 262144,
-	Model                 string        `json:"model,omitempty"`                 // "model": "ProLiant BL460c Gen9",
-	Modified              string        `json:"modified,omitempty"`              // "modified": "2015-09-01T22:42:50.086Z",
-	MpFirwareVersion      string        `json:"mpFirmwareVersion,omitempty"`     // "mpFirmwareVersion": "2.03 Nov 07 2014",
-	MpModel               string        `json:"mpModel,omitempty"`               // "mpModel": "iLO4",
-	Name                  string        `json:"name,omitempty"`                  // "name": "se05, bay 16",
-	PartNumber            string        `json:"partNumber,omitempty"`            // "partNumber": "727021-B21",
-	Position              int           `json:"position,omitempty"`              // "position": 16,
-	PowerLock             bool          `json:"powerLock,omitempty"`             // "powerLock": false,
-	PowerState            string        `json:"powerState,omitempty"`            // "powerState": "Off",
-	ProcessorCoreCount    int           `json:"processorCoreCount,omitempty"`    // "processorCoreCount": 14,
-	ProcessorCount        int           `json:"processorCount,omitempty"`        // "processorCount": 2,
-	ProcessorSpeedMhz     int           `json:"processorSpeedMhz,omitempty"`     // "processorSpeedMhz": 2300,
-	ProcessorType         string        `json:"processorType,omitempty"`         // "processorType": "Intel(R) Xeon(R) CPU E5-2695 v3 @ 2.30GHz",
-	RefreshState          string        `json:"refreshState,omitempty"`          // "refreshState": "NotRefreshing",
-	RomVersion            string        `json:"romVersion,omitempty"`            // "romVersion": "I36 11/03/2014",
+	AssetTag              string        `json:"assetTag,omitempty"`    // "assetTag": "[Unknown]",
+	Category              string        `json:"category,omitempty"`    // "category": "server-hardware",
+	Created               string        `json:"created,omitempty"`     // "created": "2015-08-14T21:02:01.537Z",
+	Description           utils.Nstring `json:"description,omitempty"` // "description": null,
+	ETAG                  string        `json:"eTag,omitempty"`        // "eTag": "1441147370086",
+	FormFactor            string        `json:"formFactor,omitempty"`  // "formFactor": "HalfHeight",
+	Generation            string        `json:"generation,omitempty"`  // "generation":,
+	HostOsType            int           `json:"hostOsType,omitempty"`
+	LicensingIntent       string        `json:"licensingIntent,omitempty"`    // "licensingIntent": "OneView",
+	LocationURI           utils.Nstring `json:"locationUri,omitempty"`        // "locationUri": "/rest/enclosures/092SN51207RR",
+	MemoryMb              int           `json:"memoryMb,omitempty"`           // "memoryMb": 262144,
+	Model                 string        `json:"model,omitempty"`              // "model": "ProLiant BL460c Gen9",
+	Modified              string        `json:"modified,omitempty"`           // "modified": "2015-09-01T22:42:50.086Z",
+	MpFirwareVersion      string        `json:"mpFirmwareVersion,omitempty"`  // "mpFirmwareVersion": "2.03 Nov 07 2014",
+	MpModel               string        `json:"mpModel,omitempty"`            // "mpModel": "iLO4",
+	Name                  string        `json:"name,omitempty"`               // "name": "se05, bay 16",
+	PartNumber            string        `json:"partNumber,omitempty"`         // "partNumber": "727021-B21",
+	Position              int           `json:"position,omitempty"`           // "position": 16,
+	PowerLock             bool          `json:"powerLock,omitempty"`          // "powerLock": false,
+	PowerState            string        `json:"powerState,omitempty"`         // "powerState": "Off",
+	ProcessorCoreCount    int           `json:"processorCoreCount,omitempty"` // "processorCoreCount": 14,
+	ProcessorCount        int           `json:"processorCount,omitempty"`     // "processorCount": 2,
+	ProcessorSpeedMhz     int           `json:"processorSpeedMhz,omitempty"`  // "processorSpeedMhz": 2300,
+	ProcessorType         string        `json:"processorType,omitempty"`      // "processorType": "Intel(R) Xeon(R) CPU E5-2695 v3 @ 2.30GHz",
+	RefreshState          string        `json:"refreshState,omitempty"`       // "refreshState": "NotRefreshing",
+	RomVersion            string        `json:"romVersion,omitempty"`         // "romVersion": "I36 11/03/2014",
+	ScopesUri             string        `json:"scopesUri,omitempty"`
 	SerialNumber          utils.Nstring `json:"serialNumber,omitempty"`          // "serialNumber": "2M25090RMW",
 	ServerGroupURI        utils.Nstring `json:"serverGroupUri,omitempty"`        // "serverGroupUri": "/rest/enclosure-groups/56ad0069-8362-42fd-b4e3-f5c5a69af039",
 	ServerHardwareTypeURI utils.Nstring `json:"serverHardwareTypeUri,omitempty"` // "serverHardwareTypeUri": "/rest/server-hardware-types/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
@@ -233,7 +236,7 @@ func (c *OVClient) GetServerHardwareByName(name string) (ServerHardware, error) 
 	)
 
 	filters := []string{fmt.Sprintf("name matches '%s'", name)}
-	serverHardwareList, err := c.GetServerHardwareList(filters, "name:asc")
+	serverHardwareList, err := c.GetServerHardwareList(filters, "name:asc", "", "", "")
 	if serverHardwareList.Total > 0 {
 		serverHardwareList.Members[0].Client = c
 		return serverHardwareList.Members[0], err
@@ -243,7 +246,7 @@ func (c *OVClient) GetServerHardwareByName(name string) (ServerHardware, error) 
 }
 
 // GetServerHardwareList gets a server hardware with filters
-func (c *OVClient) GetServerHardwareList(filters []string, sort string) (ServerHardwareList, error) {
+func (c *OVClient) GetServerHardwareList(filters []string, sort string, start string, count string, expand string) (ServerHardwareList, error) {
 	var (
 		uri        = "/rest/server-hardware"
 		q          map[string]interface{}
@@ -256,6 +259,18 @@ func (c *OVClient) GetServerHardwareList(filters []string, sort string) (ServerH
 
 	if sort != "" {
 		q["sort"] = sort
+	}
+
+	if start != "" {
+		q["start"] = start
+	}
+
+	if count != "" {
+		q["count"] = count
+	}
+
+	if expand != "" {
+		q["expand"] = expand
 	}
 
 	// refresh login
@@ -286,7 +301,7 @@ func (c *OVClient) GetAvailableHardware(hardwaretype_uri utils.Nstring, servergr
 		f      = []string{"serverHardwareTypeUri='" + hardwaretype_uri.String() + "'",
 			"serverGroupUri='" + servergroup_uri.String() + "'"}
 	)
-	if hwlist, err = c.GetServerHardwareList(f, "name:desc"); err != nil {
+	if hwlist, err = c.GetServerHardwareList(f, "name:desc", "", "", ""); err != nil {
 		return hw, err
 	}
 	if !(len(hwlist.Members) > 0) {

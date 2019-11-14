@@ -503,6 +503,30 @@ func resourceServerProfile() *schema.Resource {
 					return
 				},
 			},
+			"options": {
+				Optional: true,
+				Type:	  schema.TypeSet,
+				Elem:     &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"op": {
+							Required: true,
+							Type:    schema.TypeString,
+						},
+						"path": {
+                                                        Required: true,
+                                                        Type:    schema.TypeString,
+                                                },
+						"value": {
+                                                        Required: true,
+                                                        Type:    schema.TypeString,
+                                                },
+					},
+				},
+			},
+			"update_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"os_deployment_settings": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -965,336 +989,365 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	serverProfile := ov.ServerProfile{
-		Type: d.Get("type").(string),
-		Name: d.Get("name").(string),
-		URI:  utils.NewNstring(d.Get("uri").(string)),
-	}
+	update_type := d.Get("update_type").(string)
 
-	var serverHardware ov.ServerHardware
-	if val, ok := d.GetOk("hardware_name"); ok {
-		var err error
-		serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
-		if err != nil {
-			return err
+	if update_type == "patch" {
+		serverProfile := ov.ServerProfile{
+			Name: d.Get("name").(string),
+			Type: d.Get("type").(string),
+			URI:  utils.NewNstring(d.Get("uri").(string)),
 		}
-		if !strings.EqualFold(serverHardware.PowerState, "off") {
-			return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
+
+		rawOptions := d.Get("options").(*schema.Set).List()
+		options := make([]ov.Options, len(rawOptions))
+		for i, rawData := range rawOptions {
+			option := rawData.(map[string]interface{})
+			options[i] = ov.Options{option["op"].(string),
+						option["path"].(string),
+						option["value"].(string)}
 		}
-		serverProfile.ServerHardwareURI = serverHardware.URI
-	}
 
-	if val, ok := d.GetOk("template"); ok {
-		serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
-		if err != nil || serverProfileTemplate.URI.IsNil() {
-			return err
+		error := config.ovClient.PatchServerProfile(serverProfile, options)
+		d.SetId(d.Get("name").(string))
+		if error != nil {
+			d.SetId("")
+			return error
 		}
-		serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 	}
 
-	if val, ok := d.GetOk("affinity"); ok {
-		serverProfile.Affinity = val.(string)
-	}
-
-	if val, ok := d.GetOk("serial_number_type"); ok {
-		serverProfile.SerialNumberType = val.(string)
-	}
-
-	if val, ok := d.GetOk("wwn_type"); ok {
-		serverProfile.WWNType = val.(string)
-	}
-
-	if val, ok := d.GetOk("mac_type"); ok {
-		serverProfile.MACType = val.(string)
-	}
-
-	if val, ok := d.GetOk("hide_unused_flex_nics"); ok {
-		serverProfile.HideUnusedFlexNics = val.(bool)
-	}
-
-	if val, ok := d.GetOk("enclosure_group"); ok {
-		enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(val.(string))
-		if err != nil {
-			return err
+	if update_type == "put" {
+		serverProfile := ov.ServerProfile{
+			Type: d.Get("type").(string),
+			Name: d.Get("name").(string),
+			URI:  utils.NewNstring(d.Get("uri").(string)),
 		}
-		serverProfile.EnclosureGroupURI = enclosureGroup.URI
-	}
 
-	if val, ok := d.GetOk("server_hardware_type"); ok {
-		serverHardwareType, err := config.ovClient.GetServerHardwareTypeByName(val.(string))
-		if err != nil {
-			return err
+		var serverHardware ov.ServerHardware
+		if val, ok := d.GetOk("hardware_name"); ok {
+			var err error
+			serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
+			if err != nil {
+				return err
+			}
+			if !strings.EqualFold(serverHardware.PowerState, "off") {
+				return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
+			}
+			serverProfile.ServerHardwareURI = serverHardware.URI
 		}
-		serverProfile.ServerHardwareTypeURI = serverHardwareType.URI
-	}
 
-	rawNetwork := d.Get("network").(*schema.Set).List()
-	networks := make([]ov.Connection, 0)
-	for _, rawNet := range rawNetwork {
-		rawNetworkItem := rawNet.(map[string]interface{})
+		if val, ok := d.GetOk("template"); ok {
+			serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
+			if err != nil || serverProfileTemplate.URI.IsNil() {
+				return err
+			}
+			serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
+		}
 
-		bootOptions := ov.BootOption{}
-		if rawNetworkItem["boot"] != nil {
-			rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
-			for _, rawBoot := range rawBoots {
-				bootItem := rawBoot.(map[string]interface{})
+		if val, ok := d.GetOk("affinity"); ok {
+			serverProfile.Affinity = val.(string)
+		}
 
-				iscsi := ov.BootIscsi{}
-				if bootItem["iscsi"] != nil {
-					rawIscsis := bootItem["iscsi"].(*schema.Set).List()
-					for _, rawIscsi := range rawIscsis {
-						rawIscsiItem := rawIscsi.(map[string]interface{})
-						iscsi = ov.BootIscsi{
-							Chaplevel:            rawIscsiItem["chap_level"].(string),
-							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
-							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
-							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+		if val, ok := d.GetOk("serial_number_type"); ok {
+			serverProfile.SerialNumberType = val.(string)
+		}
+
+		if val, ok := d.GetOk("wwn_type"); ok {
+			serverProfile.WWNType = val.(string)
+		}
+
+		if val, ok := d.GetOk("mac_type"); ok {
+			serverProfile.MACType = val.(string)
+		}
+
+		if val, ok := d.GetOk("hide_unused_flex_nics"); ok {
+			serverProfile.HideUnusedFlexNics = val.(bool)
+		}
+
+		if val, ok := d.GetOk("enclosure_group"); ok {
+			enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(val.(string))
+			if err != nil {
+				return err
+			}
+			serverProfile.EnclosureGroupURI = enclosureGroup.URI
+		}
+
+		if val, ok := d.GetOk("server_hardware_type"); ok {
+			serverHardwareType, err := config.ovClient.GetServerHardwareTypeByName(val.(string))
+			if err != nil {
+				return err
+			}
+			serverProfile.ServerHardwareTypeURI = serverHardwareType.URI
+		}
+
+		rawNetwork := d.Get("network").(*schema.Set).List()
+		networks := make([]ov.Connection, 0)
+		for _, rawNet := range rawNetwork {
+			rawNetworkItem := rawNet.(map[string]interface{})
+
+			bootOptions := ov.BootOption{}
+			if rawNetworkItem["boot"] != nil {
+				rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+				for _, rawBoot := range rawBoots {
+					bootItem := rawBoot.(map[string]interface{})
+
+					iscsi := ov.BootIscsi{}
+					if bootItem["iscsi"] != nil {
+						rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+						for _, rawIscsi := range rawIscsis {
+							rawIscsiItem := rawIscsi.(map[string]interface{})
+							iscsi = ov.BootIscsi{
+								Chaplevel:            rawIscsiItem["chap_level"].(string),
+								FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
+								FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+								SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
+								SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+							}
 						}
 					}
-				}
 
-				bootOptions = ov.BootOption{
-					Priority:         bootItem["priority"].(string),
-					EthernetBootType: bootItem["ethernet_boot_type"].(string),
-					BootVolumeSource: bootItem["boot_volume_source"].(string),
-					Iscsi:            &iscsi,
-				}
-			}
-		}
-
-		ipv4 := ov.Ipv4Option{}
-		if rawNetworkItem["ipv4"] != nil {
-			rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
-			for _, rawIpv4 := range rawIpv4s {
-				rawIpv4Item := rawIpv4.(map[string]interface{})
-				ipv4 = ov.Ipv4Option{
-					Gateway:         rawIpv4Item["gateway"].(string),
-					IpAddressSource: rawIpv4Item["ip_address_source"].(string),
-				}
-			}
-		}
-
-		networks = append(networks, ov.Connection{
-			ID:            rawNetworkItem["id"].(int),
-			Name:          rawNetworkItem["name"].(string),
-			FunctionType:  rawNetworkItem["function_type"].(string),
-			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
-			PortID:        rawNetworkItem["port_id"].(string),
-			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
-			Ipv4:          &ipv4,
-			Boot:          &bootOptions,
-		})
-	}
-	if val, ok := d.GetOk("manage_connections"); ok {
-		serverProfile.ConnectionSettings.ManageConnections = val.(bool)
-		serverProfile.ConnectionSettings.Connections = networks
-	} else {
-		serverProfile.Connections = networks
-	}
-
-	if val, ok := d.GetOk("boot_order"); ok {
-		rawBootOrder := val.(*schema.Set).List()
-		bootOrder := make([]string, len(rawBootOrder))
-		for i, raw := range rawBootOrder {
-			bootOrder[i] = raw.(string)
-		}
-		serverProfile.Boot.ManageBoot = true
-		serverProfile.Boot.Order = bootOrder
-		rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-		serverProfile.BootMode = ov.BootModeOption{
-			ManageMode:    rawBootMode["manage_mode"].(bool),
-			Mode:          rawBootMode["mode"].(string),
-			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
-		}
-
-	}
-
-	if val, ok := d.GetOk("bios_option"); ok {
-		rawBiosOption := val.(*schema.Set).List()
-		biosOption := ov.BiosOption{}
-		for _, raw := range rawBiosOption {
-			rawBiosItem := raw.(map[string]interface{})
-
-			overriddenSettings := make([]ov.BiosSettings, 0)
-			rawOverriddenSetting := rawBiosItem["overridden_settings"].(*schema.Set).List()
-
-			for _, raw2 := range rawOverriddenSetting {
-				rawOverriddenSettingItem := raw2.(map[string]interface{})
-				overriddenSettings = append(overriddenSettings, ov.BiosSettings{
-					ID:    rawOverriddenSettingItem["id"].(string),
-					Value: rawOverriddenSettingItem["value"].(string),
-				})
-			}
-			biosOption = ov.BiosOption{
-				ManageBios:         rawBiosItem["manage_bios"].(bool),
-				OverriddenSettings: overriddenSettings,
-			}
-		}
-		serverProfile.Bios = &biosOption
-	}
-
-	if val, ok := d.GetOk("initial_scope_uris"); ok {
-		initialScopeUrisOrder := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
-		for i, raw := range initialScopeUrisOrder {
-			initialScopeUris[i] = utils.Nstring(raw.(string))
-		}
-		serverProfile.InitialScopeUris = initialScopeUris
-	}
-
-	// Get firmware details
-	rawFirmware := d.Get("firmware").(*schema.Set).List()
-	firmware := ov.FirmwareOption{}
-	for _, raw := range rawFirmware {
-		firmwareItem := raw.(map[string]interface{})
-		firmware = ov.FirmwareOption{
-			ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
-			FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
-			ManageFirmware:       firmwareItem["manage_firmware"].(bool),
-			FirmwareOptionv200: ov.FirmwareOptionv200{
-				FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
-			},
-		}
-	}
-	serverProfile.Firmware = firmware
-
-	// Get local storage data if provided
-	rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
-	localStorage := ov.LocalStorageOptions{}
-	for _, raw := range rawLocalStorage {
-		localStorageItem := raw.(map[string]interface{})
-		localStorage = ov.LocalStorageOptions{
-			ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-			Initialize:         localStorageItem["initialize"].(bool),
-		}
-	}
-	serverProfile.LocalStorage = localStorage
-
-	rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
-	logicalDrives := make([]ov.LogicalDrive, 0)
-	for _, rawLogicalDrive := range rawLogicalDrives {
-		logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-		logicalDrives = append(logicalDrives, ov.LogicalDrive{
-			Bootable:  logicalDrivesItem["bootable"].(bool),
-			RaidLevel: logicalDrivesItem["raid_level"].(string),
-		})
-	}
-	serverProfile.LocalStorage.LogicalDrives = logicalDrives
-
-	// get SAN storage data if provided
-	rawSanStorage := d.Get("san_storage").(*schema.Set).List()
-	sanStorage := ov.SanStorageOptions{}
-	for _, raw := range rawSanStorage {
-		sanStorageItem := raw.(map[string]interface{})
-		sanStorage = ov.SanStorageOptions{
-			HostOSType:            sanStorageItem["host_os_type"].(string),
-			ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
-			ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
-			ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
-			SerialNumber:          sanStorageItem["serial_number"].(string),
-			Type:                  sanStorageItem["type"].(string),
-			URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
-		}
-	}
-	serverProfile.SanStorage = sanStorage
-
-	// Get volume attachment data for san storage
-	rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
-	volumeAttachments := make([]ov.VolumeAttachment, 0)
-
-	for _, rawVolumeAttachment := range rawVolumeAttachments {
-		volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
-
-		// get volumeAttachemts.storagepaths
-		storagePaths := make([]ov.StoragePath, 0)
-		if volumeAttachmentItem["storage_paths"] != nil {
-			rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
-
-			for _, rawStoragePath := range rawStoragePaths {
-				storagePathItem := rawStoragePath.(map[string]interface{})
-
-				// get volumeAttachemts.storagepaths.targets
-				targets := make([]ov.Target, 0)
-				if storagePathItem["targets"] != nil {
-					rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
-					for _, rawStorageTarget := range rawStorageTargets {
-						storageTargetItem := rawStorageTarget.(map[string]interface{})
-						targets = append(targets, ov.Target{
-							IpAddress: storageTargetItem["ip_address"].(string),
-							Name:      storageTargetItem["name"].(string),
-							TcpPort:   storageTargetItem["tcp_port"].(int),
-						})
+					bootOptions = ov.BootOption{
+						Priority:         bootItem["priority"].(string),
+						EthernetBootType: bootItem["ethernet_boot_type"].(string),
+						BootVolumeSource: bootItem["boot_volume_source"].(string),
+						Iscsi:            &iscsi,
 					}
 				}
-
-				storagePaths = append(storagePaths, ov.StoragePath{
-					IsEnabled:         storagePathItem["is_enabled"].(bool),
-					Status:            storagePathItem["status"].(string),
-					ConnectionID:      storagePathItem["connection_id"].(int),
-					StorageTargetType: storagePathItem["storage_target_type"].(string),
-					TargetSelector:    storagePathItem["target_selector"].(string),
-					Targets:           targets,
-				})
 			}
+
+			ipv4 := ov.Ipv4Option{}
+			if rawNetworkItem["ipv4"] != nil {
+				rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+				for _, rawIpv4 := range rawIpv4s {
+					rawIpv4Item := rawIpv4.(map[string]interface{})
+					ipv4 = ov.Ipv4Option{
+						Gateway:         rawIpv4Item["gateway"].(string),
+						IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+					}
+				}
+			}
+
+			networks = append(networks, ov.Connection{
+				ID:            rawNetworkItem["id"].(int),
+				Name:          rawNetworkItem["name"].(string),
+				FunctionType:  rawNetworkItem["function_type"].(string),
+				NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+				PortID:        rawNetworkItem["port_id"].(string),
+				RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+				Ipv4:          &ipv4,
+				Boot:          &bootOptions,
+			})
+		}
+		if val, ok := d.GetOk("manage_connections"); ok {
+			serverProfile.ConnectionSettings.ManageConnections = val.(bool)
+			serverProfile.ConnectionSettings.Connections = networks
+		} else {
+			serverProfile.Connections = networks
 		}
 
-		tempPermanent := volumeAttachmentItem["permanent"].(bool)
-		tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
-		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-			Permanent:                      &tempPermanent,
-			ID:                             volumeAttachmentItem["id"].(int),
-			LUN:                            volumeAttachmentItem["lun"].(string),
-			LUNType:                        volumeAttachmentItem["lun_type"].(string),
-			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
-			VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
-			VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-			VolumeShareable:                &tempVolumeShareable,
-			VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
-			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
-			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
-			VolumeName:                     volumeAttachmentItem["volume_name"].(string),
-			StoragePaths:                   storagePaths,
-			BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-		})
-	}
-	serverProfile.SanStorage.VolumeAttachments = volumeAttachments
+		if val, ok := d.GetOk("boot_order"); ok {
+			rawBootOrder := val.(*schema.Set).List()
+			bootOrder := make([]string, len(rawBootOrder))
+			for i, raw := range rawBootOrder {
+				bootOrder[i] = raw.(string)
+			}
+			serverProfile.Boot.ManageBoot = true
+			serverProfile.Boot.Order = bootOrder
+			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+			serverProfile.BootMode = ov.BootModeOption{
+				ManageMode:    rawBootMode["manage_mode"].(bool),
+				Mode:          rawBootMode["mode"].(string),
+				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+			}
 
-	if val, ok := d.GetOk("os_deployment_settings"); ok {
-		rawOsDeploySetting := val.(*schema.Set).List()
-		for _, raw := range rawOsDeploySetting {
-			osDeploySettingItem := raw.(map[string]interface{})
+		}
 
-			osCustomAttributes := make([]ov.OSCustomAttribute, 0)
-			if osDeploySettingItem["os_custom_attributes"] != nil {
-				rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
-				for _, rawDeploySetting := range rawOsDeploySettings {
-					rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+		if val, ok := d.GetOk("bios_option"); ok {
+			rawBiosOption := val.(*schema.Set).List()
+			biosOption := ov.BiosOption{}
+			for _, raw := range rawBiosOption {
+				rawBiosItem := raw.(map[string]interface{})
 
-					osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-						Name:  rawOsDeploySetting["name"].(string),
-						Value: rawOsDeploySetting["value"].(string),
+				overriddenSettings := make([]ov.BiosSettings, 0)
+				rawOverriddenSetting := rawBiosItem["overridden_settings"].(*schema.Set).List()
+
+				for _, raw2 := range rawOverriddenSetting {
+					rawOverriddenSettingItem := raw2.(map[string]interface{})
+					overriddenSettings = append(overriddenSettings, ov.BiosSettings{
+						ID:    rawOverriddenSettingItem["id"].(string),
+						Value: rawOverriddenSettingItem["value"].(string),
+					})
+				}
+				biosOption = ov.BiosOption{
+					ManageBios:         rawBiosItem["manage_bios"].(bool),
+					OverriddenSettings: overriddenSettings,
+				}
+			}
+			serverProfile.Bios = &biosOption
+		}
+
+		if val, ok := d.GetOk("initial_scope_uris"); ok {
+			initialScopeUrisOrder := val.(*schema.Set).List()
+			initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
+			for i, raw := range initialScopeUrisOrder {
+				initialScopeUris[i] = utils.Nstring(raw.(string))
+			}
+			serverProfile.InitialScopeUris = initialScopeUris
+		}
+
+		// Get firmware details
+		rawFirmware := d.Get("firmware").(*schema.Set).List()
+		firmware := ov.FirmwareOption{}
+		for _, raw := range rawFirmware {
+			firmwareItem := raw.(map[string]interface{})
+			firmware = ov.FirmwareOption{
+				ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
+				FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+				ManageFirmware:       firmwareItem["manage_firmware"].(bool),
+				FirmwareOptionv200: ov.FirmwareOptionv200{
+					FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
+				},
+			}
+		}
+		serverProfile.Firmware = firmware
+
+		// Get local storage data if provided
+		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+		localStorage := ov.LocalStorageOptions{}
+		for _, raw := range rawLocalStorage {
+			localStorageItem := raw.(map[string]interface{})
+			localStorage = ov.LocalStorageOptions{
+				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				Initialize:         localStorageItem["initialize"].(bool),
+			}
+		}
+		serverProfile.LocalStorage = localStorage
+
+		rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
+		logicalDrives := make([]ov.LogicalDrive, 0)
+		for _, rawLogicalDrive := range rawLogicalDrives {
+			logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+			logicalDrives = append(logicalDrives, ov.LogicalDrive{
+				Bootable:  logicalDrivesItem["bootable"].(bool),
+				RaidLevel: logicalDrivesItem["raid_level"].(string),
+			})
+		}
+		serverProfile.LocalStorage.LogicalDrives = logicalDrives
+
+		// get SAN storage data if provided
+		rawSanStorage := d.Get("san_storage").(*schema.Set).List()
+		sanStorage := ov.SanStorageOptions{}
+		for _, raw := range rawSanStorage {
+			sanStorageItem := raw.(map[string]interface{})
+			sanStorage = ov.SanStorageOptions{
+				HostOSType:            sanStorageItem["host_os_type"].(string),
+				ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
+				ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
+				ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
+				SerialNumber:          sanStorageItem["serial_number"].(string),
+				Type:                  sanStorageItem["type"].(string),
+				URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
+			}
+		}
+		serverProfile.SanStorage = sanStorage
+
+		// Get volume attachment data for san storage
+		rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+		volumeAttachments := make([]ov.VolumeAttachment, 0)
+
+		for _, rawVolumeAttachment := range rawVolumeAttachments {
+			volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+
+			// get volumeAttachemts.storagepaths
+			storagePaths := make([]ov.StoragePath, 0)
+			if volumeAttachmentItem["storage_paths"] != nil {
+				rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+
+				for _, rawStoragePath := range rawStoragePaths {
+					storagePathItem := rawStoragePath.(map[string]interface{})
+
+					// get volumeAttachemts.storagepaths.targets
+					targets := make([]ov.Target, 0)
+					if storagePathItem["targets"] != nil {
+						rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
+						for _, rawStorageTarget := range rawStorageTargets {
+							storageTargetItem := rawStorageTarget.(map[string]interface{})
+							targets = append(targets, ov.Target{
+								IpAddress: storageTargetItem["ip_address"].(string),
+								Name:      storageTargetItem["name"].(string),
+								TcpPort:   storageTargetItem["tcp_port"].(int),
+							})
+						}
+					}
+
+					storagePaths = append(storagePaths, ov.StoragePath{
+						IsEnabled:         storagePathItem["is_enabled"].(bool),
+						Status:            storagePathItem["status"].(string),
+						ConnectionID:      storagePathItem["connection_id"].(int),
+						StorageTargetType: storagePathItem["storage_target_type"].(string),
+						TargetSelector:    storagePathItem["target_selector"].(string),
+						Targets:           targets,
 					})
 				}
 			}
 
-			// If Name already imported from SPT, overwrite its value from SP
-			for _, temp1 := range osCustomAttributes {
-				for j, temp2 := range serverProfile.OSDeploymentSettings.OSCustomAttributes {
-					if temp1.Name == temp2.Name {
-						serverProfile.OSDeploymentSettings.OSCustomAttributes[j].Value = temp1.Value
+			tempPermanent := volumeAttachmentItem["permanent"].(bool)
+			tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
+			volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
+				Permanent:                      &tempPermanent,
+				ID:                             volumeAttachmentItem["id"].(int),
+				LUN:                            volumeAttachmentItem["lun"].(string),
+				LUNType:                        volumeAttachmentItem["lun_type"].(string),
+				VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
+				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
+				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
+				VolumeShareable:                &tempVolumeShareable,
+				VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
+				VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
+				VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
+				VolumeName:                     volumeAttachmentItem["volume_name"].(string),
+				StoragePaths:                   storagePaths,
+				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+			})
+		}
+		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
+
+		if val, ok := d.GetOk("os_deployment_settings"); ok {
+			rawOsDeploySetting := val.(*schema.Set).List()
+			for _, raw := range rawOsDeploySetting {
+				osDeploySettingItem := raw.(map[string]interface{})
+
+				osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+				if osDeploySettingItem["os_custom_attributes"] != nil {
+					rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+					for _, rawDeploySetting := range rawOsDeploySettings {
+						rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+
+						osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+							Name:  rawOsDeploySetting["name"].(string),
+							Value: rawOsDeploySetting["value"].(string),
+						})
 					}
 				}
+
+				// If Name already imported from SPT, overwrite its value from SP
+				for _, temp1 := range osCustomAttributes {
+					for j, temp2 := range serverProfile.OSDeploymentSettings.OSCustomAttributes {
+						if temp1.Name == temp2.Name {
+							serverProfile.OSDeploymentSettings.OSCustomAttributes[j].Value = temp1.Value
+						}
+					}
+				}
+
 			}
-
 		}
-	}
 
-	err := config.ovClient.UpdateServerProfile(serverProfile)
-	if err != nil {
-		return err
+		err := config.ovClient.UpdateServerProfile(serverProfile)
+		if err != nil {
+			return err
+		}
+		d.SetId(d.Get("name").(string))
+
 	}
-	d.SetId(d.Get("name").(string))
 
 	return resourceServerProfileRead(d, meta)
 
@@ -1323,7 +1376,7 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, f
 
 	f = append(f, filters...)
 
-	if hwlist, err = config.ovClient.GetServerHardwareList(f, "name:desc"); err != nil {
+	if hwlist, err = config.ovClient.GetServerHardwareList(f, "name:desc", "", "", ""); err != nil {
 		if _, ok := err.(*json.SyntaxError); ok && len(filters) > 0 {
 			return hw, fmt.Errorf("%s. It's likely your hw_filter(s) are incorrectly formatted", err)
 		}
