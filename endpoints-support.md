@@ -46,7 +46,7 @@
 |     **Interconnect Types**                                                                                                                           |
 |<sub>/rest/Interconnect-types/{id}</sub>                                                 | GET      | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   |
 |     **Interconnects**                                                                                                                          |
-|<sub>/rest/interconnects/{id}</sub>                                                      | GET      | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   |
+|<sub>/rest/interconnects/{id}</sub>                                                      | GET      | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   |  :white_check_mark:  |
 |     **Logical Enclosure**                                                                                                                         |
 |<sub>/rest/logical-enclosures/</sub>                                                     | POST     |  :heavy_multiplication_x:  | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   |
 |<sub>/rest/logical-enclosures/{id}</sub>                                                 | GET      | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :heavy_multiplication_x:   | :white_check_mark:   | :white_check_mark:   | :white_check_mark:   |
