@@ -327,7 +327,7 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, f
 
 	f = append(f, filters...)
 
-	if hwlist, err = config.ovClient.GetServerHardwareList(f, "name:desc"); err != nil {
+	if hwlist, err = config.ovClient.GetServerHardwareList(f, "name:desc", "", "", ""); err != nil {
 		if _, ok := err.(*json.SyntaxError); ok && len(filters) > 0 {
 			return hw, fmt.Errorf("%s. It's likely your hw_filter(s) are incorrectly formatted", err)
 		}
