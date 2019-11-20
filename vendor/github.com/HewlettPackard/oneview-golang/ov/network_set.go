@@ -18,6 +18,7 @@ type NetworkSet struct {
 	Modified              string          `json:"modified,omitempty"`              // "modified": "20150831T154835.250Z",
 	Name                  string          `json:"name"`                            // "name": "Network Set 1",
 	NativeNetworkUri      utils.Nstring   `json:"nativeNetworkUri,omitempty"`
+	NetworkSetType        string          `json:"networkSetType,omitempty"` // "networkSetType": "Regular"
 	NetworkUris           []utils.Nstring `json:"networkUris"`
 	ScopesUri             utils.Nstring   `json:"scopesUri,omitempty"`
 	State                 string          `json:"state,omitempty"`  // "state": "Normal",
