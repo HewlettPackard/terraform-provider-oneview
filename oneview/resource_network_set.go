@@ -96,9 +96,9 @@ func resourceNetworkSet() *schema.Resource {
 				Set: schema.HashString,
 			},
 			"network_set_type": {
-                                Type:     schema.TypeString,
-                                Optional: true,
-                        },
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -178,7 +178,7 @@ func resourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("network_uris", networkUris)
 	d.Set("initial_scope_uris", netSet.InitialScopeUris)
 	d.Set("scopes_uri", netSet.ScopesUri)
-	d.Set("network_set_type",netSet.NetworkSetType)
+	d.Set("network_set_type", netSet.NetworkSetType)
 
 	return nil
 
@@ -193,18 +193,18 @@ func resourceNetworkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 		netUris[i] = utils.NewNstring(raw.(string))
 	}
 	newNetSet := ov.NetworkSet{
-		ETAG: d.Get("eTag").(string),
-		URI:  utils.NewNstring(d.Get("uri").(string)),
-		Name: d.Get("name").(string),
+		ETAG:                  d.Get("eTag").(string),
+		URI:                   utils.NewNstring(d.Get("uri").(string)),
+		Name:                  d.Get("name").(string),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type:             d.Get("type").(string),
-		NativeNetworkUri: utils.NewNstring(d.Get("native_network_uri").(string)),
-		NetworkUris:      netUris,
+		Type:                  d.Get("type").(string),
+		NativeNetworkUri:      utils.NewNstring(d.Get("native_network_uri").(string)),
+		NetworkUris:           netUris,
 	}
 
 	if val, ok := d.GetOk("network_set_type"); ok {
-                newNetSet.NetworkSetType = val.(string)
-        }
+		newNetSet.NetworkSetType = val.(string)
+	}
 
 	err := config.ovClient.UpdateNetworkSet(newNetSet)
 	if err != nil {
