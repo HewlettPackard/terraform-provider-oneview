@@ -20,6 +20,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Interconnect Type
 - Logical enclosure
 - Network set
+- Scope
 - Server hardware
 - Storage pool
 - Storage system
