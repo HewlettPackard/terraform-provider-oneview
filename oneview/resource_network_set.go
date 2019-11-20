@@ -129,6 +129,7 @@ func resourceNetworkSetCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if val, ok := d.GetOk("network_set_type"); ok {
+
 		netSet.NetworkSetType = val.(string)
 	}
 
