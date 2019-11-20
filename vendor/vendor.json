@@ -83,7 +83,7 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "fVm/i4b7qPzkMGWC+ty5TPaPLp8=",
+			"checksumSHA1": "QYb6c+5+TMEXRa+p1rJhWUcdkhs=",
 			"path": "github.com/HewlettPackard/oneview-golang",
 			"revision": "9481bd511421afff3bdafab3c774108a13cce6a8",
 			"revisionTime": "2019-11-14T06:25:28Z"
@@ -113,7 +113,7 @@
 			"revisionTime": "2019-11-14T06:25:28Z"
 		},
 		{
-			"checksumSHA1": "QUDI5Ivrn51bVSLTRWAin2nlouk=",
+			"checksumSHA1": "vvaELSjTCgNRDWhp6DTxxHFUuDU=",
 			"path": "github.com/HewlettPackard/oneview-golang/ov",
 			"revision": "9481bd511421afff3bdafab3c774108a13cce6a8",
 			"revisionTime": "2019-11-14T06:25:28Z"
