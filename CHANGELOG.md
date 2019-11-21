@@ -28,6 +28,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Storage volume
 - Storage volume attachment
 - Storage volume template
+- Uplink set
 
 ### Image Streamer Features supported
 - Deployment Plan
