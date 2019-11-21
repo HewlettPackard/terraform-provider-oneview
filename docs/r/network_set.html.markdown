@@ -46,3 +46,11 @@ In addition to the arguments listed above, the following computed attributes are
 * `uri` - The URI of the created resource.
 
 * `eTag` - Entity tag/version ID of the resource.
+
+* `connection_template_uri` - The URI of the existing connection template associated with this object.
+
+* `scopesUri` - The URI for the resource scope assignments.
+
+* `description` - Brief description of the resource.
+
+* `network_set_type` - NetworkSet Type whose default value is "Regular".
