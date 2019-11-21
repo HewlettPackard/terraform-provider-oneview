@@ -66,6 +66,14 @@ func dataSourceServerHardwareType() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"family": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"model": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -86,6 +94,8 @@ func dataSourceServerHardwareTypeRead(d *schema.ResourceData, meta interface{}) 
 	d.Set("category", serverHardwareType.Category)
 	d.Set("etag", serverHardwareType.ETAG)
 	d.Set("uri", serverHardwareType.URI.String())
+	d.Set("family", serverHardwareType.Family)
+	d.Set("model", serverHardwareType.Model)
 
 	controllerModes := make([]interface{}, len(serverHardwareType.StorageCapabilities.ControllerModes))
 	for i, controllerMode := range serverHardwareType.StorageCapabilities.ControllerModes {

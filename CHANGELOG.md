@@ -22,6 +22,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Network set
 - Scope
 - Server hardware
+- Server hardware type
 - Storage pool
 - Storage system
 - Storage volume
