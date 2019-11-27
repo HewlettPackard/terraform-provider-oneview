@@ -8,30 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
  - Server Profile support with Server Profile Template extended to 800
  - Support for update compliance in Logical Interonnect.
 
-### Major changes:
-- Extended support of SDK to OneView API1000.
-
 #### Bug fixes & Enhancements:
 - [#153] (https://github.com/HewlettPackard/oneview-golang/issues/153) change in the enclosure.go file for editing  wrong fields
-
-### Oneview Features supported
-- Deployment Plan
-- Enclosure group
-- Ethernet Network
-- FC Network
-- FCoE Network
-- Interconnect
-- Interconnect type
-- Logical enclosure
-- Network Set
-- Scope
-- Server hardware type
-- Server Profile
-- Storage pool
-- Storage system
-- Storage volume
-- Storage volume attachment
-- Storage volume template
 
 # [v1.0.0] (2019-02-07)
 ### Notes

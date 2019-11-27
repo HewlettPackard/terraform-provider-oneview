@@ -25,7 +25,7 @@ resource "oneview_enclosure_group" "eg_inst" {
 	{
 		interconnect_bay = 4
 		logical_interconnect_group_uri = "/rest/sas-logical-interconnect-groups/a14f144f-359d-4ce2-b2c1-446382a30ad0"
-	}
+	},
 	]
 }
 
@@ -44,7 +44,7 @@ resource "oneview_enclosure_group" "eg_inst" {
         {
                 interconnect_bay = 4
                 logical_interconnect_group_uri = "/rest/sas-logical-interconnect-groups/a14f144f-359d-4ce2-b2c1-446382a30ad0"
-        }
+        },
         ]
 	interconnect_bay_mapping_count = 2
 	type = "EnclosureGroupV7"

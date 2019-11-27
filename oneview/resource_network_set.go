@@ -80,8 +80,9 @@ func resourceNetworkSet() *schema.Resource {
 				Computed: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
@@ -94,10 +95,6 @@ func resourceNetworkSet() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
-			},
-			"network_set_type": {
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 		},
 	}
@@ -126,10 +123,6 @@ func resourceNetworkSetCreate(d *schema.ResourceData, meta interface{}) error {
 			initialScopeUris[i] = utils.Nstring(raw.(string))
 		}
 		netSet.InitialScopeUris = initialScopeUris
-	}
-
-	if val, ok := d.GetOk("network_set_type"); ok {
-		netSet.NetworkSetType = val.(string)
 	}
 
 	netSetError := config.ovClient.CreateNetworkSet(netSet)
@@ -178,7 +171,6 @@ func resourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("network_uris", networkUris)
 	d.Set("initial_scope_uris", netSet.InitialScopeUris)
 	d.Set("scopes_uri", netSet.ScopesUri)
-	d.Set("network_set_type", netSet.NetworkSetType)
 
 	return nil
 
@@ -193,17 +185,13 @@ func resourceNetworkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 		netUris[i] = utils.NewNstring(raw.(string))
 	}
 	newNetSet := ov.NetworkSet{
-		ETAG: d.Get("eTag").(string),
-		URI:  utils.NewNstring(d.Get("uri").(string)),
-		Name: d.Get("name").(string),
+		ETAG:                  d.Get("eTag").(string),
+		URI:                   utils.NewNstring(d.Get("uri").(string)),
+		Name:                  d.Get("name").(string),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type:             d.Get("type").(string),
-		NativeNetworkUri: utils.NewNstring(d.Get("native_network_uri").(string)),
-		NetworkUris:      netUris,
-	}
-
-	if val, ok := d.GetOk("network_set_type"); ok {
-		newNetSet.NetworkSetType = val.(string)
+		Type:                  d.Get("type").(string),
+		NativeNetworkUri:      utils.NewNstring(d.Get("native_network_uri").(string)),
+		NetworkUris:           netUris,
 	}
 
 	err := config.ovClient.UpdateNetworkSet(newNetSet)

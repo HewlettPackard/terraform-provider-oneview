@@ -3,229 +3,300 @@ package format
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"sort"
 	"strings"
 
-	"github.com/hashicorp/terraform/terraform"
 	"github.com/mitchellh/colorstring"
+
+	"github.com/hashicorp/terraform/addrs"
+	"github.com/hashicorp/terraform/plans"
+	"github.com/hashicorp/terraform/states"
+	"github.com/hashicorp/terraform/terraform"
 )
 
-// PlanOpts are the options for formatting a plan.
-type PlanOpts struct {
-	// Plan is the plan to format. This is required.
-	Plan *terraform.Plan
-
-	// Color is the colorizer. This is optional.
-	Color *colorstring.Colorize
-
-	// ModuleDepth is the depth of the modules to expand. By default this
-	// is zero which will not expand modules at all.
-	ModuleDepth int
+// Plan is a representation of a plan optimized for display to
+// an end-user, as opposed to terraform.Plan which is for internal use.
+//
+// DisplayPlan excludes implementation details that may otherwise appear
+// in the main plan, such as destroy actions on data sources (which are
+// there only to clean up the state).
+type Plan struct {
+	Resources []*InstanceDiff
 }
 
-// Plan takes a plan and returns a
-func Plan(opts *PlanOpts) string {
-	p := opts.Plan
-	if p.Diff == nil || p.Diff.Empty() {
+// InstanceDiff is a representation of an instance diff optimized
+// for display, in conjunction with DisplayPlan.
+type InstanceDiff struct {
+	Addr   *terraform.ResourceAddress
+	Action plans.Action
+
+	// Attributes describes changes to the attributes of the instance.
+	//
+	// For destroy diffs this is always nil.
+	Attributes []*AttributeDiff
+
+	Tainted bool
+	Deposed bool
+}
+
+// AttributeDiff is a representation of an attribute diff optimized
+// for display, in conjunction with DisplayInstanceDiff.
+type AttributeDiff struct {
+	// Path is a dot-delimited traversal through possibly many levels of list and map structure,
+	// intended for display purposes only.
+	Path string
+
+	Action plans.Action
+
+	OldValue string
+	NewValue string
+
+	NewComputed bool
+	Sensitive   bool
+	ForcesNew   bool
+}
+
+// PlanStats gives summary counts for a Plan.
+type PlanStats struct {
+	ToAdd, ToChange, ToDestroy int
+}
+
+// NewPlan produces a display-oriented Plan from a terraform.Plan.
+func NewPlan(changes *plans.Changes) *Plan {
+	log.Printf("[TRACE] NewPlan for %#v", changes)
+	ret := &Plan{}
+	if changes == nil {
+		// Nothing to do!
+		return ret
+	}
+
+	for _, rc := range changes.Resources {
+		addr := rc.Addr
+		log.Printf("[TRACE] NewPlan found %s (%s)", addr, rc.Action)
+		dataSource := addr.Resource.Resource.Mode == addrs.DataResourceMode
+
+		// We create "delete" actions for data resources so we can clean
+		// up their entries in state, but this is an implementation detail
+		// that users shouldn't see.
+		if dataSource && rc.Action == plans.Delete {
+			continue
+		}
+
+		// For now we'll shim this to work with our old types.
+		// TODO: Update for the new plan types, ideally also switching over to
+		// a structural diff renderer instead of a flat renderer.
+		did := &InstanceDiff{
+			Addr:   terraform.NewLegacyResourceInstanceAddress(addr),
+			Action: rc.Action,
+		}
+
+		if rc.DeposedKey != states.NotDeposed {
+			did.Deposed = true
+		}
+
+		// Since this is just a temporary stub implementation on the way
+		// to us replacing this with the structural diff renderer, we currently
+		// don't include any attributes here.
+		// FIXME: Implement the structural diff renderer to replace this
+		// codepath altogether.
+
+		ret.Resources = append(ret.Resources, did)
+	}
+
+	// Sort the instance diffs by their addresses for display.
+	sort.Slice(ret.Resources, func(i, j int) bool {
+		iAddr := ret.Resources[i].Addr
+		jAddr := ret.Resources[j].Addr
+		return iAddr.Less(jAddr)
+	})
+
+	return ret
+}
+
+// Format produces and returns a text representation of the receiving plan
+// intended for display in a terminal.
+//
+// If color is not nil, it is used to colorize the output.
+func (p *Plan) Format(color *colorstring.Colorize) string {
+	if p.Empty() {
 		return "This plan does nothing."
 	}
 
-	if opts.Color == nil {
-		opts.Color = &colorstring.Colorize{
+	if color == nil {
+		color = &colorstring.Colorize{
 			Colors: colorstring.DefaultColors,
 			Reset:  false,
 		}
 	}
 
-	buf := new(bytes.Buffer)
-	for _, m := range p.Diff.Modules {
-		if len(m.Path)-1 <= opts.ModuleDepth || opts.ModuleDepth == -1 {
-			formatPlanModuleExpand(buf, m, opts)
-		} else {
-			formatPlanModuleSingle(buf, m, opts)
+	// Find the longest path length of all the paths that are changing,
+	// so we can align them all.
+	keyLen := 0
+	for _, r := range p.Resources {
+		for _, attr := range r.Attributes {
+			key := attr.Path
+
+			if len(key) > keyLen {
+				keyLen = len(key)
+			}
 		}
+	}
+
+	buf := new(bytes.Buffer)
+	for _, r := range p.Resources {
+		formatPlanInstanceDiff(buf, r, keyLen, color)
 	}
 
 	return strings.TrimSpace(buf.String())
 }
 
-// formatPlanModuleExpand will output the given module and all of its
-// resources.
-func formatPlanModuleExpand(
-	buf *bytes.Buffer, m *terraform.ModuleDiff, opts *PlanOpts) {
-	// Ignore empty diffs
-	if m.Empty() {
-		return
+// Stats returns statistics about the plan
+func (p *Plan) Stats() PlanStats {
+	var ret PlanStats
+	for _, r := range p.Resources {
+		switch r.Action {
+		case plans.Create:
+			ret.ToAdd++
+		case plans.Update:
+			ret.ToChange++
+		case plans.DeleteThenCreate, plans.CreateThenDelete:
+			ret.ToAdd++
+			ret.ToDestroy++
+		case plans.Delete:
+			ret.ToDestroy++
+		}
 	}
+	return ret
+}
 
-	var moduleName string
-	if !m.IsRoot() {
-		moduleName = fmt.Sprintf("module.%s", strings.Join(m.Path[1:], "."))
+// ActionCounts returns the number of diffs for each action type
+func (p *Plan) ActionCounts() map[plans.Action]int {
+	ret := map[plans.Action]int{}
+	for _, r := range p.Resources {
+		ret[r.Action]++
 	}
+	return ret
+}
 
-	// We want to output the resources in sorted order to make things
-	// easier to scan through, so get all the resource names and sort them.
-	names := make([]string, 0, len(m.Resources))
-	for name, _ := range m.Resources {
-		names = append(names, name)
-	}
-	sort.Strings(names)
+// Empty returns true if there is at least one resource diff in the receiving plan.
+func (p *Plan) Empty() bool {
+	return len(p.Resources) == 0
+}
 
-	// Go through each sorted name and start building the output
-	for _, name := range names {
-		rdiff := m.Resources[name]
-		if rdiff.Empty() {
-			continue
-		}
-
-		dataSource := strings.HasPrefix(name, "data.")
-
-		if moduleName != "" {
-			name = moduleName + "." + name
-		}
-
-		// Determine the color for the text (green for adding, yellow
-		// for change, red for delete), and symbol, and output the
-		// resource header.
-		color := "yellow"
-		symbol := "~"
-		oldValues := true
-		switch rdiff.ChangeType() {
-		case terraform.DiffDestroyCreate:
-			color = "green"
-			symbol = "-/+"
-		case terraform.DiffCreate:
-			color = "green"
-			symbol = "+"
-			oldValues = false
-
-			// If we're "creating" a data resource then we'll present it
-			// to the user as a "read" operation, so it's clear that this
-			// operation won't change anything outside of the Terraform state.
-			// Unfortunately by the time we get here we only have the name
-			// to work with, so we need to cheat and exploit knowledge of the
-			// naming scheme for data resources.
-			if dataSource {
-				symbol = "<="
-				color = "cyan"
-			}
-		case terraform.DiffDestroy:
-			color = "red"
-			symbol = "-"
-		}
-
-		var extraAttr []string
-		if rdiff.DestroyTainted {
-			extraAttr = append(extraAttr, "tainted")
-		}
-		if rdiff.DestroyDeposed {
-			extraAttr = append(extraAttr, "deposed")
-		}
-		var extraStr string
-		if len(extraAttr) > 0 {
-			extraStr = fmt.Sprintf(" (%s)", strings.Join(extraAttr, ", "))
-		}
-
-		buf.WriteString(opts.Color.Color(fmt.Sprintf(
-			"[%s]%s %s%s\n",
-			color, symbol, name, extraStr)))
-
-		// Get all the attributes that are changing, and sort them. Also
-		// determine the longest key so that we can align them all.
-		keyLen := 0
-		keys := make([]string, 0, len(rdiff.Attributes))
-		for key, _ := range rdiff.Attributes {
-			// Skip the ID since we do that specially
-			if key == "id" {
-				continue
-			}
-
-			keys = append(keys, key)
-			if len(key) > keyLen {
-				keyLen = len(key)
-			}
-		}
-		sort.Strings(keys)
-
-		// Go through and output each attribute
-		for _, attrK := range keys {
-			attrDiff := rdiff.Attributes[attrK]
-
-			v := attrDiff.New
-			if v == "" && attrDiff.NewComputed {
-				v = "<computed>"
-			}
-
-			if attrDiff.Sensitive {
-				v = "<sensitive>"
-			}
-
-			updateMsg := ""
-			if attrDiff.RequiresNew && rdiff.Destroy {
-				updateMsg = opts.Color.Color(" [red](forces new resource)")
-			} else if attrDiff.Sensitive && oldValues {
-				updateMsg = opts.Color.Color(" [yellow](attribute changed)")
-			}
-
-			if oldValues {
-				var u string
-				if attrDiff.Sensitive {
-					u = "<sensitive>"
-				} else {
-					u = attrDiff.Old
-				}
-				buf.WriteString(fmt.Sprintf(
-					"    %s:%s %#v => %#v%s\n",
-					attrK,
-					strings.Repeat(" ", keyLen-len(attrK)),
-					u,
-					v,
-					updateMsg))
-			} else {
-				buf.WriteString(fmt.Sprintf(
-					"    %s:%s %#v%s\n",
-					attrK,
-					strings.Repeat(" ", keyLen-len(attrK)),
-					v,
-					updateMsg))
-			}
-		}
-
-		// Write the reset color so we don't overload the user's terminal
-		buf.WriteString(opts.Color.Color("[reset]\n"))
+// DiffActionSymbol returns a string that, once passed through a
+// colorstring.Colorize, will produce a result that can be written
+// to a terminal to produce a symbol made of three printable
+// characters, possibly interspersed with VT100 color codes.
+func DiffActionSymbol(action plans.Action) string {
+	switch action {
+	case plans.DeleteThenCreate:
+		return "[red]-[reset]/[green]+[reset]"
+	case plans.CreateThenDelete:
+		return "[green]+[reset]/[red]-[reset]"
+	case plans.Create:
+		return "  [green]+[reset]"
+	case plans.Delete:
+		return "  [red]-[reset]"
+	case plans.Read:
+		return " [cyan]<=[reset]"
+	case plans.Update:
+		return "  [yellow]~[reset]"
+	default:
+		return "  ?"
 	}
 }
 
-// formatPlanModuleSingle will output the given module and all of its
-// resources.
-func formatPlanModuleSingle(
-	buf *bytes.Buffer, m *terraform.ModuleDiff, opts *PlanOpts) {
-	// Ignore empty diffs
-	if m.Empty() {
-		return
-	}
-
-	moduleName := fmt.Sprintf("module.%s", strings.Join(m.Path[1:], "."))
+// formatPlanInstanceDiff writes the text representation of the given instance diff
+// to the given buffer, using the given colorizer.
+func formatPlanInstanceDiff(buf *bytes.Buffer, r *InstanceDiff, keyLen int, colorizer *colorstring.Colorize) {
+	addrStr := r.Addr.String()
 
 	// Determine the color for the text (green for adding, yellow
 	// for change, red for delete), and symbol, and output the
 	// resource header.
 	color := "yellow"
-	symbol := "~"
-	switch m.ChangeType() {
-	case terraform.DiffCreate:
+	symbol := DiffActionSymbol(r.Action)
+	oldValues := true
+	switch r.Action {
+	case plans.DeleteThenCreate, plans.CreateThenDelete:
+		color = "yellow"
+	case plans.Create:
 		color = "green"
-		symbol = "+"
-	case terraform.DiffDestroy:
+		oldValues = false
+	case plans.Delete:
 		color = "red"
-		symbol = "-"
+	case plans.Read:
+		color = "cyan"
+		oldValues = false
 	}
 
-	buf.WriteString(opts.Color.Color(fmt.Sprintf(
-		"[%s]%s %s\n",
-		color, symbol, moduleName)))
-	buf.WriteString(fmt.Sprintf(
-		"    %d resource(s)",
-		len(m.Resources)))
-	buf.WriteString(opts.Color.Color("[reset]\n"))
+	var extraStr string
+	if r.Tainted {
+		extraStr = extraStr + " (tainted)"
+	}
+	if r.Deposed {
+		extraStr = extraStr + " (deposed)"
+	}
+	if r.Action.IsReplace() {
+		extraStr = extraStr + colorizer.Color(" [red][bold](new resource required)")
+	}
+
+	buf.WriteString(
+		colorizer.Color(fmt.Sprintf(
+			"[%s]%s [%s]%s%s\n",
+			color, symbol, color, addrStr, extraStr,
+		)),
+	)
+
+	for _, attr := range r.Attributes {
+
+		v := attr.NewValue
+		var dispV string
+		switch {
+		case v == "" && attr.NewComputed:
+			dispV = "<computed>"
+		case attr.Sensitive:
+			dispV = "<sensitive>"
+		default:
+			dispV = fmt.Sprintf("%q", v)
+		}
+
+		updateMsg := ""
+		switch {
+		case attr.ForcesNew && r.Action.IsReplace():
+			updateMsg = colorizer.Color(" [red](forces new resource)")
+		case attr.Sensitive && oldValues:
+			updateMsg = colorizer.Color(" [yellow](attribute changed)")
+		}
+
+		if oldValues {
+			u := attr.OldValue
+			var dispU string
+			switch {
+			case attr.Sensitive:
+				dispU = "<sensitive>"
+			default:
+				dispU = fmt.Sprintf("%q", u)
+			}
+			buf.WriteString(fmt.Sprintf(
+				"      %s:%s %s => %s%s\n",
+				attr.Path,
+				strings.Repeat(" ", keyLen-len(attr.Path)),
+				dispU, dispV,
+				updateMsg,
+			))
+		} else {
+			buf.WriteString(fmt.Sprintf(
+				"      %s:%s %s%s\n",
+				attr.Path,
+				strings.Repeat(" ", keyLen-len(attr.Path)),
+				dispV,
+				updateMsg,
+			))
+		}
+	}
+
+	// Write the reset color so we don't bleed color into later text
+	buf.WriteString(colorizer.Color("[reset]\n"))
 }

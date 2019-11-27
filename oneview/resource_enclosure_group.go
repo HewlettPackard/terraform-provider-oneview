@@ -109,7 +109,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"port_mapping_count": {
 				Type:     schema.TypeInt,
-				Computed: true,
+				Optional: true,
 			},
 			"port_mappings": {
 				Optional: true,
@@ -140,8 +140,9 @@ func resourceEnclosureGroup() *schema.Resource {
 				Optional: true,
 			},
 			"Status": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -244,10 +245,10 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	enclosureGroup := ov.EnclosureGroup{
-		URI: utils.NewNstring(d.Get("uri").(string)),
+		URI:                         utils.NewNstring(d.Get("uri").(string)),
 		InterconnectBayMappingCount: d.Get("interconnect_bay_mapping_count").(int),
-		Type:         d.Get("type").(string),
-		StackingMode: d.Get("stacking_mode").(string),
+		Type:                        d.Get("type").(string),
+		StackingMode:                d.Get("stacking_mode").(string),
 	}
 
 	rawInterconnectBayMappings := d.Get("interconnect_bay_mappings").(*schema.Set).List()

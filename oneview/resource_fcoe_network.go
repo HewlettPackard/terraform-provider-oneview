@@ -33,13 +33,15 @@ func resourceFCoENetwork() *schema.Resource {
 				Required: true,
 			},
 			"vlanId": {
-				Type:     schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Type:       schema.TypeInt,
+				Required:   true,
+				ForceNew:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"connectionTemplateUri": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -47,12 +49,14 @@ func resourceFCoENetwork() *schema.Resource {
 				Default:  "fcoe-network",
 			},
 			"managedSanUri": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"fabricUri": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -67,8 +71,9 @@ func resourceFCoENetwork() *schema.Resource {
 				Computed: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"modified": {
 				Type:     schema.TypeString,
@@ -86,19 +91,6 @@ func resourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scopesUri": {
-				Optional: true,
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"initial_scope_uris": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-				Set: schema.HashString,
-			},
 		},
 	}
 }
@@ -111,14 +103,7 @@ func resourceFCoENetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		VlanId: d.Get("vlanId").(int),
 		Type:   d.Get("type").(string),
 	}
-	if val, ok := d.GetOk("initial_scope_uris"); ok {
-		rawInitialScopeUris := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-		for _, rawData := range rawInitialScopeUris {
-			initialScopeUris = append(initialScopeUris, utils.Nstring(rawData.(string)))
-		}
-		fcoeNet.InitialScopeUris = initialScopeUris
-	}
+
 	fcoeNetError := config.ovClient.CreateFCoENetwork(fcoeNet)
 	d.SetId(d.Get("name").(string))
 	if fcoeNetError != nil {
@@ -131,12 +116,11 @@ func resourceFCoENetworkCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	fcoeNet, fcoeNetError := config.ovClient.GetFCoENetworkByName(d.Id())
+	fcoeNet, fcoeNetError := config.ovClient.GetFCoENetworkByName(d.Get("name").(string))
 	if fcoeNetError != nil || fcoeNet.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
-	d.Set("vlanId", fcoeNet.VlanId)
 	d.Set("created", fcoeNet.Created)
 	d.Set("modified", fcoeNet.Modified)
 	d.Set("uri", fcoeNet.URI.String())
@@ -148,8 +132,7 @@ func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("eTag", fcoeNet.ETAG)
 	d.Set("managedSanUri", fcoeNet.ManagedSanUri)
 	d.Set("description", fcoeNet.Description)
-	d.Set("scopesUri", fcoeNet.ScopesUri.String())
-	d.Set("initial_scope_uris", fcoeNet.InitialScopeUris)
+
 	return nil
 }
 
@@ -157,12 +140,12 @@ func resourceFCoENetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	newFCoENet := ov.FCoENetwork{
-		ETAG:   d.Get("eTag").(string),
-		URI:    utils.NewNstring(d.Get("uri").(string)),
-		VlanId: d.Get("vlanId").(int),
-		Name:   d.Get("name").(string),
+		ETAG:                  d.Get("eTag").(string),
+		URI:                   utils.NewNstring(d.Get("uri").(string)),
+		VlanId:                d.Get("vlanId").(int),
+		Name:                  d.Get("name").(string),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connectionTemplateUri").(string)),
-		Type: d.Get("type").(string),
+		Type:                  d.Get("type").(string),
 	}
 
 	err := config.ovClient.UpdateFCoENetwork(newFCoENet)

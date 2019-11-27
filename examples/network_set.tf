@@ -23,6 +23,3 @@ output "oneview_network_set_value" {
         value = "${data.oneview_network_set.network_set.uri}"
 }
 
-//Importing an existing resource from appliance
-resource "oneview_network_set" "import_ns" {
-}

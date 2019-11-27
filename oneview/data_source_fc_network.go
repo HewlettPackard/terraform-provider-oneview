@@ -69,8 +69,9 @@ func dataSourceFCNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"created": {
 				Type:     schema.TypeString,
@@ -81,8 +82,9 @@ func dataSourceFCNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"scopesUri": {
-				Computed: true,
-				Type:     schema.TypeString,
+				Computed:   true,
+				Type:       schema.TypeString,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 		},
 	}

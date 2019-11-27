@@ -85,12 +85,14 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"scopesUri": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"initial_scope_uris": {
 				Computed: true,

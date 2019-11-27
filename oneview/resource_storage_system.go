@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -79,8 +80,9 @@ func resourceStorageSystem() *schema.Resource {
 				Computed: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -185,7 +187,7 @@ func resourceStorageSystem() *schema.Resource {
 func resourceStorageSystemCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	storageSystem := ov.StorageSystem{
+	storageSystem := ov.StorageSystemV4{
 		Hostname: d.Get("hostname").(string),
 		Username: d.Get("username").(string),
 		Password: d.Get("password").(string),
@@ -280,7 +282,7 @@ func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	storageSystem := ov.StorageSystem{
+	storageSystem := ov.StorageSystemV4{
 		Hostname: d.Get("hostname").(string),
 		URI:      utils.NewNstring(d.Get("uri").(string)),
 		Name:     d.Get("name").(string),

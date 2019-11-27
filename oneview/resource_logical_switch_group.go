@@ -86,8 +86,9 @@ func resourceLogicalSwitchGroup() *schema.Resource {
 				Computed: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"switch_type_uri": {
 				Type:     schema.TypeString,

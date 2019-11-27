@@ -27,35 +27,18 @@ type BootTarget struct {
 	LUN       string `json:"lun,omitempty"`       // lun(string,required), The LUN of the Boot Volume presented by the target device. This value can be either 1 to 3 decimal digits in the range 0 to 255, or 13 to 16 hex digits with no other characters
 }
 
-type Ipv4Option struct {
-	Gateway         string `json:"gateway,omitempty"`
-	IpAddressSource string `json:"ipAddressSource,omitempty"`
-}
-
-type BootIscsi struct {
-	Chaplevel            string `json:"chapLevel,omitempty"`
-	FirstBootTargetIp    string `json:"firstBootTargetIp,omitempty"`
-	FirstBootTargetPort  string `json:"firstBootTargetPort,omitempty"`
-	SecondBootTargetIp   string `json:"secondBootTargetIp,omitempty"`
-	SecondBootTargetPort string `json:"secondBootTargetPort,omitempty"`
-}
-
 // BootOption -
 type BootOption struct {
 	BootOptionV3
-	Priority         string       `json:"priority,omitempty"` // priority(const_string), indicates the boot priority for this device. PXE and Fibre Channel connections are treated separately; an Ethernet connection and a Fibre Channel connection can both be marked as Primary. The 'order' attribute controls ordering among the different device types.
-	Targets          []BootTarget `json:"targets,omitempty"`  // targets {BootTarget}
-	EthernetBootType string       `json:"ethernetBootType,omitempty"`
-	BootVolumeSource string       `json:"bootVolumeSource,omitempty"`
-	Iscsi            *BootIscsi   `json:"iscsi,omitempty"`
+	Priority string       `json:"priority,omitempty"` // priority(const_string), indicates the boot priority for this device. PXE and Fibre Channel connections are treated separately; an Ethernet connection and a Fibre Channel connection can both be marked as Primary. The 'order' attribute controls ordering among the different device types.
+	Targets  []BootTarget `json:"targets,omitempty"`  // targets {BootTarget}
 }
 
 // Connection server profile object for ov
 type Connection struct {
 	Connectionv200
-	AllocatedMbps    int           `json:"allocatedMbps,omitempty"` // allocatedMbps(int:read), The transmit throughput (mbps) currently allocated to this connection. When Fibre Channel connections are set to Auto for requested bandwidth, the value can be set to -2000 to indicate that the actual value is unknown until OneView is able to negotiate the actual speed.
-	Boot             *BootOption   `json:"boot,omitempty"`          // boot {}
-	Ipv4             *Ipv4Option   `json:"ipv4,omitempty"`
+	AllocatedMbps    int           `json:"allocatedMbps,omitempty"`    // allocatedMbps(int:read), The transmit throughput (mbps) currently allocated to this connection. When Fibre Channel connections are set to Auto for requested bandwidth, the value can be set to -2000 to indicate that the actual value is unknown until OneView is able to negotiate the actual speed.
+	Boot             *BootOption   `json:"boot,omitempty"`             // boot {}
 	DeploymentStatus string        `json:"deploymentStatus,omitempty"` // deploymentStatus(const_string:read), The deployment status of the connection. The value can be 'Undefined', 'Reserved', or 'Deployed'.
 	FunctionType     string        `json:"functionType,omitempty"`     // functionType(const_string),  Type of function required for the connection. functionType cannot be modified after the connection is created. 'Ethernet', 'FibreChannel'
 	ID               int           `json:"id,omitempty"`               // id(int), A unique identifier for this connection. When creating or editing a profile, an id is automatically assigned if the attribute is omitted or 0 is specified. When editing a profile, a connection is created if the id does not identify an existing connection.

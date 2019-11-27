@@ -83,8 +83,9 @@ func resourceUplinkSet() *schema.Resource {
 				Optional: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"lacptimer": {
 				Type:     schema.TypeString,
@@ -154,12 +155,12 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 	const Port = "Port"
 
 	uplinkSet := ov.UplinkSet{
-		Name: d.Get("name").(string),
-		LogicalInterconnectURI: utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
-		ConnectionMode:         d.Get("connection_mode").(string),
-		NetworkType:            d.Get("network_type").(string),
-		EthernetNetworkType:    d.Get("ethernet_network_type").(string),
-		Type:                   d.Get("type").(string),
+		Name:                           d.Get("name").(string),
+		LogicalInterconnectURI:         utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
+		ConnectionMode:                 d.Get("connection_mode").(string),
+		NetworkType:                    d.Get("network_type").(string),
+		EthernetNetworkType:            d.Get("ethernet_network_type").(string),
+		Type:                           d.Get("type").(string),
 		ManualLoginRedistributionState: d.Get("manual_login_redistribution_state").(string),
 	}
 
@@ -287,13 +288,13 @@ func resourceUplinkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 	const Port = "Port"
 
 	uplinkSet := ov.UplinkSet{
-		Name: d.Get("name").(string),
-		LogicalInterconnectURI: utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
-		ConnectionMode:         d.Get("connection_mode").(string),
-		NetworkType:            d.Get("network_type").(string),
-		EthernetNetworkType:    d.Get("ethernet_network_type").(string),
-		Type:                   d.Get("type").(string),
-		URI:                    utils.NewNstring(d.Get("uri").(string)),
+		Name:                           d.Get("name").(string),
+		LogicalInterconnectURI:         utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
+		ConnectionMode:                 d.Get("connection_mode").(string),
+		NetworkType:                    d.Get("network_type").(string),
+		EthernetNetworkType:            d.Get("ethernet_network_type").(string),
+		Type:                           d.Get("type").(string),
+		URI:                            utils.NewNstring(d.Get("uri").(string)),
 		ManualLoginRedistributionState: d.Get("manual_login_redistribution_state").(string),
 	}
 

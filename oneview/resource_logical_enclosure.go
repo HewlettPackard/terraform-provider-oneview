@@ -174,10 +174,6 @@ func resourceLogicalEnclosure() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"update_type": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 		},
 	}
 
@@ -219,12 +215,12 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	logicalEnclosure, err := config.ovClient.GetLogicalEnclosureByName(d.Id())
+	logicalEnclosure, err := config.ovClient.GetLogicalEnclosureByName(d.Get("name").(string))
 	if err != nil {
 		d.SetId("")
 		return nil
 	}
-	d.SetId(logicalEnclosure.Name)
+	d.SetId("name")
 	d.Set("ambient_temperature_mode", logicalEnclosure.AmbientTemperatureMode)
 	d.Set("category", logicalEnclosure.Category)
 	d.Set("created", logicalEnclosure.Created)
@@ -292,21 +288,6 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	if val, ok := d.GetOk("update_type"); ok {
-		if val.(string) == "updateByGroup" {
-			id := d.Id()
-			logicalEnclosure, err := config.ovClient.GetLogicalEnclosureByName(id)
-			err = config.ovClient.UpdateFromGroupLogicalEnclosure(logicalEnclosure)
-
-			if err != nil {
-				return err
-			}
-			d.SetId(id)
-
-			return resourceLogicalEnclosureRead(d, meta)
-		}
-	}
-
 	logicalEnclosure := ov.LogicalEnclosure{
 		Name: d.Get("name").(string),
 		Type: d.Get("type").(string),
@@ -332,10 +313,6 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 		logicalEnclosure.ScopesUri = utils.NewNstring(val.(string))
 	}
 
-	if val, ok := d.GetOk("enclosure_group_uri"); ok {
-		logicalEnclosure.EnclosureGroupUri = utils.NewNstring(val.(string))
-	}
-
 	deploymentManagerSettingsList := d.Get("deployment_manager_settings").(*schema.Set).List()
 	for _, raw := range deploymentManagerSettingsList {
 		deploymentManagerSetting := raw.(map[string]interface{})
@@ -347,10 +324,7 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 			ManageOSDeployment:     deploymentManagerSetting["manage_os_deployment"].(bool),
 			DeploymentModeSettings: &deploymentModeSettings,
 		}
-		deploymentClusterUri := utils.NewNstring("")
-		if deploymentManagerSetting["deployment_cluster_uri"] != nil {
-			deploymentClusterUri = utils.NewNstring(deploymentManagerSetting["deployment_cluster_uri"].(string))
-		}
+		deploymentClusterUri := utils.NewNstring(deploymentManagerSetting["deployment_cluster_uri"].(string))
 		deploymentManagerSettings := ov.DeploymentManagerSettings{
 			DeploymentClusterUri: deploymentClusterUri,
 			OsDeploymentSettings: &leOsDeploymentSettings,
