@@ -30,31 +30,43 @@ type ExpectedNeighbor struct {
 	RemotePortId    string `json:"remotePortId,omitempty"`    //"remotePortId":"",
 }
 
+type PrivateVlanDomains struct {
+	IsolatedNetwork *VlanAttributes `json:"isolatedNetwork,omitempty"`
+	PrimaryNetwork  *VlanAttributes `json:"primaryNetwork,omitempty"`
+}
+
+type VlanAttributes struct {
+	Name   string `json:"name,omitempty"`
+	Uri    string `json:"uri,omitempty"`
+	VlanId string `json:"vlanId,omitempty"`
+}
+
 type UplinkSet struct {
-	Name                           string            `json:"name,omitempty"`                           // "name": "Uplink77",
-	LogicalInterconnectURI         utils.Nstring     `json:"logicalInterconnectUri,omitempty"`         // "logicalInterconnectUri": "/rest/logical-interconnects/7769cae0-b680-435b-9b87-9b864c81657f",
-	NetworkURIs                    []utils.Nstring   `json:"networkUris,omitempty"`                    // "networkUris": "/rest/ethernet-networks/e2f0031b-52bd-4223-9ac1-d91cb519d548",
-	FcNetworkURIs                  []utils.Nstring   `json:"fcNetworkUris"`                            // "fcNetworkUris": "[]",
-	FcoeNetworkURIs                []utils.Nstring   `json:"fcoeNetworkUris"`                          // "fcoeNetworkUris": "[]",
-	PortConfigInfos                []PortConfigInfos `json:"portConfigInfos"`                          // "portConfigInfos": "[]",
-	ConnectionMode                 string            `json:"connectionMode,omitempty"`                 // "connectionMode":"Auto",
-	NetworkType                    string            `json:"networkType,omitempty"`                    // "networkType":"Ethernet",
-	EthernetNetworkType            string            `json:"ethernetNetworkType,omitempty"`            // "ethernetNetworkType":"Tagged",
-	ManualLoginRedistributionState string            `json:"manualLoginRedistributionState,omitempty"` //"manualLoginRedistributionState":"NotSupported"
-	URI                            utils.Nstring     `json:"uri,omitempty"`                            // "uri": "/rest/uplink-sets/"e2f0031b-52bd-4223-9ac1-d91cb519d548",
-	Type                           string            `json:"type,omitempty"`                           // "type": "uplink-setV4",
-	Category                       string            `json:"category,omitempty"`                       //"category":"uplink-sets",
-	Created                        string            `json:"created,omitempty"`                        //"created":"20150831T154835.250Z",
-	Description                    utils.Nstring     `json:"description,omitempty"`                    // "description": "Uplink-set 1",
-	Etag                           string            `json:"eTag,omitempty"`                           // "eTag": "1441036118675/8",
-	Modified                       string            `json:"modified,omitempty"`                       // "modified": "20150831T154835.250Z",
-	LacpTimer                      string            `json:"lacpTimer,omitempty"`                      // "lacpTimer": "Long",
-	FcMode                         string            `json:"fcMode,omitempty"`                         // "fcMode": "TRUNK",
-	NativeNetworkUri               utils.Nstring     `json:"nativeNetworkUri,omitempty"`               // "nativeNetworkUri": null,
-	PrimaryPortLocation            *Location         `json:"primaryPort,omitempty"`                    // "primaryPort": {...},
-	Reachability                   string            `json:"reachability,omitempty"`                   // "reachability": "Reachable",
-	State                          string            `json:"state,omitempty"`                          // "state": "Normal",
-	Status                         string            `json:"status,omitempty"`                         // "status": "Critical",
+	Name                           string               `json:"name,omitempty"`                           // "name": "Uplink77",
+	LogicalInterconnectURI         utils.Nstring        `json:"logicalInterconnectUri,omitempty"`         // "logicalInterconnectUri": "/rest/logical-interconnects/7769cae0-b680-435b-9b87-9b864c81657f",
+	NetworkURIs                    []utils.Nstring      `json:"networkUris,omitempty"`                    // "networkUris": "/rest/ethernet-networks/e2f0031b-52bd-4223-9ac1-d91cb519d548",
+	FcNetworkURIs                  []utils.Nstring      `json:"fcNetworkUris"`                            // "fcNetworkUris": "[]",
+	FcoeNetworkURIs                []utils.Nstring      `json:"fcoeNetworkUris"`                          // "fcoeNetworkUris": "[]",
+	PortConfigInfos                []PortConfigInfos    `json:"portConfigInfos"`                          // "portConfigInfos": "[]",
+	ConnectionMode                 string               `json:"connectionMode,omitempty"`                 // "connectionMode":"Auto",
+	NetworkType                    string               `json:"networkType,omitempty"`                    // "networkType":"Ethernet",
+	EthernetNetworkType            string               `json:"ethernetNetworkType,omitempty"`            // "ethernetNetworkType":"Tagged",
+	ManualLoginRedistributionState string               `json:"manualLoginRedistributionState,omitempty"` //"manualLoginRedistributionState":"NotSupported"
+	URI                            utils.Nstring        `json:"uri,omitempty"`                            // "uri": "/rest/uplink-sets/"e2f0031b-52bd-4223-9ac1-d91cb519d548",
+	Type                           string               `json:"type,omitempty"`                           // "type": "uplink-setV5",
+	Category                       string               `json:"category,omitempty"`                       //"category":"uplink-sets",
+	Created                        string               `json:"created,omitempty"`                        //"created":"20150831T154835.250Z",
+	Description                    utils.Nstring        `json:"description,omitempty"`                    // "description": "Uplink-set 1",
+	Etag                           string               `json:"eTag,omitempty"`                           // "eTag": "1441036118675/8",
+	Modified                       string               `json:"modified,omitempty"`                       // "modified": "20150831T154835.250Z",
+	LacpTimer                      string               `json:"lacpTimer,omitempty"`                      // "lacpTimer": "Long",
+	FcMode                         string               `json:"fcMode,omitempty"`                         // "fcMode": "TRUNK",
+	NativeNetworkUri               utils.Nstring        `json:"nativeNetworkUri,omitempty"`               // "nativeNetworkUri": null,
+	PrimaryPortLocation            *Location            `json:"primaryPort,omitempty"`                    // "primaryPort": {...},
+	Reachability                   string               `json:"reachability,omitempty"`                   // "reachability": "Reachable",
+	State                          string               `json:"state,omitempty"`                          // "state": "Normal",
+	Status                         string               `json:"status,omitempty"`                         // "status": "Critical",
+	PrivateVlanDomains             []PrivateVlanDomains `json:"privateVlanDomains,omitempty"`             //"privateVlanDomains: []",
 
 }
 

@@ -14,12 +14,14 @@ resource "oneview_enclosure" "enclosure_inst" {
 	password = "<enclosure_password>"
 	licensing_intent = "Oneview"
 	initial_scope_uris = ["/rest/scopes/bf7df2e6-ebbb-4c6b-bc7a-be8cdac930bf"]
+	name = "Encl2"
 }
 
 /*resource "oneview_enclosure" "enclosure_inst" {
 	op = "replace"
 	path = "/name"
 	value = "Enclosure_Renamed"
+	name = "Enclosure_Renamed"
 }*/
 
 /* Testing data source

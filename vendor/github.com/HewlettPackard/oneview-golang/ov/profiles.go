@@ -345,8 +345,8 @@ func (c *OVClient) CreateProfileFromTemplate(name string, template ServerProfile
 func (c *OVClient) SubmitDeleteProfile(p ServerProfile) (t *Task, err error) {
 	var (
 		uri = p.URI.String()
-	// 	task = rest_api(:oneview, :post, '/rest/server-profiles', { 'body' => new_template_profile })
 	)
+
 	t = t.NewProfileTask(c)
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, p)
@@ -364,7 +364,7 @@ func (c *OVClient) SubmitDeleteProfile(p ServerProfile) (t *Task, err error) {
 	}
 
 	log.Debugf("Response delete profile %s", data)
-	if err := json.Unmarshal([]byte(data), &t); err != nil {
+	if err := json.Unmarshal(data, &t); err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
 		return t, err
@@ -409,9 +409,11 @@ func (c *OVClient) DeleteProfile(name string) error {
 
 		// submit delete task
 		t, err := c.SubmitDeleteProfile(profile)
-		err = t.Wait()
-		if err != nil {
-			return err
+		if c.APIVersion < 1000 {
+			err = t.Wait()
+			if err != nil {
+				return err
+			}
 		}
 
 		// check for task execution
