@@ -1474,10 +1474,10 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		"type": logicalInterconnectGroup.EthernetSettings.Type,
 		"interconnect_utilization_alert": *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
-		"igmp_snooping": 		   *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
+		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
 		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
-		"rich_tlv": 			   *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
+		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
 		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
 		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
 
