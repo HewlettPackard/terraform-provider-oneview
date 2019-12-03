@@ -1472,7 +1472,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSettings = append(interconnectSettings, map[string]interface{}{
 		"type": logicalInterconnectGroup.EthernetSettings.Type,
-		"interconnect_utilization_alert": *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
 		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
