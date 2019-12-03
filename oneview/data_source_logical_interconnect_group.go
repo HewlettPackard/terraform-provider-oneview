@@ -876,17 +876,19 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	d.Set("snmp_configuration", snmpConfiguration)
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
-	interconnectSettings = append(interconnectSettings, map[string]interface{}{
-		"type":                           logicalInterconnectGroup.EthernetSettings.Type,
-		"fast_mac_cache_failover":        *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
-		"igmp_snooping":                  *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
-		"network_loop_protection":        *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
-		"pause_flood_protection":         *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
-		"rich_tlv":                       *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
-		"igmp_timeout_interval":          logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
-		"mac_refresh_interval":           logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
-		"interconnect_utilization_alert": *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
-	})
+	interconnectSetting := map[string]interface{}{
+		"type": logicalInterconnectGroup.EthernetSettings.Type,
+		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
+		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
+		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
+		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
+		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
+		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
+		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
+	}
+
+	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
+	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
