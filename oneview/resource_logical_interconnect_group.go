@@ -1472,14 +1472,15 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSettings = append(interconnectSettings, map[string]interface{}{
 		"type": logicalInterconnectGroup.EthernetSettings.Type,
-		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
-		"igmp_snooping": *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
 		"interconnect_utilization_alert": *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
+		"fast_mac_cache_failover": logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
+		"igmp_snooping": 		   *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
-		"pause_flood_protection": *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
-		"rich_tlv": *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
-		"igmp_timeout_interval": logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
-		"mac_refresh_interval": logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
+		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
+		"rich_tlv": 			   *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
+		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
+		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
+
 	})
 	d.Set("interconnect_settings", interconnectSettings)
 
