@@ -12,6 +12,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Usecase for synergy infrastructure provisioning with i3s.
 
 ### Oneview Features supported
+- Enclosure
 - Enclosure Group
 - Ethernet network
 - FC network
@@ -19,6 +20,7 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Interconnect
 - Interconnect Type
 - Logical enclosure
+- Logical interconnect
 - Logical interconnect group
 - Network set
 - Scope
