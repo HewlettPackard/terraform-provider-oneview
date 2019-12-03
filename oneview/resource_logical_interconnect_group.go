@@ -1480,7 +1480,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
 		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
 		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
-
 	})
 	d.Set("interconnect_settings", interconnectSettings)
 
