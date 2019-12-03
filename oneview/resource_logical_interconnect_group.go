@@ -1470,7 +1470,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("snmp_configuration", snmpConfiguration)
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
-	interconnectSettings = append(interconnectSettings, map[string]interface{}{
+	interconnectSetting := map[string]interface{}{
 		"type": logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
 		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
@@ -1479,7 +1479,10 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
 		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
 		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
-	})
+	}
+
+	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
+	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
