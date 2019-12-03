@@ -877,15 +877,15 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSettings = append(interconnectSettings, map[string]interface{}{
-		"type": logicalInterconnectGroup.EthernetSettings.Type,
-		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
-		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
-		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
-		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
-		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
-		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
-		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
-		"interconnect_utilization_alert":	*logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
+		"type":                           logicalInterconnectGroup.EthernetSettings.Type,
+		"fast_mac_cache_failover":        *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
+		"igmp_snooping":                  *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
+		"network_loop_protection":        *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
+		"pause_flood_protection":         *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
+		"rich_tlv":                       *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
+		"igmp_timeout_interval":          logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
+		"mac_refresh_interval":           logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
+		"interconnect_utilization_alert": *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
 	})
 	d.Set("interconnect_settings", interconnectSettings)
 
