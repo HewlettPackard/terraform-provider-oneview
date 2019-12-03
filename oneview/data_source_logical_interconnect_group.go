@@ -885,7 +885,8 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
 		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
 		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
-		"interconnect_utilization_alert": *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
+		"interconnect_utilization_alert":
+					   *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
 	})
 	d.Set("interconnect_settings", interconnectSettings)
 

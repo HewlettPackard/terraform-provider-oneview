@@ -25,6 +25,7 @@ install:
     - mkdir -p $TF_DOWNLOAD_PATH
     - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
     - echo $UNFORMATTED
+    - echo -e "gofmt -w $PWD/$fn"
 
 before_script:
     - if ! [ -z "$UNFORMATTED" ]; then
@@ -34,9 +35,11 @@ before_script:
         done;
         exit 1;
       fi
+    - echo -e "gofmt -w $PWD/$fn"
 
 script:
     # Standard Go testing avoiding the testing of the vendor folder.
+    - echo -e "gofmt -w $PWD/$fn"
     - go vet $(go list ./... | grep -v '/vendor/')
     - go test -v $(go list ./... | grep -v '/vendor/')
 
