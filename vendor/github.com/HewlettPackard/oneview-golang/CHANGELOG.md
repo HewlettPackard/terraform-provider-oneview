@@ -1,11 +1,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.1.0] (UNRELEASED)
+# [v1.1.0] (03-12-2019)
 ### Notes
  - Minor Bug Fixes
  - New Endpoint support for Server Hardware (firmware)
- - Server Profile support with Server Profile Template extended to 800
+ - Server Profile support with Server Profile Template extended to 1000
  - Support for update compliance in Logical Interonnect.
 
 ### Major changes:
@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Interconnect
 - Interconnect type
 - Logical enclosure
+- Logical interconnect
 - Logical interconnect group
 - Network Set
 - Scope
@@ -34,6 +35,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage volume
 - Storage volume attachment
 - Storage volume template
+- Task
 - Uplink set
 
 # [v1.0.0] (2019-02-07)

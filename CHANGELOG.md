@@ -1,7 +1,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.1.0] (UnReleased)
+# [v1.1.0]
 
 ### Notes
 This version supports OneView appliances with version 4.2 using the OneView REST API version 1000.
