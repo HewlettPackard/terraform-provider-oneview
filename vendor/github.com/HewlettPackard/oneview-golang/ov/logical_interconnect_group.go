@@ -25,7 +25,8 @@ type LogicalInterconnectGroup struct {
 	Name                    string                   `json:"name"`                             // "name": "Logical Interconnect Group1",
 	QosConfiguration        *QosConfiguration        `json:"qosConfiguration,omitempty"`       // "qosConfiguration": {},
 	RedundancyType          string                   `json:"redundancyType,omitempty"`         // "redundancyType": "HighlyAvailable"
-	ScopeUri                string                   `json:"scopeUri,omitempty"`               // "scopeUri":""
+	ScopesUri               utils.Nstring            `json:"scopesUri,omitempty"`              // "scopesUri":""
+	InitialScopeUris        []utils.Nstring          `json:"initialScopeUris,omitempty"`       // "initialScopeUris":[]
 	NextPageUri             string                   `json:"NextPageUri,omitempty"`            // "NextPageUri":""
 	PrevPageUri             string                   `json:"prevPageUri,omitempty"`            // "PrevPageUri":""
 	Start                   int                      `json:"start,omitempty"`                  // "start":""
@@ -36,40 +37,42 @@ type LogicalInterconnectGroup struct {
 	State                   string                   `json:"state,omitempty"`                  // "state": "Normal",
 	Status                  string                   `json:"status,omitempty"`                 // "status": "Critical",
 	TelemetryConfiguration  *TelemetryConfiguration  `json:"telemetryConfiguration,omitempty"` // "telemetryConfiguration": {...},
+	SflowConfiguration      *SflowConfiguration      `json:"sflowConfiguration,omitempty"`     // "sflowConfiguration": {...},
 	Type                    string                   `json:"type"`                             // "type": "logical-interconnect-groupsV3",
 	UplinkSets              []UplinkSets             `json:"uplinkSets"`                       // "uplinkSets": {...},
 	URI                     utils.Nstring            `json:"uri,omitempty"`                    // "uri": "/rest/logical-interconnect-groups/e2f0031b-52bd-4223-9ac1-d91cb519d548",
 }
 
 type EthernetSettings struct {
-	Category                    utils.Nstring `json:"category,omitempty"`                    // "category": null,
-	Created                     string        `json:"created,omitempty"`                     // "created": "20150831T154835.250Z",
-	DependentResourceUri        utils.Nstring `json:"dependentResourceUri,omitempty"`        // dependentResourceUri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86",
-	Description                 utils.Nstring `json:"description,omitempty,omitempty"`       // "description": "Ethernet Settings",
-	ETAG                        string        `json:"eTag,omitempty"`                        // "eTag": "1441036118675/8",
-	EnableFastMacCacheFailover  *bool         `json:"enableFastMacCacheFailover,omitempty"`  //"enableFastMacCacheFailover": false,
-	EnableIgmpSnooping          *bool         `json:"enableIgmpSnooping,omitempty"`          // "enableIgmpSnooping": false,
-	EnableNetworkLoopProtection *bool         `json:"enableNetworkLoopProtection,omitempty"` // "enableNetworkLoopProtection": false,
-	EnablePauseFloodProtection  *bool         `json:"enablePauseFloodProtection,omitempty"`  // "enablePauseFloodProtection": false,
-	EnableRichTLV               *bool         `json:"enableRichTLV,omitempty"`               // "enableRichTLV": false,
-	EnableStormControl          *bool         `json:"enableStormControl,omitempty"`          // "enableStormControl": false,
-	EnableTaggedLldp            *bool         `json:"enableTaggedLldp,omitempty"`            // "enableTaggedLldp": false,
-	ID                          string        `json:"id,omitempty"`                          //"id": "0c398238-2d35-48eb-9eb5-7560d59f94b3",
-	IgmpIdleTimeoutInterval     int           `json:"igmpIdleTimeoutInterval,omitempty"`     // "igmpIdleTimeoutInterval": 260,
-	IgmpSnoopingVlanIds         string        `json:"igmpSnoopingVlanIds,omitempty"`         // "igmpSnoopingVlanIds": "",
-	LldpIpAddressMode           string        `json:"lldpIpAddressMode,omitempty"`           // "lldpIpAddressMode": "IPV4",
-	LldpIpv4Address             string        `json:"lldpIpv4Address,omitempty"`             // "lldpIpv4Address": "",
-	LldpIpv6Address             string        `json:"lldpIpv6Address,omitempty"`             //"lldpIpv6Address": "",
-	InterconnectType            string        `json:"interconnectType,omitempty"`            // "interconnectType": "Ethernet",
-	MacRefreshInterval          int           `json:"macRefreshInterval,omitempty"`          // "macRefreshInterval": 5,
-	Modified                    string        `json:"modified,omitempty"`                    // "modified": "20150831T154835.250Z",
-	Name                        string        `json:"name,omitempty"`                        // "name": "ethernetSettings 1",
-	State                       string        `json:"state,omitempty"`                       // "state": "Normal",
-	Status                      string        `json:"status,omitempty"`                      // "status": "Critical",
-	StormControlPollingInterval int           `json:"stormControlPollingInterval,omitempty"` //"stormControlPollingInterval": 10,
-	StormControlThreshold       int           `json:"stormControlThreshold,,omitempty"`      //"stormControlThreshold": 0,
-	Type                        string        `json:"type,omitempty"`                        // "EthernetInterconnectSettingsV3",
-	URI                         utils.Nstring `json:"uri,omitempty"`                         // "uri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86/ethernetSettings"
+	Category                           utils.Nstring `json:"category,omitempty"`                           // "category": null,
+	Created                            string        `json:"created,omitempty"`                            // "created": "20150831T154835.250Z",
+	DependentResourceUri               utils.Nstring `json:"dependentResourceUri,omitempty"`               // dependentResourceUri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86",
+	Description                        utils.Nstring `json:"description,omitempty,omitempty"`              // "description": "Ethernet Settings",
+	ETAG                               string        `json:"eTag,omitempty"`                               // "eTag": "1441036118675/8",
+	EnableFastMacCacheFailover         *bool         `json:"enableFastMacCacheFailover,omitempty"`         //"enableFastMacCacheFailover": false,
+	EnableIgmpSnooping                 *bool         `json:"enableIgmpSnooping,omitempty"`                 // "enableIgmpSnooping": false,
+	EnableInterconnectUtilizationAlert *bool         `json:"enableInterconnectUtilizationAlert,omitempty"` // "enableInterconnectUtilizationAlert": false,
+	EnableNetworkLoopProtection        *bool         `json:"enableNetworkLoopProtection,omitempty"`        // "enableNetworkLoopProtection": false,
+	EnablePauseFloodProtection         *bool         `json:"enablePauseFloodProtection,omitempty"`         // "enablePauseFloodProtection": false,
+	EnableRichTLV                      *bool         `json:"enableRichTLV,omitempty"`                      // "enableRichTLV": false,
+	EnableStormControl                 *bool         `json:"enableStormControl,omitempty"`                 // "enableStormControl": false,
+	EnableTaggedLldp                   *bool         `json:"enableTaggedLldp,omitempty"`                   // "enableTaggedLldp": false,
+	ID                                 string        `json:"id,omitempty"`                                 //"id": "0c398238-2d35-48eb-9eb5-7560d59f94b3",
+	IgmpIdleTimeoutInterval            int           `json:"igmpIdleTimeoutInterval,omitempty"`            // "igmpIdleTimeoutInterval": 260,
+	IgmpSnoopingVlanIds                string        `json:"igmpSnoopingVlanIds,omitempty"`                // "igmpSnoopingVlanIds": "",
+	LldpIpAddressMode                  string        `json:"lldpIpAddressMode,omitempty"`                  // "lldpIpAddressMode": "IPV4",
+	LldpIpv4Address                    string        `json:"lldpIpv4Address,omitempty"`                    // "lldpIpv4Address": "",
+	LldpIpv6Address                    string        `json:"lldpIpv6Address,omitempty"`                    //"lldpIpv6Address": "",
+	InterconnectType                   string        `json:"interconnectType,omitempty"`                   // "interconnectType": "Ethernet",
+	MacRefreshInterval                 int           `json:"macRefreshInterval,omitempty"`                 // "macRefreshInterval": 5,
+	Modified                           string        `json:"modified,omitempty"`                           // "modified": "20150831T154835.250Z",
+	Name                               string        `json:"name,omitempty"`                               // "name": "ethernetSettings 1",
+	State                              string        `json:"state,omitempty"`                              // "state": "Normal",
+	Status                             string        `json:"status,omitempty"`                             // "status": "Critical",
+	StormControlPollingInterval        int           `json:"stormControlPollingInterval,omitempty"`        //"stormControlPollingInterval": 10,
+	StormControlThreshold              int           `json:"stormControlThreshold,,omitempty"`             //"stormControlThreshold": 0,
+	Type                               string        `json:"type,omitempty"`                               // "EthernetInterconnectSettingsV5",
+	URI                                utils.Nstring `json:"uri,omitempty"`                                // "uri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86/ethernetSettings"
 }
 
 type InterconnectMapTemplate struct {
@@ -224,35 +227,102 @@ type TrapDestination struct {
 }
 
 type TelemetryConfiguration struct {
-	Category        string        `json:"category,omitempty"`        // "category": "telemetry-configuration",
-	Created         string        `json:"created,omitempty"`         // "created": "20150831T154835.250Z",
-	Description     utils.Nstring `json:"description,omitempty"`     // "description": null,
-	ETAG            string        `json:"eTag,omitempty"`            // "eTag": "1441036118675/8",
-	EnableTelemetry *bool         `json:"enableTelemetry,omitempty"` // "enableTelemetry": false,
-	Modified        string        `json:"modified,omitempty"`        // "modified": "20150831T154835.250Z",
-	Name            string        `json:"name,omitempty"`            // "name": "telemetry configuration",
-	SampleCount     int           `json:"sampleCount,omitempty"`     // "sampleCount": 12
-	SampleInterval  int           `json:"sampleInterval,omitempty"`  // "sampleInterval": 300,
-	State           string        `json:"state,omitempty"`           // "state": "Normal",
-	Status          string        `json:"status,omitempty"`          // "status": "Critical",
-	Type            string        `json:"type,omitempty"`            // "type": "telemetry-configuration",
-	URI             utils.Nstring `json:"uri,omitempty"`             // "uri": null
+	Category            string        `json:"category,omitempty"`            // "category": "telemetry-configuration",
+	Created             string        `json:"created,omitempty"`             // "created": "20150831T154835.250Z",
+	Description         utils.Nstring `json:"description,omitempty"`         // "description": null,
+	ETAG                string        `json:"eTag,omitempty"`                // "eTag": "1441036118675/8",
+	EnableTelemetry     *bool         `json:"enableTelemetry,omitempty"`     // "enableTelemetry": false,
+	Modified            string        `json:"modified,omitempty"`            // "modified": "20150831T154835.250Z",
+	Name                string        `json:"name,omitempty"`                // "name": "telemetry configuration",
+	SampleCount         int           `json:"sampleCount,omitempty"`         // "sampleCount": 12
+	SampleInterval      int           `json:"sampleInterval,omitempty"`      // "sampleInterval": 300,
+	State               string        `json:"state,omitempty"`               // "state": "Normal",
+	Status              string        `json:"status,omitempty"`              // "status": "Critical",
+	Type                string        `json:"type,omitempty"`                // "type": "telemetry-configuration",
+	URI                 utils.Nstring `json:"uri,omitempty"`                 // "uri": null,
+	VcfcsampleIntervals string        `json:"vcfcsampleIntervals,omitempty"` // "vcfcsampleIntervals": "NOT_APPLICABLE"
 }
 
+type SflowConfiguration struct {
+	Category        string           `json:"category,omitempty"`        // "category": "sflow-configuration",
+	Created         string           `json:"created,omitempty"`         // "created": "20150831T154835.250Z",
+	Description     utils.Nstring    `json:"description,omitempty"`     // "description": null,
+	ETAG            string           `json:"eTag,omitempty"`            // "eTag": "1441036118675/8",
+	Enabled         *bool            `json:"enabled,omitempty"`         // "enabled": false,
+	Modified        string           `json:"modified,omitempty"`        // "modified": "20150831T154835.250Z",
+	Name            string           `json:"name,omitempty"`            // "name": "sflow configuration",
+	SflowAgents     []SflowAgent     `json:"sflowAgents,omitempty"`     // "sflowAgents": {...},
+	SflowCollectors []SflowCollector `json:"sflowCollectors,omitempty"` // "sflowCollectors": {...},
+	SflowNetwork    *SflowNetwork    `json:"sflowNetwork,omitempty"`    // "sflowNetwork": {...},
+	SflowPorts      []SflowPort      `json:"sflowPorts,omitempty"`      // "sflowPorts": {...},
+	State           string           `json:"state,omitempty"`           // "state": "Normal",
+	Status          string           `json:"status,omitempty"`          // "status": "Critical",
+	Type            string           `json:"type,omitempty"`            // "type": "sflow-configuration",
+	URI             utils.Nstring    `json:"uri,omitempty"`             // "uri": null
+}
+
+type SflowAgent struct {
+	BayNumber      int    `json:"bayNumber,omitempty"`      // "bayNumber": 1,
+	EnclosureIndex int    `json:"enclosureIndex,omitempty"` // "enclosureIndex": 1,
+	IpAddr         string `json:"ipAddr,omitempty"`         // "ipAddr": "172.18.1.11",
+	IpMode         string `json:"ipMode,omitempty"`         // "ipAddr": "SflowAgent",
+	Status         string `json:"status,omitempty"`         // "status": "Enabled",
+	SubnetMask     string `json:"subnetMask,omitempty"`     // "subnetMask": "",
+}
+
+type SflowCollector struct {
+	CollectorEnabled *bool  `json:"collectorEnabled,omitempty"` // "collectorEnabled": false,
+	CollectorId      int    `json:"collectorId,omitempty"`      // "collectorId": 1,
+	IPAddress        string `json:"ipAddress"`                  //"ipAddress": "172.18.1.11",
+	MaxDatagramSize  int    `json:"maxDatagramSize,omitempty"`  // "maxDatagramSize": 1400,
+	MaxHeaderSize    int    `json:"maxHeaderSize,omitempty"`    // "maxHeaderSize": 128,
+	Name             string `json:"name,omitempty"`             // "name": "",
+	Port             int    `json:"port,omitempty"`             // "port": 6343,
+}
+
+type SflowNetwork struct {
+	Name   string        `json:"name,omitempty"`   // "name": "",
+	URI    utils.Nstring `json:"uri,omitempty"`    // "uri": null,
+	VlanId int           `json:"vlanId,omitempty"` // "vlanId": 1
+}
+
+type SflowPort struct {
+	BayNumber               int                      `json:"bayNumber,omitempty"`               // "bayNumber": 1,
+	CollectorId             int                      `json:"collectorId,omitempty"`             // "collectorId": 1,
+	EnclosureIndex          int                      `json:"enclosureIndex,omitempty"`          // "enclosureIndex": 1,
+	IcmName                 string                   `json:"icmName,omitempty"`                 // "icmName": "",
+	PortName                string                   `json:"portName,omitempty"`                // "portName": "",
+	SflowConfigurationModes []SflowConfigurationMode `json:"sflowConfigurationModes,omitempty"` // "sflowConfigurationModes": {...},
+}
+
+type SflowConfigurationMode struct {
+	configurationMode string `json:"configurationMode,omitempty"` // "configurationMode": "SflowConfigurationMode",
+}
 type UplinkSets struct {
 	EthernetNetworkType    string                  `json:"ethernetNetworkType,omitempty"` // "ethernetNetworkType": "Tagged",
 	LacpTimer              string                  `json:"lacpTimer,omitempty"`           // "lacpTimer": "Long",
 	LogicalPortConfigInfos []LogicalPortConfigInfo `json:"logicalPortConfigInfos"`        // "logicalPortConfigInfos": {...},
 	Mode                   string                  `json:"mode,omitempty"`                // "mode": "Auto",
 	FcMode                 string                  `json:"fcMode,omitempty"`              //"fcMode": "NA",
+	LoadBalancingMode      string                  `json:"loadBalancingMode,omitempty"`   //"loadBalancingMode": "None",
 	Name                   string                  `json:"name,omitempty"`                // "name": "Uplink 1",
 	NativeNetworkUri       utils.Nstring           `json:"nativeNetworkUri,omitempty"`    // "nativeNetworkUri": null,
 	NetworkType            string                  `json:"networkType,omitempty"`         // "networkType": "Ethernet",
 	NetworkUris            []utils.Nstring         `json:"networkUris"`                   // "networkUris": ["/rest/ethernet-networks/f1e38895-721b-4204-8395-ae0caba5e163"]
 	PrimaryPort            *LogicalLocation        `json:"primaryPort,omitempty"`         // "primaryPort": {...},
+	PrivateVlanDomains     []PrivateVlanDomain     `json:"privateVlanDomains,omitempty"`  // "privateVlanDomains": {...}
 	Reachability           string                  `json:"reachability,omitempty"`        // "reachability": "Reachable",
 }
 
+type PrivateVlanDomain struct {
+	IsolatedNetwork *NetworkLite `json:"isolatedNetwork,omitempty"` // "isolatedNetwork": {...},
+	PrimaryNetwork  *NetworkLite `json:"primaryNetwork,omitempty"`  // "primaryNetwork": {...},
+}
+type NetworkLite struct {
+	Name   string        `json:"name,omitempty"`   // "name": "Uplink 1",
+	URI    utils.Nstring `json:"uri,omitempty"`    // "uri": null,
+	VlanId int           `json:"vlanId,omitempty"` // "vlanId": 100,
+}
 type LogicalPortConfigInfo struct {
 	DesiredSpeed    string          `json:"desiredSpeed,omitempty"`    // "desiredSpeed": "Auto",
 	LogicalLocation LogicalLocation `json:"logicalLocation,omitempty"` // "logicalLocation": {...},
@@ -372,7 +442,6 @@ func (c *OVClient) GetLogicalInterconnectGroups(count int, filter string, scopeU
 	if start >= 0 {
 		q["start"] = strconv.Itoa(start)
 	}
-
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
