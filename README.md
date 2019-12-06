@@ -56,6 +56,8 @@ provider "oneview" {
 }
 ```
 
+Note: Currently this SDK supports OneView API 1200 minimally where we can test OneView API 1200 version with this SDK. No new fields have been added/deleted to support API 1200 version. Complete support will be done in next releases.
+
 ### License
 
 This project is licensed under the Apache 2.0 license.

@@ -13,6 +13,24 @@ setting for make to avoid using docker. Otherwise make sure to have these tools:
 - docker client and daemon
 - gnu make tools
 
+
+
+### Environment Variables
+
+Following environment variables can be set for testing:
+
+```bash
+# Required
+export ONEVIEW_OV_ENDPOINT=<ov_endpoint>
+
+export ONEVIEW_OV_USER=<ov_username>
+export ONEVIEW_OV_PASSWORD=<ov_password>
+export ONEVIEW_OV_DOMAIN=LOCAL
+export ONEVIEW_SSLVERIFY=false
+export ONEVIEW_APIVERSION=<ov_apiversion>
+```
+Note: Currently this SDK supports OneView API 1200 minimally where we can test OneView API 1200 version with this SDK. No new fields have been added/deleted to support API 1200 version. Complete support will be done in next releases.
+
 ## Testing your changes
 
 ### From a container
