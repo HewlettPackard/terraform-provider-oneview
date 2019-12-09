@@ -57,6 +57,12 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 					return a.(int)
 				},
 			},
+			"initial_scope_uris": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
+			},
 			"interconnect_map_entry_template": {
 				Required: true,
 				Type:     schema.TypeSet,
@@ -274,6 +280,163 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 					},
 				},
 			},
+			"sflow_configuration": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"enabled": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"sflow_agents": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bay_number": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"enclosure_index": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"ip_addr": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"ip_mode": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"subnet_mask": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"sflow_collectors": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"collector_enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"collector_id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"ip_address": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"max_datagram_size": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"max_header_size": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"port": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"sflow_network": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"vlan_id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"sflow_ports": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bay_number": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"collector_id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"enclosure_index": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"icm_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"port_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"interconnect_settings": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -291,6 +454,11 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Default:  true,
 						},
 						"igmp_snooping": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
+						},
+						"interconnect_utilization_alert": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  false,
@@ -478,6 +646,16 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		lig.EnclosureIndexes = enclosureIndexes
 	}
 
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		rawInitialScopeUris := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		for _, raw := range rawInitialScopeUris {
+			initialScopeUri := utils.Nstring(raw.(string))
+			initialScopeUris = append(initialScopeUris, initialScopeUri)
+		}
+		lig.InitialScopeUris = initialScopeUris
+	}
+
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
 	rawInterconnectMapEntryTemplates := d.Get("interconnect_map_entry_template").(*schema.Set).List()
 	for _, raw := range rawInterconnectMapEntryTemplates {
@@ -598,8 +776,158 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 		uplinkSets = append(uplinkSets, uplinkSet)
 	}
-
 	lig.UplinkSets = uplinkSets
+
+	sflowConfigurationPrefix := fmt.Sprintf("sflow_configuration.0")
+	sflowConfiguration := ov.SflowConfiguration{}
+
+	sflowAgentCount := d.Get(sflowConfigurationPrefix + ".sflow_agents.#").(int)
+	sflowAgents := make([]ov.SflowAgent, 0)
+	for i := 0; i < sflowAgentCount; i++ {
+		sflowAgentPrefix := fmt.Sprintf(sflowConfigurationPrefix+".sflow_agents.%d", i)
+		sflowAgent := ov.SflowAgent{}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".bay_number"); ok {
+			sflowAgent.BayNumber = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".enclosure_index"); ok {
+			sflowAgent.EnclosureIndex = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".ip_addr"); ok {
+			sflowAgent.IpAddr = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".ip_mode"); ok {
+			sflowAgent.IpMode = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".status"); ok {
+			sflowAgent.Status = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".subnet_mask"); ok {
+			sflowAgent.SubnetMask = val.(string)
+		}
+
+		sflowAgents = append(sflowAgents, sflowAgent)
+	}
+	sflowConfiguration.SflowAgents = sflowAgents
+
+	sflowCollectorCount := d.Get(sflowConfigurationPrefix + ".sflow_collectors.#").(int)
+	sflowCollectors := make([]ov.SflowCollector, 0)
+	for i := 0; i < sflowCollectorCount; i++ {
+		sflowCollectorPrefix := fmt.Sprintf(sflowConfigurationPrefix+".sflow_collectors.%d", i)
+		sflowCollector := ov.SflowCollector{}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_enabled"); ok {
+			enabled := val.(bool)
+			sflowCollector.CollectorEnabled = &enabled
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_id"); ok {
+			sflowCollector.CollectorId = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".ip_address"); ok {
+			sflowCollector.IPAddress = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".max_datagram_size"); ok {
+			sflowCollector.MaxDatagramSize = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".max_header_size"); ok {
+			sflowCollector.MaxHeaderSize = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".name"); ok {
+			sflowCollector.Name = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".port"); ok {
+			sflowCollector.Port = val.(int)
+		}
+
+		sflowCollectors = append(sflowCollectors, sflowCollector)
+	}
+	sflowConfiguration.SflowCollectors = sflowCollectors
+
+	sflowNetworkPrefix := fmt.Sprintf(sflowConfigurationPrefix + ".sflow_network.0")
+	sflowNetwork := ov.SflowNetwork{}
+
+	if val, ok := d.GetOk(sflowNetworkPrefix + ".vlan_id"); ok {
+		sflowNetwork.VlanId = val.(int)
+	}
+
+	if val, ok := d.GetOk(sflowNetworkPrefix + ".uri"); ok {
+		sflowNetwork.URI = utils.Nstring(val.(string))
+	}
+
+	if val, ok := d.GetOk(sflowNetworkPrefix + ".name"); ok {
+		sflowNetwork.Name = val.(string)
+	}
+
+	sflowConfiguration.SflowNetwork = &sflowNetwork
+
+	sflowPortCount := d.Get(sflowConfigurationPrefix + ".sflow_ports.#").(int)
+	sflowPorts := make([]ov.SflowPort, 0)
+	for i := 0; i < sflowPortCount; i++ {
+		sflowPortPrefix := fmt.Sprintf(sflowConfigurationPrefix+".sflow_ports.%d", i)
+		sflowPort := ov.SflowPort{}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".bay_number"); ok {
+			sflowPort.BayNumber = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".enclosure_index"); ok {
+			sflowPort.EnclosureIndex = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".collector_id"); ok {
+			sflowPort.CollectorId = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".icm_name"); ok {
+			sflowPort.IcmName = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".port_num"); ok {
+			sflowPort.PortName = val.(string)
+		}
+
+		sflowPorts = append(sflowPorts, sflowPort)
+	}
+	sflowConfiguration.SflowPorts = sflowPorts
+
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".category"); ok {
+		sflowConfiguration.Category = val.(string)
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".description"); ok {
+		sflowConfiguration.Description = utils.NewNstring(val.(string))
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".enabled"); ok {
+		enabled := val.(bool)
+		sflowConfiguration.Enabled = &enabled
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".name"); ok {
+		sflowConfiguration.Name = val.(string)
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".state"); ok {
+		sflowConfiguration.State = val.(string)
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".status"); ok {
+		sflowConfiguration.Status = val.(string)
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".uri"); ok {
+		sflowConfiguration.URI = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".type"); ok {
+		sflowConfiguration.Type = val.(string)
+		lig.SflowConfiguration = &sflowConfiguration
+	}
 
 	rawInternalNetUris := d.Get("internal_network_uris").(*schema.Set).List()
 	internalNetUris := make([]utils.Nstring, len(rawInternalNetUris))
@@ -713,6 +1041,11 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
 			enabled := val1.(bool)
 			interconnectSettings.EnableRichTLV = &enabled
+		}
+
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
+			enabled := val1.(bool)
+			interconnectSettings.EnableInterconnectUtilizationAlert = &enabled
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_snooping"); ok {
@@ -843,6 +1176,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("eTag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
 	d.Set("interconnect_settings.0.igmp_snooping", logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping)
+	d.Set("interconnect_settings.0.interconnect_utilization_alert", logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert)
 	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
 	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
 
@@ -851,6 +1185,12 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		enclosureIndexes[i] = enclosureIndexVal
 	}
 	d.Set("enclosure_indexes", schema.NewSet(func(a interface{}) int { return a.(int) }, enclosureIndexes))
+
+	initialScopeUris := make([]interface{}, len(logicalInterconnectGroup.InitialScopeUris))
+	for i, initialScopeUriVal := range logicalInterconnectGroup.InitialScopeUris {
+		initialScopeUris[i] = initialScopeUriVal
+	}
+	d.Set("initial_scope_uris", schema.NewSet(func(a interface{}) int { return a.(int) }, initialScopeUris))
 
 	interconnectMapEntryTemplates := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates))
 	for _, interconnectMapEntryTemplate := range logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates {
@@ -991,6 +1331,73 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	}
 	d.Set("internal_network_uris", internalNetworkUris)
 
+	if logicalInterconnectGroup.SflowConfiguration != nil {
+		sflowAgents := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowAgents))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowAgents); i++ {
+
+			sflowAgents = append(sflowAgents, map[string]interface{}{
+				"bay_number":      logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].BayNumber,
+				"enclosure_index": logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].EnclosureIndex,
+				"ip_addr":         logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].IpAddr,
+				"ip_mode":         logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].IpMode,
+				"subnet_mask":     logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].SubnetMask,
+				"status":          logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].Status,
+			})
+		}
+
+		sflowCollectors := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowCollectors))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowCollectors); i++ {
+
+			sflowCollectors = append(sflowCollectors, map[string]interface{}{
+				"collector_enabled": logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].CollectorEnabled,
+				"collector_id":      logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].CollectorId,
+				"ip_address":        logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].IPAddress,
+				"max_datagram_size": logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].MaxDatagramSize,
+				"max_header_size":   logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].MaxHeaderSize,
+				"name":              logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].Name,
+				"port":              logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].Port,
+			})
+		}
+		sflowNetwork := make([]map[string]interface{}, 0, 1)
+		if logicalInterconnectGroup.SflowConfiguration.SflowNetwork != nil {
+			sflowNetwork = append(sflowNetwork, map[string]interface{}{
+				"name":    logicalInterconnectGroup.SflowConfiguration.SflowNetwork.Name,
+				"vlan_id": logicalInterconnectGroup.SflowConfiguration.SflowNetwork.VlanId,
+				"uri":     logicalInterconnectGroup.SflowConfiguration.SflowNetwork.URI.String(),
+			})
+		}
+
+		sflowPorts := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowPorts))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowPorts); i++ {
+			sflowPorts = append(sflowPorts, map[string]interface{}{
+				"bay_number":      logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].BayNumber,
+				"collector_id":    logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].CollectorId,
+				"enclosure_index": logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].EnclosureIndex,
+				"icm_name":        logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].IcmName,
+				"port_name":       logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].PortName,
+			})
+		}
+
+		sflowConfigurations := make([]map[string]interface{}, 0, 1)
+
+		sflowConfigurations = append(sflowConfigurations, map[string]interface{}{
+			"category":         logicalInterconnectGroup.SflowConfiguration.Category,
+			"description":      logicalInterconnectGroup.SflowConfiguration.Description.String(),
+			"enabled":          *logicalInterconnectGroup.SflowConfiguration.Enabled,
+			"name":             logicalInterconnectGroup.SflowConfiguration.Name,
+			"state":            logicalInterconnectGroup.SflowConfiguration.State,
+			"status":           logicalInterconnectGroup.SflowConfiguration.Status,
+			"type":             logicalInterconnectGroup.SflowConfiguration.Type,
+			"uri":              logicalInterconnectGroup.SflowConfiguration.URI.String(),
+			"sflow_agents":     sflowAgents,
+			"sflow_collectors": sflowCollectors,
+			"sflow_network":    sflowNetwork,
+			"sflow_ports":      sflowPorts,
+		})
+
+		d.Set("sflow_configuration", sflowConfigurations)
+
+	}
 	telemetryConfigurations := make([]map[string]interface{}, 0, 1)
 	telemetryConfigurations = append(telemetryConfigurations, map[string]interface{}{
 		"enabled":         *logicalInterconnectGroup.TelemetryConfiguration.EnableTelemetry,
@@ -1064,8 +1471,8 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("snmp_configuration", snmpConfiguration)
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
-	interconnectSettings = append(interconnectSettings, map[string]interface{}{
-		"type":                    logicalInterconnectGroup.EthernetSettings.Type,
+	interconnectSetting := map[string]interface{}{
+		"type": logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
 		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
@@ -1073,7 +1480,10 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
 		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
 		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
-	})
+	}
+
+	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
+	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
@@ -1164,6 +1574,16 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			enclosureIndexes[i] = raw.(int)
 		}
 		lig.EnclosureIndexes = enclosureIndexes
+	}
+
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		rawInitialScopeUris := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		for _, raw := range rawInitialScopeUris {
+			initialScopeUri := utils.Nstring(raw.(string))
+			initialScopeUris = append(initialScopeUris, initialScopeUri)
+		}
+		lig.InitialScopeUris = initialScopeUris
 	}
 
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)
@@ -1313,6 +1733,157 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		lig.TelemetryConfiguration = &telemetryConfiguration
 	}
 
+	sflowConfigurationPrefix := fmt.Sprintf("sflow_configuration.0")
+	sflowConfiguration := ov.SflowConfiguration{}
+
+	sflowAgentCount := d.Get(sflowConfigurationPrefix + ".sflow_agents.#").(int)
+	sflowAgents := make([]ov.SflowAgent, 0)
+	for i := 0; i < sflowAgentCount; i++ {
+		sflowAgentPrefix := fmt.Sprintf(sflowConfigurationPrefix+".sflow_agents.%d", i)
+		sflowAgent := ov.SflowAgent{}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".bay_number"); ok {
+			sflowAgent.BayNumber = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".enclosure_index"); ok {
+			sflowAgent.EnclosureIndex = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".ip_addr"); ok {
+			sflowAgent.IpAddr = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".ip_mode"); ok {
+			sflowAgent.IpMode = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".status"); ok {
+			sflowAgent.Status = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowAgentPrefix + ".subnet_mask"); ok {
+			sflowAgent.SubnetMask = val.(string)
+		}
+
+		sflowAgents = append(sflowAgents, sflowAgent)
+	}
+	sflowConfiguration.SflowAgents = sflowAgents
+
+	sflowCollectorCount := d.Get(sflowConfigurationPrefix + ".sflow_collectors.#").(int)
+	sflowCollectors := make([]ov.SflowCollector, 0)
+	for i := 0; i < sflowCollectorCount; i++ {
+		sflowCollectorPrefix := fmt.Sprintf(sflowConfigurationPrefix+".sflow_collectors.%d", i)
+		sflowCollector := ov.SflowCollector{}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_enabled"); ok {
+			enabled := val.(bool)
+			sflowCollector.CollectorEnabled = &enabled
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_id"); ok {
+			sflowCollector.CollectorId = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".ip_address"); ok {
+			sflowCollector.IPAddress = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".max_datagram_size"); ok {
+			sflowCollector.MaxDatagramSize = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".max_header_size"); ok {
+			sflowCollector.MaxHeaderSize = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".name"); ok {
+			sflowCollector.Name = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowCollectorPrefix + ".port"); ok {
+			sflowCollector.Port = val.(int)
+		}
+
+		sflowCollectors = append(sflowCollectors, sflowCollector)
+	}
+	sflowConfiguration.SflowCollectors = sflowCollectors
+
+	sflowNetworkPrefix := fmt.Sprintf(sflowConfigurationPrefix + ".sflow_network.0")
+	sflowNetwork := ov.SflowNetwork{}
+
+	if val, ok := d.GetOk(sflowNetworkPrefix + ".vlan_id"); ok {
+		sflowNetwork.VlanId = val.(int)
+	}
+
+	if val, ok := d.GetOk(sflowNetworkPrefix + ".uri"); ok {
+		sflowNetwork.URI = utils.Nstring(val.(string))
+	}
+
+	if val, ok := d.GetOk(sflowNetworkPrefix + ".name"); ok {
+		sflowNetwork.Name = val.(string)
+	}
+
+	sflowConfiguration.SflowNetwork = &sflowNetwork
+
+	sflowPortCount := d.Get(sflowConfigurationPrefix + ".sflow_ports.#").(int)
+	sflowPorts := make([]ov.SflowPort, 0)
+	for i := 0; i < sflowPortCount; i++ {
+		sflowPortPrefix := fmt.Sprintf(sflowConfigurationPrefix+".sflow_ports.%d", i)
+		sflowPort := ov.SflowPort{}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".bay_number"); ok {
+			sflowPort.BayNumber = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".enclosure_index"); ok {
+			sflowPort.EnclosureIndex = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".collector_id"); ok {
+			sflowPort.CollectorId = val.(int)
+		}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".icm_name"); ok {
+			sflowPort.IcmName = val.(string)
+		}
+
+		if val, ok := d.GetOk(sflowPortPrefix + ".port_num"); ok {
+			sflowPort.PortName = val.(string)
+		}
+
+		sflowPorts = append(sflowPorts, sflowPort)
+	}
+	sflowConfiguration.SflowPorts = sflowPorts
+
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".category"); ok {
+		sflowConfiguration.Category = val.(string)
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".description"); ok {
+		sflowConfiguration.Description = utils.NewNstring(val.(string))
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".enabled"); ok {
+		enabled := val.(bool)
+		sflowConfiguration.Enabled = &enabled
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".name"); ok {
+		sflowConfiguration.Name = val.(string)
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".state"); ok {
+		sflowConfiguration.State = val.(string)
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".status"); ok {
+		sflowConfiguration.Status = val.(string)
+	}
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".uri"); ok {
+		sflowConfiguration.URI = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk(sflowConfigurationPrefix + ".type"); ok {
+		sflowConfiguration.Type = val.(string)
+		lig.SflowConfiguration = &sflowConfiguration
+	}
+
 	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
 	snmpConfiguration := ov.SnmpConfiguration{}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
@@ -1406,6 +1977,11 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_snooping"); ok {
 			enabled := val1.(bool)
 			interconnectSettings.EnableIgmpSnooping = &enabled
+		}
+
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
+			enabled := val1.(bool)
+			interconnectSettings.EnableInterconnectUtilizationAlert = &enabled
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_timeout_interval"); ok {

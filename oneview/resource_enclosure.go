@@ -216,7 +216,7 @@ func resourceEnclosure() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"op": {
 				Type:     schema.TypeString,
@@ -301,9 +301,6 @@ func resourceEnclosure() *schema.Resource {
 func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	//jsonobj,_ := json.Marshal(d)
-	by := []byte(d.Get("user_name").(string))
-	ioutil.WriteFile("enclosureMap.json", by /*jsonobj*/, 0644)
 	enclosureCreateMap := ov.EnclosureCreateMap{
 		EnclosureGroupUri:    utils.NewNstring(d.Get("enclosure_group_uri").(string)),
 		Hostname:             d.Get("host_name").(string),

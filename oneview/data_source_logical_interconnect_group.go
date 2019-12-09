@@ -166,6 +166,162 @@ func dataSourceLogicalInterconnectGroup() *schema.Resource {
 					},
 				},
 			},
+			"sflow_configuration": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"category": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"enabled": {
+							Type:     schema.TypeBool,
+							Computed: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"sflow_agents": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bay_number": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"enclosure_index": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"ip_addr": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"ip_mode": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"subnet_mask": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
+						},
+						"sflow_collectors": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"collector_enabled": {
+										Type:     schema.TypeBool,
+										Computed: true,
+									},
+									"collector_id": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"ip_address": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"max_datagram_size": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"max_header_size": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"port": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+								},
+							},
+						},
+						"sflow_network": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"vlan_id": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"uri": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
+						},
+						"sflow_ports": {
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bay_number": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"collector_id": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"enclosure_index": {
+										Type:     schema.TypeInt,
+										Computed: true,
+									},
+									"icm_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"port_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"snmp_configuration": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -258,6 +414,10 @@ func dataSourceLogicalInterconnectGroup() *schema.Resource {
 							Computed: true,
 						},
 						"igmp_snooping": {
+							Type:     schema.TypeBool,
+							Computed: true,
+						},
+						"interconnect_utilization_alert": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
@@ -465,6 +625,73 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 
 	d.Set("interconnect_map_entry_template", interconnectMapEntryTemplates)
 
+	if logicalInterconnectGroup.SflowConfiguration != nil {
+		sflowAgents := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowAgents))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowAgents); i++ {
+
+			sflowAgents = append(sflowAgents, map[string]interface{}{
+				"bay_number":      logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].BayNumber,
+				"enclosure_index": logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].EnclosureIndex,
+				"ip_addr":         logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].IpAddr,
+				"ip_mode":         logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].IpMode,
+				"subnet_mask":     logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].SubnetMask,
+				"status":          logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].Status,
+			})
+		}
+
+		sflowCollectors := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowCollectors))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowCollectors); i++ {
+
+			sflowCollectors = append(sflowCollectors, map[string]interface{}{
+				"collector_enabled": logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].CollectorEnabled,
+				"collector_id":      logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].CollectorId,
+				"ip_address":        logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].IPAddress,
+				"max_datagram_size": logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].MaxDatagramSize,
+				"max_header_size":   logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].MaxHeaderSize,
+				"name":              logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].Name,
+				"port":              logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].Port,
+			})
+		}
+		sflowNetwork := make([]map[string]interface{}, 0, 1)
+		if logicalInterconnectGroup.SflowConfiguration.SflowNetwork != nil {
+			sflowNetwork = append(sflowNetwork, map[string]interface{}{
+				"name":    logicalInterconnectGroup.SflowConfiguration.SflowNetwork.Name,
+				"vlan_id": logicalInterconnectGroup.SflowConfiguration.SflowNetwork.VlanId,
+				"uri":     logicalInterconnectGroup.SflowConfiguration.SflowNetwork.URI.String(),
+			})
+		}
+
+		sflowPorts := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowPorts))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowPorts); i++ {
+			sflowPorts = append(sflowPorts, map[string]interface{}{
+				"bay_number":      logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].BayNumber,
+				"collector_id":    logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].CollectorId,
+				"enclosure_index": logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].EnclosureIndex,
+				"icm_name":        logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].IcmName,
+				"port_name":       logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].PortName,
+			})
+		}
+
+		sflowConfigurations := make([]map[string]interface{}, 0, 1)
+
+		sflowConfigurations = append(sflowConfigurations, map[string]interface{}{
+			"category":         logicalInterconnectGroup.SflowConfiguration.Category,
+			"description":      logicalInterconnectGroup.SflowConfiguration.Description.String(),
+			"enabled":          *logicalInterconnectGroup.SflowConfiguration.Enabled,
+			"name":             logicalInterconnectGroup.SflowConfiguration.Name,
+			"state":            logicalInterconnectGroup.SflowConfiguration.State,
+			"status":           logicalInterconnectGroup.SflowConfiguration.Status,
+			"type":             logicalInterconnectGroup.SflowConfiguration.Type,
+			"uri":              logicalInterconnectGroup.SflowConfiguration.URI.String(),
+			"sflow_agents":     sflowAgents,
+			"sflow_collectors": sflowCollectors,
+			"sflow_network":    sflowNetwork,
+			"sflow_ports":      sflowPorts,
+		})
+
+		d.Set("sflow_configuration", sflowConfigurations)
+
+	}
 	uplinkSets := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.UplinkSets))
 	for i, uplinkSet := range logicalInterconnectGroup.UplinkSets {
 
@@ -649,7 +876,7 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	d.Set("snmp_configuration", snmpConfiguration)
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
-	interconnectSettings = append(interconnectSettings, map[string]interface{}{
+	interconnectSetting := map[string]interface{}{
 		"type": logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
 		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
@@ -658,7 +885,10 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
 		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
 		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
-	})
+	}
+
+	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
+	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)

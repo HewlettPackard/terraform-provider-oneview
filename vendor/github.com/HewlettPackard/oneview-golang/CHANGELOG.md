@@ -1,15 +1,49 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.1.0] (UNRELEASED)
+# [v1.2.0] (Unreleased)
+### Notes
+- This release supports API1200 minimally where we can test OneView API1200 with this SDK. No new fields are added/deleted to support API1200. Complete support will be done in next releases.
+
+### Oneview Features supported
+- Enclosure
+- Network Set
+- Server Profile
+- Task
+
+# [v1.1.0] (03-12-2019)
 ### Notes
  - Minor Bug Fixes
  - New Endpoint support for Server Hardware (firmware)
- - Server Profile support with Server Profile Template extended to 800
+ - Server Profile support with Server Profile Template extended to 1000
  - Support for update compliance in Logical Interonnect.
 
 #### Bug fixes & Enhancements:
 - [#153] (https://github.com/HewlettPackard/oneview-golang/issues/153) change in the enclosure.go file for editing  wrong fields
+
+### Oneview Features supported
+- Deployment Plan
+- Enclosure
+- Enclosure group
+- Ethernet Network
+- FC Network
+- FCoE Network
+- Interconnect
+- Interconnect type
+- Logical enclosure
+- Logical interconnect
+- Logical interconnect group
+- Network Set
+- Scope
+- Server hardware type
+- Server Profile
+- Storage pool
+- Storage system
+- Storage volume
+- Storage volume attachment
+- Storage volume template
+- Task
+- Uplink set
 
 # [v1.0.0] (2019-02-07)
 ### Notes
