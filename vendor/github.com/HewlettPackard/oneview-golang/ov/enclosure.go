@@ -3,7 +3,6 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -248,7 +247,7 @@ type Partition struct {
 	MemoryMb          int           `json:"memoryMb,omitempty"`          // "memoryMb": 1,
 	MonarchDevice     int           `json:"monarchDevice,omitempty"`     // "monarchDevice": 1,
 	PartitionHealth   string        `json:"partitionHealth,omitempty"`   // "partitionHealth": "",
-	PartitionID       int           `json:"partitionID,omitempty"`       // "partitionID": "",
+	PartitionID       string        `json:"partitionID,omitempty"`       // "partitionID": "",
 	PartitionName     string        `json:"partitionName,omitempty"`     // "partitionName": "",
 	PartitionStatus   string        `json:"partitionStatus,omitempty"`   // "partitionStatus": "",
 	ParttionUUID      string        `json:"parttionUUID,omitempty"`      // "parttionUUID": "",

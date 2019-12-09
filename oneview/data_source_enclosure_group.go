@@ -132,8 +132,9 @@ func dataSourceEnclosureGroup() *schema.Resource {
 				Computed: true,
 			},
 			"Status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"type": {
 				Type:     schema.TypeString,

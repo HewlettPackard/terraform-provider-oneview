@@ -21,22 +21,12 @@ resource "oneview_fcoe_network" "default" {
 
 ## Argument Reference
 
-The following arguments are supported:
+The following arguments are supported: 
 
 * `name` - (Required) A unique name for the resource.
 
-* `vlanId` - (Required) The Virtual LAN (VLAN) identification number (integer) assigned to the network.
+* `vlanId` - (Required) The Virtual LAN (VLAN) identification number (integer) assigned to the network. 
 Changing this forces a new resource
-
-* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
-
-* `connection_template_uri` - The connection template URI that is associated with this Fibre Channel network.
-
-* `managed_san_uri` - The managed SAN URI that is associated with this Fibre Channel network.
-
-* `fabric_uri` - The URI of the fabric resource of which this resource is a member.
-
-* `description` - Brief description of the resource.
 
 ## Attributes Reference
 

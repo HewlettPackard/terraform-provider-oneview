@@ -82,8 +82,9 @@ func resourceFCNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"created": {
 				Type:     schema.TypeString,
@@ -94,9 +95,10 @@ func resourceFCNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"scopesUri": {
-				Optional: true,
-				Type:     schema.TypeString,
-				Computed: true,
+				Optional:   true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"initial_scope_uris": {
 				Optional: true,
@@ -119,8 +121,8 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		ManagedSanURI:           utils.NewNstring(d.Get("managed_san_uri").(string)),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type:        d.Get("type").(string),
-		Description: utils.NewNstring(d.Get("description").(string)),
+		Type:                    d.Get("type").(string),
+		Description:             utils.NewNstring(d.Get("description").(string)),
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
@@ -179,9 +181,9 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type: d.Get("type").(string),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Description:           utils.NewNstring(d.Get("description").(string)),
+		Type:                    d.Get("type").(string),
+		ConnectionTemplateUri:   utils.NewNstring(d.Get("connection_template_uri").(string)),
+		Description:             utils.NewNstring(d.Get("description").(string)),
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)

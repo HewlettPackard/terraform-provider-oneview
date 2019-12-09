@@ -99,13 +99,15 @@ func resourceEthernetNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"scopesUri": {
-				Optional: true,
-				Type:     schema.TypeString,
-				Computed: true,
+				Optional:   true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"initial_scope_uris": {
 				Optional: true,
@@ -192,7 +194,7 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 		PrivateNetwork:        d.Get("private_network").(bool),
 		SmartLink:             d.Get("smart_link").(bool),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type: d.Get("type").(string),
+		Type:                  d.Get("type").(string),
 	}
 
 	err := config.ovClient.UpdateEthernetNetwork(newENet)

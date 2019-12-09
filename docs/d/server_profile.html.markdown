@@ -55,33 +55,3 @@ In addition to the arguments listed above, the following computed attributes are
 * `ilo_ip` - The ILO ip address that is managing the server.
 
 * `hardware_uri` - The URI of the hardware the server is provisioned on.
-
-* `boot_order` - Defines the order in which boot will be attempted on the available devices.
-
-* `boot_mode` -  Boot mode settings to be configured on the server.
-
-* `bios_option` - Server BIOS settings.
-
-* `server_hardware_type` - Identifies the server hardware type for which the Server Profile was designed. 
-
-* `enclosure_group` -  Identifies the enclosure group for which the Server Profile was designed.
-
-* `affinity` - This identifies the behavior of the server profile when the server hardware is removed or replaced. 
-
-* `hide_unused_flex_nics` - This setting controls the enumeration of physical functions that do not correspond to connections in a profile.
-
-* `serial_number_type` -  Specifies the type of Serial Number and UUID to be programmed into the server ROM.
-
-* `wwn_type` -  Specifies the type of WWN address to be programmed into the IO devices. 
-
-* `mac_type` - Specifies the type of MAC address to be programmed into the IO Devices.
-
-* `firmware` - Defines and enables firmware baseline management.
-
-* `local_storage` -  Local storage settings to be configured on the server.
-
-* `logical_drives` - The list of logical drives associated with the controller. 
-
-* `san_storage` - The profile san storage configuration.
-
-* `volume_attachments` - The list of storage volume attachments.

@@ -17,8 +17,6 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 
 - Support for Update Group in Logical Enclosure.
 - Support for Update Compliance in Logical Interconnect.
-- Usecase for synergy infrastructure provisioning with Network.
-- Usecase for synergy infrastructure provisioning with i3s.
 
 ### Oneview Features supported
 - Enclosure
@@ -49,11 +47,11 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 ### Notes
 - Patch changes to sever profile to include boot order fixes.
 - Usecase for infrasructure provisioning without storage and image streamer
-
+  
 # [v1.0.0]
 ### Notes
-  This is the first release of the OneView modules in Terraform and it adds support to core features listed below.
-  This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800.
+  This is the first release of the OneView modules in Terraform and it adds support to core features listed below. 
+  This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800. 
 
 ### Major changes:
 - Support for Go 1.11  

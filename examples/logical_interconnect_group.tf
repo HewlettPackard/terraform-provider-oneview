@@ -23,13 +23,3 @@ resource "oneview_logical_interconnect_group" "LIG" {
     },
   ]
 }
-
-/* Test for data source
-
-data "oneview_logical_interconnect_group" "logical_interconnect_group" {
-        name = "TestLIG"
-}
-
-output "lig_value" {
-        value = "${data.oneview_logical_interconnect_group.logical_interconnect_group.redundancy_type}"
-}*/

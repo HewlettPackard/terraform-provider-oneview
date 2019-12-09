@@ -77,18 +77,6 @@ Changing this forces a new resoure.
 * `requested_mbps` - (Optional) The transmit throughput (mbps) that should be allocated to this connection.
 Defaults to `2500`
 
-* `bios_option` - (Optional) Bios setting required for the server profile template.
-
-* `firmware` - (Optional) Firmware attributes required to configure firmware.
-
-* `local_storage` - (Optional) Local storage settings to be configured on the server.
-
-* `logical_drives` - (Optional) List of logical drives associated with the controller.
-
-* `san_storage` - (Optional)The profile SAN storage configuration.
-
-* `os_deployment_settings` - (Optional) OS Deployment settings applicable when deployment is invoked through a server profile.
-
 
 ## Attributes Reference
 

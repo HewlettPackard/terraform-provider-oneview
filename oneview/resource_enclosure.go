@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"io/ioutil"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -127,8 +129,9 @@ func resourceEnclosure() *schema.Resource {
 				Set: schema.HashString,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"enclosure_group_uri": {
 				Type:     schema.TypeString,

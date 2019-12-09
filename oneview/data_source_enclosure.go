@@ -110,8 +110,9 @@ func dataSourceEnclosure() *schema.Resource {
 				Set: schema.HashString,
 			},
 			"eTag": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:       schema.TypeString,
+				Computed:   true,
+				Deprecated: "Warning: Current value structure is deprecated",
 			},
 			"enclosure_group_uri": {
 				Type:     schema.TypeString,

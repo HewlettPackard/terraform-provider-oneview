@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/states/statefile"
+	"github.com/hashicorp/terraform/states/statemgr"
 	"github.com/mitchellh/cli"
 )
 
@@ -16,48 +17,50 @@ type StatePullCommand struct {
 }
 
 func (c *StatePullCommand) Run(args []string) int {
-	args = c.Meta.process(args, true)
+	args, err := c.Meta.process(args, true)
+	if err != nil {
+		return 1
+	}
 
-	cmdFlags := c.Meta.flagSet("state pull")
+	cmdFlags := c.Meta.defaultFlagSet("state pull")
 	if err := cmdFlags.Parse(args); err != nil {
 		return cli.RunResultHelp
 	}
 	args = cmdFlags.Args()
 
 	// Load the backend
-	b, err := c.Backend(nil)
+	b, backendDiags := c.Backend(nil)
+	if backendDiags.HasErrors() {
+		c.showDiagnostics(backendDiags)
+		return 1
+	}
+
+	// Get the state manager for the current workspace
+	env := c.Workspace()
+	stateMgr, err := b.StateMgr(env)
 	if err != nil {
-		c.Ui.Error(fmt.Sprintf("Failed to load backend: %s", err))
+		c.Ui.Error(fmt.Sprintf(errStateLoadingState, err))
+		return 1
+	}
+	if err := stateMgr.RefreshState(); err != nil {
+		c.Ui.Error(fmt.Sprintf("Failed to refresh state: %s", err))
 		return 1
 	}
 
-	// Get the state
-	env := c.Env()
-	state, err := b.State(env)
-	if err != nil {
-		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", err))
-		return 1
-	}
-	if err := state.RefreshState(); err != nil {
-		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", err))
-		return 1
-	}
+	// Get a statefile object representing the latest snapshot
+	stateFile := statemgr.Export(stateMgr)
 
-	s := state.State()
-	if s == nil {
-		// Output on "error" so it shows up on stderr
-		c.Ui.Error("Empty state (no state)")
+	if stateFile != nil { // we produce no output if the statefile is nil
+		var buf bytes.Buffer
+		err = statefile.Write(stateFile, &buf)
+		if err != nil {
+			c.Ui.Error(fmt.Sprintf("Failed to write state: %s", err))
+			return 1
+		}
 
-		return 0
+		c.Ui.Output(buf.String())
 	}
 
-	var buf bytes.Buffer
-	if err := terraform.WriteState(s, &buf); err != nil {
-		c.Ui.Error(fmt.Sprintf("Failed to load state: %s", err))
-		return 1
-	}
-
-	c.Ui.Output(buf.String())
 	return 0
 }
 

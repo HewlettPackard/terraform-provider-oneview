@@ -17,7 +17,7 @@ type StorageAttachment struct {
 	Description      utils.Nstring `json:"description,omitempty"`
 	ETAG             string        `json:"eTag,omitempty"`
 	Host             *Host         `json:"host,omitempty"`
-	Paths            []Paths       `json:"paths,omitempty"`
+	Paths            *Paths        `json:"paths,omitempty"`
 	Name             string        `json:"name,omitempty"`
 	State            string        `json:"state,omitempty"`
 	Status           string        `json:"status,omitempty"`
@@ -25,7 +25,6 @@ type StorageAttachment struct {
 	URI              utils.Nstring `json:"uri,omitempty"`
 	StorageSystemUri utils.Nstring `json:"storageSystemUri,omitempty"`
 	StorageVolumeUri utils.Nstring `json:"storageVolumeUri,omitempty"`
-	OwnerUri         utils.Nstring `json:"ownerUri,omitempty"`
 }
 
 type Host struct {
@@ -57,7 +56,7 @@ type MutualChap struct {
 	secret string `json:"secret,omitempty"`
 }
 
-type StorageAttachmentsList struct {
+type StorageAttachmentsListV2 struct {
 	Total       int                 `json:"total,omitempty"`       // "total": 1,
 	Count       int                 `json:"count,omitempty"`       // "count": 1,
 	Start       int                 `json:"start,omitempty"`       // "start": 0,
@@ -79,11 +78,11 @@ func (c *OVClient) GetStorageAttachmentByName(name string) (StorageAttachment, e
 	}
 }
 
-func (c *OVClient) GetStorageAttachments(filter string, sort string, start string, count string) (StorageAttachmentsList, error) {
+func (c *OVClient) GetStorageAttachments(filter string, sort string, start string, count string) (StorageAttachmentsListV2, error) {
 	var (
 		uri          = "/rest/storage-volume-attachments"
 		q            map[string]interface{}
-		sAttachments StorageAttachmentsList
+		sAttachments StorageAttachmentsListV2
 	)
 	q = make(map[string]interface{})
 	if len(filter) > 0 {

@@ -5,7 +5,7 @@ Terraform
 - [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
 - Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
 
-![Terraform](https://rawgithub.com/hashicorp/terraform/master/website/source/assets/images/logo-hashicorp.svg)
+<img alt="Terraform" src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" width="600px">
 
 Terraform is a tool for building, changing, and versioning infrastructure safely and efficiently. Terraform can manage existing and popular service providers as well as custom in-house solutions.
 
@@ -24,19 +24,31 @@ For more information, see the [introduction section](http://www.terraform.io/int
 Getting Started & Documentation
 -------------------------------
 
-All documentation is available on the [Terraform website](http://www.terraform.io).
+If you're new to Terraform and want to get started creating infrastructure, please checkout our [Getting Started](https://www.terraform.io/intro/getting-started/install.html) guide, available on the [Terraform website](http://www.terraform.io).
+
+All documentation is available on the [Terraform website](http://www.terraform.io):
+
+  - [Intro](https://www.terraform.io/intro/index.html)
+  - [Docs](https://www.terraform.io/docs/index.html)
 
 Developing Terraform
 --------------------
 
-If you wish to work on Terraform itself or any of its built-in providers, you'll first need [Go](http://www.golang.org) installed on your machine (version 1.8+ is *required*). Alternatively, you can use the Vagrantfile in the root of this repo to stand up a virtual machine with the appropriate dev tooling already set up for you.
+If you wish to work on Terraform itself or any of its built-in providers, you'll first need [Go](http://www.golang.org) installed on your machine (version 1.11+ is *required*). Alternatively, you can use the Vagrantfile in the root of this repo to stand up a virtual machine with the appropriate dev tooling already set up for you.
 
-For local dev first make sure Go is properly installed, including setting up a [GOPATH](http://golang.org/doc/code.html#GOPATH). You will also need to add `$GOPATH/bin` to your `$PATH`.
+This repository contains only Terraform core, which includes the command line interface and the main graph engine. Providers are implemented as plugins that each have their own repository in [the `terraform-providers` organization](https://github.com/terraform-providers) on GitHub. Instructions for developing each provider are in the associated README file. For more information, see [the provider development overview](https://www.terraform.io/docs/plugins/provider.html).
 
-Next, using [Git](https://git-scm.com/), clone this repository into `$GOPATH/src/github.com/hashicorp/terraform`. All the necessary dependencies are either vendored or automatically installed, so you just need to type `make`. This will compile the code and then run the tests. If this exits with exit status 0, then everything is working!
+For local development of Terraform core, first make sure Go is properly installed and that a
+[GOPATH](http://golang.org/doc/code.html#GOPATH) has been set. You will also need to add `$GOPATH/bin` to your `$PATH`.
+
+Next, using [Git](https://git-scm.com/), clone this repository into `$GOPATH/src/github.com/hashicorp/terraform`.
+
+You'll need to run `make tools` to install some required tools, then `make`.  This will compile the code and then run the tests. If this exits with exit status 0, then everything is working!
+You only need to run `make tools` once (or when the tools change).
 
 ```sh
 $ cd "$GOPATH/src/github.com/hashicorp/terraform"
+$ make tools
 $ make
 ```
 
@@ -56,21 +68,17 @@ $ make test TEST=./terraform
 ...
 ```
 
-If you're working on a specific provider and only wish to rebuild that provider, you can use the `plugin-dev` target. For example, to build only the Azure provider:
+If you're working on a specific provider which has not been separated into an individual repository and only wish to rebuild that provider, you can use the `plugin-dev` target. For example, to build only the Test provider:
 
 ```sh
-$ make plugin-dev PLUGIN=provider-azure
-```
-
-If you're working on the core of Terraform, and only wish to rebuild that without rebuilding providers, you can use the `core-dev` target. It is important to note that some types of changes may require both core and providers to be rebuilt - for example work on the RPC interface. To build just the core of Terraform:
-
-```sh
-$ make core-dev
+$ make plugin-dev PLUGIN=provider-test
 ```
 
 ### Dependencies
 
-Terraform stores its dependencies under `vendor/`, which [Go 1.6+ will automatically recognize and load](https://golang.org/cmd/go/#hdr-Vendor_Directories). We use [`govendor`](https://github.com/kardianos/govendor) to manage the vendored dependencies.
+Terraform uses Go Modules for dependency management, but for the moment is
+continuing to use Go 1.6-style vendoring for compatibility with tools that
+have not yet been updated for full Go Modules support.
 
 If you're developing Terraform, there are a few tasks you might need to perform.
 
@@ -82,17 +90,11 @@ To add a dependency:
 
 Assuming your work is on a branch called `my-feature-branch`, the steps look like this:
 
-1. Add the new package to your GOPATH:
+1. Add an `import` statement to a suitable package in the Terraform code.
 
-    ```bash
-    go get github.com/hashicorp/my-project
-    ```
-
-2.  Add the new package to your `vendor/` directory:
-
-    ```bash
-    govendor add github.com/hashicorp/my-project/package
-    ```
+2. Run `go mod vendor` to download the latest version of the module containing
+   the imported package into the `vendor/` directory, and update the `go.mod`
+   and `go.sum` files.
 
 3. Review the changes in git and commit them.
 
@@ -100,13 +102,11 @@ Assuming your work is on a branch called `my-feature-branch`, the steps look lik
 
 To update a dependency:
 
-1. Fetch the dependency:
+1. Run `go get -u module-path@version-number`, such as `go get -u github.com/hashicorp/hcl@2.0.0`
 
-    ```bash
-    govendor fetch github.com/hashicorp/my-project
-    ```
+2. Run `go mod vendor` to update the vendored copy in the `vendor/` directory.
 
-2. Review the changes in git and commit them.
+3. Review the changes in git and commit them.
 
 ### Acceptance Tests
 
@@ -162,3 +162,7 @@ For example, run the following command to build terraform in a linux-based conta
 ```sh
 docker run --rm -v $(pwd):/go/src/github.com/hashicorp/terraform -w /go/src/github.com/hashicorp/terraform -e XC_OS=darwin -e XC_ARCH=amd64 golang:latest bash -c "apt-get update && apt-get install -y zip && make bin"
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fhashicorp%2Fterraform.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fhashicorp%2Fterraform?ref=badge_large)

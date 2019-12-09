@@ -12,6 +12,9 @@
 package oneview
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -19,6 +22,7 @@ func resourceLogicalInterconnect() *schema.Resource {
 	return &schema.Resource{
 		Read:   resourceLogicalInterconnectRead,
 		Update: resourceLogicalInterconnectUpdate,
+		Delete: resourceLogicalInterconnectDelete,
 
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -380,7 +384,8 @@ func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{})
 	updateType := d.Get("update_type").(string)
 
 	if updateType == "updateComplianceById" {
-		id := d.Id()
+		id := strings.Replace(d.Get("uri").(string), "/rest/logical-interconnects/", "", -1)
+
 		err := config.ovClient.UpdateLogicalInterconnectConsistentStateById(id)
 		if err != nil {
 			return err
@@ -389,4 +394,9 @@ func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	return resourceLogicalInterconnectRead(d, meta)
+}
+
+func resourceLogicalInterconnectDelete(d *schema.ResourceData, meta interface{}) error {
+
+	return errors.New("No logic implemented")
 }
