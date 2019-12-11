@@ -6,26 +6,35 @@ provider "oneview" {
 	ov_apiversion = <ov_apiversion>
 	ov_ifmatch = "*"
 }
-/*data "oneview_logical_enclosure" "logical_enclosure" {
-        name = "TESTLE"
-	enclosure_group_uri = "/rest/enclosure-groups/4f7b2cf4-fdb5-4065-8886-54a9905659f9"
-}
 
-output "oneview_logical_enclosure_value" {
-        value = "${data.oneview_logical_enclosure.logical_enclosure.name}"
-}*/
+data "oneview_enclosure_group" "enclosure_group" {
+        name = "EnclosureGroupDemo"
+}
 
 resource "oneview_logical_enclosure" "LogicalEnclosure" {
 	name = "TESTLE"
 	enclosure_uris = ["/rest/enclosures/0000000000A66101","/rest/enclosures/0000000000A66102","/rest/enclosures/0000000000A66103"]
-	enclosure_group_uri = "/rest/enclosure-groups/4f7b2cf4-fdb5-4065-8886-54a9905659f9"
+	enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
 }
 
 /* Update by Group
 
 resource "oneview_logical_enclosure" "LogicalEnclosure" {
-	name = "TESTLE"
-	enclosure_uris = ["/rest/enclosures/0000000000A66101","/rest/enclosures/0000000000A66102","/rest/enclosures/0000000000A66103"]
-	enclosure_group_uri = "/rest/enclosure-groups/4f7b2cf4-fdb5-4065-8886-54a9905659f9"
-	update_type = "updateByGroup"
+  name = "TESTLE"
+  enclosure_uris = ["/rest/enclosures/0000000000A66101","/rest/enclosures/0000000000A66102","/rest/enclosures/0000000000A66103"]
+  enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
+  update_type = "updateByGroup"
+*/
+
+# Datasource
+
+/*
+data "oneview_logical_enclosure" "logical_enclosure" {
+    name = "TESTLE"
+	enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
+}
+
+output "oneview_logical_enclosure_value" {
+        value = "${data.oneview_logical_enclosure.logical_enclosure.name}"
+}
 */

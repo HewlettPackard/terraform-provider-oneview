@@ -7,8 +7,15 @@ This release supports API1200 minimally where we can use OneView API1200 with th
 
 ### Oneview Features supported
 - Enclosure
+- Enclosure Group
+- FC Network
+- FCoE Network
+- Interconnect Type
+- Logical Enclosure
+- Logical Interconnect Group
 - Network Set
 - Server Profile
+- Server Profile Template
 
 # [v1.1.0]
 
