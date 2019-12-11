@@ -7,8 +7,13 @@ This release supports API1200 minimally where we can use OneView API1200 with th
 
 ### Oneview Features supported
 - Enclosure
+- Interconnect
+- Logical Interconnect
 - Network Set
+- Server Hardware
+- Server Hardware Type
 - Server Profile
+- Uplink Set
 
 # [v1.1.0]
 
