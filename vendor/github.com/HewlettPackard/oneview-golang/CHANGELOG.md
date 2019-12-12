@@ -7,9 +7,26 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Oneview Features supported
 - Enclosure
+- Enclosure Group
+- FC Network
+- FCoE Network
+- Interconnect
+- Interconnect type
+- Logical Enclosure
+- Logical interconnect
+- Logical Interconnect Group
 - Network Set
+- Server hardware
+- Server hardware type
 - Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage System
+- Storage Volume
+- Storage Volume Attachment
+- Storage Volume Template
 - Task
+- Uplink set
 
 # [v1.1.0] (03-12-2019)
 ### Notes
@@ -40,6 +57,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Scope
 - Server hardware type
 - Server Profile
+- Server Profile Template
 - Storage pool
 - Storage system
 - Storage volume

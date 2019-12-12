@@ -11,7 +11,7 @@ provider "oneview" {
 resource "oneview_storage_volume_template" "svt" {
         name = "DemoStorageTemplate"
         description = "Testing creation of storage volume template"
-        root_template_uri = "/rest/storage-volume-templates/96196d4c-3cac-4d6b-ab6b-a93c0143ac75"
+        root_template_uri = "/rest/storage-volume-templates/7adda42a-cf30-4d99-aa10-ab2000707395"
         initial_scope_uris = ["/rest/scopes/8604784e-b116-4b70-8bf4-f1fd754ae28e"]
         tp_name =[
 	{
@@ -63,7 +63,7 @@ resource "oneview_storage_volume_template" "svt" {
                 type = "string"
                 title = "Storage Pool"
                 format = "x-uri-reference"
-                default = "/rest/storage-pools/547F8659-BD66-4775-9943-A93C0143AC70"
+                default = "/rest/storage-pools/52F40929-4712-4614-A082-AB200070738A"
                 required = true
                 description = "A common provisioning group URI reference"
         }]

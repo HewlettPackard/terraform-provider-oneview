@@ -7,10 +7,14 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
+data "oneview_scope" "scope_obj" {
+        name = "test"
+}
+
 resource "oneview_fc_network" "FCNetwork" {
 	name = "TestFCNetwork"
 	type = "fc-networkV4"
-	initial_scope_uris = ["/rest/scopes/8aa405fb-bc62-42e5-9ca6-4a544e7ffdec", "/rest/scopes/bf7df2e6-ebbb-4c6b-bc7a-be8cdac930bf"]
+	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
 }
 
 /*resource "oneview_fc_network" "FCNetwork" {

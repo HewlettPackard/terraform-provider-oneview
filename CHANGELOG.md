@@ -7,12 +7,24 @@ This release supports API1200 minimally where we can use OneView API1200 with th
 
 ### Oneview Features supported
 - Enclosure
+- Enclosure Group
+- FC Network
+- FCoE Network
 - Interconnect
+- Interconnect Type
+- Logical Enclosure
 - Logical Interconnect
+- Logical Interconnect Group
 - Network Set
 - Server Hardware
 - Server Hardware Type
 - Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage System
+- Storage Volume
+- Storage Volume Attachment
+- Storage Volume Template
 - Uplink Set
 
 # [v1.1.0]
@@ -40,6 +52,8 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Scope
 - Server hardware
 - Server hardware type
+- Server profile
+- Server profile template
 - Storage pool
 - Storage system
 - Storage volume
