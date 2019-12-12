@@ -10,10 +10,14 @@ This release supports API1200 minimally where we can use OneView API1200 with th
 - Enclosure Group
 - FC Network
 - FCoE Network
+- Interconnect
 - Interconnect Type
 - Logical Enclosure
+- Logical Interconnect
 - Logical Interconnect Group
 - Network Set
+- Server Hardware
+- Server Hardware Type
 - Server Profile
 - Server Profile Template
 - Storage Pool
@@ -21,6 +25,7 @@ This release supports API1200 minimally where we can use OneView API1200 with th
 - Storage Volume
 - Storage Volume Attachment
 - Storage Volume Template
+- Uplink Set
 
 # [v1.1.0]
 
