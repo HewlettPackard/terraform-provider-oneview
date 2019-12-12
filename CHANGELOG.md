@@ -16,6 +16,11 @@ This release supports API1200 minimally where we can use OneView API1200 with th
 - Network Set
 - Server Profile
 - Server Profile Template
+- Storage Pool
+- Storage System
+- Storage Volume
+- Storage Volume Attachment
+- Storage Volume Template
 
 # [v1.1.0]
 
@@ -42,6 +47,8 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 - Scope
 - Server hardware
 - Server hardware type
+- Server profile
+- Server profile template
 - Storage pool
 - Storage system
 - Storage volume

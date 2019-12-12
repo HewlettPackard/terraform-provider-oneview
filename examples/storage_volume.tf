@@ -10,7 +10,7 @@ provider "oneview" {
 resource "oneview_volume" "volume" {
   properties = {
     "name" = "testvol"
-    "storage_pool"= "/rest/storage-pools/16CA2E3F-523A-4B46-8F67-AAAF0099D359",
+    "storage_pool"= "/rest/storage-pools/4EF64D4-FB48-4209-8790-AB200070738C",
     "size"= 268435456,
     "provisioning_type"= "Thin",
     "is_deduplicated"= false
