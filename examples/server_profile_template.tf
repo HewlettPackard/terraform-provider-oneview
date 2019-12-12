@@ -9,7 +9,7 @@ provider "oneview" {
 
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
 	name = "TestServerProfileTemplate"
-	type = "ServerProfileTemplateV5"
+	type = "ServerProfileTemplateV7"
 	enclosure_group = "SYN03_EC"
 	server_hardware_type = "SY 480 Gen9 2"
 	initial_scope_uris = ["/rest/scopes/74877630-9a22-4061-9db4-d12b6c4cfee0"]
@@ -18,9 +18,9 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 /* 	Update
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
 	name = "TestServerProfileTemplate_Renamed"
-	type = "ServerProfileTemplateV5"
+	type = "ServerProfileTemplateV7"
 	enclosure_group = "SYN03_EC"
-	server_hardware_type = "SY 480 Gen9 3"
+	server_hardware_type = "SY 480 Gen9 2"
 	initial_scope_uris = ["/rest/scopes/74877630-9a22-4061-9db4-d12b6c4cfee0"]
 }
 */

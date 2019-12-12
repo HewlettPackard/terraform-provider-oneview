@@ -3,12 +3,12 @@ provider "oneview" {
         ov_password = "<ov-password>"
         ov_endpoint = "<ov-endpoint>"
         ov_sslverify = false
-        ov_apiversion = 800
+        ov_apiversion = <ov_apiversion>
         ov_ifmatch = "*"
 }
 
 data "oneview_interconnect_type" "interconnect_type" {
-	name = "Synergy 10Gb Pass-Thru Module"
+	name = "Virtual Connect SE 40Gb F8 Module for Synergy"
 }
 
 output "oneview_interconnect_type_value" {
