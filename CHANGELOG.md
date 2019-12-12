@@ -9,6 +9,11 @@ This release supports API1200 minimally where we can use OneView API1200 with th
 - Enclosure
 - Network Set
 - Server Profile
+- Storage Pool
+- Storage System
+- Storage Volume
+- Storage Volume Attachment
+- Storage Volume Template
 
 # [v1.1.0]
 
