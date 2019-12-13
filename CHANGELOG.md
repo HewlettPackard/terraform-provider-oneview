@@ -12,10 +12,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Enclosure Group
 - FC Network
 - FCoE Network
+- Interconnect
 - Interconnect Type
 - Logical Enclosure
+- Logical Interconnect
 - Logical Interconnect Group
 - Network Set
+- Server Hardware
+- Server Hardware Type
 - Server Profile
 - Server Profile Template
 - Storage Pool
@@ -23,6 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage Volume
 - Storage Volume Attachment
 - Storage Volume Template
+- Uplink Set
 
 # [v1.1.0]
 
