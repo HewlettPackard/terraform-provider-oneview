@@ -14,6 +14,7 @@ package oneview
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -757,16 +758,18 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	serverProfile.Firmware = firmware
 
 	// Get local storage data if provided
-	rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
-	localStorage := ov.LocalStorageOptions{}
-	for _, raw := range rawLocalStorage {
-		localStorageItem := raw.(map[string]interface{})
-		localStorage = ov.LocalStorageOptions{
-			ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-			Initialize:         localStorageItem["initialize"].(bool),
+	if _, ok := d.GetOk("local_storage"); ok {
+		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+		localStorage := ov.LocalStorageOptions{}
+		for _, raw := range rawLocalStorage {
+			localStorageItem := raw.(map[string]interface{})
+			localStorage = ov.LocalStorageOptions{
+				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				Initialize:         localStorageItem["initialize"].(bool),
+			}
 		}
-	}
 	serverProfile.LocalStorage = localStorage
+}
 
 	rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
 	logicalDrives := make([]ov.LogicalDrive, 0)
@@ -886,6 +889,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 		}
 	}
+
+	 file, _ := json.MarshalIndent(serverProfile, "", " ")
+        _= ioutil.WriteFile("test.json", file, 0644)
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
