@@ -14,11 +14,11 @@ package oneview
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"io/ioutil"
 	"strings"
 )
 
@@ -626,67 +626,65 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.ServerHardwareTypeURI = serverHardwareType.URI
 	}
 
-	if _, ok := d.GetOk("network"); ok {
-		rawNetwork := d.Get("network").(*schema.Set).List()
-		networks := make([]ov.Connection, 0)
-		for _, rawNet := range rawNetwork {
-			rawNetworkItem := rawNet.(map[string]interface{})
+	rawNetwork := d.Get("network").(*schema.Set).List()
+	networks := make([]ov.Connection, 0)
+	for _, rawNet := range rawNetwork {
+		rawNetworkItem := rawNet.(map[string]interface{})
 
-			bootOptions := ov.BootOption{}
-			if rawNetworkItem["boot"] != nil {
-				rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
-				for _, rawBoot := range rawBoots {
-					bootItem := rawBoot.(map[string]interface{})
+		bootOptions := ov.BootOption{}
+		if rawNetworkItem["boot"] != nil {
+			rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+			for _, rawBoot := range rawBoots {
+				bootItem := rawBoot.(map[string]interface{})
 
-					iscsi := ov.BootIscsi{}
-					if bootItem["iscsi"] != nil {
-						rawIscsis := bootItem["iscsi"].(*schema.Set).List()
-						for _, rawIscsi := range rawIscsis {
-							rawIscsiItem := rawIscsi.(map[string]interface{})
-							iscsi = ov.BootIscsi{
-								Chaplevel:            rawIscsiItem["chap_level"].(string),
-								FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-								FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
-								SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
-								SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
-							}
+				iscsi := ov.BootIscsi{}
+				if bootItem["iscsi"] != nil {
+					rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+					for _, rawIscsi := range rawIscsis {
+						rawIscsiItem := rawIscsi.(map[string]interface{})
+						iscsi = ov.BootIscsi{
+							Chaplevel:            rawIscsiItem["chap_level"].(string),
+							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
+							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
+							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 						}
 					}
+				}
 
-					bootOptions = ov.BootOption{
-						Priority:         bootItem["priority"].(string),
-						EthernetBootType: bootItem["ethernet_boot_type"].(string),
-						BootVolumeSource: bootItem["boot_volume_source"].(string),
-						Iscsi:            &iscsi,
-					}
+				bootOptions = ov.BootOption{
+					Priority:         bootItem["priority"].(string),
+					EthernetBootType: bootItem["ethernet_boot_type"].(string),
+					BootVolumeSource: bootItem["boot_volume_source"].(string),
+					Iscsi:            &iscsi,
 				}
 			}
-
-			ipv4 := ov.Ipv4Option{}
-			if rawNetworkItem["ipv4"] != nil {
-				rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
-				for _, rawIpv4 := range rawIpv4s {
-					rawIpv4Item := rawIpv4.(map[string]interface{})
-					ipv4 = ov.Ipv4Option{
-						Gateway:         rawIpv4Item["gateway"].(string),
-						IpAddressSource: rawIpv4Item["ip_address_source"].(string),
-					}
-				}
-			}
-
-			networks = append(networks, ov.Connection{
-				ID:            rawNetworkItem["id"].(int),
-				Name:          rawNetworkItem["name"].(string),
-				FunctionType:  rawNetworkItem["function_type"].(string),
-				NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
-				PortID:        rawNetworkItem["port_id"].(string),
-				RequestedMbps: rawNetworkItem["requested_mbps"].(string),
-				Ipv4:          &ipv4,
-				Boot:          &bootOptions,
-			})
 		}
+
+		ipv4 := ov.Ipv4Option{}
+		if rawNetworkItem["ipv4"] != nil {
+			rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+			for _, rawIpv4 := range rawIpv4s {
+				rawIpv4Item := rawIpv4.(map[string]interface{})
+				ipv4 = ov.Ipv4Option{
+					Gateway:         rawIpv4Item["gateway"].(string),
+					IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+				}
+			}
+		}
+
+		networks = append(networks, ov.Connection{
+			ID:            rawNetworkItem["id"].(int),
+			Name:          rawNetworkItem["name"].(string),
+			FunctionType:  rawNetworkItem["function_type"].(string),
+			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+			PortID:        rawNetworkItem["port_id"].(string),
+			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+			Ipv4:          &ipv4,
+			Boot:          &bootOptions,
+		})
 	}
-	
+
 	if val, ok := d.GetOk("manage_connections"); ok {
 		serverProfile.ConnectionSettings.ManageConnections = val.(bool)
 		serverProfile.ConnectionSettings.Connections = networks
@@ -744,7 +742,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.InitialScopeUris = initialScopeUris
 	}
 
-	// Get firmware details
+	// Get firmware details if provided
 	if _, ok := d.GetOk("firmware"); ok {
 		rawFirmware := d.Get("firmware").(*schema.Set).List()
 		firmware := ov.FirmwareOption{}
@@ -773,7 +771,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				Initialize:         localStorageItem["initialize"].(bool),
 			}
 		}
-	serverProfile.LocalStorage = localStorage
+		serverProfile.LocalStorage = localStorage
 	}
 
 	if _, ok := d.GetOk("logical_drives"); ok {
@@ -901,8 +899,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
-	 file, _ := json.MarshalIndent(serverProfile, "", " ")
-        _= ioutil.WriteFile("test.json", file, 0644)
+	file, _ := json.MarshalIndent(serverProfile, "", " ")
+	_ = ioutil.WriteFile("test.json", file, 0644)
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
