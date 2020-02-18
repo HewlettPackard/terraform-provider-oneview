@@ -626,64 +626,67 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.ServerHardwareTypeURI = serverHardwareType.URI
 	}
 
-	rawNetwork := d.Get("network").(*schema.Set).List()
-	networks := make([]ov.Connection, 0)
-	for _, rawNet := range rawNetwork {
-		rawNetworkItem := rawNet.(map[string]interface{})
+	if _, ok := d.GetOk("network"); ok {
+		rawNetwork := d.Get("network").(*schema.Set).List()
+		networks := make([]ov.Connection, 0)
+		for _, rawNet := range rawNetwork {
+			rawNetworkItem := rawNet.(map[string]interface{})
 
-		bootOptions := ov.BootOption{}
-		if rawNetworkItem["boot"] != nil {
-			rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
-			for _, rawBoot := range rawBoots {
-				bootItem := rawBoot.(map[string]interface{})
+			bootOptions := ov.BootOption{}
+			if rawNetworkItem["boot"] != nil {
+				rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+				for _, rawBoot := range rawBoots {
+					bootItem := rawBoot.(map[string]interface{})
 
-				iscsi := ov.BootIscsi{}
-				if bootItem["iscsi"] != nil {
-					rawIscsis := bootItem["iscsi"].(*schema.Set).List()
-					for _, rawIscsi := range rawIscsis {
-						rawIscsiItem := rawIscsi.(map[string]interface{})
-						iscsi = ov.BootIscsi{
-							Chaplevel:            rawIscsiItem["chap_level"].(string),
-							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
-							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
-							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+					iscsi := ov.BootIscsi{}
+					if bootItem["iscsi"] != nil {
+						rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+						for _, rawIscsi := range rawIscsis {
+							rawIscsiItem := rawIscsi.(map[string]interface{})
+							iscsi = ov.BootIscsi{
+								Chaplevel:            rawIscsiItem["chap_level"].(string),
+								FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
+								FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+								SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
+								SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+							}
 						}
 					}
-				}
 
-				bootOptions = ov.BootOption{
-					Priority:         bootItem["priority"].(string),
-					EthernetBootType: bootItem["ethernet_boot_type"].(string),
-					BootVolumeSource: bootItem["boot_volume_source"].(string),
-					Iscsi:            &iscsi,
-				}
-			}
-		}
-
-		ipv4 := ov.Ipv4Option{}
-		if rawNetworkItem["ipv4"] != nil {
-			rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
-			for _, rawIpv4 := range rawIpv4s {
-				rawIpv4Item := rawIpv4.(map[string]interface{})
-				ipv4 = ov.Ipv4Option{
-					Gateway:         rawIpv4Item["gateway"].(string),
-					IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+					bootOptions = ov.BootOption{
+						Priority:         bootItem["priority"].(string),
+						EthernetBootType: bootItem["ethernet_boot_type"].(string),
+						BootVolumeSource: bootItem["boot_volume_source"].(string),
+						Iscsi:            &iscsi,
+					}
 				}
 			}
-		}
 
-		networks = append(networks, ov.Connection{
-			ID:            rawNetworkItem["id"].(int),
-			Name:          rawNetworkItem["name"].(string),
-			FunctionType:  rawNetworkItem["function_type"].(string),
-			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
-			PortID:        rawNetworkItem["port_id"].(string),
-			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
-			Ipv4:          &ipv4,
-			Boot:          &bootOptions,
-		})
+			ipv4 := ov.Ipv4Option{}
+			if rawNetworkItem["ipv4"] != nil {
+				rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+				for _, rawIpv4 := range rawIpv4s {
+					rawIpv4Item := rawIpv4.(map[string]interface{})
+					ipv4 = ov.Ipv4Option{
+						Gateway:         rawIpv4Item["gateway"].(string),
+						IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+					}
+				}
+			}
+
+			networks = append(networks, ov.Connection{
+				ID:            rawNetworkItem["id"].(int),
+				Name:          rawNetworkItem["name"].(string),
+				FunctionType:  rawNetworkItem["function_type"].(string),
+				NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+				PortID:        rawNetworkItem["port_id"].(string),
+				RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+				Ipv4:          &ipv4,
+				Boot:          &bootOptions,
+			})
+		}
 	}
+	
 	if val, ok := d.GetOk("manage_connections"); ok {
 		serverProfile.ConnectionSettings.ManageConnections = val.(bool)
 		serverProfile.ConnectionSettings.Connections = networks
@@ -742,20 +745,22 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	// Get firmware details
-	rawFirmware := d.Get("firmware").(*schema.Set).List()
-	firmware := ov.FirmwareOption{}
-	for _, raw := range rawFirmware {
-		firmwareItem := raw.(map[string]interface{})
-		firmware = ov.FirmwareOption{
-			ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
-			FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
-			ManageFirmware:       firmwareItem["manage_firmware"].(bool),
-			FirmwareOptionv200: ov.FirmwareOptionv200{
-				FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
-			},
+	if _, ok := d.GetOk("firmware"); ok {
+		rawFirmware := d.Get("firmware").(*schema.Set).List()
+		firmware := ov.FirmwareOption{}
+		for _, raw := range rawFirmware {
+			firmwareItem := raw.(map[string]interface{})
+			firmware = ov.FirmwareOption{
+				ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
+				FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+				ManageFirmware:       firmwareItem["manage_firmware"].(bool),
+				FirmwareOptionv200: ov.FirmwareOptionv200{
+					FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
+				},
+			}
 		}
+		serverProfile.Firmware = firmware
 	}
-	serverProfile.Firmware = firmware
 
 	// Get local storage data if provided
 	if _, ok := d.GetOk("local_storage"); ok {
@@ -769,96 +774,102 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			}
 		}
 	serverProfile.LocalStorage = localStorage
-}
-
-	rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
-	logicalDrives := make([]ov.LogicalDrive, 0)
-	for _, rawLogicalDrive := range rawLogicalDrives {
-		logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-		logicalDrives = append(logicalDrives, ov.LogicalDrive{
-			Bootable:  logicalDrivesItem["bootable"].(bool),
-			RaidLevel: logicalDrivesItem["raid_level"].(string),
-		})
 	}
-	serverProfile.LocalStorage.LogicalDrives = logicalDrives
+
+	if _, ok := d.GetOk("logical_drives"); ok {
+		rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
+		logicalDrives := make([]ov.LogicalDrive, 0)
+		for _, rawLogicalDrive := range rawLogicalDrives {
+			logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+			logicalDrives = append(logicalDrives, ov.LogicalDrive{
+				Bootable:  logicalDrivesItem["bootable"].(bool),
+				RaidLevel: logicalDrivesItem["raid_level"].(string),
+			})
+		}
+		serverProfile.LocalStorage.LogicalDrives = logicalDrives
+	}
 
 	// get SAN storage data if provided
-	rawSanStorage := d.Get("san_storage").(*schema.Set).List()
-	sanStorage := ov.SanStorageOptions{}
-	for _, raw := range rawSanStorage {
-		sanStorageItem := raw.(map[string]interface{})
-		sanStorage = ov.SanStorageOptions{
-			HostOSType:            sanStorageItem["host_os_type"].(string),
-			ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
-			ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
-			ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
-			SerialNumber:          sanStorageItem["serial_number"].(string),
-			Type:                  sanStorageItem["type"].(string),
-			URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
-		}
-	}
-	serverProfile.SanStorage = sanStorage
-
-	// Get volume attachment data for san storage
-	rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
-	volumeAttachments := make([]ov.VolumeAttachment, 0)
-
-	for _, rawVolumeAttachment := range rawVolumeAttachments {
-		volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
-
-		// get volumeAttachemts.storagepaths
-		storagePaths := make([]ov.StoragePath, 0)
-		if volumeAttachmentItem["storage_paths"] != nil {
-			rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
-
-			for _, rawStoragePath := range rawStoragePaths {
-				storagePathItem := rawStoragePath.(map[string]interface{})
-
-				// get volumeAttachemts.storagepaths.targets
-				targets := make([]ov.Target, 0)
-				if storagePathItem["targets"] != nil {
-					rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
-					for _, rawStorageTarget := range rawStorageTargets {
-						storageTargetItem := rawStorageTarget.(map[string]interface{})
-						targets = append(targets, ov.Target{
-							IpAddress: storageTargetItem["ip_address"].(string),
-							Name:      storageTargetItem["name"].(string),
-							TcpPort:   storageTargetItem["tcp_port"].(int),
-						})
-					}
-				}
-
-				storagePaths = append(storagePaths, ov.StoragePath{
-					IsEnabled:         storagePathItem["is_enabled"].(bool),
-					Status:            storagePathItem["status"].(string),
-					ConnectionID:      storagePathItem["connection_id"].(int),
-					StorageTargetType: storagePathItem["storage_target_type"].(string),
-					TargetSelector:    storagePathItem["target_selector"].(string),
-					Targets:           targets,
-				})
+	if _, ok := d.GetOk("san_storage"); ok {
+		rawSanStorage := d.Get("san_storage").(*schema.Set).List()
+		sanStorage := ov.SanStorageOptions{}
+		for _, raw := range rawSanStorage {
+			sanStorageItem := raw.(map[string]interface{})
+			sanStorage = ov.SanStorageOptions{
+				HostOSType:            sanStorageItem["host_os_type"].(string),
+				ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
+				ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
+				ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
+				SerialNumber:          sanStorageItem["serial_number"].(string),
+				Type:                  sanStorageItem["type"].(string),
+				URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
 			}
 		}
-
-		tempPermanent := volumeAttachmentItem["permanent"].(bool)
-		tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
-		volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-			Permanent:                      &tempPermanent,
-			ID:                             volumeAttachmentItem["id"].(int),
-			LUN:                            volumeAttachmentItem["lun"].(string),
-			LUNType:                        volumeAttachmentItem["lun_type"].(string),
-			VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
-			VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
-			VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-			VolumeShareable:                &tempVolumeShareable,
-			VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
-			VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
-			VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
-			VolumeName:                     volumeAttachmentItem["volume_name"].(string),
-			StoragePaths:                   storagePaths,
-			BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-		})
+		serverProfile.SanStorage = sanStorage
 	}
-	serverProfile.SanStorage.VolumeAttachments = volumeAttachments
+
+	// Get volume attachment data for san storage
+	if _, ok := d.GetOk("volume_attachments"); ok {
+		rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+		volumeAttachments := make([]ov.VolumeAttachment, 0)
+
+		for _, rawVolumeAttachment := range rawVolumeAttachments {
+			volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+
+			// get volumeAttachemts.storagepaths
+			storagePaths := make([]ov.StoragePath, 0)
+			if volumeAttachmentItem["storage_paths"] != nil {
+				rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+
+				for _, rawStoragePath := range rawStoragePaths {
+					storagePathItem := rawStoragePath.(map[string]interface{})
+
+					// get volumeAttachemts.storagepaths.targets
+					targets := make([]ov.Target, 0)
+					if storagePathItem["targets"] != nil {
+						rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
+						for _, rawStorageTarget := range rawStorageTargets {
+							storageTargetItem := rawStorageTarget.(map[string]interface{})
+							targets = append(targets, ov.Target{
+								IpAddress: storageTargetItem["ip_address"].(string),
+								Name:      storageTargetItem["name"].(string),
+								TcpPort:   storageTargetItem["tcp_port"].(int),
+							})
+						}
+					}
+
+					storagePaths = append(storagePaths, ov.StoragePath{
+						IsEnabled:         storagePathItem["is_enabled"].(bool),
+						Status:            storagePathItem["status"].(string),
+						ConnectionID:      storagePathItem["connection_id"].(int),
+						StorageTargetType: storagePathItem["storage_target_type"].(string),
+						TargetSelector:    storagePathItem["target_selector"].(string),
+						Targets:           targets,
+					})
+				}
+			}
+
+			tempPermanent := volumeAttachmentItem["permanent"].(bool)
+			tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
+			volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
+				Permanent:                      &tempPermanent,
+				ID:                             volumeAttachmentItem["id"].(int),
+				LUN:                            volumeAttachmentItem["lun"].(string),
+				LUNType:                        volumeAttachmentItem["lun_type"].(string),
+				VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
+				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
+				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
+				VolumeShareable:                &tempVolumeShareable,
+				VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
+				VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
+				VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
+				VolumeName:                     volumeAttachmentItem["volume_name"].(string),
+				StoragePaths:                   storagePaths,
+				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+			})
+		}
+		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
+	}
 
 	if val, ok := d.GetOk("os_deployment_settings"); ok {
 		rawOsDeploySetting := val.(*schema.Set).List()
@@ -1086,69 +1097,71 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.ServerHardwareTypeURI = serverHardwareType.URI
 		}
 
-		rawNetwork := d.Get("network").(*schema.Set).List()
-		networks := make([]ov.Connection, 0)
-		for _, rawNet := range rawNetwork {
-			rawNetworkItem := rawNet.(map[string]interface{})
+		if _, ok := d.GetOk("network"); ok {
+			rawNetwork := d.Get("network").(*schema.Set).List()
+			networks := make([]ov.Connection, 0)
+			for _, rawNet := range rawNetwork {
+				rawNetworkItem := rawNet.(map[string]interface{})
 
-			bootOptions := ov.BootOption{}
-			if rawNetworkItem["boot"] != nil {
-				rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
-				for _, rawBoot := range rawBoots {
-					bootItem := rawBoot.(map[string]interface{})
+				bootOptions := ov.BootOption{}
+				if rawNetworkItem["boot"] != nil {
+					rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+					for _, rawBoot := range rawBoots {
+						bootItem := rawBoot.(map[string]interface{})
 
-					iscsi := ov.BootIscsi{}
-					if bootItem["iscsi"] != nil {
-						rawIscsis := bootItem["iscsi"].(*schema.Set).List()
-						for _, rawIscsi := range rawIscsis {
-							rawIscsiItem := rawIscsi.(map[string]interface{})
-							iscsi = ov.BootIscsi{
-								Chaplevel:            rawIscsiItem["chap_level"].(string),
-								FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-								FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
-								SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
-								SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+						iscsi := ov.BootIscsi{}
+						if bootItem["iscsi"] != nil {
+							rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+							for _, rawIscsi := range rawIscsis {
+								rawIscsiItem := rawIscsi.(map[string]interface{})
+								iscsi = ov.BootIscsi{
+									Chaplevel:            rawIscsiItem["chap_level"].(string),
+									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
+									FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+									SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
+									SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+								}
 							}
 						}
-					}
 
-					bootOptions = ov.BootOption{
-						Priority:         bootItem["priority"].(string),
-						EthernetBootType: bootItem["ethernet_boot_type"].(string),
-						BootVolumeSource: bootItem["boot_volume_source"].(string),
-						Iscsi:            &iscsi,
-					}
-				}
-			}
-
-			ipv4 := ov.Ipv4Option{}
-			if rawNetworkItem["ipv4"] != nil {
-				rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
-				for _, rawIpv4 := range rawIpv4s {
-					rawIpv4Item := rawIpv4.(map[string]interface{})
-					ipv4 = ov.Ipv4Option{
-						Gateway:         rawIpv4Item["gateway"].(string),
-						IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+						bootOptions = ov.BootOption{
+							Priority:         bootItem["priority"].(string),
+							EthernetBootType: bootItem["ethernet_boot_type"].(string),
+							BootVolumeSource: bootItem["boot_volume_source"].(string),
+							Iscsi:            &iscsi,
+						}
 					}
 				}
-			}
 
-			networks = append(networks, ov.Connection{
-				ID:            rawNetworkItem["id"].(int),
-				Name:          rawNetworkItem["name"].(string),
-				FunctionType:  rawNetworkItem["function_type"].(string),
-				NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
-				PortID:        rawNetworkItem["port_id"].(string),
-				RequestedMbps: rawNetworkItem["requested_mbps"].(string),
-				Ipv4:          &ipv4,
-				Boot:          &bootOptions,
-			})
-		}
-		if val, ok := d.GetOk("manage_connections"); ok {
-			serverProfile.ConnectionSettings.ManageConnections = val.(bool)
-			serverProfile.ConnectionSettings.Connections = networks
-		} else {
-			serverProfile.Connections = networks
+				ipv4 := ov.Ipv4Option{}
+				if rawNetworkItem["ipv4"] != nil {
+					rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+					for _, rawIpv4 := range rawIpv4s {
+						rawIpv4Item := rawIpv4.(map[string]interface{})
+						ipv4 = ov.Ipv4Option{
+							Gateway:         rawIpv4Item["gateway"].(string),
+							IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+						}
+					}
+				}
+
+				networks = append(networks, ov.Connection{
+					ID:            rawNetworkItem["id"].(int),
+					Name:          rawNetworkItem["name"].(string),
+					FunctionType:  rawNetworkItem["function_type"].(string),
+					NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+					PortID:        rawNetworkItem["port_id"].(string),
+					RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+					Ipv4:          &ipv4,
+					Boot:          &bootOptions,
+				})
+			}
+			if val, ok := d.GetOk("manage_connections"); ok {
+				serverProfile.ConnectionSettings.ManageConnections = val.(bool)
+				serverProfile.ConnectionSettings.Connections = networks
+			} else {
+				serverProfile.Connections = networks
+			}
 		}
 
 		if val, ok := d.GetOk("boot_order"); ok {
@@ -1202,121 +1215,131 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		}
 
 		// Get firmware details
-		rawFirmware := d.Get("firmware").(*schema.Set).List()
-		firmware := ov.FirmwareOption{}
-		for _, raw := range rawFirmware {
-			firmwareItem := raw.(map[string]interface{})
-			firmware = ov.FirmwareOption{
-				ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
-				FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
-				ManageFirmware:       firmwareItem["manage_firmware"].(bool),
-				FirmwareOptionv200: ov.FirmwareOptionv200{
-					FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
-				},
-			}
-		}
-		serverProfile.Firmware = firmware
-
-		// Get local storage data if provided
-		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
-		localStorage := ov.LocalStorageOptions{}
-		for _, raw := range rawLocalStorage {
-			localStorageItem := raw.(map[string]interface{})
-			localStorage = ov.LocalStorageOptions{
-				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				Initialize:         localStorageItem["initialize"].(bool),
-			}
-		}
-		serverProfile.LocalStorage = localStorage
-
-		rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
-		logicalDrives := make([]ov.LogicalDrive, 0)
-		for _, rawLogicalDrive := range rawLogicalDrives {
-			logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-			logicalDrives = append(logicalDrives, ov.LogicalDrive{
-				Bootable:  logicalDrivesItem["bootable"].(bool),
-				RaidLevel: logicalDrivesItem["raid_level"].(string),
-			})
-		}
-		serverProfile.LocalStorage.LogicalDrives = logicalDrives
-
-		// get SAN storage data if provided
-		rawSanStorage := d.Get("san_storage").(*schema.Set).List()
-		sanStorage := ov.SanStorageOptions{}
-		for _, raw := range rawSanStorage {
-			sanStorageItem := raw.(map[string]interface{})
-			sanStorage = ov.SanStorageOptions{
-				HostOSType:            sanStorageItem["host_os_type"].(string),
-				ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
-				ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
-				ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
-				SerialNumber:          sanStorageItem["serial_number"].(string),
-				Type:                  sanStorageItem["type"].(string),
-				URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
-			}
-		}
-		serverProfile.SanStorage = sanStorage
-
-		// Get volume attachment data for san storage
-		rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
-		volumeAttachments := make([]ov.VolumeAttachment, 0)
-
-		for _, rawVolumeAttachment := range rawVolumeAttachments {
-			volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
-
-			// get volumeAttachemts.storagepaths
-			storagePaths := make([]ov.StoragePath, 0)
-			if volumeAttachmentItem["storage_paths"] != nil {
-				rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
-
-				for _, rawStoragePath := range rawStoragePaths {
-					storagePathItem := rawStoragePath.(map[string]interface{})
-
-					// get volumeAttachemts.storagepaths.targets
-					targets := make([]ov.Target, 0)
-					if storagePathItem["targets"] != nil {
-						rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
-						for _, rawStorageTarget := range rawStorageTargets {
-							storageTargetItem := rawStorageTarget.(map[string]interface{})
-							targets = append(targets, ov.Target{
-								IpAddress: storageTargetItem["ip_address"].(string),
-								Name:      storageTargetItem["name"].(string),
-								TcpPort:   storageTargetItem["tcp_port"].(int),
-							})
-						}
-					}
-
-					storagePaths = append(storagePaths, ov.StoragePath{
-						IsEnabled:         storagePathItem["is_enabled"].(bool),
-						Status:            storagePathItem["status"].(string),
-						ConnectionID:      storagePathItem["connection_id"].(int),
-						StorageTargetType: storagePathItem["storage_target_type"].(string),
-						TargetSelector:    storagePathItem["target_selector"].(string),
-						Targets:           targets,
-					})
+		if _, ok := d.GetOk("firmware"); ok {
+			rawFirmware := d.Get("firmware").(*schema.Set).List()
+			firmware := ov.FirmwareOption{}
+			for _, raw := range rawFirmware {
+				firmwareItem := raw.(map[string]interface{})
+				firmware = ov.FirmwareOption{
+					ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
+					FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+					ManageFirmware:       firmwareItem["manage_firmware"].(bool),
+					FirmwareOptionv200: ov.FirmwareOptionv200{
+						FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
+					},
 				}
 			}
-
-			tempPermanent := volumeAttachmentItem["permanent"].(bool)
-			tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
-			volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-				Permanent:                      &tempPermanent,
-				ID:                             volumeAttachmentItem["id"].(int),
-				LUN:                            volumeAttachmentItem["lun"].(string),
-				LUNType:                        volumeAttachmentItem["lun_type"].(string),
-				VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
-				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
-				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-				VolumeShareable:                &tempVolumeShareable,
-				VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
-				VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
-				VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
-				VolumeName:                     volumeAttachmentItem["volume_name"].(string),
-				StoragePaths:                   storagePaths,
-				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-			})
+			serverProfile.Firmware = firmware
 		}
-		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
+
+		// Get local storage data if provided
+		if _, ok := d.GetOk("local_storage"); ok {
+			rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+			localStorage := ov.LocalStorageOptions{}
+			for _, raw := range rawLocalStorage {
+				localStorageItem := raw.(map[string]interface{})
+				localStorage = ov.LocalStorageOptions{
+					ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+					Initialize:         localStorageItem["initialize"].(bool),
+				}
+			}
+			serverProfile.LocalStorage = localStorage
+		}
+
+		if _, ok := d.GetOk("logical_drives"); ok {
+			rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
+			logicalDrives := make([]ov.LogicalDrive, 0)
+			for _, rawLogicalDrive := range rawLogicalDrives {
+				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+				logicalDrives = append(logicalDrives, ov.LogicalDrive{
+					Bootable:  logicalDrivesItem["bootable"].(bool),
+					RaidLevel: logicalDrivesItem["raid_level"].(string),
+				})
+			}
+			serverProfile.LocalStorage.LogicalDrives = logicalDrives
+		}
+
+		// get SAN storage data if provided
+		if _, ok := d.GetOk("san_storage"); ok {
+			rawSanStorage := d.Get("san_storage").(*schema.Set).List()
+			sanStorage := ov.SanStorageOptions{}
+			for _, raw := range rawSanStorage {
+				sanStorageItem := raw.(map[string]interface{})
+				sanStorage = ov.SanStorageOptions{
+					HostOSType:            sanStorageItem["host_os_type"].(string),
+					ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
+					ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
+					ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
+					SerialNumber:          sanStorageItem["serial_number"].(string),
+					Type:                  sanStorageItem["type"].(string),
+					URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
+				}
+			}
+			serverProfile.SanStorage = sanStorage
+		}
+
+		// Get volume attachment data for san storage
+		if _, ok := d.GetOk("volume_attachments"); ok {
+			rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+			volumeAttachments := make([]ov.VolumeAttachment, 0)
+
+			for _, rawVolumeAttachment := range rawVolumeAttachments {
+				volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+
+				// get volumeAttachemts.storagepaths
+				storagePaths := make([]ov.StoragePath, 0)
+				if volumeAttachmentItem["storage_paths"] != nil {
+					rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+
+					for _, rawStoragePath := range rawStoragePaths {
+						storagePathItem := rawStoragePath.(map[string]interface{})
+
+						// get volumeAttachemts.storagepaths.targets
+						targets := make([]ov.Target, 0)
+						if storagePathItem["targets"] != nil {
+							rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
+							for _, rawStorageTarget := range rawStorageTargets {
+								storageTargetItem := rawStorageTarget.(map[string]interface{})
+								targets = append(targets, ov.Target{
+									IpAddress: storageTargetItem["ip_address"].(string),
+									Name:      storageTargetItem["name"].(string),
+									TcpPort:   storageTargetItem["tcp_port"].(int),
+								})
+							}
+						}
+
+						storagePaths = append(storagePaths, ov.StoragePath{
+							IsEnabled:         storagePathItem["is_enabled"].(bool),
+							Status:            storagePathItem["status"].(string),
+							ConnectionID:      storagePathItem["connection_id"].(int),
+							StorageTargetType: storagePathItem["storage_target_type"].(string),
+							TargetSelector:    storagePathItem["target_selector"].(string),
+							Targets:           targets,
+						})
+					}
+				}
+
+				tempPermanent := volumeAttachmentItem["permanent"].(bool)
+				tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
+				volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
+					Permanent:                      &tempPermanent,
+					ID:                             volumeAttachmentItem["id"].(int),
+					LUN:                            volumeAttachmentItem["lun"].(string),
+					LUNType:                        volumeAttachmentItem["lun_type"].(string),
+					VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
+					VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
+					VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
+					VolumeShareable:                &tempVolumeShareable,
+					VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
+					VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
+					VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
+					VolumeName:                     volumeAttachmentItem["volume_name"].(string),
+					StoragePaths:                   storagePaths,
+					BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+				})
+			}
+			serverProfile.SanStorage.VolumeAttachments = volumeAttachments
+		}
 
 		if val, ok := d.GetOk("os_deployment_settings"); ok {
 			rawOsDeploySetting := val.(*schema.Set).List()
