@@ -27,14 +27,14 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
         name = "172.18.13.11"
 	type = "HypervisorManagerV2"
         username= "dcs1"
-        preferences= {    type= "Vmware"
- virtual_switch_type= "Standard"
- distributed_switch_version=""
- distributed_switch_usage=""
- multi_nic_v_motion="false"
- drs_enabled="true"
- ha_enabled="false"
-} 
+        preferences= {   type= "Vmware"
+			 virtual_switch_type= "Standard"
+			 distributed_switch_version=""
+			 distributed_switch_usage=""
+			 multi_nic_v_motion="false"
+			 drs_enabled="true"
+			 ha_enabled="false"
+	} 
 }
 */
 /* Testing data source*/
