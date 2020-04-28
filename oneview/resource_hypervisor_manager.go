@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
 package oneview
 
 import (
-	"encoding/json"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -35,42 +34,34 @@ func resourceHypervisorManager() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-
 			"category": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-
 			"display_name": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"hypervisor_type": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
-
 			"modified": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -79,13 +70,11 @@ func resourceHypervisorManager() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-
 			"port": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  443,
 			},
-
 			"preferences": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -96,32 +85,26 @@ func resourceHypervisorManager() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-
 						"distributed_switch_version": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-
 						"drs_enabled": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-
 						"ha_enabled": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-
 						"multi_nic_v_motion": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-
 						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-
 						"virtual_switch_type": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -129,12 +112,10 @@ func resourceHypervisorManager() *schema.Resource {
 					},
 				},
 			},
-
 			"refresh_state": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"resource_paths": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -151,52 +132,42 @@ func resourceHypervisorManager() *schema.Resource {
 					},
 				},
 			},
-
 			"scopes_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"state_reason": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"type": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-
 			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"username": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-
 			"uuid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"version": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"initial_scope_uris": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -257,8 +228,6 @@ func resourceHypervisorManagerCreate(d *schema.ResourceData, meta interface{}) e
 		resourcePathCollect = append(resourcePathCollect, hypervisorManagerResourcePaths)
 		hypMan.ResourcePaths = resourcePathCollect
 	}
-	file, _ := json.MarshalIndent(hypMan, "", "")
-	_ = ioutil.WriteFile("test.json", file, 0644)
 
 	hypManError := config.ovClient.CreateHypervisorManager(hypMan)
 	d.SetId(d.Get("name").(string))

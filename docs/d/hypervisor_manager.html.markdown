@@ -28,26 +28,37 @@ output "oneview_hypervisor_manager_value" {
 
 ## Attributes Reference
 
-* `fabric_type` - The supported Fibre Channel access method.
+* `available_dvs_versions` -   Available distributed switch versions on this hypervisor manager.
 
-* `link_stability_time` - The time interval, expressed in seconds, to wait after a link that was previously offline becomes stable, before automatic redistribution occurs within the fabric.
+* `category` -  Resource category used for authorization which is "hypervisor-managers".
 
-* `category` - Identifies the resource type.
+* `description` - Description for this hypervisor manager.
 
-* `description` - Brief description of the resource.
+* `display_name` -  Indicates the display name of the Hypervisor manager.
 
-* `etag` - Entity tag/version ID of the resource, the same value that is returned in the ETag header on a GET of the resource.
+* `e_tag` -  Entity tag/version ID of the resource, the same value that is returned in the ETag header on a GET of the resource.
 
-* `auto_login_redistribution` - Used for load balancing when logins are not evenly distributed over the Fibre Channel links, such as when an uplink that was previously down becomes available.
+* `hypervisor_type` -  Hypervisor type which can be Vmware or HyperV.
 
-* `connection_template_uri` - The connection template URI that is associated with this Fibre Channel network.
+* `name` -  Host name or IP of this hypervisor manager.
 
-* `managed_san_uri` - The managed SAN URI that is associated with this Fibre Channel network.
+* `password` -   Password that can be used to authenticate with this hypervisor manager.
 
-* `scopesUri` - The URI for the resource scope assignments..
+* `port` -   Port number of the hypervisor manager service.Default set to 443
 
-* `status` - Overall health status of the resource.
+* `preferences` - Default preferences to be used for cluster profiles with this hypervisor manager
+
+* `refresh_state` -  Indicates if the resource is currently refreshing.
+
+* `resource_paths` -   Represents inventory paths in the hypervisor manager where cluster can be added
+
+* `state` - Current state of the resource. Valid values include Connected, Disconnected, Configuring and Error.
+
+* `state_reason` -  Indicates the reason the resource in its current state.
+
+* `status` - Current status of this resource. Valid values include Unknown, OK, Disabled, Warning, Critical.
+
+* `type` -   Uniquely identifies the type of the JSON object
 
 * `uri` - The URI of the resource.
 
-* `type` - Type of the resource.

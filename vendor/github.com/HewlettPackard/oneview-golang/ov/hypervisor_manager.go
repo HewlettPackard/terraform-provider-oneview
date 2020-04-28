@@ -29,7 +29,7 @@ type HypervisorManager struct {
 	Status               string          `json:"status,omitempty"`               // "status": "Critical",
 	Type                 string          `json:"type,omitempty"`                 // "type": "HypervisorManagerV2",
 	URI                  utils.Nstring   `json:"uri,omitempty"`                  // "uri": "/rest/hypervisor-managers/e2f0031b-52bd-4223-9ac1-d91cb519d548"
-	UUID                  utils.Nstring   `json:"uuid,omitempty"`                  // "uri": "/rest/hypervisor-managers/e2f0031b-52bd-4223-9ac1-d91cb519d548"
+	UUID                 utils.Nstring   `json:"uuid,omitempty"`                 // "UUID":"60FB5CB3-FF04-400A-BEC8-E7920CB4193"
 	Username             string          `json:"username,omitempty"`             // "username": "name1",
 	Version              string          `json:"version,omitempty"`              // "version": ""
 	InitialScopeUris     []utils.Nstring `json:"initialScopeUris,omitempty"`     // "initialScopUris":

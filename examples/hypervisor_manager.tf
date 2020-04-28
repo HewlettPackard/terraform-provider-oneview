@@ -10,7 +10,7 @@ provider "oneview" {
 data "oneview_scope" "scope_obj" {
         name = "test_scope"
 }
-/*
+
 resource "oneview_hypervisor_manager" "HypervisorManager" {
 	display_name = "TestHypervisorManager"
         name = "172.18.13.11"
@@ -21,7 +21,7 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
 	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
 
 
-}*//*
+}/* Uncomment following to run update
 resource "oneview_hypervisor_manager" "HypervisorManager" {
 	display_name = "TestHypervisorManager_Renamed"
         name = "172.18.13.11"

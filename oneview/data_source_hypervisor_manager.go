@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -26,57 +26,46 @@ func dataSourceHypervisorManager() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
-
 			"category": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"display_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"hypervisor_type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"modified": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-
 			"password": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"port": {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
-
 			"preferences": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -87,32 +76,26 @@ func dataSourceHypervisorManager() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-
 						"distributed_switch_version": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-
 						"drs_enabled": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-
 						"ha_enabled": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-
 						"multi_nic_v_motion": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-
 						"type": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-
 						"virtual_switch_type": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -120,12 +103,10 @@ func dataSourceHypervisorManager() *schema.Resource {
 					},
 				},
 			},
-
 			"refresh_state": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"resource_paths": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -142,47 +123,38 @@ func dataSourceHypervisorManager() *schema.Resource {
 					},
 				},
 			},
-
 			"scopes_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"state_reason": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"username": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"uuid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"version": {
 				Type:     schema.TypeString,
 				Computed: true,
