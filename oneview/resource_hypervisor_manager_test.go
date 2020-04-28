@@ -21,7 +21,7 @@ import (
 )
 
 func TestAccHypervisorManager_1(t *testing.T) {
-	var fcNetwork ov.HypervisorManager
+	var hypervisorManager ov.HypervisorManager
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -32,9 +32,9 @@ func TestAccHypervisorManager_1(t *testing.T) {
 				Config: testAccHypervisorManager,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckHypervisorManagerExists(
-						"oneview_hypervisor_manager.test", &fcNetwork),
+						"oneview_hypervisor_manager.test", &hypervisorManager),
 					resource.TestCheckResourceAttr(
-						"oneview_hypervisor_manager.test", "name", "Terraform FC Network 1",
+						"oneview_hypervisor_manager.test", "name", "Terraform Hypervisor Manager1",
 					),
 				),
 			},
@@ -47,7 +47,7 @@ func TestAccHypervisorManager_1(t *testing.T) {
 	})
 }
 
-func testAccCheckHypervisorManagerExists(n string, fcNetwork *ov.HypervisorManager) resource.TestCheckFunc {
+func testAccCheckHypervisorManagerExists(n string, hypervisorManager *ov.HypervisorManager) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -70,7 +70,7 @@ func testAccCheckHypervisorManagerExists(n string, fcNetwork *ov.HypervisorManag
 		if testHypervisorManager.Name != rs.Primary.ID {
 			return fmt.Errorf("Instance not found")
 		}
-		*fcNetwork = testHypervisorManager
+		*hypervisorManager = testHypervisorManager
 		return nil
 	}
 }
@@ -82,9 +82,9 @@ func testAccCheckHypervisorManagerDestroy(s *terraform.State) error {
 			continue
 		}
 
-		testFCNet, _ := config.ovClient.GetHypervisorManagerByName(rs.Primary.ID)
+		testHypervisorManager, _ := config.ovClient.GetHypervisorManagerByName(rs.Primary.ID)
 
-		if testFCNet.Name != "" {
+		if testHypervisorManager.Name != "" {
 			return fmt.Errorf("HypervisorManager still exists")
 		}
 	}
@@ -94,5 +94,5 @@ func testAccCheckHypervisorManagerDestroy(s *terraform.State) error {
 
 var testAccHypervisorManager = `resource "oneview_hypervisor_manager" "test" {
   count = 1
-  name = "Terraform FC Network 1"
+  name = "Terraform Hypervisor Manager1"
 }`
