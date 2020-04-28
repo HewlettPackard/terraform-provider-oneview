@@ -1,7 +1,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.3.0](unerleased)
+# [v1.3.0](unreleased)
 ### Notes
 - This release supports for Hypervisor Manager for API 800,1000,1200 
 
