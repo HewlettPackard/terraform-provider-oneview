@@ -214,7 +214,7 @@ func dataSourceHypervisorManagerRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("port", hypMan.Port)
 	hypManPreferences := make([]map[string]interface{}, 0, 1)
 	hypManPreferences = append(hypManPreferences, map[string]interface{}{
-	        "type":                       hypMan.Preferences.Type,
+		"type":                       hypMan.Preferences.Type,
 		"virtual_switch_type":        hypMan.Preferences.VirtualSwitchType,
 		"distributed_switch_version": hypMan.Preferences.DistributedSwitchVersion,
 		"distributed_switch_usage":   hypMan.Preferences.DistributedSwitchUsage,
