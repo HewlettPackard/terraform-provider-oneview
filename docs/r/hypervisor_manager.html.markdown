@@ -22,8 +22,8 @@ resource "oneview_hypervisor_manager" "default" {
 
 The following arguments are supported: 
 
-* `username` - (Required) A unique name for the resource.
-* `type` - (Required) Indicates the display name of the Hypervisor manager.
+* `username` - (Required) An  username to authenticate the hypervisor manager.
+* `type` - (Required) Uniquely identifies the type of the JSON object.
 
 
 - - -

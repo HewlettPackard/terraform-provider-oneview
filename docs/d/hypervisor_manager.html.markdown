@@ -12,7 +12,7 @@ Use this data source to access the attributes of a hypervisor manager.
 
 ## Example Usage
 
-```hcl
+```
 data "oneview_hypervisor_manager" "test" {
  name = "Test hypervisor manager"
 }
@@ -24,7 +24,7 @@ output "oneview_hypervisor_manager_value" {
 
 ## Argument Reference
 
-* `uri` - (Required) The name of the hypervisor manager.
+* `username` - (Required) The username to  authenticate the hypervisor manager.
 
 ## Attributes Reference
 
