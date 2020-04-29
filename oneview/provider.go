@@ -106,7 +106,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_logical_interconnect":       resourceLogicalInterconnect(),
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
 			"oneview_network_set":                resourceNetworkSet(),
-			"oneview_scope":                      resourceScope(),			
+			"oneview_scope":                      resourceScope(),
 			"oneview_server_profile":             resourceServerProfile(),
 			"oneview_server_profile_template":    resourceServerProfileTemplate(),
 			"oneview_storage_system":             resourceStorageSystem(),
