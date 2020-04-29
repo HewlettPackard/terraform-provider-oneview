@@ -12,11 +12,9 @@
 package oneview
 
 import (
-	"encoding/json"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	"io/ioutil"
 )
 
 func resourceServerCertificate() *schema.Resource {
@@ -334,8 +332,6 @@ func resourceServerCertificateCreate(d *schema.ResourceData, meta interface{}) e
 		CertificateDetailCollect = append(CertificateDetailCollect, servCCertificateDetails)
 		servC.CertificateDetails = CertificateDetailCollect
 	}
-	file, _ := json.MarshalIndent(servC, "", " ")
-	_ = ioutil.WriteFile("test.json", file, 0644)
 	CertificateStatusList := d.Get("certificate_status").(*schema.Set).List()
 	for _, raw := range CertificateStatusList {
 		certificatestat := raw.(map[string]interface{})
@@ -384,9 +380,9 @@ func resourceServerCertificateRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("category", servC.Category)
 	servCCertificateDetails := make([]map[string]interface{}, 0, len(servC.CertificateDetails))
 	for _, servCCertificateDetail := range servC.CertificateDetails {
-		cdep_list := make([]interface{}, len(servCCertificateDetail.CrlDistributionEndPoints))
+		cdeplist := make([]interface{}, len(servCCertificateDetail.CrlDistributionEndPoints))
 		for i, cdep := range servCCertificateDetail.CrlDistributionEndPoints {
-			cdep_list[i] = cdep
+			cdeplist[i] = cdep
 		}
 		servCCertificateDetails = append(servCCertificateDetails, map[string]interface{}{
 			"alias_name":          servCCertificateDetail.AliasName,
@@ -426,8 +422,6 @@ func resourceServerCertificateRead(d *schema.ResourceData, meta interface{}) err
 			"type":                servCCertificateDetail.Type,
 		})
 	}
-	file, _ := json.MarshalIndent(servC, "", " ")
-	_ = ioutil.WriteFile("test1.json", file, 0644)
 	d.Set("certificate_details", servCCertificateDetails)
 	servCCertificateStatus := make([]map[string]interface{}, 0, 1)
 	servCCertificateStatus = append(servCCertificateStatus, map[string]interface{}{

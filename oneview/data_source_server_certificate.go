@@ -249,7 +249,7 @@ func dataSourceServerCertificate() *schema.Resource {
 			"read_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default: "name",
+				Default:  "name",
 			},
 			"remote_ip": {
 				Type:     schema.TypeString,
@@ -302,9 +302,9 @@ func dataSourceServerCertificateRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("category", servC.Category)
 	servCCertificateDetails := make([]map[string]interface{}, 0, len(servC.CertificateDetails))
 	for _, servCCertificateDetail := range servC.CertificateDetails {
-		cdep_list := make([]interface{}, len(servCCertificateDetail.CrlDistributionEndPoints))
+		cdeplist := make([]interface{}, len(servCCertificateDetail.CrlDistributionEndPoints))
 		for i, cdep := range servCCertificateDetail.CrlDistributionEndPoints {
-			cdep_list[i] = cdep
+			cdeplist[i] = cdep
 		}
 		servCCertificateDetails = append(servCCertificateDetails, map[string]interface{}{
 			"alias_name":          servCCertificateDetail.AliasName,
