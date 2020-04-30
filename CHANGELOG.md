@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Oneview Features supported
 - Hypervisor Manager
+- Server Certificate
 
 # [v1.2.0]
 ### Notes

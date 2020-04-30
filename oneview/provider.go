@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -81,6 +81,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_logical_interconnect_group": dataSourceLogicalInterconnectGroup(),
 			"oneview_network_set":                dataSourceNetworkSet(),
 			"oneview_scope":                      dataSourceScope(),
+			"oneview_server_certificate":         dataSourceServerCertificate(),
 			"oneview_server_hardware":            dataSourceServerHardware(),
 			"oneview_server_hardware_type":       dataSourceServerHardwareType(),
 			"oneview_storage_attachment":         dataSourceStorageAttachment(),
@@ -107,6 +108,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_logical_switch_group":       resourceLogicalSwitchGroup(),
 			"oneview_network_set":                resourceNetworkSet(),
 			"oneview_scope":                      resourceScope(),
+			"oneview_server_certificate":         resourcseServerCertificate(),
 			"oneview_server_profile":             resourceServerProfile(),
 			"oneview_server_profile_template":    resourceServerProfileTemplate(),
 			"oneview_storage_system":             resourceStorageSystem(),
