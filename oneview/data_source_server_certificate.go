@@ -23,7 +23,7 @@ func dataSourceServerCertificate() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"alias_name": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"category": {
 				Type:     schema.TypeString,
@@ -245,11 +245,6 @@ func dataSourceServerCertificate() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
-			},
-			"read_type": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "name",
 			},
 			"remote_ip": {
 				Type:     schema.TypeString,

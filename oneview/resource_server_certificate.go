@@ -149,10 +149,6 @@ func resourceServerCertificate() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"remote_ip": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"serial_number": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -248,11 +244,6 @@ func resourceServerCertificate() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"read_type": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "name",
 			},
 			"state": {
 				Type:     schema.TypeString,
@@ -358,25 +349,11 @@ func resourceServerCertificateCreate(d *schema.ResourceData, meta interface{}) e
 
 func resourceServerCertificateRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	var servC ov.ServerCertificate
-	var err error
-	if val, ok := d.GetOk("read_type"); ok {
-		if val.(string) == "readByIP" {
-			servC, err = config.ovClient.GetServerCertificateByIp(d.Get("remote_ip").(string))
-
-			if err != nil {
-				d.SetId("")
-				return nil
-			}
-		} else {
-			servC, err = config.ovClient.GetServerCertificateByName(d.Id())
-			if err != nil {
-				d.SetId("")
-				return nil
-			}
-		}
+	servC, err := config.ovClient.GetServerCertificateByName(d.Id())
+	if err != nil {
+		d.SetId("")
+		return nil
 	}
-
 	d.Set("category", servC.Category)
 	servCCertificateDetails := make([]map[string]interface{}, 0, len(servC.CertificateDetails))
 	for _, servCCertificateDetail := range servC.CertificateDetails {
@@ -440,7 +417,6 @@ func resourceServerCertificateRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("status", servC.Status)
 	d.Set("type", servC.Type)
 	d.Set("uri", servC.URI)
-	d.Set("remote_ip", servC.Name)
 	return nil
 }
 
@@ -515,7 +491,11 @@ func resourceServerCertificateUpdate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	servCError := config.ovClient.UpdateServerCertificate(servC)
-	d.SetId(d.Get("name").(string))
+	var aliasname string
+	for _, servCDetail := range servC.CertificateDetails {
+		aliasname = servCDetail.AliasName
+	}
+	d.SetId(aliasname)
 	if servCError != nil {
 		d.SetId("")
 		return servCError
