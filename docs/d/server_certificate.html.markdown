@@ -14,7 +14,7 @@ Use this data source to access the attributes of a server certificate.
 
 ```hcl
 data "oneview_server_certificate" "test" {
- name = "Test server certificate"
+alias_name = "Test server certificate"
 }
 
 output "oneview_server_certificate_value" {
