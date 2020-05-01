@@ -276,8 +276,7 @@ func resourceServerCertificateCreate(d *schema.ResourceData, meta interface{}) e
 		Name:        d.Get("name").(string),
 		State:       d.Get("state").(string),
 		Status:      d.Get("status").(string),
-		Type:        d.Get("type").(string),
-		URI:         utils.NewNstring(d.Get("uri").(string)),
+		Type:        d.Get("type").(string),		
 	}
 	CertificateDetailCollect := make([]ov.CertificateDetail, 0)
 	rawCertificateDetails := d.Get("certificate_details").(*schema.Set).List()
