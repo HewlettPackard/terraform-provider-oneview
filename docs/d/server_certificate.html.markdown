@@ -23,8 +23,8 @@ output "oneview_server_certificate_value" {
 ```
 
 ## Argument Reference
-
-* `remote_ip` - (Required) Either alias_name or remote_ip  needs to be provided. Remote ip is used to fetch the server certificate of a remote host. 
+Note:  Either alias_name or remote_ip  needs to be provided.
+* `remote_ip` - Remote ip is used to fetch the server certificate of a remote host. 
 * `alias_name` -  Retrieves the device or server certificate, already trusted in the appliance, with the specified aliasName
 ## Attributes Reference
 
