@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 # [v1.3.0](unreleased)
 ### Notes
 - This release supports for API 800,1000,1200 for Hypervisor Manager, Server Certificate resources.
-- This release supports API1200 minimally where we can use OneView API1200 with this SDK. No new fields are added/deleted to support API1200. Complete support will be done in next releases.
+- This release extended support for API1600 for below resources.
 
 ### Oneview Features supported
 - Enclosure
