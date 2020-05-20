@@ -12,14 +12,14 @@ provider "oneview" {
 resource "oneview_server_profile" "SP" {
   name = "TestSP"
   hardware_name = "0000A66102, bay 3"
-  type = "ServerProfileV9"
+  type = "ServerProfileV12"
 }
 
 # Creation of Server Profile without template
 resource "oneview_server_profile" "SP" {
   name = "TestSP"
   hardware_name = "SYN03_Frame3, bay 1"
-  type = "ServerProfileV10"
+  type = "ServerProfileV12"
   enclosure_group = "SYN03_EC"
   initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
 }
@@ -28,7 +28,7 @@ resource "oneview_server_profile" "SP" {
 resource "oneview_server_profile" "SP" {
   name = "TestSP_Renamed"
   hardware_name = "SYN03_Frame3, bay 1"
-  type = "ServerProfileV10"
+  type = "ServerProfileV12"
   enclosure_group = "SYN03_EC"
   server_hardware_type = "SY 480 Gen9 3"
   initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
@@ -46,7 +46,7 @@ resource "oneview_server_profile" "SP" {
         }
         ]
         name = "TestSP_Renamed"
-        type = "ServerProfileV10"
+        type = "ServerProfileV12"
         server_hardware_type = "SY 480 Gen9 3"
         enclosure_group = "SYN03_EC"
         hardware_name = "SYN03_Frame3, bay 1"
