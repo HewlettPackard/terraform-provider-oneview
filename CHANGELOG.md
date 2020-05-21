@@ -3,11 +3,16 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.3.0](unreleased)
 ### Notes
-- This release supports for API 800,1000,1200  for resource listed below.
+- This release supports to API 800,1000,1200 for Hypervisor Manager and Server Certificate resources.
+- This release supports API1600 minimally where we can use OneView API1600 with this SDK. No new fields are added/deleted to support API1600.
 
 ### Oneview Features supported
-- Hypervisor Manager
-- Server Certificate
+- Interconnects
+- Interconnect Type
+- Logical Interconnect
+- Logical Interconnect Group
+- Server Hardware
+- Server Hardware Type
 
 # [v1.2.0]
 ### Notes
