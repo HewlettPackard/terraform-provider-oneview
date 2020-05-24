@@ -35,6 +35,7 @@ func resourceVolume() *schema.Resource {
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"device_volume_name": {
 				Type:     schema.TypeString,
@@ -72,6 +73,7 @@ func resourceVolume() *schema.Resource {
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"storage_pool": {
 							Type:     schema.TypeString,
@@ -119,6 +121,7 @@ func resourceVolume() *schema.Resource {
 			"is_permanent": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Computed: true,
 			},
 			"is_shareable": {
 				Type:     schema.TypeBool,
@@ -175,6 +178,7 @@ func resourceVolume() *schema.Resource {
 			"volume_template_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"initial_scope_uris": {
 				Optional: true,
@@ -287,9 +291,8 @@ func resourceVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 	isPermanent := d.Get("is_permanent").(bool)
 	isShareable := d.Get("is_shareable").(bool)
 
-	properties := d.Get("properties").(*schema.Set).List()[0].(map[string]interface{})
 	volume.Name = d.Get("name").(string)
-	volume.ProvisioningTypeForUpdate = properties["provisioning_type"].(string)
+	volume.ProvisioningTypeForUpdate = d.Get("provisioning_type").(string)
 	volume.Description = utils.NewNstring(d.Get("description").(string))
 	volume.IsPermanent = &isPermanent
 	volume.URI = utils.NewNstring(d.Get("uri").(string))
@@ -313,6 +316,7 @@ func resourceVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 	volume.ETAG = d.Get("eTag").(string)
 	volume.ProvisionedCapacity = d.Get("provisioned_capacity").(string)
 	volume.TemplateVersion = d.Get("template_version").(string)
+	volume.VolumeTemplateUri = utils.NewNstring(d.Get("volume_template_uri").(string))
 
 	err := config.ovClient.UpdateStorageVolume(volume)
 	d.SetId(d.Get("name").(string))
