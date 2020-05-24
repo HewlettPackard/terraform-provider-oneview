@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -29,6 +30,7 @@ func resourceStoragePool() *schema.Resource {
 			"category": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -37,30 +39,35 @@ func resourceStoragePool() *schema.Resource {
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"eTag": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"allocated_capacity": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"storage_system_uri": {
 				Type:     schema.TypeString,
@@ -77,9 +84,11 @@ func resourceStoragePool() *schema.Resource {
 			"is_managed": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Computed: true,
 			},
 			"storage_pool_device_specific_attributes": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -87,6 +96,7 @@ func resourceStoragePool() *schema.Resource {
 						"device_id": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"capacity_limit": {
 							Type:     schema.TypeString,
@@ -99,18 +109,22 @@ func resourceStoragePool() *schema.Resource {
 						"domain": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"supported_raid_level": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"uuid": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"is_deduplication_capable": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -145,16 +159,19 @@ func resourceStoragePoolRead(d *schema.ResourceData, meta interface{}) error {
 	rawdevspecificattributes := storagePool.DeviceSpecificAttributes
 	devspecificattributes := make([]map[string]interface{}, 0)
 	devspecificattributes = append(devspecificattributes, map[string]interface{}{
-		"device_id":            rawdevspecificattributes.DeviceID,
-		"capacity_limit":       rawdevspecificattributes.CapacityLimit,
-		"device_speed":         rawdevspecificattributes.DeviceSpeed,
-		"domain":               rawdevspecificattributes.Domain,
-		"supported_raid_level": rawdevspecificattributes.SupportedRaidLevel,
-		"uuid":                 rawdevspecificattributes.Uuid,
+		"device_id":                rawdevspecificattributes.DeviceID,
+		"capacity_limit":           rawdevspecificattributes.CapacityLimit,
+		"device_speed":             rawdevspecificattributes.DeviceSpeed,
+		"domain":                   rawdevspecificattributes.Domain,
+		"supported_raid_level":     rawdevspecificattributes.SupportedRaidLevel,
+		"uuid":                     rawdevspecificattributes.Uuid,
 		"is_deduplication_capable": rawdevspecificattributes.IsDeduplicationCapable,
 	})
-	d.Set("storage_pool_device_specific_attributes", devspecificattributes)
 
+	if err := d.Set("storage_pool_device_specific_attributes", devspecificattributes); err != nil {
+		return fmt.Errorf("error setting device attributes for resources %s:%s", d.Id(), err)
+	}
+	d.SetId("name")
 	return nil
 }
 
@@ -172,11 +189,12 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	for _, rawData := range rawDeviceSpecificAttributes {
 		deviceSpecificAttributesItem := rawData.(map[string]interface{})
 		deviceSpecificAttributes = ov.DeviceSpecificAttributesStoragePool{
-			DeviceID:           deviceSpecificAttributesItem["device_id"].(string),
-			CapacityLimit:      deviceSpecificAttributesItem["capacity_limit"].(string),
-			DeviceSpeed:        deviceSpecificAttributesItem["device_speed"].(string),
-			Domain:             deviceSpecificAttributesItem["domain"].(string),
-			SupportedRaidLevel: deviceSpecificAttributesItem["supported_raid_level"].(string),
+			DeviceID:               deviceSpecificAttributesItem["device_id"].(string),
+			CapacityLimit:          deviceSpecificAttributesItem["capacity_limit"].(string),
+			DeviceSpeed:            deviceSpecificAttributesItem["device_speed"].(string),
+			Domain:                 deviceSpecificAttributesItem["domain"].(string),
+			SupportedRaidLevel:     deviceSpecificAttributesItem["supported_raid_level"].(string),
+			IsDeduplicationCapable: deviceSpecificAttributesItem["is_deduplication_capable"].(bool),
 		}
 	}
 
@@ -196,6 +214,9 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if val, ok := d.GetOk("free_capacity"); ok {
 		storagePool.FreeCapacity = val.(string)
+	}
+	if val, ok := d.GetOk("allocated_capacity"); ok {
+		storagePool.AllocatedCapacity = val.(string)
 	}
 
 	if val, ok := d.GetOk("is_managed"); ok {
@@ -228,5 +249,5 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.SetId(d.Get("name").(string))
 
-	return resourceStorageSystemRead(d, meta)
+	return resourceStoragePoolRead(d, meta)
 }
