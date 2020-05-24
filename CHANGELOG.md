@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 # [v1.4.0] (ureleased)
 ### Notes
 - This release supports API1600 minimally where we can use OneView API1600 with this SDK. No new fields are added/deleted to support API1600. Complete support will be done in next releases.
-- Support for API1200 for image streamer resource deployment plan.
+- Support for API V1200 for image streamer resource deployment plan.
 
 ### Oneview Features supported
 - Storage Pool
