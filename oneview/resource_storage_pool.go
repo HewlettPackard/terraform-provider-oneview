@@ -94,6 +94,7 @@ func resourceStoragePool() *schema.Resource {
 						"device_id": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"capacity_limit": {
 							Type:     schema.TypeString,
@@ -106,18 +107,22 @@ func resourceStoragePool() *schema.Resource {
 						"domain": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"supported_raid_level": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"uuid": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"is_deduplication_capable": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 					},
 				},
