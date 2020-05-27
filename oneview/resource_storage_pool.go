@@ -159,12 +159,12 @@ func resourceStoragePoolRead(d *schema.ResourceData, meta interface{}) error {
 	rawdevspecificattributes := storagePool.DeviceSpecificAttributes
 	devspecificattributes := make([]map[string]interface{}, 0)
 	devspecificattributes = append(devspecificattributes, map[string]interface{}{
-		"device_id":                rawdevspecificattributes.DeviceID,
-		"capacity_limit":           rawdevspecificattributes.CapacityLimit,
-		"device_speed":             rawdevspecificattributes.DeviceSpeed,
-		"domain":                   rawdevspecificattributes.Domain,
-		"supported_raid_level":     rawdevspecificattributes.SupportedRaidLevel,
-		"uuid":                     rawdevspecificattributes.Uuid,
+		"device_id":            rawdevspecificattributes.DeviceID,
+		"capacity_limit":       rawdevspecificattributes.CapacityLimit,
+		"device_speed":         rawdevspecificattributes.DeviceSpeed,
+		"domain":               rawdevspecificattributes.Domain,
+		"supported_raid_level": rawdevspecificattributes.SupportedRaidLevel,
+		"uuid":                 rawdevspecificattributes.Uuid,
 		"is_deduplication_capable": rawdevspecificattributes.IsDeduplicationCapable,
 	})
 
@@ -189,11 +189,11 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	for _, rawData := range rawDeviceSpecificAttributes {
 		deviceSpecificAttributesItem := rawData.(map[string]interface{})
 		deviceSpecificAttributes = ov.DeviceSpecificAttributesStoragePool{
-			DeviceID:               deviceSpecificAttributesItem["device_id"].(string),
-			CapacityLimit:          deviceSpecificAttributesItem["capacity_limit"].(string),
-			DeviceSpeed:            deviceSpecificAttributesItem["device_speed"].(string),
-			Domain:                 deviceSpecificAttributesItem["domain"].(string),
-			SupportedRaidLevel:     deviceSpecificAttributesItem["supported_raid_level"].(string),
+			DeviceID:           deviceSpecificAttributesItem["device_id"].(string),
+			CapacityLimit:      deviceSpecificAttributesItem["capacity_limit"].(string),
+			DeviceSpeed:        deviceSpecificAttributesItem["device_speed"].(string),
+			Domain:             deviceSpecificAttributesItem["domain"].(string),
+			SupportedRaidLevel: deviceSpecificAttributesItem["supported_raid_level"].(string),
 			IsDeduplicationCapable: deviceSpecificAttributesItem["is_deduplication_capable"].(bool),
 		}
 	}
