@@ -3,7 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.3.0](unreleased)
 ### Notes
-- This release supports for API 800,1000,1200  for resource listed below.
+- This release supports for API 800,1000,1200,1600  for resource listed below.
 
 ### Oneview Features supported
 - Hypervisor Manager
