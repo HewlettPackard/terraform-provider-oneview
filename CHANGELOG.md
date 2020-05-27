@@ -7,12 +7,18 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - This release supports API1600 minimally where we can use OneView API1600 with this SDK. No new fields are added/deleted to support API1600.
 
 ### Oneview Features supported
+- Enclosure
+- Enclosure Group
 - Interconnects
 - Interconnect Type
+- Logical Enclosure
 - Logical Interconnect
 - Logical Interconnect Group
 - Server Hardware
 - Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Task
 
 # [v1.2.0]
 ### Notes
