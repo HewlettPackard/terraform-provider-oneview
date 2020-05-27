@@ -189,6 +189,7 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 			DeviceSpeed:        deviceSpecificAttributesItem["device_speed"].(string),
 			Domain:             deviceSpecificAttributesItem["domain"].(string),
 			SupportedRaidLevel: deviceSpecificAttributesItem["supported_raid_level"].(string),
+			IsDeduplicationCapable: deviceSpecificAttributesItem["is_deduplication_capabale"].(bool),
 		}
 	}
 
