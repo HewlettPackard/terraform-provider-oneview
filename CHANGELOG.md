@@ -3,11 +3,16 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.3.0](unreleased)
 ### Notes
-- This release supports for API 800,1000,1200  for resource listed below.
+- This release supports for API 800,1000,1200 for Hypervisor Manager, Server Certificate resources.
+- This release extended support for API1600 for below resources.
 
 ### Oneview Features supported
-- Hypervisor Manager
-- Server Certificate
+- Enclosure
+- Enclosure Group
+- Logical Enclosure
+- Server Profile
+- Server Profile Template
+- Task
 
 # [v1.2.0]
 ### Notes
