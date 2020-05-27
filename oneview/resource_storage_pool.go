@@ -159,12 +159,12 @@ func resourceStoragePoolRead(d *schema.ResourceData, meta interface{}) error {
 	rawdevspecificattributes := storagePool.DeviceSpecificAttributes
 	devspecificattributes := make([]map[string]interface{}, 0)
 	devspecificattributes = append(devspecificattributes, map[string]interface{}{
-		"device_id":            rawdevspecificattributes.DeviceID,
-		"capacity_limit":       rawdevspecificattributes.CapacityLimit,
-		"device_speed":         rawdevspecificattributes.DeviceSpeed,
-		"domain":               rawdevspecificattributes.Domain,
-		"supported_raid_level": rawdevspecificattributes.SupportedRaidLevel,
-		"uuid":                 rawdevspecificattributes.Uuid,
+		"device_id":                rawdevspecificattributes.DeviceID,
+		"capacity_limit":           rawdevspecificattributes.CapacityLimit,
+		"device_speed":             rawdevspecificattributes.DeviceSpeed,
+		"domain":                   rawdevspecificattributes.Domain,
+		"supported_raid_level":     rawdevspecificattributes.SupportedRaidLevel,
+		"uuid":                     rawdevspecificattributes.Uuid,
 		"is_deduplication_capable": rawdevspecificattributes.IsDeduplicationCapable,
 	})
 
@@ -194,7 +194,6 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 			DeviceSpeed:        deviceSpecificAttributesItem["device_speed"].(string),
 			Domain:             deviceSpecificAttributesItem["domain"].(string),
 			SupportedRaidLevel: deviceSpecificAttributesItem["supported_raid_level"].(string),
-			IsDeduplicationCapable: deviceSpecificAttributesItem["is_deduplication_capable"].(bool),
 		}
 	}
 
