@@ -184,11 +184,11 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	for _, rawData := range rawDeviceSpecificAttributes {
 		deviceSpecificAttributesItem := rawData.(map[string]interface{})
 		deviceSpecificAttributes = ov.DeviceSpecificAttributesStoragePool{
-			DeviceID:           deviceSpecificAttributesItem["device_id"].(string),
-			CapacityLimit:      deviceSpecificAttributesItem["capacity_limit"].(string),
-			DeviceSpeed:        deviceSpecificAttributesItem["device_speed"].(string),
-			Domain:             deviceSpecificAttributesItem["domain"].(string),
-			SupportedRaidLevel: deviceSpecificAttributesItem["supported_raid_level"].(string),
+			DeviceID:               deviceSpecificAttributesItem["device_id"].(string),
+			CapacityLimit:          deviceSpecificAttributesItem["capacity_limit"].(string),
+			DeviceSpeed:            deviceSpecificAttributesItem["device_speed"].(string),
+			Domain:                 deviceSpecificAttributesItem["domain"].(string),
+			SupportedRaidLevel:     deviceSpecificAttributesItem["supported_raid_level"].(string),
 			IsDeduplicationCapable: deviceSpecificAttributesItem["is_deduplication_capabale"].(bool),
 		}
 	}
