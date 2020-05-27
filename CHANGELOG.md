@@ -9,11 +9,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Oneview Features supported
 - Enclosure
 - Enclosure Group
-- Interconnects
+- Hypervisor Manager
+- Interconnect
 - Interconnect Type
 - Logical Enclosure
 - Logical Interconnect
 - Logical Interconnect Group
+- Server Certificate
 - Server Hardware
 - Server Hardware Type
 - Server Profile
