@@ -95,12 +95,11 @@ func resourceStoragePool() *schema.Resource {
 						"device_id": {
 							Type:     schema.TypeString,
 							Optional: true,
-                                                        Computed: true,
+							Computed: true,
 						},
 						"capacity_limit": {
 							Type:     schema.TypeString,
 							Required: true,
-				                        Computed: true,
 						},
 						"device_speed": {
 							Type:     schema.TypeString,
@@ -109,22 +108,22 @@ func resourceStoragePool() *schema.Resource {
 						"domain": {
 							Type:     schema.TypeString,
 							Optional: true,
-				                        Computed: true,
+							Computed: true,
 						},
 						"supported_raid_level": {
 							Type:     schema.TypeString,
 							Optional: true,
-				                        Computed: true,
+							Computed: true,
 						},
 						"uuid": {
 							Type:     schema.TypeString,
 							Optional: true,
-				                        Computed: true,
+							Computed: true,
 						},
 						"is_deduplication_capable": {
 							Type:     schema.TypeBool,
 							Optional: true,
-				                        Computed: true,
+							Computed: true,
 						},
 					},
 				},
@@ -159,12 +158,12 @@ func resourceStoragePoolRead(d *schema.ResourceData, meta interface{}) error {
 	rawdevspecificattributes := storagePool.DeviceSpecificAttributes
 	devspecificattributes := make([]map[string]interface{}, 0)
 	devspecificattributes = append(devspecificattributes, map[string]interface{}{
-		"device_id":            rawdevspecificattributes.DeviceID,
-		"capacity_limit":       rawdevspecificattributes.CapacityLimit,
-		"device_speed":         rawdevspecificattributes.DeviceSpeed,
-		"domain":               rawdevspecificattributes.Domain,
-		"supported_raid_level": rawdevspecificattributes.SupportedRaidLevel,
-		"uuid":                 rawdevspecificattributes.Uuid,
+		"device_id":                rawdevspecificattributes.DeviceID,
+		"capacity_limit":           rawdevspecificattributes.CapacityLimit,
+		"device_speed":             rawdevspecificattributes.DeviceSpeed,
+		"domain":                   rawdevspecificattributes.Domain,
+		"supported_raid_level":     rawdevspecificattributes.SupportedRaidLevel,
+		"uuid":                     rawdevspecificattributes.Uuid,
 		"is_deduplication_capable": rawdevspecificattributes.IsDeduplicationCapable,
 	})
 	d.Set("storage_pool_device_specific_attributes", devspecificattributes)
