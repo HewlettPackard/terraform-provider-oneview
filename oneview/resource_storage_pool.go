@@ -29,6 +29,7 @@ func resourceStoragePool() *schema.Resource {
 			"category": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -37,14 +38,17 @@ func resourceStoragePool() *schema.Resource {
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"eTag": {
 				Type:     schema.TypeString,
@@ -53,14 +57,16 @@ func resourceStoragePool() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"allocated_capacity": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"storage_system_uri": {
 				Type:     schema.TypeString,
@@ -77,9 +83,11 @@ func resourceStoragePool() *schema.Resource {
 			"is_managed": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Computed: true,
 			},
 			"storage_pool_device_specific_attributes": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -87,10 +95,12 @@ func resourceStoragePool() *schema.Resource {
 						"device_id": {
 							Type:     schema.TypeString,
 							Optional: true,
+                                                        Computed: true,
 						},
 						"capacity_limit": {
 							Type:     schema.TypeString,
 							Required: true,
+				                        Computed: true,
 						},
 						"device_speed": {
 							Type:     schema.TypeString,
@@ -99,18 +109,22 @@ func resourceStoragePool() *schema.Resource {
 						"domain": {
 							Type:     schema.TypeString,
 							Optional: true,
+				                        Computed: true,
 						},
 						"supported_raid_level": {
 							Type:     schema.TypeString,
 							Optional: true,
+				                        Computed: true,
 						},
 						"uuid": {
 							Type:     schema.TypeString,
 							Optional: true,
+				                        Computed: true,
 						},
 						"is_deduplication_capable": {
 							Type:     schema.TypeBool,
 							Optional: true,
+				                        Computed: true,
 						},
 					},
 				},
@@ -228,5 +242,5 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.SetId(d.Get("name").(string))
 
-	return resourceStorageSystemRead(d, meta)
+	return resourceStoragePoolRead(d, meta)
 }
