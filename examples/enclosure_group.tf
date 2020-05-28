@@ -47,7 +47,7 @@ resource "oneview_enclosure_group" "eg_inst" {
         }
         ]
 	interconnect_bay_mapping_count = 2
-	type = "EnclosureGroupV7"
+	type = "EnclosureGroupV8"
 	stacking_mode = "Enclosure"
 }*/
 
