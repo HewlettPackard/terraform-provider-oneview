@@ -2,9 +2,11 @@ package ov
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
+	"strconv"
 )
 
 type HypervisorClusterProfile struct {
@@ -105,13 +107,13 @@ type VirtualSwitchUplinks struct {
 	Vmnic  string `json:"vmnic,omitempty"`  //"vmnic":"null"
 }
 type HypervisorClusterProfileList struct {
-	Total       int            `json:"total,omitempty"`       // "total": 1,
-	Count       int            `json:"count,omitempty"`       // "count": 1,
-	Start       int            `json:"start,omitempty"`       // "start": 0,
-	PrevPageURI utils.Nstring  `json:"prevPageUri,omitempty"` // "prevPageUri": null,
-	NextPageURI utils.Nstring  `json:"nextPageUri,omitempty"` // "nextPageUri": null,
-	URI         utils.Nstring  `json:"uri,omitempty"`         // "uri": "/rest/interconnects?start=2&count=2",
-	Members     []Interconnect `json:"members,omitempty"`     // "members":[]
+	Total       int                        `json:"total,omitempty"`       // "total": 1,
+	Count       int                        `json:"count,omitempty"`       // "count": 1,
+	Start       int                        `json:"start,omitempty"`       // "start": 0,
+	PrevPageURI utils.Nstring              `json:"prevPageUri,omitempty"` // "prevPageUri": null,
+	NextPageURI utils.Nstring              `json:"nextPageUri,omitempty"` // "nextPageUri": null,
+	URI         utils.Nstring              `json:"uri,omitempty"`         // "uri": "/rest/interconnects?start=2&count=2",
+	Members     []HypervisorClusterProfile `json:"members,omitempty"`     // "members":[]
 }
 
 type HypervisorClusterProfileCompliancePreview struct {
@@ -157,7 +159,17 @@ func (c *OVClient) GetHypervisorClusterProfileById(id string) (HypervisorCluster
 
 	return hypervisorclusterprofile, err
 }
-
+func (c *OVClient) GetHypervisorClusterProfileByName(name string) (HypervisorClusterProfile, error) {
+	var (
+		hypervisorclusterprofile HypervisorClusterProfile
+	)
+	hypervisorclusterprofiles, err := c.GetHypervisorClusterProfiles("", "", fmt.Sprintf("name matches '%s'", name), "name:asc")
+	if hypervisorclusterprofiles.Total > 0 {
+		return hypervisorclusterprofiles.Members[0], err
+	} else {
+		return hypervisorclusterprofile, err
+	}
+}
 func (c *OVClient) GetHypervisorClusterProfileByUri(uri string) (HypervisorClusterProfile, error) {
 	var (
 		hypervisorClusterProfile HypervisorClusterProfile
@@ -294,7 +306,7 @@ func (c *OVClient) CreateVirtualSwitchLayout(virtualswitchlayout VirtualSwitchLa
 	return nil
 }
 
-func (c *OVClient) DeleteHypervisorClusterProfile(id string) error {
+func (c *OVClient) DeleteHypervisorClusterProfile(name string) error {
 	var (
 		hyClustProf HypervisorClusterProfile
 		err         error
@@ -302,7 +314,7 @@ func (c *OVClient) DeleteHypervisorClusterProfile(id string) error {
 		uri         string
 	)
 
-	hyClustProf, err = c.GetHypervisorClusterProfileById(id)
+	hyClustProf, err = c.GetHypervisorClusterProfileByName(name)
 	if err != nil {
 		return err
 	}
@@ -336,7 +348,71 @@ func (c *OVClient) DeleteHypervisorClusterProfile(id string) error {
 		}
 		return nil
 	} else {
-		log.Infof("HypervisorClusterProfile could not be found to delete, %s, skipping delete ...", id)
+		log.Infof("HypervisorClusterProfile could not be found to delete, %s, skipping delete ...", name)
+	}
+	return nil
+}
+
+func (c *OVClient) DeleteHypervisorClusterProfileSoftDelete(name string, soft_delete bool) error {
+	err_softdelete := c.DeleteHypervisorClusterProfileSoftDeleteForce(name, soft_delete, false)
+	return err_softdelete
+}
+
+func (c *OVClient) DeleteHypervisorClusterProfileSoftDeleteForce(name string, soft_delete bool, force bool) error {
+	var (
+		hyClustProf HypervisorClusterProfile
+		err         error
+		t           *Task
+		uri         string
+		q           map[string]interface{}
+	)
+
+	q = make(map[string]interface{})
+	q["softDelete"] = strconv.FormatBool(soft_delete)
+	q["force"] = strconv.FormatBool(force)
+
+	hyClustProf, err = c.GetHypervisorClusterProfileByName(name)
+	if err != nil {
+		return err
+	}
+	if hyClustProf.Name != "" {
+		t = t.NewProfileTask(c)
+		t.ResetTask()
+		log.Debugf("REST : %s \n %+v\n", hyClustProf.URI, hyClustProf)
+		log.Debugf("task -> %+v", t)
+		uri = hyClustProf.URI.String()
+		if uri == "" {
+			log.Warn("Unable to post delete, no uri found.")
+			t.TaskIsDone = true
+			return err
+		}
+
+		// refresh login
+		c.RefreshLogin()
+		c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+		// Setup query
+		c.SetQueryString(q)
+
+		data, err := c.RestAPICall(rest.DELETE, uri, nil)
+		if err != nil {
+			log.Errorf("Error submitting delete hypervisor cluster profile request: %s", err)
+			t.TaskIsDone = true
+			return err
+		}
+
+		log.Debugf("Response delete hypervisor cluster profile %s", data)
+		if err := json.Unmarshal([]byte(data), &t); err != nil {
+			t.TaskIsDone = true
+			log.Errorf("Error with task un-marshal: %s", err)
+			return err
+		}
+		err = t.Wait()
+		if err != nil {
+			return err
+		}
+		return nil
+	} else {
+		log.Infof("HypervisorClusterProfile could not be found to delete, %s, skipping delete ...", name)
 	}
 	return nil
 }
