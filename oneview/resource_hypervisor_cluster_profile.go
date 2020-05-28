@@ -1042,8 +1042,8 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 
 func resourceHypervisorClusterProfileDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	var soft_delete = true
-	err := config.ovClient.DeleteHypervisorClusterProfileSoftDelete(d.Id(),soft_delete)
+	var softdelete = true
+	err := config.ovClient.DeleteHypervisorClusterProfileSoftDelete(d.Id(), softdelete)
 	if err != nil {
 		return err
 	}

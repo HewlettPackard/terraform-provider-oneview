@@ -24,7 +24,7 @@ func TestAccHypervisorClusterProfile_2(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccHypervisorClusterProfileData,
-				Check: resource.ComposeTestCheckFunc(					
+				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("oneview_hypervisor_manager.test", "name", "TestHypervisorClusterProfile"),
 				),
 			},
