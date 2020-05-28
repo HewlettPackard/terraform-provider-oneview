@@ -26,7 +26,8 @@ install:
     - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
 
 before_script:
-    - for i in $UNFORMATTED; do echo "$(gofmt -d $i)" ; done
+    - echo -e $UNFORMATTED
+    - for i in $UNFORMATTED; do echo -e "$(gofmt -d $i)" ; done
     - if ! [ -z "$UNFORMATTED" ]; then
         echo -e "Go files must be formatted with gofmt. Please run:";
         for fn in $UNFORMATTED; do
