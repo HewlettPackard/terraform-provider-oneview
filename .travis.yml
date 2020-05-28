@@ -25,9 +25,8 @@ install:
     - mkdir -p $TF_DOWNLOAD_PATH
     - bash <(curl -s https://raw.githubusercontent.com/patrickdappollonio/download-terraform-binaries/master/download_terraform_binaries.sh)
 
-before_script:
-    - gofmt -d $UNFORMATTED
-    - gofmt -d oneview/resource_hypervisor_cluster_profile.go
+before_script:  
+    - gofmt -d /home/travis/gopath/src/github.com/HewlettPackard/terraform-provider-oneview/oneview/resource_hypervisor_cluster_profile.go
     - echo -e $UNFORMATTED
     - for i in $UNFORMATTED; do echo -e "$(gofmt -d $i)" ; done
     - if ! [ -z "$UNFORMATTED" ]; then
