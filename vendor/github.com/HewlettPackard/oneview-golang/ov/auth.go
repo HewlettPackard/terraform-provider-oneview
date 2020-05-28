@@ -62,6 +62,7 @@ type Auth struct {
 	UserName string `json:"userName,omitempty"`
 	Password string `json:"password,omitempty"`
 	Domain   string `json:"authLoginDomain,omitempty"`
+	MsgAck   bool   `json:"loginMsgAck,omitempty"`
 }
 
 // TimeOut structure
@@ -97,7 +98,7 @@ func (c *OVClient) RefreshLogin() error {
 func (c *OVClient) SessionLogin() (Session, error) {
 	var (
 		uri     = "/rest/login-sessions"
-		body    = Auth{UserName: c.User, Password: c.Password, Domain: c.Domain}
+		body    = Auth{UserName: c.User, Password: c.Password, Domain: c.Domain, MsgAck: true}
 		session Session
 	)
 
