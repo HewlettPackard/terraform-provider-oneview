@@ -398,9 +398,9 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 	/*********************Add hostrequests end***********************/
 
 	/*********************IP Pools start***********************/
-	rawIpPools := d.Get("ip_pools").(*schema.Set).List()
-	ipPools := make([]utils.Nstring, len(rawIpPools))
-	for i, rawip := range rawIpPools {
+	rawIPPools := d.Get("ip_pools").(*schema.Set).List()
+	ipPools := make([]utils.Nstring, len(rawIPPools))
+	for i, rawip := range rawIPPools {
 		ipPools[i] = utils.Nstring(rawip.(string))
 	}
 	hypCP.IpPools = ipPools
@@ -723,8 +723,8 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 		virtualSwitchPortGroups := make([]map[string]interface{}, 0, len(virtualSwitch.VirtualSwitchPortGroups))
 		for _, virtualSwitchPortGroup := range virtualSwitch.VirtualSwitchPortGroups {
 			vspgnetworkUris := make([]interface{}, len(virtualSwitchPortGroup.NetworkUris))
-			for i, vspgnetworkUri := range virtualSwitchPortGroup.NetworkUris {
-				vspgnetworkUris[i] = vspgnetworkUri.String()
+			for i, vspgnetworkURI := range virtualSwitchPortGroup.NetworkUris {
+				vspgnetworkUris[i] = vspgnetworkURI.String()
 			}
 			//########################vritual switch ports####################################
 
@@ -755,8 +755,8 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 		//#############################virtual switch port group ends##########################
 
 		networkUris := make([]interface{}, len(virtualSwitch.NetworkUris))
-		for i, networkUri := range virtualSwitch.NetworkUris {
-			networkUris[i] = networkUri
+		for i, networkURI := range virtualSwitch.NetworkUris {
+			networkUris[i] = networkURI
 		}
 
 		virtualSwitches = append(virtualSwitches, map[string]interface{}{

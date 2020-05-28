@@ -424,8 +424,8 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 		virtualSwitchPortGroups := make([]map[string]interface{}, 0, len(virtualSwitch.VirtualSwitchPortGroups))
 		for _, virtualSwitchPortGroup := range virtualSwitch.VirtualSwitchPortGroups {
 			vspgnetworkUris := make([]interface{}, len(virtualSwitchPortGroup.NetworkUris))
-			for i, vspgnetworkUri := range virtualSwitchPortGroup.NetworkUris {
-				vspgnetworkUris[i] = vspgnetworkUri.String()
+			for i, vspgnetworkURI := range virtualSwitchPortGroup.NetworkUris {
+				vspgnetworkUris[i] = vspgnetworkURI.String()
 			}
 			/***********vritual switch ports*********************/
 
@@ -470,8 +470,8 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 		/**********virtual switch upnlinks end************/
 
 		networkUris := make([]interface{}, len(virtualSwitch.NetworkUris))
-		for i, networkUri := range virtualSwitch.NetworkUris {
-			networkUris[i] = networkUri
+		for i, networkURI := range virtualSwitch.NetworkUris {
+			networkUris[i] = networkURI
 		}
 
 		virtualSwitches = append(virtualSwitches, map[string]interface{}{
