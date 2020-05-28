@@ -373,8 +373,8 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 	d.Set("created", hypCP.Created)
 	d.Set("description", hypCP.Description.String())
 	d.Set("e_tag", hypCP.ETag)
-	hypCPCS_list := make([]map[string]interface{}, 0, 1)
-	hypCPCS_list = append(hypCPCS_list, map[string]interface{}{
+	hypCPCSList := make([]map[string]interface{}, 0, 1)
+	hypCPCSList = append(hypCPCSList, map[string]interface{}{
 		"distributed_switch_version": hypCP.HypervisorClusterSettings.DistributedSwitchVersion,
 		"distributed_switch_usage":   hypCP.HypervisorClusterSettings.DistributedSwitchUsage,
 		"drs_enabled":                hypCP.HypervisorClusterSettings.DrsEnabled,
@@ -384,7 +384,7 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 		"virtual_switch_type":        hypCP.HypervisorClusterSettings.VirtualSwitchType,
 	})
 
-	d.Set("hypervisor_cluster_settings", hypCPCS_list)
+	d.Set("hypervisor_cluster_settings", hypCPCSList)
 
 	d.Set("hypervisor_cluster_uri", hypCP.HypervisorClusterUri)
 	deploymentCustomArgs := make([]interface{}, len(hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentCustomArgs))
@@ -488,8 +488,8 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 
 	/*****************virtual switch ends*************************************/
 
-	hypCPHHPT_list := make([]map[string]interface{}, 0, 1)
-	hypCPHHPT_list = append(hypCPHHPT_list, map[string]interface{}{
+	hypCPHHPTList := make([]map[string]interface{}, 0, 1)
+	hypCPHHPTList = append(hypCPHHPTList, map[string]interface{}{
 		"deployment_manager_type":      hypCP.HypervisorHostProfileTemplate.DeploymentManagerType,
 		"deployment_plan":              dplist,
 		"host_config_policy":           hostConfigPolicylist,
@@ -499,7 +499,7 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 		"virtual_switches":             virtualSwitches,
 	})
 
-	d.Set("hypervisor_host_profile_template", hypCPHHPT_list)
+	d.Set("hypervisor_host_profile_template", hypCPHHPTList)
 	d.Set("hypervisor_host_profile_uris", hypCP.HypervisorHostProfileUris)
 	d.Set("hypervisor_manager_uri", hypCP.HypervisorManagerUri)
 	d.Set("hypervisor_type", hypCP.HypervisorType)
