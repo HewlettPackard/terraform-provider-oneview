@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Oneview Features supported
 - Enclosure
 - Enclosure Group
+- Hypervisor Cluster Profile
 - Interconnects
 - Interconnect Type
 - Logical Enclosure

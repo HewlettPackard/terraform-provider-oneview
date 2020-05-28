@@ -391,8 +391,8 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 	/*********************Add hostrequests start***********************/
 	rawAddHostRequests := d.Get("add_host_requests").(*schema.Set).List()
 	addHostRequests := make([]string, len(rawAddHostRequests))
-	for i, raw_add := range rawAddHostRequests {
-		addHostRequests[i] = raw_add.(string)
+	for i, rawadd := range rawAddHostRequests {
+		addHostRequests[i] = rawadd.(string)
 	}
 	hypCP.AddHostRequests = addHostRequests
 	/*********************Add hostrequests end***********************/
@@ -400,16 +400,16 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 	/*********************IP Pools start***********************/
 	rawIpPools := d.Get("ip_pools").(*schema.Set).List()
 	ipPools := make([]utils.Nstring, len(rawIpPools))
-	for i, raw_ip := range rawIpPools {
-		ipPools[i] = utils.Nstring(raw_ip.(string))
+	for i, rawip := range rawIpPools {
+		ipPools[i] = utils.Nstring(rawip.(string))
 	}
 	hypCP.IpPools = ipPools
 	/*********************Ip Pools end***********************/
 	/*********************Shared Storage volumes start***********************/
 	rawSharedStorageVolumes := d.Get("ip_pools").(*schema.Set).List()
 	sharedStorageVolumes := make([]utils.Nstring, len(rawSharedStorageVolumes))
-	for i, raw_shsvol := range rawSharedStorageVolumes {
-		sharedStorageVolumes[i] = utils.Nstring(raw_shsvol.(string))
+	for i, rawshsvol := range rawSharedStorageVolumes {
+		sharedStorageVolumes[i] = utils.Nstring(rawshsvol.(string))
 	}
 	hypCP.SharedStorageVolumes = sharedStorageVolumes
 	/*********************Shared Storage Volumes end***********************/
@@ -440,16 +440,16 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 		virtualSwitchUplinks := ov.VirtualSwitchUplinks{}
 
 		virtualSwitches := ov.VirtualSwitches{}
-		for _, raw_vs := range rawVirtualSwitches {
+		for _, rawvs := range rawVirtualSwitches {
 
-			rawVirtualSwitchesItem := raw_vs.(map[string]interface{})
+			rawVirtualSwitchesItem := rawvs.(map[string]interface{})
 			/*********************virtual switch networkUris start***********************/
 			var networkUris []utils.Nstring
 			if rawVirtualSwitchesItem["network_uris"] != nil {
 				rawNetworkUris := rawVirtualSwitchesItem["network_uris"].([]interface{})
 				networkUris = make([]utils.Nstring, len(rawNetworkUris))
-				for i, raw_vsnw := range rawNetworkUris {
-					networkUris[i] = utils.Nstring(raw_vsnw.(string))
+				for i, rawvsnw := range rawNetworkUris {
+					networkUris[i] = utils.Nstring(rawvsnw.(string))
 				}
 			}
 			/******************virtual switch network uris end*************************/
@@ -461,8 +461,8 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 					rawVirtualSwitchUplinks := rawVirtualSwitchesItem["virtual_switch_uplinks"].([]interface{})
 					virtualSwitchUplinksCollect = make([]ov.VirtualSwitchUplinks, 0)
 
-					for _, raw_vsul := range rawVirtualSwitchUplinks {
-						rawVirtualSwitchUplinksItem := raw_vsul.(map[string]interface{})
+					for _, rawvsul := range rawVirtualSwitchUplinks {
+						rawVirtualSwitchUplinksItem := rawvsul.(map[string]interface{})
 						virtualSwitchUplinks = ov.VirtualSwitchUplinks{
 							Action: rawVirtualSwitchUplinksItem["action"].(string),
 							Active: rawVirtualSwitchUplinksItem["active"].(bool),
@@ -481,27 +481,27 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 				virtualSwitchPortGroups := ov.VirtualSwitchPortGroups{}
 				virtualSwitchPorts := ov.VirtualSwitchPorts{}
 
-				for _, raw_vspg := range rawVirtualSwitchPortGroups {
-					rawVirtualSwitchPortGroupsItem := raw_vspg.(map[string]interface{})
+				for _, rawvspg := range rawVirtualSwitchPortGroups {
+					rawVirtualSwitchPortGroupsItem := rawvspg.(map[string]interface{})
 					/*********************virtual switch port group networkUris start***********************/
 					rawNetworkUris := rawVirtualSwitchPortGroupsItem["network_uris"].([]interface{})
 					networkUris := make([]utils.Nstring, len(rawNetworkUris))
 
-					for i, raw_vspgnw := range rawNetworkUris {
-						networkUris[i] = utils.Nstring(raw_vspgnw.(string))
+					for i, rawvspgnw := range rawNetworkUris {
+						networkUris[i] = utils.Nstring(rawvspgnw.(string))
 					}
 					/******************virtual switch port groups network uris end*************************/
 					/*************virtual switch ports start******************************************/
 					rawVirtualSwitchPorts := rawVirtualSwitchPortGroupsItem["virtual_switch_ports"].([]interface{})
 					virtualSwitchPortsCollect := make([]ov.VirtualSwitchPorts, 0)
 
-					for _, raw_vsp := range rawVirtualSwitchPorts {
-						rawVirtualSwitchPortsItem := raw_vsp.(map[string]interface{})
+					for _, rawvsp := range rawVirtualSwitchPorts {
+						rawVirtualSwitchPortsItem := rawvsp.(map[string]interface{})
 						/*********************virtual switch port purpose start***********************/
 						rawVirtualPortPurpose := rawVirtualSwitchPortsItem["virtual_port_purpose"].([]interface{})
 						virtualPortPurpose := make([]utils.Nstring, len(rawVirtualPortPurpose))
-						for i, raw_pp := range rawVirtualPortPurpose {
-							virtualPortPurpose[i] = utils.Nstring(raw_pp.(string))
+						for i, rawpp := range rawVirtualPortPurpose {
+							virtualPortPurpose[i] = utils.Nstring(rawpp.(string))
 						}
 						/******************virtual switch port purpose end*************************/
 						virtualSwitchPorts = ov.VirtualSwitchPorts{
@@ -546,8 +546,8 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 
 	rawVirtualSwitchConfigPolicy := d.Get("virtual_switch_config_policy").(*schema.Set).List()
 
-	for _, raw_scp := range rawVirtualSwitchConfigPolicy {
-		rawVirtualSwitchConfigPolicyItem := raw_scp.(map[string]interface{})
+	for _, rawscp := range rawVirtualSwitchConfigPolicy {
+		rawVirtualSwitchConfigPolicyItem := rawscp.(map[string]interface{})
 
 		virtualSwitchConfigPolicy = ov.VirtualSwitchConfigPolicy{
 			ConfigurePortGroups:   rawVirtualSwitchConfigPolicyItem["configure_port_groups"].(bool),
@@ -561,8 +561,8 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 	hostConfigPolicy := ov.HostConfigPolicy{}
 	rawHostConfigPolicy := d.Get("host_config_policy").(*schema.Set).List()
 
-	for _, raw_hcp := range rawHostConfigPolicy {
-		rawHostConfigPolicyItem := raw_hcp.(map[string]interface{})
+	for _, rawhcp := range rawHostConfigPolicy {
+		rawHostConfigPolicyItem := rawhcp.(map[string]interface{})
 
 		hostConfigPolicy = ov.HostConfigPolicy{
 			LeaveHostInMaintenance:  rawHostConfigPolicyItem["leave_host_in_maintenance"].(bool),
@@ -576,15 +576,15 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 	rawHypervisorHostProfileTemplate := d.Get("hypervisor_host_profile_template").(*schema.Set).List()
 	hypervisorProfileTemplate := ov.HypervisorHostProfileTemplate{}
 
-	for _, raw_ht := range rawHypervisorHostProfileTemplate {
-		rawHostProfileTemplateItem := raw_ht.(map[string]interface{})
+	for _, rawht := range rawHypervisorHostProfileTemplate {
+		rawHostProfileTemplateItem := rawht.(map[string]interface{})
 		deploymentPlan := ov.DeploymentPlan{}
 
 		/******************* deployment plan start********************/
 		rawDeploymentPlan := rawHostProfileTemplateItem["deployment_plan"].([]interface{})
 
-		for _, raw_dp := range rawDeploymentPlan {
-			rawDeploymentPlanItem := raw_dp.(map[string]interface{})
+		for _, rawdp := range rawDeploymentPlan {
+			rawDeploymentPlanItem := rawdp.(map[string]interface{})
 			if val, ok := rawDeploymentPlanItem["deployment_custom_args"]; ok {
 				dpCustomArgsOrder := val.([]interface{})
 				dpCustomArgs := make([]utils.Nstring, len(dpCustomArgsOrder))
@@ -646,8 +646,8 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 	d.Set("created", hypCP.Created)
 	d.Set("description", hypCP.Description.String())
 	d.Set("e_tag", hypCP.ETag)
-	hypCPCS_list := make([]map[string]interface{}, 0, 1)
-	hypCPCS_list = append(hypCPCS_list, map[string]interface{}{
+	hypCPCSList := make([]map[string]interface{}, 0, 1)
+	hypCPCSList = append(hypCPCSList, map[string]interface{}{
 		"distributed_switch_version": hypCP.HypervisorClusterSettings.DistributedSwitchVersion,
 		"distributed_switch_usage":   hypCP.HypervisorClusterSettings.DistributedSwitchUsage,
 		"drs_enabled":                hypCP.HypervisorClusterSettings.DrsEnabled,
@@ -657,7 +657,7 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 		"virtual_switch_type":        hypCP.HypervisorClusterSettings.VirtualSwitchType,
 	})
 
-	d.Set("hypervisor_cluster_settings", hypCPCS_list)
+	d.Set("hypervisor_cluster_settings", hypCPCSList)
 
 	d.Set("hypervisor_cluster_uri", hypCP.HypervisorClusterUri)
 	deploymentCustomArgs := make([]interface{}, len(hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentCustomArgs))
@@ -691,14 +691,14 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 	})
 	d.Set("virtual_switch_config_policy", virtualSwitchConfigPolicylist)
 
-	hypCPHHPT_list := make([]map[string]interface{}, 0, 1)
-	hypCPHHPT_list = append(hypCPHHPT_list, map[string]interface{}{
+	hypCPHHPTList := make([]map[string]interface{}, 0, 1)
+	hypCPHHPTList = append(hypCPHHPTList, map[string]interface{}{
 		"deployment_manager_type":     hypCP.HypervisorHostProfileTemplate.DeploymentManagerType,
 		"deployment_plan":             dplist,
 		"host_prefix":                 hypCP.HypervisorHostProfileTemplate.Hostprefix,
 		"server_profile_template_uri": hypCP.HypervisorHostProfileTemplate.ServerProfileTemplateUri.String(),
 	})
-	d.Set("hypervisor_host_profile_template", hypCPHHPT_list)
+	d.Set("hypervisor_host_profile_template", hypCPHHPTList)
 
 	//###########################virtual switches###########################
 
@@ -853,16 +853,16 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 		virtualSwitchUplinks := ov.VirtualSwitchUplinks{}
 
 		virtualSwitches := ov.VirtualSwitches{}
-		for _, raw_vs := range rawVirtualSwitches {
+		for _, rawvs := range rawVirtualSwitches {
 
-			rawVirtualSwitchesItem := raw_vs.(map[string]interface{})
+			rawVirtualSwitchesItem := rawvs.(map[string]interface{})
 			/*********************virtual switch networkUris start***********************/
 			var networkUris []utils.Nstring
 			if rawVirtualSwitchesItem["network_uris"] != nil {
 				rawNetworkUris := rawVirtualSwitchesItem["network_uris"].([]interface{})
 				networkUris = make([]utils.Nstring, len(rawNetworkUris))
-				for i, raw_vsnw := range rawNetworkUris {
-					networkUris[i] = utils.Nstring(raw_vsnw.(string))
+				for i, rawvsnw := range rawNetworkUris {
+					networkUris[i] = utils.Nstring(rawvsnw.(string))
 				}
 			}
 			/******************virtual switch network uris end*************************/
@@ -874,8 +874,8 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 					rawVirtualSwitchUplinks := rawVirtualSwitchesItem["virtual_switch_uplinks"].([]interface{})
 					virtualSwitchUplinksCollect = make([]ov.VirtualSwitchUplinks, 0)
 
-					for _, raw_vsul := range rawVirtualSwitchUplinks {
-						rawVirtualSwitchUplinksItem := raw_vsul.(map[string]interface{})
+					for _, rawvsul := range rawVirtualSwitchUplinks {
+						rawVirtualSwitchUplinksItem := rawvsul.(map[string]interface{})
 						virtualSwitchUplinks = ov.VirtualSwitchUplinks{
 							Action: rawVirtualSwitchUplinksItem["action"].(string),
 							Active: rawVirtualSwitchUplinksItem["active"].(bool),
@@ -894,27 +894,27 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 				virtualSwitchPortGroups := ov.VirtualSwitchPortGroups{}
 				virtualSwitchPorts := ov.VirtualSwitchPorts{}
 
-				for _, raw_vspg := range rawVirtualSwitchPortGroups {
-					rawVirtualSwitchPortGroupsItem := raw_vspg.(map[string]interface{})
+				for _, rawvspg := range rawVirtualSwitchPortGroups {
+					rawVirtualSwitchPortGroupsItem := rawvspg.(map[string]interface{})
 					/*********************virtual switch port group networkUris start***********************/
 					rawNetworkUris := rawVirtualSwitchPortGroupsItem["network_uris"].([]interface{})
 					networkUris := make([]utils.Nstring, len(rawNetworkUris))
 
-					for i, raw_vspgnw := range rawNetworkUris {
-						networkUris[i] = utils.Nstring(raw_vspgnw.(string))
+					for i, rawvspgnw := range rawNetworkUris {
+						networkUris[i] = utils.Nstring(rawvspgnw.(string))
 					}
 					/******************virtual switch port groups network uris end*************************/
 					/*************virtual switch ports start******************************************/
 					rawVirtualSwitchPorts := rawVirtualSwitchPortGroupsItem["virtual_switch_ports"].([]interface{})
 					virtualSwitchPortsCollect := make([]ov.VirtualSwitchPorts, 0)
 
-					for _, raw_vsp := range rawVirtualSwitchPorts {
-						rawVirtualSwitchPortsItem := raw_vsp.(map[string]interface{})
+					for _, rawvsp := range rawVirtualSwitchPorts {
+						rawVirtualSwitchPortsItem := rawvsp.(map[string]interface{})
 						/*********************virtual switch port purpose start***********************/
 						rawVirtualPortPurpose := rawVirtualSwitchPortsItem["virtual_port_purpose"].([]interface{})
 						virtualPortPurpose := make([]utils.Nstring, len(rawVirtualPortPurpose))
-						for i, raw_pp := range rawVirtualPortPurpose {
-							virtualPortPurpose[i] = utils.Nstring(raw_pp.(string))
+						for i, rawpp := range rawVirtualPortPurpose {
+							virtualPortPurpose[i] = utils.Nstring(rawpp.(string))
 						}
 						/******************virtual switch port purpose end*************************/
 						virtualSwitchPorts = ov.VirtualSwitchPorts{
@@ -959,8 +959,8 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 
 	rawVirtualSwitchConfigPolicy := d.Get("virtual_switch_config_policy").(*schema.Set).List()
 
-	for _, raw_scp := range rawVirtualSwitchConfigPolicy {
-		rawVirtualSwitchConfigPolicyItem := raw_scp.(map[string]interface{})
+	for _, rawscp := range rawVirtualSwitchConfigPolicy {
+		rawVirtualSwitchConfigPolicyItem := rawscp.(map[string]interface{})
 
 		virtualSwitchConfigPolicy = ov.VirtualSwitchConfigPolicy{
 			ConfigurePortGroups:   rawVirtualSwitchConfigPolicyItem["configure_port_groups"].(bool),
@@ -974,8 +974,8 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 	hostConfigPolicy := ov.HostConfigPolicy{}
 	rawHostConfigPolicy := d.Get("host_config_policy").(*schema.Set).List()
 
-	for _, raw_hcp := range rawHostConfigPolicy {
-		rawHostConfigPolicyItem := raw_hcp.(map[string]interface{})
+	for _, rawhcp := range rawHostConfigPolicy {
+		rawHostConfigPolicyItem := rawhcp.(map[string]interface{})
 
 		hostConfigPolicy = ov.HostConfigPolicy{
 			LeaveHostInMaintenance:  rawHostConfigPolicyItem["leave_host_in_maintenance"].(bool),
@@ -989,15 +989,15 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 	rawHypervisorHostProfileTemplate := d.Get("hypervisor_host_profile_template").(*schema.Set).List()
 	hypervisorProfileTemplate := ov.HypervisorHostProfileTemplate{}
 
-	for _, raw_ht := range rawHypervisorHostProfileTemplate {
-		rawHostProfileTemplateItem := raw_ht.(map[string]interface{})
+	for _, rawht := range rawHypervisorHostProfileTemplate {
+		rawHostProfileTemplateItem := rawht.(map[string]interface{})
 		deploymentPlan := ov.DeploymentPlan{}
 
 		/******************* deployment plan start********************/
 		rawDeploymentPlan := rawHostProfileTemplateItem["deployment_plan"].([]interface{})
 
-		for _, raw_dp := range rawDeploymentPlan {
-			rawDeploymentPlanItem := raw_dp.(map[string]interface{})
+		for _, rawdp := range rawDeploymentPlan {
+			rawDeploymentPlanItem := rawdp.(map[string]interface{})
 			if val, ok := rawDeploymentPlanItem["deployment_custom_args"]; ok {
 				dpCustomArgsOrder := val.([]interface{})
 				dpCustomArgs := make([]utils.Nstring, len(dpCustomArgsOrder))
@@ -1042,8 +1042,8 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 
 func resourceHypervisorClusterProfileDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
-	err := config.ovClient.DeleteHypervisorClusterProfile(d.Id())
+	var soft_delete = true
+	err := config.ovClient.DeleteHypervisorClusterProfileSoftDelete(d.Id(),soft_delete)
 	if err != nil {
 		return err
 	}
