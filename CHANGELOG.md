@@ -30,7 +30,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage System
 - Storage Volume
 - Storage Volume Attachment
-- Task
 - Uplink Set
 
 # [v1.2.0]
