@@ -15,6 +15,8 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"encoding/json"
+	"io/ioutil"
 )
 
 func resourceHypervisorClusterProfile() *schema.Resource {
@@ -1069,10 +1071,22 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 
 func resourceHypervisorClusterProfileDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+	file, _ := json.MarshalIndent(config.OVAPIVersion, "", " ")
+	_ = ioutil.WriteFile("test.json", file, 0644)
+
 	var softdelete = true
-	err := config.ovClient.DeleteHypervisorClusterProfileSoftDelete(d.Id(), softdelete)
-	if err != nil {
-		return err
-	}
+	_=softdelete
+	if config.OVAPIVersion == 1600 {
+
+	        err := config.ovClient.DeleteHypervisorClusterProfileSoftDelete(d.Id(), softdelete)
+	        if err != nil {
+		        return err
+	        }
+	 } else {
+                 err := config.ovClient.DeleteHypervisorClusterProfile(d.Id())
+	         if err != nil {
+		         return err
+	         }
+	 }
 	return nil
 }
