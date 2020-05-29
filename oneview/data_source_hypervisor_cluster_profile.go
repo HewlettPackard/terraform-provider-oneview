@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -524,6 +524,5 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 	d.Set("status", hypCP.Status)
 	d.Set("type", hypCP.Type)
 	d.Set("uri", hypCP.URI)
-	d.Set("soft_delete", true)
 	return nil
 }

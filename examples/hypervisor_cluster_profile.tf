@@ -1,9 +1,9 @@
 provider "oneview" {
-	ov_username = "Administrator"
-	ov_password = "admin123"
-	ov_endpoint = "https://10.50.9.41"
+	ov_username = "<username>" 
+	ov_password = "<password>"
+	ov_endpoint = "<endpoint>"
 	ov_sslverify = false
-	ov_apiversion = 1600
+	ov_apiversion = <ov-apiversion>
 	ov_ifmatch = "*"
 }
 
@@ -14,7 +14,7 @@ data "oneview_scope" "scope_obj" {
 resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile"{  
     "type"="HypervisorClusterProfileV3",
     "name"="Cluster",
-    "description"="asa",
+    "description"="cluster profile description",
     "hypervisor_type"="Vmware",
     "hypervisor_manager_uri"="/rest/hypervisor-managers/4d47b4ca-1c40-47ad-b170-099b04e3691f",
     "hypervisor_cluster_settings"={  
@@ -30,12 +30,13 @@ resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile"{
 
      }
 }
+/*uncomment below line to upadate*/
 /*
 
 resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile"{  
     "type"="HypervisorClusterProfileV3",
     "name"="Cluster-renamed",
-    "description"="asa",
+    "description"="cluster profile description",
     "hypervisor_type"="Vmware",
     "hypervisor_manager_uri"="/rest/hypervisor-managers/4d47b4ca-1c40-47ad-b170-099b04e3691f",
     "path"="DC2",
