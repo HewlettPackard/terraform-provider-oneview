@@ -56,7 +56,7 @@ provider "oneview" {
 }
 ```
 
-Note: Currently this SDK supports OneView API 1200 minimally where we can test OneView API 1200 version with this SDK. No new fields have been added/deleted to support API 1200 version. Complete support will be done in next releases.
+Note: Currently this SDK supports OneView API 1600 minimally where we can test OneView API 1600 version with this SDK. No new fields have been added/deleted to support API 1600 version. Complete support will be done in next releases.
 
 ### License
 
