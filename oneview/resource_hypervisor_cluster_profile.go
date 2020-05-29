@@ -319,7 +319,7 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 
 			"hypervisor_type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 
 			"ip_pools": {

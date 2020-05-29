@@ -43,7 +43,7 @@ resource "oneview_hypervisor_cluster_profile" "default" {
 The following arguments are supported: 
 
 * `name` - (Required) A unique name for the resource.
-* `type` - (Required) Indicates the display name of the Hypervisor cluster profile.
+* `hypervisor_type` - (Required)  Type of the hypervisor in the cluster
 
 
 ## Attributes Reference
@@ -95,3 +95,5 @@ In addition to the arguments listed above, the following computed attributes are
 * `state_reason` - Indicates the reason the resource in its current state.
 
 * `status` - Current status of this resource. Valid values include Unknown, OK, Disabled, Warning, Critical.
+
+* `type` - Uniquely identifies the type of the JSON object
