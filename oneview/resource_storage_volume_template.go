@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -1320,7 +1320,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1378,7 +1378,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1432,7 +1432,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1489,7 +1489,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1546,7 +1546,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1600,7 +1600,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1648,7 +1648,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1696,7 +1696,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1745,7 +1745,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1799,7 +1799,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1856,7 +1856,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1913,7 +1913,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -1970,7 +1970,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -2027,7 +2027,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -2084,7 +2084,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -2132,7 +2132,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -2180,7 +2180,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -2237,7 +2237,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -2285,7 +2285,7 @@ func resourceStorageVolumeTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -2908,7 +2908,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -2965,7 +2965,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3019,7 +3019,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3076,7 +3076,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3133,7 +3133,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3187,7 +3187,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3235,7 +3235,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3283,7 +3283,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3332,7 +3332,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3386,7 +3386,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3443,7 +3443,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3500,7 +3500,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3557,7 +3557,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3614,7 +3614,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3671,7 +3671,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3719,7 +3719,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3767,7 +3767,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3824,7 +3824,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
@@ -3872,7 +3872,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			if item["enum"] != nil {
 				rawEnums := item["enum"].(*schema.Set).List()
-				enums := make([]string, len(rawEnums))
+				enums := make([]string, 0)
 				for _, rawData := range rawEnums {
 					enums = append(enums, rawData.(string))
 				}
