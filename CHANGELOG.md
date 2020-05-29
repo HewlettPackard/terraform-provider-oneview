@@ -10,11 +10,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Enclosure
 - Enclosure Group
 - Hypervisor Cluster Profile
+- Hypervisor Manager
 - Interconnects
 - Interconnect Type
 - Logical Enclosure
 - Logical Interconnect
 - Logical Interconnect Group
+- Server Certificate
 - Server Hardware
 - Server Hardware Type
 - Server Profile
