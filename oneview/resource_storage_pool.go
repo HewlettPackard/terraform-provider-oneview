@@ -29,6 +29,7 @@ func resourceStoragePool() *schema.Resource {
 			"category": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -37,30 +38,35 @@ func resourceStoragePool() *schema.Resource {
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"eTag": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"allocated_capacity": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"storage_system_uri": {
 				Type:     schema.TypeString,
@@ -77,6 +83,7 @@ func resourceStoragePool() *schema.Resource {
 			"is_managed": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Computed: true,
 			},
 			"storage_pool_device_specific_attributes": {
 				Optional: true,
@@ -87,6 +94,7 @@ func resourceStoragePool() *schema.Resource {
 						"device_id": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"capacity_limit": {
 							Type:     schema.TypeString,
@@ -99,18 +107,22 @@ func resourceStoragePool() *schema.Resource {
 						"domain": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"supported_raid_level": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"uuid": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"is_deduplication_capable": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -172,11 +184,12 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	for _, rawData := range rawDeviceSpecificAttributes {
 		deviceSpecificAttributesItem := rawData.(map[string]interface{})
 		deviceSpecificAttributes = ov.DeviceSpecificAttributesStoragePool{
-			DeviceID:           deviceSpecificAttributesItem["device_id"].(string),
-			CapacityLimit:      deviceSpecificAttributesItem["capacity_limit"].(string),
-			DeviceSpeed:        deviceSpecificAttributesItem["device_speed"].(string),
-			Domain:             deviceSpecificAttributesItem["domain"].(string),
-			SupportedRaidLevel: deviceSpecificAttributesItem["supported_raid_level"].(string),
+			DeviceID:               deviceSpecificAttributesItem["device_id"].(string),
+			CapacityLimit:          deviceSpecificAttributesItem["capacity_limit"].(string),
+			DeviceSpeed:            deviceSpecificAttributesItem["device_speed"].(string),
+			Domain:                 deviceSpecificAttributesItem["domain"].(string),
+			SupportedRaidLevel:     deviceSpecificAttributesItem["supported_raid_level"].(string),
+			IsDeduplicationCapable: deviceSpecificAttributesItem["is_deduplication_capabale"].(bool),
 		}
 	}
 
