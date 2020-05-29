@@ -12,7 +12,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Enclosure Group
 - Hypervisor Cluster Profile
 - Hypervisor Manager
-- Hypervisor Manager
 - Interconnect
 - Interconnect Type
 - Logical Enclosure
