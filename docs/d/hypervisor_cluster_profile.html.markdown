@@ -14,7 +14,7 @@ Use this data source to access the attributes of a hypervisor cluster profile.
 
 ```hcl
 data "oneview_hypervisor_cluster_profile" "test" {
- uri = "/rest/hypervisor-cluster-profiles/12343-as45677-56778af"
+         name = "testcluster"
 }
 
 output "oneview_hypervisor_cluster_profile_value" {
@@ -24,7 +24,7 @@ output "oneview_hypervisor_cluster_profile_value" {
 
 ## Argument Reference
 
-* `uri` - (Required) The name of the hypervisor cluster profile uri.
+* `name` -  Name of the resource.
 
 ## Attributes Reference
 
@@ -75,3 +75,5 @@ output "oneview_hypervisor_cluster_profile_value" {
 * `status` - Current status of this resource. Valid values include Unknown, OK, Disabled, Warning, Critical.
 
 * `type` - Uniquely identifies the type of the JSON object
+
+* `uri` - The name of the hypervisor cluster profile uri.
