@@ -7,10 +7,6 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
-data "oneview_scope" "scope_obj" {
-        name = "test_scope"
-}
-
 resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile"{  
     "type"="HypervisorClusterProfileV3",
     "name"="Cluster",
