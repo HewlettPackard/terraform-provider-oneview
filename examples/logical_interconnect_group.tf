@@ -10,7 +10,7 @@ provider "oneview" {
 # Creates a logical interconnect group or updates if already existing
 resource "oneview_logical_interconnect_group" "LIG" {
   name = "TestLIG"
-  type = "logical-interconnect-groupV7"
+  type = "logical-interconnect-groupV8"
   interconnect_bay_set = 1
   redundancy_type = "NonRedundantASide"
   enclosure_indexes = [-1]
