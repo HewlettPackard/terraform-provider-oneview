@@ -13,7 +13,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Server Profile
 - Server Profile Template
 - Storage Pool
-- Task
 
 
 # [v1.2.0]
