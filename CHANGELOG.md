@@ -21,7 +21,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Server Hardware Type
 - Server Profile
 - Server Profile Template
-- Task
+- Storage Pool
+
 
 
 # [v1.2.0]
