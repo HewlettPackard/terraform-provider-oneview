@@ -32,7 +32,8 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type: schema.TypeString},
+					Type: schema.TypeString,
+				},
 				Set: schema.HashString,
 			},
 
@@ -108,7 +109,8 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"deployment_manager_type": {
 							Type:     schema.TypeString,
-							Optional: true},
+							Optional: true,
+						},
 						"deployment_plan": {
 							Type:     schema.TypeList,
 							Optional: true,
@@ -123,24 +125,30 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 									},
 									"deployment_plan_description": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 									"deployment_plan_uri": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 									"name": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 									"server_password": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 								}}},
 
 						"host_prefix": {
 							Type:     schema.TypeString,
-							Optional: true},
+							Optional: true,
+						},
 						"server_profile_template_uri": {
 							Type:     schema.TypeString,
-							Optional: true},
+							Optional: true,
+						},
 					}}},
 			"host_config_policy": {
 				Type:     schema.TypeSet,
@@ -149,13 +157,16 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"leave_host_in_maintenance": {
 							Type:     schema.TypeBool,
-							Optional: true},
+							Optional: true,
+						},
 						"use_host_prefix_as_hostname": {
 							Type:     schema.TypeBool,
-							Optional: true},
+							Optional: true,
+						},
 						"use_hostname_to_register": {
 							Type:     schema.TypeBool,
-							Optional: true},
+							Optional: true,
+						},
 					}}},
 			"virtual_switch_config_policy": {
 				Type:     schema.TypeSet,
@@ -165,13 +176,16 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 
 						"configure_port_groups": {
 							Type:     schema.TypeBool,
-							Optional: true},
+							Optional: true,
+						},
 						"custom_virtual_switches": {
 							Type:     schema.TypeBool,
-							Optional: true},
+							Optional: true,
+						},
 						"manage_virtual_switches": {
 							Type:     schema.TypeBool,
-							Optional: true},
+							Optional: true,
+						},
 					}}},
 			"hypervisor_cluster_uri": {
 				Type:     schema.TypeString,
@@ -184,23 +198,28 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"action": {
 							Type:     schema.TypeString,
-							Optional: true},
+							Optional: true,
+						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true},
+							Optional: true,
+						},
 						"network_uris": {
 							Type:     schema.TypeList,
 							Optional: true,
 							Elem: &schema.Schema{
-								Type: schema.TypeString},
+								Type: schema.TypeString,
+							},
 						},
 						"version": {
 							Type:     schema.TypeString,
-							Optional: true},
+							Optional: true,
+						},
 
 						"virtual_switch_type": {
 							Type:     schema.TypeString,
-							Optional: true},
+							Optional: true,
+						},
 						"virtual_switch_uplinks": {
 							Type:     schema.TypeList,
 							Optional: true,
@@ -208,19 +227,24 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"action": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 									"active": {
 										Type:     schema.TypeBool,
-										Optional: true},
+										Optional: true,
+									},
 									"mac": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 									"name": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 									"vmnic": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 								},
 							},
 						},
@@ -231,15 +255,18 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"action": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 									"name": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 									"network_uris": {
 										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Schema{
-											Type: schema.TypeString},
+											Type: schema.TypeString,
+										},
 									},
 									"virtual_switch_ports": {
 										Type:     schema.TypeList,
@@ -248,27 +275,33 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 											Schema: map[string]*schema.Schema{
 												"action": {
 													Type:     schema.TypeString,
-													Optional: true},
+													Optional: true,
+												},
 												"dhcp": {
 													Type:     schema.TypeBool,
-													Optional: true},
+													Optional: true,
+												},
 												"ip_address": {
 													Type:     schema.TypeString,
-													Optional: true},
+													Optional: true,
+												},
 												"subnet_mask": {
 													Type:     schema.TypeString,
-													Optional: true},
+													Optional: true,
+												},
 												"virtual_port_purpose": {
 													Type:     schema.TypeList,
 													Optional: true,
 													Elem: &schema.Schema{
-														Type: schema.TypeString},
+														Type: schema.TypeString,
+													},
 												},
 											},
 										}},
 									"vlan": {
 										Type:     schema.TypeString,
-										Optional: true},
+										Optional: true,
+									},
 								}},
 						},
 					},
@@ -331,7 +364,8 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type: schema.TypeString},
+					Type: schema.TypeString,
+				},
 				Set: schema.HashString,
 			},
 
