@@ -184,4 +184,3 @@ func resourceFCoENetworkDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 	return nil
 }
-
