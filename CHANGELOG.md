@@ -3,20 +3,24 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.3.0] (unreleased)
 ### Notes
-- This release add supports to API 800,1000,1200,1600 for Hypervisor Manager,Hypervisor Cluster Profile and Server Certificate resources.
+- This release supports to API 800,1000,1200,1600 for Hypervisor Manager and Server Certificate resources.
 - This release supports API1600 minimally where we can use OneView API1600 with this SDK. No new fields are added/deleted to support API1600.
 
 ### Oneview Features supported
 - Deployment Plan
 - Enclosure
 - Enclosure Group
-- Hypervisor Cluster Profile
+- Ethernet Network
+- FC Network
+- FCoE Network
 - Hypervisor Manager
 - Interconnect
 - Interconnect Type
 - Logical Enclosure
 - Logical Interconnect
 - Logical Interconnect Group
+- Network Set
+- Scopes
 - Server Certificate
 - Server Hardware
 - Server Hardware Type
@@ -26,7 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage System
 - Storage Volume
 - Storage Volume Attachment
-- Storage Volume Template
+- Uplink Set
 
 # [v1.2.0]
 ### Notes
