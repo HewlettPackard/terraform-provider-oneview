@@ -634,7 +634,6 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 				Name:                      rawDeploymentPlanItem["name"].(string),
 				ServerPassword:            rawDeploymentPlanItem["server_password"].(string),
 			}
-			deploymentPlan = deploymentPlan
 		}
 		/******************* deployment plan end********************/
 
