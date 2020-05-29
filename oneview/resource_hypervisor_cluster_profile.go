@@ -840,7 +840,6 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 	config := meta.(*Config)
 
 	hypCP := ov.HypervisorClusterProfile{
-		//AddHostRequests: d.Get("add_host_requests").(string),
 		Category:                  d.Get("category").(string),
 		ComplianceState:           d.Get("compliance_state").(string),
 		Created:                   d.Get("created").(string),
@@ -849,16 +848,11 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 		HypervisorHostProfileUris: utils.Nstring(d.Get("hypervisor_host_profile_uris").(string)),
 		HypervisorManagerUri:      utils.Nstring(d.Get("hypervisor_manager_uri").(string)),
 		HypervisorType:            d.Get("hypervisor_type").(string),
-		//IpPools:                   utils.Nstring(d.Get("ip_pools").(string)),
 		MgmtIpSettingsOverride: d.Get("mgmt_ip_settings_override").(string),
 		Name:                   d.Get("name").(string),
 		Path:                   d.Get("path").(string),
-		//	RefreshState:           d.Get("refresh_state").(string),
 		ScopesUri: d.Get("scopes_uri").(string),
-		//SharedStorageVolumes:      utils.Nstring(d.Get("shared_storage_volumes").(string)),
-		//	State:       d.Get("state").(string),
 		StateReason: d.Get("state_reason").(string),
-		//	Status:      d.Get("status").(string),
 		Type: d.Get("type").(string),
 		URI:  utils.Nstring(d.Get("uri").(string)),
 	}
