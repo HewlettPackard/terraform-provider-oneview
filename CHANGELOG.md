@@ -9,18 +9,24 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Oneview Features supported
 - Enclosure
 - Enclosure Group
+- Ethernet Network
+- FC Network
+- FCoE Network
 - Hypervisor Manager
 - Interconnect
 - Interconnect Type
 - Logical Enclosure
 - Logical Interconnect
 - Logical Interconnect Group
+- Network Set
+- Scopes
 - Server Certificate
 - Server Hardware
 - Server Hardware Type
 - Server Profile
 - Server Profile Template
 - Task
+- Uplink Set
 
 # [v1.2.0]
 ### Notes
