@@ -24,18 +24,17 @@ $ mv $GOPATH/bin/terraform-provider-oneview /usr/local/bin/terraform
 ## Using `terraform-provider-oneview` with Docker
 
 
-We also provide a lightweight and easy way to test and execute `terraform-provider-oneview`. The `prisood/terraform-provider-oneview` docker image contains
-an installation of Terraform and our provider you can use by just pulling down the Docker Image:
+We also provide a lightweight and easy way to test and execute `terraform-provider-oneview`. The `hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:<tag>` docker image contains an installation of Terraform and our provider you can use by just pulling down the Docker Image:
 
 ```bash
 # Download and store a local copy of terraform-provider-oneview and
 # use it as a Docker image.
-$ docker pull prisood/terraform-provider-oneview
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.3.0-OV5.2
 
 # Run docker commands using the "ash" shell from Alpine, this will create
 # a sh session where you can create files, issue commands and execute both
 # terraform and the provider with ease.
-$ docker run -it prisood/terraform-provider-oneview /bin/sh
+$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.3.0-OV5.2 /bin/sh
 ```
 
 
