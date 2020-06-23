@@ -37,7 +37,6 @@ $ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.3.0-OV5.
 $ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.3.0-OV5.2 /bin/sh
 ```
 
-
 ### Provider Information
 
 For authentication, you need to provide the provider information in examples:
