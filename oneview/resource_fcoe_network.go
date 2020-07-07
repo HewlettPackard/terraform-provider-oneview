@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -113,7 +113,8 @@ func resourceFCoENetworkCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawInitialScopeUris := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		initialScopeUris := make([]utils.Nstring, 0)
+
 		for _, rawData := range rawInitialScopeUris {
 			initialScopeUris = append(initialScopeUris, utils.Nstring(rawData.(string)))
 		}

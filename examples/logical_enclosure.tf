@@ -24,6 +24,7 @@ resource "oneview_logical_enclosure" "LogicalEnclosure" {
   enclosure_uris = ["/rest/enclosures/0000000000A66101","/rest/enclosures/0000000000A66102","/rest/enclosures/0000000000A66103"]
   enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
   update_type = "updateByGroup"
+}
 */
 
 # Datasource

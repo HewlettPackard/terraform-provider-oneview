@@ -68,11 +68,13 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
+			"oneview_deployment_plan":            dataSourceDeploymentPlan(),
 			"oneview_enclosure":                  dataSourceEnclosure(),
 			"oneview_enclosure_group":            dataSourceEnclosureGroup(),
 			"oneview_ethernet_network":           dataSourceEthernetNetwork(),
 			"oneview_fc_network":                 dataSourceFCNetwork(),
 			"oneview_fcoe_network":               dataSourceFCoENetwork(),
+			"oneview_hypervisor_cluster_profile": dataSourceHypervisorClusterProfile(),
 			"oneview_hypervisor_manager":         dataSourceHypervisorManager(),
 			"oneview_interconnect_type":          dataSourceInterconnectType(),
 			"oneview_interconnect":               dataSourceInterconnects(),
@@ -100,6 +102,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_ethernet_network":           resourceEthernetNetwork(),
 			"oneview_fcoe_network":               resourceFCoENetwork(),
 			"oneview_fc_network":                 resourceFCNetwork(),
+			"oneview_hypervisor_cluster_profile": resourceHypervisorClusterProfile(),
 			"oneview_hypervisor_manager":         resourceHypervisorManager(),
 			"oneview_i3s_plan":                   resourceI3SPlan(),
 			"oneview_logical_enclosure":          resourceLogicalEnclosure(),
