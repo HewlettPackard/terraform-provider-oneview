@@ -108,6 +108,7 @@ func resourceStorageSystem() *schema.Resource {
 			},
 			"ports": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -117,11 +118,13 @@ func resourceStorageSystem() *schema.Resource {
 						},
 						"id": {
 							Type:     schema.TypeString,
-							Required: true,
+							Computed: true,
+							Optional: true,
 						},
 						"mode": {
 							Type:     schema.TypeString,
-							Required: true,
+							Computed: true,
+							Optional: true,
 						},
 					},
 				},
@@ -207,9 +210,7 @@ func resourceStorageSystemCreate(d *schema.ResourceData, meta interface{}) error
 
 func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Get("hostname").(string)
-
-	storageSystemList, err := config.ovClient.GetStorageSystems(fmt.Sprintf("hostname matches '%s'", id), "")
+	storageSystemList, err := config.ovClient.GetStorageSystems(fmt.Sprintf("hostname matches '%s'", d.Id()), "")
 	if err != nil || len(storageSystemList.Members) < 1 {
 		d.SetId("")
 		return nil
@@ -221,7 +222,6 @@ func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	d.SetId(id)
 	d.Set("hostname", storageSystem.Hostname)
 	d.Set("category", storageSystem.Category)
 	d.Set("eTag", storageSystem.ETAG)
