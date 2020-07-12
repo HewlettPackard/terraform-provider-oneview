@@ -115,7 +115,7 @@ func resourceStorageSystem() *schema.Resource {
 						"partner_port": {
 							Type:     schema.TypeString,
 							Optional: true,
-                                                        Computed: true,
+							Computed: true,
 						},
 						"id": {
 							Type:     schema.TypeString,
