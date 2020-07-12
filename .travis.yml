@@ -47,7 +47,7 @@ script:
 
     # Run a Sanity Check against an empty terraform file. When
     # ran, it should fail if the compilation was unsuccessful.
-    - docker run -it --rm=true $REPO:$TAG /bin/ash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
+    - docker run -it --rm=true $REPO:$TAG /bin/bash -c "echo '' >> /demo.tf && cd / && /usr/local/terraform/terraform plan"
 
 after_success:
     - if [ "$TRAVIS_BRANCH" == "master" ]; then
