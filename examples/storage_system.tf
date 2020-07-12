@@ -1,9 +1,9 @@
 provider "oneview" {
-  ov_username   = "administrator"
-  ov_password   = "admin123"
-  ov_endpoint   = "https://10.50.9.41"
+  ov_username   = "<ov_username>"
+  ov_password   = "<ov_password>"
+  ov_endpoint   = "<ov_endpoint>"
   ov_sslverify  = false
-  ov_apiversion = 1800
+  ov_apiversion = <ov_apiversion>
   ov_ifmatch    = "*"
 }
 
