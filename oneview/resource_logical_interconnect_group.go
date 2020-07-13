@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -453,11 +453,6 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Optional: true,
 							Default:  true,
 						},
-						"igmp_snooping": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
-						},
 						"interconnect_utilization_alert": {
 							Type:     schema.TypeBool,
 							Optional: true,
@@ -478,15 +473,89 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Optional: true,
 							Default:  false,
 						},
-						"igmp_timeout_interval": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Default:  260,
-						},
 						"mac_refresh_interval": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Default:  5,
+						},
+					},
+				},
+			},
+			"igmp_settings": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "IgmpSettings",
+						},
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "ExactMatch",
+						},
+						"created": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"etag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"igmp_snooping": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"prevent_flooding": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"proxy_reporting": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"igmp_idle_timeout_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"igmp_snooping_vlan_ids": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"modified": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 					},
 				},
@@ -1024,7 +1093,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		lig.SnmpConfiguration = &snmpConfiguration
 	}
 
-	interconnectSettingsPrefix := fmt.Sprintf("interconnect_settings.0")
+	interconnectSettingsPrefix := fmt.Sprintf("interconnect_settings")
 	if val, ok := d.GetOk(interconnectSettingsPrefix + ".type"); ok {
 		interconnectSettings := ov.EthernetSettings{}
 
@@ -1047,21 +1116,92 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 			interconnectSettings.EnableInterconnectUtilizationAlert = &enabled
 		}
 
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_snooping"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableIgmpSnooping = &enabled
-		}
-
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_timeout_interval"); ok {
-			interconnectSettings.IgmpIdleTimeoutInterval = val1.(int)
-		}
-
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
 			interconnectSettings.MacRefreshInterval = val1.(int)
 		}
 
 		interconnectSettings.Type = val.(string)
 		lig.EthernetSettings = &interconnectSettings
+	}
+
+	igmpSettingsPrefix := fmt.Sprintf("igmp_settings.0")
+	if val, ok := d.GetOk(igmpSettingsPrefix + ".type"); ok {
+		igmpSettings := ov.IgmpSettings{}
+
+		consistencyChecking := d.Get(igmpSettingsPrefix + ".consistency_checking")
+		igmpSettings.ConsistencyChecking = consistencyChecking.(string)
+
+		igmpSnooping := d.Get(igmpSettingsPrefix + ".igmp_snooping").(bool)
+		igmpSettings.EnableIgmpSnooping = &igmpSnooping
+
+		preventFlooding := d.Get(igmpSettingsPrefix + ".prevent_flooding").(bool)
+		igmpSettings.EnablePreventFlooding = &preventFlooding
+
+		proxyReporting := d.Get(igmpSettingsPrefix + ".proxy_reporting").(bool)
+		igmpSettings.EnableProxyReporting = &proxyReporting
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".created"); ok {
+			enabled := val1.(string)
+			igmpSettings.Created = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".description"); ok {
+			enabled := utils.NewNstring(val1.(string))
+			igmpSettings.Description = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".id"); ok {
+			enabled := val1.(string)
+			igmpSettings.ID = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".etag"); ok {
+			enabled := utils.NewNstring(val1.(string))
+			igmpSettings.ETAG = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".igmp_idle_timeout_interval"); ok {
+			enabled := val1.(int)
+			igmpSettings.IgmpIdleTimeoutInterval = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".igmp_snooping_vlan_ids"); ok {
+			enabled := val1.(string)
+			igmpSettings.IgmpSnoopingVlanIds = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".modified"); ok {
+			enabled := val1.(string)
+			igmpSettings.Modified = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".name"); ok {
+			enabled := val1.(string)
+			igmpSettings.Name = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".state"); ok {
+			enabled := val1.(string)
+			igmpSettings.State = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".status"); ok {
+			enabled := val1.(string)
+			igmpSettings.Status = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".category"); ok {
+			enabled := utils.NewNstring(val1.(string))
+			igmpSettings.Category = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".uri"); ok {
+			enabled := utils.NewNstring(val1.(string))
+			igmpSettings.URI = enabled
+		}
+
+		igmpSettings.Type = val.(string)
+		lig.IgmpSettings = &igmpSettings
 	}
 
 	qualityOfServicePrefix := fmt.Sprintf("quality_of_service.0")
@@ -1158,6 +1298,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	config := meta.(*Config)
 
 	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
+
 	if err != nil || logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -1174,7 +1315,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("fabric_uri", logicalInterconnectGroup.FabricUri.String())
 	d.Set("eTag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
-	d.Set("interconnect_settings.0.igmp_snooping", logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping)
 	d.Set("interconnect_settings.0.interconnect_utilization_alert", logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert)
 	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
 	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
@@ -1471,19 +1611,41 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSetting := map[string]interface{}{
-		"type": logicalInterconnectGroup.EthernetSettings.Type,
+		"type":                    logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
-		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
 		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
 		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
-		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
 		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
 	}
 
 	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
 	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
+
+	igmpSettings := make([]map[string]interface{}, 0, 1)
+	igmpSetting := map[string]interface{}{
+		"category":                   logicalInterconnectGroup.IgmpSettings.Category,
+		"consistency_checking":       logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
+		"created":                    logicalInterconnectGroup.IgmpSettings.Created,
+		"dependent_resource_uri":     logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
+		"description":                logicalInterconnectGroup.IgmpSettings.Description,
+		"etag":                       logicalInterconnectGroup.IgmpSettings.ETAG,
+		"igmp_snooping":              *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
+		"prevent_flooding":           *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
+		"proxy_reporting":            *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
+		"id":                         logicalInterconnectGroup.IgmpSettings.ID,
+		"igmp_idle_timeout_interval": logicalInterconnectGroup.IgmpSettings.IgmpIdleTimeoutInterval,
+		"igmp_snooping_vlan_ids":     logicalInterconnectGroup.IgmpSettings.IgmpSnoopingVlanIds,
+		"modified":                   logicalInterconnectGroup.IgmpSettings.Modified,
+		"name":                       logicalInterconnectGroup.IgmpSettings.Name,
+		"state":                      logicalInterconnectGroup.IgmpSettings.State,
+		"status":                     logicalInterconnectGroup.IgmpSettings.Status,
+		"type":                       logicalInterconnectGroup.IgmpSettings.Type,
+		"uri":                        logicalInterconnectGroup.IgmpSettings.URI,
+	}
+	igmpSettings = append(igmpSettings, igmpSetting)
+	d.Set("igmp_settings", igmpSettings)
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
@@ -1526,7 +1688,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	qualityOfService := make([]map[string]interface{}, 0, 1)
 	qualityOfService = append(qualityOfService, map[string]interface{}{
-		"type": logicalInterconnectGroup.QosConfiguration.Type,
+		"type":                         logicalInterconnectGroup.QosConfiguration.Type,
 		"active_qos_config_type":       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
 		"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
 		"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
@@ -1973,18 +2135,9 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			interconnectSettings.EnableRichTLV = &enabled
 		}
 
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_snooping"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableIgmpSnooping = &enabled
-		}
-
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
 			enabled := val1.(bool)
 			interconnectSettings.EnableInterconnectUtilizationAlert = &enabled
-		}
-
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".igmp_timeout_interval"); ok {
-			interconnectSettings.IgmpIdleTimeoutInterval = val1.(int)
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
@@ -1993,6 +2146,87 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 
 		interconnectSettings.Type = val.(string)
 		lig.EthernetSettings = &interconnectSettings
+	}
+
+	igmpSettingsPrefix := fmt.Sprintf("igmp_settings.0")
+
+	if val, ok := d.GetOk(igmpSettingsPrefix + ".type"); ok {
+		igmpSettings := ov.IgmpSettings{}
+
+		consistencyChecking := d.Get(igmpSettingsPrefix + ".consistency_checking").(string)
+		igmpSettings.ConsistencyChecking = consistencyChecking
+
+		igmpSnooping := d.Get(igmpSettingsPrefix + ".igmp_snooping").(bool)
+		igmpSettings.EnableIgmpSnooping = &igmpSnooping
+
+		preventFlooding := d.Get(igmpSettingsPrefix + ".prevent_flooding").(bool)
+		igmpSettings.EnablePreventFlooding = &preventFlooding
+
+		proxyReporting := d.Get(igmpSettingsPrefix + ".proxy_reporting").(bool)
+		igmpSettings.EnableProxyReporting = &proxyReporting
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".created"); ok {
+			enabled := val1.(string)
+			igmpSettings.Created = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".description"); ok {
+			enabled := utils.NewNstring(val1.(string))
+			igmpSettings.Description = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".id"); ok {
+			enabled := val1.(string)
+			igmpSettings.ID = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".etag"); ok {
+			enabled := utils.NewNstring(val1.(string))
+			igmpSettings.ETAG = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".igmp_idle_timeout_interval"); ok {
+			enabled := val1.(int)
+			igmpSettings.IgmpIdleTimeoutInterval = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".igmp_snooping_vlan_ids"); ok {
+			enabled := val1.(string)
+			igmpSettings.IgmpSnoopingVlanIds = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".modified"); ok {
+			enabled := val1.(string)
+			igmpSettings.Modified = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".name"); ok {
+			enabled := val1.(string)
+			igmpSettings.Name = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".state"); ok {
+			enabled := val1.(string)
+			igmpSettings.State = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".status"); ok {
+			enabled := val1.(string)
+			igmpSettings.Status = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".category"); ok {
+			enabled := utils.NewNstring(val1.(string))
+			igmpSettings.Category = enabled
+		}
+
+		if val1, ok := d.GetOk(igmpSettingsPrefix + ".uri"); ok {
+			enabled := utils.NewNstring(val1.(string))
+			igmpSettings.URI = enabled
+		}
+
+		igmpSettings.Type = val.(string)
+		lig.IgmpSettings = &igmpSettings
 	}
 
 	qualityOfServicePrefix := fmt.Sprintf("quality_of_service.0")
