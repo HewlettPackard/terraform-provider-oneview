@@ -37,3 +37,9 @@ output "oneview_fcoe_network" {
         value = "${data.oneview_fcoe_network.fcoe_network_obj.vlan_id}"
 }
 */
+
+/*
+#Importing Existing resource
+resource "oneview_fcor_network_value" "import_fcoe"{
+}
+*/

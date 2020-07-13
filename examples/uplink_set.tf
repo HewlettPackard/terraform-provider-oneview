@@ -28,3 +28,9 @@ data "oneview_uplink_set" "uplink_set" {
 output "oneview_uplink_set_value" {
         value = "${data.oneview_uplink_set.uplink_set.uri}"
 }
+/*
+
+#Importing Existing resource
+resource "oneview_uplink_set" "import_us"{
+}
+*/
