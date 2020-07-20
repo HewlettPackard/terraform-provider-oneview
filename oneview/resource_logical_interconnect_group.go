@@ -1146,7 +1146,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		}
 
 		if val1, ok := d.GetOk(igmpSettingsPrefix + ".description"); ok {
-			enabled := utils.NewNstring(val1.(string))
+			enabled := val1.(string)
 			igmpSettings.Description = enabled
 		}
 
@@ -2171,7 +2171,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		}
 
 		if val1, ok := d.GetOk(igmpSettingsPrefix + ".description"); ok {
-			enabled := utils.NewNstring(val1.(string))
+			enabled := val1.(string)
 			igmpSettings.Description = enabled
 		}
 

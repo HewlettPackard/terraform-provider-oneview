@@ -52,6 +52,7 @@ type Folders struct {
 type AllocatedCapacity struct {
 	SnapshotAllocatedCapacity string `json:"snapshotAllocatedCapacity,omitempty"`
 	TotalAllocatedCapacity    string `json:"totalAllocatedCapacity,omitempty"`
+	SharedAllocatedCapacity   string `json:"sharedAllocatedCapacity,omitempty"`
 	VolumeAllocatedCapacity   string `json:"volumeAllocatedCapacity,omitempty"`
 }
 

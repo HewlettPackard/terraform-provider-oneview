@@ -46,14 +46,14 @@ type LogicalInterconnectGroup struct {
 
 type EthernetSettings struct {
 	Category                           utils.Nstring `json:"category,omitempty"`                           // "category": null,
-	ConsistencyChecking		   string        `json:"consistencyChecking,omitempty"`		       // "consistencyChecking":"ExactMatch"
+	ConsistencyChecking                string        `json:"consistencyChecking,omitempty"`                // "consistencyChecking":"ExactMatch"
 	Created                            string        `json:"created,omitempty"`                            // "created": "20150831T154835.250Z",
 	DependentResourceUri               utils.Nstring `json:"dependentResourceUri,omitempty"`               // "dependentResourceUri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86",
 	Description                        utils.Nstring `json:"description,omitempty"`                        // "description": "Ethernet Settings",
-	DomainName			   string	 `json:"domainName,omitempty"           `              // "domainName": "ADHS",
+	DomainName                         string        `json:"domainName,omitempty"           `              // "domainName": "ADHS",
 	ETAG                               utils.Nstring `json:"eTag,omitempty"`                               // "eTag": "1441036118675/8",
-	EnableCutThrough		   *bool         `json:"enableCutThrough,omitempty"`                  // "enableCutThrough": false,	
-	EnableDdns			   *bool	 `json:"enableDdns,omitempty"`                        // "enableCutThrough": false,
+	EnableCutThrough                   *bool         `json:"enableCutThrough,omitempty"`                   // "enableCutThrough": false,
+	EnableDdns                         *bool         `json:"enableDdns,omitempty"`                         // "enableCutThrough": false,
 	EnableFastMacCacheFailover         *bool         `json:"enableFastMacCacheFailover,omitempty"`         // "enableFastMacCacheFailover": false,
 	EnableInterconnectUtilizationAlert *bool         `json:"enableInterconnectUtilizationAlert,omitempty"` // "enableInterconnectUtilizationAlert": false,
 	EnableNetworkLoopProtection        *bool         `json:"enableNetworkLoopProtection,omitempty"`        // "enableNetworkLoopProtection": false,
@@ -77,26 +77,25 @@ type EthernetSettings struct {
 	URI                                utils.Nstring `json:"uri,omitempty"`                                // "uri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86/ethernetSettings"
 }
 
-
 type IgmpSettings struct {
-	Category                           utils.Nstring `json:"category,omitempty"`                           // "category": null,
-	ConsistencyChecking		   string        `json:"consistencyChecking,omitempty"`		       // "consistencyChecking":"ExactMatch"
-	Created                            string        `json:"created,omitempty"`                            // "created": "20150831T154835.250Z",
-	DependentResourceUri               utils.Nstring `json:"dependentResourceUri,omitempty"`               // "dependentResourceUri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86",
-	Description                        utils.Nstring `json:"description,omitempty"`                        // "description": "Igmp Settings",
-	ETAG                               utils.Nstring `json:"eTag,omitempty"`                               // "eTag": "1441036118675/8",
-	EnableIgmpSnooping                 *bool         `json:"enableIgmpSnooping,omitempty"`                 // "enableIgmpSnooping": true,
-	EnablePreventFlooding		   *bool         `json:"enablePreventFlooding,omitempty"`              // "enablePreventFlooding": false,
-	EnableProxyReporting		   *bool         `json:"enableProxyReporting,omitempty"`               // "enableProxyReporting": false,
-	ID                                 string        `json:"id,omitempty"`                                 // "id": "0c398238-2d35-48eb-9eb5-7560d59f94b3",
-	IgmpIdleTimeoutInterval            int           `json:"igmpIdleTimeoutInterval,omitempty"`            // "igmpIdleTimeoutInterval": 260,
-	IgmpSnoopingVlanIds                string        `json:"igmpSnoopingVlanIds,omitempty"`                // "igmpSnoopingVlanIds": "",
-	Modified                           string        `json:"modified,omitempty"`                           // "modified": "20150831T154835.250Z",
-	Name                               string        `json:"name,omitempty"`                               // "name": "IgmpSettings 1",
-	State                              string        `json:"state,omitempty"`                              // "state": "Normal",
-	Status                             string        `json:"status,omitempty"`                             // "status": "Critical",
-	Type                               string        `json:"type,omitempty"`                               // "type": "IgmpSettings"
-	URI                                utils.Nstring `json:"uri,omitempty"`                                // "uri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86/igmpSettings"
+	Category                utils.Nstring `json:"category,omitempty"`                // "category": null,
+	ConsistencyChecking     string        `json:"consistencyChecking,omitempty"`     // "consistencyChecking":"ExactMatch"
+	Created                 string        `json:"created,omitempty"`                 // "created": "20150831T154835.250Z",
+	DependentResourceUri    string        `json:"dependentResourceUri,omitempty"`    // "dependentResourceUri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86",
+	Description             string        `json:"description,omitempty"`             // "description": "Igmp Settings",
+	ETAG                    utils.Nstring `json:"eTag,omitempty"`                    // "eTag": "1441036118675/8",
+	EnableIgmpSnooping      *bool         `json:"enableIgmpSnooping,omitempty"`      // "enableIgmpSnooping": true,
+	EnablePreventFlooding   *bool         `json:"enablePreventFlooding,omitempty"`   // "enablePreventFlooding": false,
+	EnableProxyReporting    *bool         `json:"enableProxyReporting,omitempty"`    // "enableProxyReporting": false,
+	ID                      string        `json:"id,omitempty"`                      // "id": "0c398238-2d35-48eb-9eb5-7560d59f94b3",
+	IgmpIdleTimeoutInterval int           `json:"igmpIdleTimeoutInterval,omitempty"` // "igmpIdleTimeoutInterval": 260,
+	IgmpSnoopingVlanIds     string        `json:"igmpSnoopingVlanIds,omitempty"`     // "igmpSnoopingVlanIds": "",
+	Modified                string        `json:"modified,omitempty"`                // "modified": "20150831T154835.250Z",
+	Name                    string        `json:"name,omitempty"`                    // "name": "IgmpSettings 1",
+	State                   string        `json:"state,omitempty"`                   // "state": "Normal",
+	Status                  string        `json:"status,omitempty"`                  // "status": "Critical",
+	Type                    string        `json:"type,omitempty"`                    // "type": "IgmpSettings"
+	URI                     utils.Nstring `json:"uri,omitempty"`                     // "uri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86/igmpSettings"
 }
 
 type InterconnectMapTemplate struct {
@@ -370,7 +369,7 @@ type LogicalInterconnectGroupDefaultSettings struct {
 	Created          string            `json:"created,omitempty"`          //"created": null,
 	Modified         string            `json:"modified,omitempty"`         //"modified": null,
 	EthernetSettings *EthernetSettings `json:"ethernetSettings,omitempty"` // "ethernetSettings": {...},
-        IgmpSettings     *IgmpSettings     `json:"igmpSettings,omitempty"`     // "igmpSettings": {...},
+	IgmpSettings     *IgmpSettings     `json:"igmpSettings,omitempty"`     // "igmpSettings": {...},
 	FcoeSettings     string            `json:"fcoeSettings,omitempty"`     // "fcoeSettings": null,
 	Description      string            `json:"description,omitempty"`      // "description": null,
 	State            string            `json:"state,omitempty"`            //  "state": null,
