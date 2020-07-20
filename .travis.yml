@@ -43,7 +43,7 @@ script:
     - GOOS=linux go build -a -tags netgo -ldflags '-s -w' -o $TF_DOWNLOAD_PATH/linux/$BUILDNAME
 
     # Create the docker image from the Dockerfile.
-    - docker build -f Dockerfile -t $REPO:$TAG .
+    - docker build -f Dockerfile -t $REPO .
 
     # Run a Sanity Check against an empty terraform file. When
     # ran, it should fail if the compilation was unsuccessful.
