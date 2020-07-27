@@ -30,3 +30,9 @@ resource "oneview_ethernet_network" "ethernetnetwork" {
 	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"] 
 	
 }*/
+
+/*
+#Importing Existing resource
+resource "oneview_ethernet_network" "import_eth"{
+}
+*/
