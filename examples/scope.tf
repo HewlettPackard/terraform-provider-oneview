@@ -26,3 +26,8 @@ resource "oneview_scope" "scope_inst" {
 	type = "ScopeV3"
 	description = "Rename the Scope"
 }*/
+/*
+#Importing Existing resource
+resource "oneview_scope" "import_scope"{
+}
+*/
