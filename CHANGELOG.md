@@ -13,9 +13,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - FCOE Network
 - Interconnect
 - Interconnect Type
-- Network Set
 - Logical Interconnect
 - Logical Interconnect Group
+- Network Set
 - Scopes
 - Server Hardware
 - Server Hardware Type
