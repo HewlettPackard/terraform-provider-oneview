@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - FC Network
 - FCOE Network
 - Scopes
+- Server Certificates
 - Uplink Set
 
 # [v1.3.0]
