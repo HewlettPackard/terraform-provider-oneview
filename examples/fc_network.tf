@@ -31,3 +31,9 @@ output "oneview_fc_network_value" {
         value = "${data.oneview_fc_network.fc_network.fabric_type}"
 }
 */
+
+/*
+#Importing Existing resource
+resource "oneview_fc_network_value" "import_fc"{
+}
+*/
