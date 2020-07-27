@@ -1,18 +1,25 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.4.0]
+# [v1.4.0](unreleased)
 ### Notes
 - This release supports API1800 minimally where we can use OneView API1800 with this SDK. No new fields are added/deleted to support API1800.
 
 ### Oneview Features supported
+- Enclosure
+- Enclosure Group
+- Ethernet Network
+- FC Network
+- FCOE Network
 - Interconnect
 - Interconnect Type
 - Network Set
 - Logical Interconnect
 - Logical Interconnect Group
+- Scopes
 - Server Hardware
 - Server Hardware Type
+- Uplink Set
 
 # [v1.3.0]
 ### Notes
