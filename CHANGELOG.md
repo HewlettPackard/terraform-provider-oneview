@@ -10,7 +10,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Enclosure Group
 - Ethernet Network
 - FC Network
-- FCOE Network
+- FCOE Network 
+- Hypervisor Cluster Profile
 - Scopes
 - Uplink Set
 
