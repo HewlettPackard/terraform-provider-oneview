@@ -13,10 +13,10 @@ data "oneview_scope" "scope_obj" {
 
 resource "oneview_hypervisor_manager" "HypervisorManager" {
 	display_name = "TestHypervisorManager"
-        name = "172.18.13.11"
-        username= "dcs"
-        password = "dcs"
-        port = 443
+        name = "<hypervisor_manager_hostname>"
+        username= "<hypervisor_manager_username>"
+        password = "<hypervisor_manager_password>"
+        port = <hypervisor_manager_port_num>
 	type = "HypervisorManagerV2"
 	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
 
@@ -24,7 +24,7 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
 }/* Uncomment following to run update
 resource "oneview_hypervisor_manager" "HypervisorManager" {
 	display_name = "TestHypervisorManager_Renamed"
-        name = "172.18.13.11"
+        name = "<hypervisor_manager_hostname>"
 	type = "HypervisorManagerV2"
         username= "dcs1"
         preferences= {   type= "Vmware"
@@ -39,7 +39,7 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
 */
 /* Testing data source*/
 data "oneview_hypervisor_manager" "HypervisorManager" {
-        name = "172.18.13.11"
+        name = "<hypervisor_manager_hostname>"
 }
 
 output "oneview_hypervisor_manager_value" {
