@@ -13,6 +13,20 @@ setting for make to avoid using docker. Otherwise make sure to have these tools:
 - docker client and daemon
 - gnu make tools
 
+### Docker Container Setup
+
+We also provide a lightweight and easy way to test and run `oneview-golang`. The `hewlettpackardenterprise/hpe-oneview-sdk-for-golang:<tag>` docker image contains an installation of oneview-golang installation you can use by just pulling down the Docker Image:
+
+The Docker Store image `tag` consist of two sections: `<sdk_version-OV_version>`
+
+```bash
+# Download and store a local copy of hpe-oneview-sdk-for-golang and
+# use it as a Docker image.
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-golang:v1.5.0-OV5.3
+#Run docker commands and this will in turn create
+# a sh session where you can create files, issue commands and execute the tests
+$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-golang:v1.5.0-OV5.3 /bin/sh
+```
 
 
 ### Environment Variables
@@ -29,7 +43,7 @@ export ONEVIEW_OV_DOMAIN=LOCAL
 export ONEVIEW_SSLVERIFY=false
 export ONEVIEW_APIVERSION=<ov_apiversion>
 ```
-Note: Currently this SDK supports OneView API 1600 minimally where we can test OneView API 1600 version with this SDK. No new fields have been added/deleted to support API 1600 version. Complete support will be done in next releases.
+Note: Currently this SDK supports OneView API 1800 minimally where we can test OneView API 1800 version with this SDK. No new fields have been added/deleted to support API 1800 version. Complete support will be done in next releases.
 
 ## Testing your changes
 
