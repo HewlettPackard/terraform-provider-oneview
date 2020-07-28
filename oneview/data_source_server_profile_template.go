@@ -146,8 +146,6 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	var connections []ov.Connection
 	if len(spt.ConnectionSettings.Connections) != 0 {
 		connections = spt.ConnectionSettings.Connections
-	} else {
-		connections = spt.Connections
 	}
 	if len(connections) != 0 {
 		networks := make([]map[string]interface{}, 0, len(connections))

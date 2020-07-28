@@ -14,11 +14,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Interconnect
 - Interconnect Type
 - Network Set
+- Logical Enclosure
 - Logical Interconnect
 - Logical Interconnect Group
 - Scopes
 - Server Hardware
 - Server Hardware Type
+- Server Profile
+- Server Profile Template
 - Uplink Set
 
 # [v1.3.0]
