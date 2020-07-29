@@ -240,7 +240,7 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	storageVolume, err := config.ovClient.GetStorageVolumeByName(d.Get("name").(string))
+	storageVolume, err := config.ovClient.GetStorageVolumeByName(d.Id())
 	if err != nil {
 		d.SetId("")
 		return nil
@@ -251,7 +251,6 @@ func resourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	d.SetId(d.Get("name").(string))
 	d.Set("category", storageVolume.Category)
 	d.Set("description", storageVolume.Description)
 	d.Set("allocated_capacity", storageVolume.AllocatedCapacity)
