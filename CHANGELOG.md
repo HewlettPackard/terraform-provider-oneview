@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Server Hardware
 - Server Hardware Type
 - Storage Volume
+- Storage Volume Template
 - Uplink Set
 
 # [v1.3.0]
