@@ -29,6 +29,7 @@ type LogicalInterconnect struct {
 	EnclosureUris                        []utils.Nstring         `json:"enclosureUris,omitempty"`                        //"enclosureUris": ["/rest/enclosures/013645CN759000AC"],
 	FusionDomainUri                      utils.Nstring           `json:"fusionDomainUri,omitempty"`                      //"fusionDomainUri": "/rest/domains/7b655ba0-11c1-4e9c-a191-672e1d0bbd8e",
 	EthernetSettings                     *EthernetSettings       `json:"ethernetSettings,omitempty"`                     //"ethernetSettings": {...},
+	IgmpSettings                         *IgmpSettings           `json:"igmpSettings,omitempty"`                         //"igmpSettings": [...],
 	LogicalInterconnectGroupUri          utils.Nstring           `json:"logicalInterconnectGroupUri,omitempty"`          //"logicalInterconnectGroupUri": "/rest/logical-interconnect-groups/3de143b3-bf77-4944-aa31-18084676b664",
 	StackingHealth                       string                  `json:"stackingHealth,omitempty"`                       //"stackingHealth": "BiConnected",
 	InitialScopeUris                     []string                `json:"initialScopeUris,omitempty"`                     //"InitialScopeUris": [],
@@ -63,6 +64,19 @@ type InterconnectMapEntries struct {
 	PermittedInterconnectTypeUri utils.Nstring `json:"permittedInterconnectTypeUri,omitempty"` //"permittedInterconnectTypeUri": "/rest/interconnect-types/59080afb-85b5-43ae-8c69-27c08cb91f3a",
 	InterconnectUri              utils.Nstring `json:"interconnectUri,omitempty"`              //"interconnectUri": "/rest/interconnects/aca6687f-1370-46cd-b832-7e3192dbddfd",
 	EnclosureIndex               int           `json:"enclosureIndex,omitempty"`               //"enclosureIndex": 2
+}
+
+type IgmpSettingsUpdate struct {
+	ConsistencyChecking     string        `json:"consistencyChecking,omitempty"`     // "consistencyChecking":"ExactMatch"
+	Created                 string        `json:"created,omitempty"`                 // "created": "20150831T154835.250Z",
+	DependentResourceUri    string        `json:"dependentResourceUri,omitempty"`    // "dependentResourceUri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86",
+	EnableIgmpSnooping      *bool         `json:"enableIgmpSnooping,omitempty"`      // "enableIgmpSnooping": true,
+	ID                      string        `json:"id,omitempty"`                      // "id": "0c398238-2d35-48eb-9eb5-7560d59f94b3",
+	IgmpIdleTimeoutInterval int           `json:"igmpIdleTimeoutInterval,omitempty"` // "igmpIdleTimeoutInterval": 260,
+	Modified                string        `json:"modified,omitempty"`                // "modified": "20150831T154835.250Z",
+	Name                    string        `json:"name,omitempty"`                    // "name": "IgmpSettings 1",
+	Type                    string        `json:"type,omitempty"`                    // "type": "IgmpSettings"
+	URI                     utils.Nstring `json:"uri,omitempty"`                     // "uri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86/igmpSettings"
 }
 
 type PortMonitor struct {
@@ -352,6 +366,60 @@ func (c *OVClient) GetLogicalInterconnectPortMonitor(Id string) (PortMonitor, er
 		return portMonitor, err
 	}
 	return portMonitor, nil
+}
+
+func (c *OVClient) GetLogicalInterconnectIgmpSettings(Id string) (IgmpSettings, error) {
+	var (
+		uri           = "/rest/logical-interconnects/"
+		igmp_settings IgmpSettings
+	)
+	uri = uri + Id + "/igmpSettings"
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return igmp_settings, err
+	}
+	log.Debugf("GetLogicalInterconnect %s", data)
+	if err := json.Unmarshal([]byte(data), &igmp_settings); err != nil {
+		return igmp_settings, err
+	}
+	return igmp_settings, nil
+}
+
+func (c *OVClient) UpdateLogicalInterconnectIgmpSettings(IgmpConfig IgmpSettingsUpdate, Id string) error {
+	var (
+		uri = "/rest/logical-interconnects/"
+		t   *Task
+	)
+	uri = uri + Id + "/igmpSettings"
+	//	IgmpConfig["DependentResourceUri"] = uri + Id
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Infof("REST : %s \n %+v\n", uri, IgmpConfig)
+	log.Infof("task -> %+v", t)
+	data, err := c.RestAPICall(rest.PUT, uri, IgmpConfig)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error updating logicalInterConnect Igmp update request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response update LogicalInterConnect Igmp Settings %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *OVClient) GetLogicalInterconnectEthernetSettings(Id string) (EthernetSettings, error) {

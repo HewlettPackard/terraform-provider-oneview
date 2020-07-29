@@ -181,7 +181,7 @@ func (c *OVClient) GetStorageSystems(filter string, sort string) (StorageSystems
 }
 
 func (c *OVClient) CreateStorageSystem(sSystem StorageSystem) error {
-	log.Infof("Initializing creation of storage volume for %s.", sSystem.Name)
+	log.Infof("Initializing creation of storage system for %s.", sSystem.Name)
 	var (
 		uri = "/rest/storage-systems"
 		t   *Task
@@ -198,7 +198,7 @@ func (c *OVClient) CreateStorageSystem(sSystem StorageSystem) error {
 	data, err := c.RestAPICall(rest.POST, uri, sSystem)
 	if err != nil {
 		t.TaskIsDone = true
-		log.Errorf("Error submitting new storage volume request: %s", err)
+		log.Errorf("Error submitting new storage system request: %s", err)
 		return err
 	}
 
