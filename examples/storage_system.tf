@@ -9,9 +9,9 @@ provider "oneview" {
 
 
 resource "oneview_storage_system" "ss_inst" {
-        hostname = "172.18.11.12"
-        username = "dcs"
-        password = "dcs"
+        hostname = "<storage_system_ip>"
+        username = "<storage_system_username>"
+        password = "<storage_system_password>"
         family   = "StoreServ"
 }
 
@@ -20,12 +20,12 @@ resource "oneview_storage_system" "ss_inst" {
 /*resource "oneview_storage_system" "ss_inst" {
   credentials = [
     {
-      username = "dcs"
-      password = "dcs"
+      username = "<storage_system_username>"
+      password = "<storage_system_password>"
     },
   ]
 
-  hostname = "172.18.11.12"
+  hostname = "<storage_system_ip>"
   name     = "ThreePAR-2"
 
   storage_system_device_specific_attributes = {
