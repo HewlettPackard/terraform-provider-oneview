@@ -9,7 +9,7 @@ provider "oneview" {
 
 /*
 
-   Import the existing the resource from appliance into the teriraform instance.
+   Import the existing the resource from appliance into the terraform instance.
    Create a empty resource and execute the following command.
 	
 	terraform import oneview_logical_interconnect.<instance> <resource_id>
@@ -18,8 +18,9 @@ provider "oneview" {
 	
 	Example: terraform import oneview_logical_interconnect.li d4468f89-4442-4324-9c01-624c7382db2d
 */
-/*resource "oneview_logical_interconnect" "li" {
-}*/
+
+resource "oneview_logical_interconnect" "li" {
+}
 
 /*
 	Use the the particular update string for a particular update functionality.
@@ -30,6 +31,7 @@ provider "oneview" {
 	|  1  | UpdateLogicalInterconnectConsistentById     | updateComplianceById         |
 	------------------------------------------------------------------------------------
 */
-resource "oneview_logical_interconnect" "li" {
+
+/*resource "oneview_logical_interconnect" "li" {
 	update_type = "updateComplianceById"
-}
+}*/

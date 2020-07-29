@@ -40,6 +40,10 @@ type FCNetworkList struct {
 	Members     []FCNetwork   `json:"members,omitempty"`     // "members":[]
 }
 
+type FCNetworkBulkDelete struct {
+	FCNetworkUris []utils.Nstring `json:"networkUris",omitempty` // "networkUris": [ "/rest/ethernet-networks/e2f0031b-52bd-4223-9ac1-d91cb519d548", "/rest/ethernet-networks/f2f0031b-52bd-4223-9ac1-d91cb519d549"]
+}
+
 func (c *OVClient) GetFCNetworkByName(name string) (FCNetwork, error) {
 	fcNets, err := c.GetFCNetworks(fmt.Sprintf("name matches '%s'", name), "name:asc", "", "")
 	if fcNets.Total > 0 {
@@ -169,6 +173,40 @@ func (c *OVClient) DeleteFCNetwork(name string) error {
 		return nil
 	} else {
 		log.Infof("fcNetwork could not be found to delete, %s, skipping delete ...", name)
+	}
+	return nil
+}
+
+func (c *OVClient) DeleteBulkFcNetwork(fcNet FCNetworkBulkDelete) error {
+	log.Infof("Initializing bulk deletion of FC network")
+	var (
+		uri = "rest/fc-networks/bulk-delete"
+		t   *Task
+	)
+	//refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Debugf("REST :%s \n %+v\n", uri, fcNet)
+	log.Debugf("task -> %+v", t)
+	data, err := c.RestAPICall(rest.POST, uri, fcNet)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error submitting new bulk delete fc-network request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response of Bulk Delete for FC Network %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
 	}
 	return nil
 }
