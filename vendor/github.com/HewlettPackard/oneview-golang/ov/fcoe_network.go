@@ -37,6 +37,10 @@ type FCoENetworkList struct {
 	Members     []FCoENetwork `json:"members,omitempty"`     // "members":[]
 }
 
+type FCoENetworkBulkDelete struct {
+	FCoENetworkUris []utils.Nstring `json:"networkUris",omitempty` // "networkUris": [ "/rest/fcoe-networks/e2f0031b-52bd-4223-9ac1-d91cb519d548", "/rest/fcoe-networks/f2f0031b-52bd-4223-9ac1-d91cb519d549"]
+}
+
 func (c *OVClient) GetFCoENetworkByName(name string) (FCoENetwork, error) {
 	var (
 		fcoeNet FCoENetwork
@@ -169,6 +173,40 @@ func (c *OVClient) DeleteFCoENetwork(name string) error {
 		return nil
 	} else {
 		log.Infof("fcoeNetwork could not be found to delete, %s, skipping delete ...", name)
+	}
+	return nil
+}
+
+func (c *OVClient) DeleteBulkFCoENetwork(fcoeNet FCoENetworkBulkDelete) error {
+	log.Infof("Initializing bulk deletion of FCoE network")
+	var (
+		uri = "rest/fcoe-networks/bulk-delete"
+		t   *Task
+	)
+	//refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Debugf("REST :%s \n %+v\n", uri, fcoeNet)
+	log.Debugf("task -> %+v", t)
+	data, err := c.RestAPICall(rest.POST, uri, fcoeNet)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error submitting new bulk delete FCoE-network request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response of Bulk Delete for FCoE Network %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
 	}
 	return nil
 }
