@@ -141,13 +141,13 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 			is_enabled = true
 			connection_id = 3
 			target_selector = "Auto"
-			storage_targets = []
+			targets = []
 			},
 			{
 			is_enabled = true
 			connection_id = 4
 			target_selector = "Auto"
-			storage_targets = []
+			targets = []
 			}]
 	}]
 	
@@ -246,9 +246,9 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 resource "oneview_server_profile" "SP" {
 	name = "TestSpTerraform"
 	hardware_name = "SYN03_Frame1, bay 3"
-	type = "ServerProfileV10"
+	type = "ServerProfileV12"
 	template = "${oneview_server_profile_template.ServerProfileTemplate.name}"
-	power_state = "on"
+	power_state = "off"
 	os_deployment_settings = {
 		os_custom_attributes = [{
 			name="HostName"

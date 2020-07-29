@@ -19,7 +19,6 @@ package ov
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"errors"
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/rest"
@@ -318,9 +317,6 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
-	file, _ := json.MarshalIndent(p, "", " ")
-        _ = ioutil.WriteFile("SPJSON.json", file, 0644)
-
 	t = t.NewProfileTask(c)
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, p)
@@ -328,12 +324,9 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 
 	// Get available server hardwares to assign it to SP
 	isHardwareAvailable, err := c.GetAvailableServers(p.ServerHardwareURI.String())
-	file, _ = json.MarshalIndent(isHardwareAvailable, "", " ")
-	_ = ioutil.WriteFile("HardwareUri.json", file, 0644)
+
 	if err != nil || isHardwareAvailable == false {
 		log.Errorf("Error getting available Hardware: %s", p.ServerHardwareURI.String())
-		file, _ = json.MarshalIndent(p, "", " ")
-		_ = ioutil.WriteFile("before_Exit.json", file, 0644)
 		os.Exit(1)
 	}
 
@@ -346,9 +339,6 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 	if server.Name != "" {
 		server.PowerOff()
 	}
-
-	file, _ = json.MarshalIndent(p, "", " ")
-        _ = ioutil.WriteFile("SPJSON_beforeRESTCALL.json", file, 0644)
 
 	data, err := c.RestAPICall(rest.POST, uri, p)
 	if err != nil {
