@@ -78,6 +78,22 @@ func (c *OVClient) GetStorageAttachmentByName(name string) (StorageAttachment, e
 		return sAttachment, err
 	}
 }
+func (c *OVClient) GetStorageAttachmentById(id string) (StorageAttachment, error) {
+	var (
+		sAttachment StorageAttachment
+		uri         = "/rest/storage-volume-attachments"
+	)
+	uri = uri + "/" + id
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return sAttachment, err
+	}
+	log.Debugf("GetStorageAttachment %s", data)
+	if err := json.Unmarshal([]byte(data), &sAttachment); err != nil {
+		return sAttachment, err
+	}
+	return sAttachment, nil
+}
 
 func (c *OVClient) GetStorageAttachments(filter string, sort string, start string, count string) (StorageAttachmentsList, error) {
 	var (

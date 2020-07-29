@@ -1,5 +1,5 @@
 /*
-(c) Copyright [2015] Hewlett Packard Enterprise Development LP
+(c) Copyright [2020] Hewlett Packard Enterprise Development LP
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
+	"os"
 )
 
 // FirmwareOption structure for firware settings
@@ -69,6 +70,26 @@ type Options struct {
 	Op    string `json:"op,omitempty"`    // "op": "replace",
 	Path  string `json:"path,omitempty"`  // "path": "/templateCompliance",
 	Value string `json:"value,omitempty"` // "value": "Compliant",
+}
+
+type Servers struct {
+	EnclosureGroupName     string   `json:"enclosureGroupName, omitempty"`
+	EnclosureName          string   `json:"enclosureGroupName, omitempty"`
+	EnclosureUri           string   `json:"enclosureGroupName, omitempty"`
+	EnclosureBay           int      `json:"enclosureBay, omitempty"`
+	ServerHardwareName     string   `json:"serverHardwareName, omitempty"`
+	ServerHardwareUri      string   `json:"serverHardwareUri, omitempty"`
+	ServerHardwareTypeName string   `json:"serverHardwareTypeName, omitempty"`
+	ServerHardwareTypeUri  string   `json:"serverHardwareTypeUri, omitempty"`
+	EnclosureGroupUri      string   `json:"enclosuregroupUri, omitempty"`
+	PowerState             string   `json:"powerState, omitempty"`
+	FormFactor             []string `json:"formFactor, omitempty"`
+	ServerHardwareStatus   string   `json:"serverHardwareStatus, omitempty"`
+}
+
+type AvailableTarget struct {
+	Type    string    `json:"type, omitempty"`
+	Members []Servers `json:"targets, omitempty"`
 }
 
 // ServerProfile - server profile object for ov
@@ -260,12 +281,42 @@ func (c *OVClient) GetProfileByURI(uri utils.Nstring) (ServerProfile, error) {
 	return profile, nil
 }
 
+// GetAvailableServers - To fetch available server hardwares
+func (c *OVClient) GetAvailableServers(ServerHardwareUri string) (bool, error) {
+	var (
+		hardwareUri         = "/rest/server-profiles/available-targets"
+		isHardwareAvailable = false
+		profiles            AvailableTarget
+	)
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	sh_data, err := c.RestAPICall(rest.GET, hardwareUri, nil)
+	if err != nil {
+		return isHardwareAvailable, err
+	}
+
+	if err := json.Unmarshal([]byte(sh_data), &profiles); err != nil {
+		return isHardwareAvailable, err
+	}
+
+	for i := 0; i < len(profiles.Members); i++ {
+		if profiles.Members[i].ServerHardwareUri == ServerHardwareUri {
+			isHardwareAvailable = true
+		}
+	}
+	return isHardwareAvailable, nil
+}
+
 // SubmitNewProfile - submit new profile template
 func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 	log.Infof("Initializing creation of server profile for %s.", p.Name)
 	var (
-		uri = "/rest/server-profiles"
-		t   *Task
+		uri    = "/rest/server-profiles"
+		server ServerHardware
+		t      *Task
 	)
 	// refresh login
 	c.RefreshLogin()
@@ -275,6 +326,24 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, p)
 	log.Debugf("task -> %+v", t)
+
+	// Get available server hardwares to assign it to SP
+	isHardwareAvailable, err := c.GetAvailableServers(p.ServerHardwareURI.String())
+	if err != nil || isHardwareAvailable == false {
+		log.Errorf("Error getting available Hardware: %s", p.ServerHardwareURI.String())
+		os.Exit(1)
+	}
+
+	server, err = c.GetServerHardwareByUri(p.ServerHardwareURI)
+	if err != nil {
+		log.Warnf("Problem getting server hardware, %s", err)
+	}
+
+	// power off the server so that we can add to SP
+	if server.Name != "" {
+		server.PowerOff()
+	}
+
 	data, err := c.RestAPICall(rest.POST, uri, p)
 	if err != nil {
 		t.TaskIsDone = true

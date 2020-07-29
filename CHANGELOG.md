@@ -11,7 +11,15 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Ethernet Network
 - FC Network
 - FCOE Network
+- Hypervisor Manager
+- Interconnect
+- Interconnect Type
+- Logical Interconnect
+- Logical Interconnect Group
+- Network Set
 - Scopes
+- Server Hardware
+- Server Hardware Type
 - Storage Volume
 - Uplink Set
 
