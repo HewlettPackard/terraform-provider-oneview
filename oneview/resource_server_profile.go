@@ -256,6 +256,22 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"consistency_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"firmware_activation_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"firmware_schedule_date_time": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"manage_firmware": {
 							Type:     schema.TypeBool,
 							Optional: true,
@@ -343,6 +359,10 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"associated_template_attachment_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"id": {
 							Type:     schema.TypeInt,
 							Required: true,
@@ -359,14 +379,6 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"permanent": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"volume_storage_pool_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"volume_storage_system_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -375,25 +387,93 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"volume_shareable": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"volume_description": {
+						"state": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"volume_provision_type": {
+						"status": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"volume_provisioned_capacity_bytes": {
-							Type:     schema.TypeString,
+						"volume": {
+							Type:     schema.TypeSet,
 							Optional: true,
-						},
-						"volume_name": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"initial_scope_uris": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"is_permanent": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"templateUri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"properties": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"volume_set": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"data_protection_level": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"data_transfer_limit": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"description": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"folder": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"iops_limit": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"is_shareable": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"performance_policy": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"size": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"snapshot_pool": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"storage_pool": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"template_version": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+								},
+							},
 						},
 						"storage_paths": {
 							Optional: true,
@@ -404,7 +484,7 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"storage_target_type": {
+									"network_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -688,8 +768,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		if val, ok := d.GetOk("manage_connections"); ok {
 			serverProfile.ConnectionSettings.ManageConnections = val.(bool)
 			serverProfile.ConnectionSettings.Connections = networks
-		} else {
-			serverProfile.Connections = networks
 		}
 	}
 
@@ -750,12 +828,14 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		for _, raw := range rawFirmware {
 			firmwareItem := raw.(map[string]interface{})
 			firmware = ov.FirmwareOption{
-				ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
-				FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
-				ManageFirmware:       firmwareItem["manage_firmware"].(bool),
-				FirmwareOptionv200: ov.FirmwareOptionv200{
-					FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
-				},
+				ForceInstallFirmware:     firmwareItem["force_install_firmware"].(bool),
+				FirmwareBaselineUri:      utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+				ManageFirmware:           firmwareItem["manage_firmware"].(bool),
+				FirmwareInstallType:      firmwareItem["firmware_install_type"].(string),
+				ConsistencyState:         firmwareItem["consistency_state"].(string),
+				FirmwareActivationType:   firmwareItem["firmware_activation_type"].(string),
+				FirmwareScheduleDateTime: firmwareItem["firmware_schedule_date_time"].(string),
+				ReapplyState:             firmwareItem["reapply_state"].(string),
 			}
 		}
 		serverProfile.Firmware = firmware
@@ -806,15 +886,50 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 		serverProfile.SanStorage = sanStorage
 	}
-
-	// Get volume attachment data for san storage
 	if _, ok := d.GetOk("volume_attachments"); ok {
 		rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
 		volumeAttachments := make([]ov.VolumeAttachment, 0)
-
 		for _, rawVolumeAttachment := range rawVolumeAttachments {
 			volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+			volumes := ov.Volume{}
+			if volumeAttachmentItem["volume"] != nil {
+				rawVolume := volumeAttachmentItem["volume"].(*schema.Set).List()
+				for _, rawVol := range rawVolume {
+					volumeItem := rawVol.(map[string]interface{})
+					tempIsPermanent := volumeItem["is_permanent"].(bool)
+					properties := ov.PropertiesSP{}
+					if volumeItem["properties"] != nil {
 
+						rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
+						for _, rawVolProp := range rawVolumeProperties {
+							propertyItem := rawVolProp.(map[string]interface{})
+							tempIsShareable := propertyItem["is_shareable"].(bool)
+							properties = ov.PropertiesSP{
+								DataProtectionLevel: propertyItem["data_protection_level"].(string),
+								DataTransferLimit:   propertyItem["data_transfer_limit"].(int),
+								Description:         propertyItem["description"].(string),
+								Folder:              propertyItem["folder"].(string),
+								IopsLimit:           propertyItem["iops_limit"].(int),
+								IsShareable:         &tempIsShareable,
+								Name:                propertyItem["name"].(string),
+								PerformancePolicy:   propertyItem["performance_policy"].(string),
+								ProvisioningType:    propertyItem["provisioning_type"].(string),
+								Size:                propertyItem["size"].(int),
+								SnapshotPool:        utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:         utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:     propertyItem["template_version"].(string),
+								VolumeSet:           utils.NewNstring(propertyItem["volume_set"].(string)),
+							}
+						}
+					}
+					volumes = ov.Volume{
+						IsPermanent:      &tempIsPermanent,
+						Properties:       &properties,
+						InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
+						TemplateUri:      utils.NewNstring(volumeItem["template_uri"].(string)),
+					}
+				}
+			}
 			// get volumeAttachemts.storagepaths
 			storagePaths := make([]ov.StoragePath, 0)
 			if volumeAttachmentItem["storage_paths"] != nil {
@@ -838,33 +953,27 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					}
 
 					storagePaths = append(storagePaths, ov.StoragePath{
-						IsEnabled:         storagePathItem["is_enabled"].(bool),
-						Status:            storagePathItem["status"].(string),
-						ConnectionID:      storagePathItem["connection_id"].(int),
-						StorageTargetType: storagePathItem["storage_target_type"].(string),
-						TargetSelector:    storagePathItem["target_selector"].(string),
-						Targets:           targets,
+						ConnectionID:   storagePathItem["connection_id"].(int),
+						IsEnabled:      storagePathItem["is_enabled"].(bool),
+						NetworkUri:     utils.NewNstring(storagePathItem["network_uri"].(string)),
+						Status:         storagePathItem["status"].(string),
+						Targets:        targets,
+						TargetSelector: storagePathItem["target_selector"].(string),
 					})
 				}
 			}
-
-			tempPermanent := volumeAttachmentItem["permanent"].(bool)
-			tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
 			volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-				Permanent:                      &tempPermanent,
 				ID:                             volumeAttachmentItem["id"].(int),
 				LUN:                            volumeAttachmentItem["lun"].(string),
 				LUNType:                        volumeAttachmentItem["lun_type"].(string),
-				VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-				VolumeShareable:                &tempVolumeShareable,
-				VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
-				VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
-				VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
-				VolumeName:                     volumeAttachmentItem["volume_name"].(string),
-				StoragePaths:                   storagePaths,
-				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+				AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
+				State:              volumeAttachmentItem["state"].(string),
+				Status:             volumeAttachmentItem["status"].(string),
+				StoragePaths:       storagePaths,
+				BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
+				Volume:             &volumes,
 			})
 		}
 		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
@@ -887,7 +996,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					})
 				}
 			}
-
 			// If Name already imported from SPT, overwrite its value from SP
 			for _, temp1 := range osCustomAttributes {
 				for j, temp2 := range serverProfile.OSDeploymentSettings.OSCustomAttributes {
@@ -899,7 +1007,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 		}
 	}
-
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
 
@@ -966,9 +1073,8 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	var connections []ov.Connection
 	if len(serverProfile.ConnectionSettings.Connections) != 0 {
 		connections = serverProfile.ConnectionSettings.Connections
-	} else {
-		connections = serverProfile.Connections
 	}
+
 	if len(connections) != 0 {
 		networks := make([]map[string]interface{}, 0, len(connections))
 		for _, rawNet := range connections {
@@ -1155,8 +1261,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			if val, ok := d.GetOk("manage_connections"); ok {
 				serverProfile.ConnectionSettings.ManageConnections = val.(bool)
 				serverProfile.ConnectionSettings.Connections = networks
-			} else {
-				serverProfile.Connections = networks
 			}
 		}
 
@@ -1217,12 +1321,14 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			for _, raw := range rawFirmware {
 				firmwareItem := raw.(map[string]interface{})
 				firmware = ov.FirmwareOption{
-					ForceInstallFirmware: firmwareItem["force_install_firmware"].(bool),
-					FirmwareBaselineUri:  utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
-					ManageFirmware:       firmwareItem["manage_firmware"].(bool),
-					FirmwareOptionv200: ov.FirmwareOptionv200{
-						FirmwareInstallType: firmwareItem["firmware_install_type"].(string),
-					},
+					ForceInstallFirmware:     firmwareItem["force_install_firmware"].(bool),
+					FirmwareBaselineUri:      utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+					ManageFirmware:           firmwareItem["manage_firmware"].(bool),
+					FirmwareInstallType:      firmwareItem["firmware_install_type"].(string),
+					ConsistencyState:         firmwareItem["consistency_state"].(string),
+					FirmwareActivationType:   firmwareItem["firmware_activation_type"].(string),
+					FirmwareScheduleDateTime: firmwareItem["firmware_schedule_date_time"].(string),
+					ReapplyState:             firmwareItem["reapply_state"].(string),
 				}
 			}
 			serverProfile.Firmware = firmware
@@ -1273,15 +1379,49 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			}
 			serverProfile.SanStorage = sanStorage
 		}
-
-		// Get volume attachment data for san storage
 		if _, ok := d.GetOk("volume_attachments"); ok {
 			rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
 			volumeAttachments := make([]ov.VolumeAttachment, 0)
-
 			for _, rawVolumeAttachment := range rawVolumeAttachments {
 				volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
+				volumes := ov.Volume{}
+				if volumeAttachmentItem["volume"] != nil {
+					rawVolume := volumeAttachmentItem["volume"].(*schema.Set).List()
+					for _, rawVol := range rawVolume {
+						volumeItem := rawVol.(map[string]interface{})
+						tempIsPermanent := volumeItem["is_permanent"].(bool)
+						properties := ov.PropertiesSP{}
+						if volumeItem["properties"] != nil {
 
+							rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
+							for _, rawVolProp := range rawVolumeProperties {
+								propertyItem := rawVolProp.(map[string]interface{})
+								tempIsShareable := propertyItem["is_shareable"].(bool)
+								properties = ov.PropertiesSP{
+									DataProtectionLevel: propertyItem["data_protection_level"].(string),
+									DataTransferLimit:   propertyItem["data_transfer_limit"].(int),
+									Description:         propertyItem["description"].(string),
+									Folder:              propertyItem["folder"].(string),
+									IsShareable:         &tempIsShareable,
+									Name:                propertyItem["name"].(string),
+									PerformancePolicy:   propertyItem["performance_policy"].(string),
+									ProvisioningType:    propertyItem["provisioning_type"].(string),
+									Size:                propertyItem["size"].(int),
+									SnapshotPool:        utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+									StoragePool:         utils.NewNstring(propertyItem["storage_pool"].(string)),
+									TemplateVersion:     propertyItem["template_version"].(string),
+									VolumeSet:           utils.NewNstring(propertyItem["volume_set"].(string)),
+								}
+							}
+						}
+						volumes = ov.Volume{
+							IsPermanent:      &tempIsPermanent,
+							Properties:       &properties,
+							InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
+							TemplateUri:      utils.NewNstring(volumeItem["template_uri"].(string)),
+						}
+					}
+				}
 				// get volumeAttachemts.storagepaths
 				storagePaths := make([]ov.StoragePath, 0)
 				if volumeAttachmentItem["storage_paths"] != nil {
@@ -1305,33 +1445,27 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						}
 
 						storagePaths = append(storagePaths, ov.StoragePath{
-							IsEnabled:         storagePathItem["is_enabled"].(bool),
-							Status:            storagePathItem["status"].(string),
-							ConnectionID:      storagePathItem["connection_id"].(int),
-							StorageTargetType: storagePathItem["storage_target_type"].(string),
-							TargetSelector:    storagePathItem["target_selector"].(string),
-							Targets:           targets,
+							IsEnabled:      storagePathItem["is_enabled"].(bool),
+							Status:         storagePathItem["status"].(string),
+							ConnectionID:   storagePathItem["connection_id"].(int),
+							NetworkUri:     utils.NewNstring(storagePathItem["network_uri"].(string)),
+							TargetSelector: storagePathItem["target_selector"].(string),
+							Targets:        targets,
 						})
 					}
 				}
-
-				tempPermanent := volumeAttachmentItem["permanent"].(bool)
-				tempVolumeShareable := volumeAttachmentItem["volume_shareable"].(bool)
 				volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
-					Permanent:                      &tempPermanent,
 					ID:                             volumeAttachmentItem["id"].(int),
 					LUN:                            volumeAttachmentItem["lun"].(string),
 					LUNType:                        volumeAttachmentItem["lun_type"].(string),
-					VolumeStoragePoolURI:           utils.NewNstring(volumeAttachmentItem["volume_storage_pool_uri"].(string)),
 					VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 					VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
-					VolumeShareable:                &tempVolumeShareable,
-					VolumeDescription:              volumeAttachmentItem["volume_description"].(string),
-					VolumeProvisionType:            volumeAttachmentItem["volume_provision_type"].(string),
-					VolumeProvisionedCapacityBytes: volumeAttachmentItem["volume_provisioned_capacity_bytes"].(string),
-					VolumeName:                     volumeAttachmentItem["volume_name"].(string),
-					StoragePaths:                   storagePaths,
-					BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+					AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
+					State:              volumeAttachmentItem["state"].(string),
+					Status:             volumeAttachmentItem["status"].(string),
+					StoragePaths:       storagePaths,
+					BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
+					Volume:             &volumes,
 				})
 			}
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments
@@ -1354,7 +1488,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						})
 					}
 				}
-
 				// If Name already imported from SPT, overwrite its value from SP
 				for _, temp1 := range osCustomAttributes {
 					for j, temp2 := range serverProfile.OSDeploymentSettings.OSCustomAttributes {
