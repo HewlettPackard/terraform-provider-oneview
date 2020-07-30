@@ -437,32 +437,8 @@ func resourceServerProfile() *schema.Resource {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"is_adaptive_optimization_enabled": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
-												"is_compressed": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
-												"is_data_reduction_enabled": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
-												"is_duplicated": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
-												"is_encrypted": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
 												"iops_limit": {
 													Type:     schema.TypeInt,
-													Optional: true,
-												},
-												"is_pinned": {
-													Type:     schema.TypeBool,
 													Optional: true,
 												},
 												"is_shareable": {
@@ -927,36 +903,22 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 						rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
 						for _, rawVolProp := range rawVolumeProperties {
 							propertyItem := rawVolProp.(map[string]interface{})
-
-							tempIsAdaptiveOptimizationEnabled := propertyItem["is_adaptive_optimization_enabled"].(bool)
-							tempIsCompressed := propertyItem["is_compressed"].(bool)
-							tempIsDataReductionEnabled := propertyItem["is_data_reduction_enabled"].(bool)
-							tempIsDuplicated := propertyItem["is_duplicated"].(bool)
-							tempIsEncrypted := propertyItem["is_encrypted"].(bool)
-							tempIsPinned := propertyItem["is_pinned"].(bool)
 							tempIsShareable := propertyItem["is_shareable"].(bool)
-
 							properties = ov.PropertiesSP{
 								DataProtectionLevel: propertyItem["data_protection_level"].(string),
 								DataTransferLimit:   propertyItem["data_transfer_limit"].(int),
 								Description:         propertyItem["description"].(string),
 								Folder:              propertyItem["folder"].(string),
-								IsAdaptiveOptimizationEnabled: &tempIsAdaptiveOptimizationEnabled,
-								IsCompressed:                  &tempIsCompressed,
-								IsDataReductionEnabled:        &tempIsDataReductionEnabled,
-								IsDeduplicated:                &tempIsDuplicated,
-								IsEncrypted:                   &tempIsEncrypted,
-								IopsLimit:                     propertyItem["iops_limit"].(int),
-								IsPinned:                      &tempIsPinned,
-								IsShareable:                   &tempIsShareable,
-								Name:                          propertyItem["name"].(string),
-								PerformancePolicy:             propertyItem["performance_policy"].(string),
-								ProvisioningType:              propertyItem["provisioning_type"].(string),
-								Size:                          propertyItem["size"].(int),
-								SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:               propertyItem["template_version"].(string),
-								VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
+								IopsLimit:           propertyItem["iops_limit"].(int),
+								IsShareable:         &tempIsShareable,
+								Name:                propertyItem["name"].(string),
+								PerformancePolicy:   propertyItem["performance_policy"].(string),
+								ProvisioningType:    propertyItem["provisioning_type"].(string),
+								Size:                propertyItem["size"].(int),
+								SnapshotPool:        utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:         utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:     propertyItem["template_version"].(string),
+								VolumeSet:           utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -1434,36 +1396,21 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
 							for _, rawVolProp := range rawVolumeProperties {
 								propertyItem := rawVolProp.(map[string]interface{})
-
-								tempIsAdaptiveOptimizationEnabled := propertyItem["is_adaptive_optimization_enabled"].(bool)
-								tempIsCompressed := propertyItem["is_compressed"].(bool)
-								tempIsDataReductionEnabled := propertyItem["is_data_reduction_enabled"].(bool)
-								tempIsDuplicated := propertyItem["is_duplicated"].(bool)
-								tempIsEncrypted := propertyItem["is_encrypted"].(bool)
-								tempIsPinned := propertyItem["is_pinned"].(bool)
 								tempIsShareable := propertyItem["is_shareable"].(bool)
-
 								properties = ov.PropertiesSP{
 									DataProtectionLevel: propertyItem["data_protection_level"].(string),
 									DataTransferLimit:   propertyItem["data_transfer_limit"].(int),
 									Description:         propertyItem["description"].(string),
 									Folder:              propertyItem["folder"].(string),
-									IsAdaptiveOptimizationEnabled: &tempIsAdaptiveOptimizationEnabled,
-									IsCompressed:                  &tempIsCompressed,
-									IsDataReductionEnabled:        &tempIsDataReductionEnabled,
-									IsDeduplicated:                &tempIsDuplicated,
-									IsEncrypted:                   &tempIsEncrypted,
-									IopsLimit:                     propertyItem["iops_limit"].(int),
-									IsPinned:                      &tempIsPinned,
-									IsShareable:                   &tempIsShareable,
-									Name:                          propertyItem["name"].(string),
-									PerformancePolicy:             propertyItem["performance_policy"].(string),
-									ProvisioningType:              propertyItem["provisioning_type"].(string),
-									Size:                          propertyItem["size"].(int),
-									SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-									StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
-									TemplateVersion:               propertyItem["template_version"].(string),
-									VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
+									IsShareable:         &tempIsShareable,
+									Name:                propertyItem["name"].(string),
+									PerformancePolicy:   propertyItem["performance_policy"].(string),
+									ProvisioningType:    propertyItem["provisioning_type"].(string),
+									Size:                propertyItem["size"].(int),
+									SnapshotPool:        utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+									StoragePool:         utils.NewNstring(propertyItem["storage_pool"].(string)),
+									TemplateVersion:     propertyItem["template_version"].(string),
+									VolumeSet:           utils.NewNstring(propertyItem["volume_set"].(string)),
 								}
 							}
 						}
