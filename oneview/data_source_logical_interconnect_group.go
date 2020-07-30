@@ -413,10 +413,6 @@ func dataSourceLogicalInterconnectGroup() *schema.Resource {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-						"igmp_snooping": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
 						"interconnect_utilization_alert": {
 							Type:     schema.TypeBool,
 							Computed: true,
@@ -433,12 +429,89 @@ func dataSourceLogicalInterconnectGroup() *schema.Resource {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-						"igmp_timeout_interval": {
+						"mac_refresh_interval": {
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
-						"mac_refresh_interval": {
+					},
+				},
+			},
+			"igmp_settings": {
+				Type:     schema.TypeSet,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "IgmpSettings",
+						},
+						"category": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"created": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"dependent_resource_uri": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"etag": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"igmp_snooping": {
+							Type:     schema.TypeBool,
+							Computed: true,
+						},
+						"prevent_flooding": {
+							Type:     schema.TypeBool,
+							Computed: true,
+						},
+						"proxy_reporting": {
+							Type:     schema.TypeBool,
+							Computed: true,
+						},
+						"id": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"igmp_idle_timeout_interval": {
 							Type:     schema.TypeInt,
+							Computed: true,
+						},
+						"igmp_snooping_vlan_ids": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"modified": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
 							Computed: true,
 						},
 					},
@@ -575,6 +648,7 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 		d.SetId("")
 		return nil
 	}
+
 	d.SetId(id)
 	d.Set("name", logicalInterconnectGroup.Name)
 	d.Set("type", logicalInterconnectGroup.Type)
@@ -587,7 +661,6 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	d.Set("fabric_uri", logicalInterconnectGroup.FabricUri.String())
 	d.Set("eTag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
-	d.Set("interconnect_settings.0.igmp_snooping", logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping)
 	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
 	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
 
@@ -692,6 +765,7 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 		d.Set("sflow_configuration", sflowConfigurations)
 
 	}
+
 	uplinkSets := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.UplinkSets))
 	for i, uplinkSet := range logicalInterconnectGroup.UplinkSets {
 
@@ -879,17 +953,40 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	interconnectSetting := map[string]interface{}{
 		"type": logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
-		"igmp_snooping":           *logicalInterconnectGroup.EthernetSettings.EnableIgmpSnooping,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
 		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
 		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
-		"igmp_timeout_interval":   logicalInterconnectGroup.EthernetSettings.IgmpIdleTimeoutInterval,
 		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
 	}
 
 	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
 	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
+
+	igmpSettings := make([]map[string]interface{}, 0, 1)
+
+	igmpSettings = append(igmpSettings, map[string]interface{}{
+		"type":                   logicalInterconnectGroup.IgmpSettings.Type,
+		"category":               logicalInterconnectGroup.IgmpSettings.Category,
+		"consistency_checking":   logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
+		"created":                logicalInterconnectGroup.IgmpSettings.Created,
+		"dependent_resource_uri": logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
+		"description":            logicalInterconnectGroup.IgmpSettings.Description,
+		"etag":                   logicalInterconnectGroup.IgmpSettings.ETAG,
+		"igmp_snooping":          *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
+		"prevent_flooding":       *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
+		"proxy_reporting":        *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
+		"id":                     logicalInterconnectGroup.IgmpSettings.ID,
+		"igmp_idle_timeout_interval": logicalInterconnectGroup.IgmpSettings.IgmpIdleTimeoutInterval,
+		"igmp_snooping_vlan_ids":     logicalInterconnectGroup.IgmpSettings.IgmpSnoopingVlanIds,
+		"modified":                   logicalInterconnectGroup.IgmpSettings.Modified,
+		"name":                       logicalInterconnectGroup.IgmpSettings.Name,
+		"state":                      logicalInterconnectGroup.IgmpSettings.State,
+		"status":                     logicalInterconnectGroup.IgmpSettings.Status,
+		"uri":                        logicalInterconnectGroup.IgmpSettings.URI,
+	})
+
+	d.Set("igmp_settings", igmpSettings)
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {

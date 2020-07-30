@@ -173,6 +173,9 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}) ([
 	log.Debugf("ERROR  --> %+v\n", err)
 	// DEBUGGING WHILE WE WORK
 
+	// RESET QUERY PARAMETERS AFTER EVERY CALL
+	c.SetQueryString(nil)
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if !c.isOkStatus(resp.StatusCode) {
 		type apiErr struct {

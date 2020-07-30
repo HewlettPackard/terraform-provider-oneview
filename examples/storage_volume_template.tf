@@ -1,18 +1,18 @@
 provider "oneview" {
-        ov_username = "<ov-username>"
-        ov_password = "<ov-password>"
-        ov_endpoint = "<ov-endpoint>"
-        ov_sslverify = false
-        ov_apiversion = ov-apiversion
-        ov_ifmatch = "*"
+  ov_username   = "<ov_username>"
+  ov_password   = "<ov_password>"
+  ov_endpoint   = "<ov_endpoint>"
+  ov_sslverify  = false
+  ov_apiversion =<ov_apiversion>
+  ov_ifmatch    = "*"
 }
 
 //Creating a storage volume template
 resource "oneview_storage_volume_template" "svt" {
         name = "DemoStorageTemplate"
         description = "Testing creation of storage volume template"
-        root_template_uri = "/rest/storage-volume-templates/7adda42a-cf30-4d99-aa10-ab2000707395"
-        initial_scope_uris = ["/rest/scopes/8604784e-b116-4b70-8bf4-f1fd754ae28e"]
+        root_template_uri = "/rest/storage-volume-templates/09c008a4-10a1-4bf4-9e2f-abf40112fe63"
+        initial_scope_uris = ["/rest/scopes/8ef32b43-2478-4aea-bb68-a65d0fbfea93"]
         tp_name =[
 	{
                 meta_locked = false
@@ -31,7 +31,7 @@ resource "oneview_storage_volume_template" "svt" {
                 title = "Capacity"
                 default = 268435456
                 required = true
-                maximum = 70368744177664
+                maximum = 1368744177664
                 minimum = 268435456 
                 description = "The capacity of the volume in bytes"
         }]
@@ -63,18 +63,9 @@ resource "oneview_storage_volume_template" "svt" {
                 type = "string"
                 title = "Storage Pool"
                 format = "x-uri-reference"
-                default = "/rest/storage-pools/52F40929-4712-4614-A082-AB200070738A"
+                default = "/rest/storage-pools/9923DE4C-F571-4B64-8C3E-ABF40112FE60"
                 required = true
                 description = "A common provisioning group URI reference"
-        }]
-        tp_is_compressed = [
-	{
-                meta_locked = true
-                type = "boolean"
-                title = "Is Compressed"
-                default = false
-                required = false
-                description = "Enables or disables compression of the volume"
         }]
 	tp_snapshot_pool = [
 	{
@@ -83,7 +74,7 @@ resource "oneview_storage_volume_template" "svt" {
                 type = "string"
                 title = "Snapshot Pool"
                 format = "x-uri-reference"
-                default = "/rest/storage-pools/547F8659-BD66-4775-9943-A93C0143AC70"
+                default = "/rest/storage-pools/9923DE4C-F571-4B64-8C3E-ABF40112FE60"
                 required = false
                 description = "A URI reference to the common provisioning group used to create snapshots"
         }]
@@ -101,7 +92,7 @@ resource "oneview_storage_volume_template" "svt" {
                 meta_locked = true
                 type = "string"
                 title = "Template version"
-                default = "2.0"
+                default = "1.1"
                 required = true
                 description = "Version of the template"
         }]
@@ -181,15 +172,6 @@ resource "oneview_storage_volume_template" "svt" {
                 required = true
                 description = "A common provisioning group URI reference"
         }]
-        tp_is_compressed = [
-	{
-                meta_locked = true
-                type = "boolean"
-                title = "Is Compressed"
-                default = false
-                required = false
-                description = "Enables or disables compression of the volume"
-        }]
 	tp_snapshot_pool = [
 	{
                 meta_locked = true
@@ -232,16 +214,16 @@ resource "oneview_storage_volume_template" "svt" {
         }]
 }*/
 
-
+/*
 // Importing an existing resource from the appliance
-/*resource "oneview_storage_volume_template" "st" {
-}*/
-
+resource "oneview_storage_volume_template" "st" {
+}
+*/
 //Tetsing data source
 /*data "oneview_storage_volume_template" "d_svt" {
-        name = "SampleVT"
+  name = "vt"
 }
 
 output "oneview_svt_value" {
-        value = "${data.oneview_storage_volume_template.d_svt.root_template_uri}"
+  value = "${data.oneview_storage_volume_template.d_svt.root_template_uri}"
 }*/
