@@ -20,10 +20,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Logical Interconnect Group
 - Network Set
 - Scopes
+- Server Certificates
 - Server Hardware
 - Server Hardware Type
 - Server Profile
 - Server Profile Template
+- Storage Pool
 - Storage System
 - Storage Volume
 - Storage Volume Attachment
