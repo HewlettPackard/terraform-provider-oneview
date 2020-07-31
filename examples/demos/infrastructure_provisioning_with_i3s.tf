@@ -10,7 +10,7 @@ provider "oneview" {
 
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
 	name = "TestServerProfileTemplateTerraform"
-	type = "ServerProfileTemplateV6"
+	type = "ServerProfileTemplateV8"
 	enclosure_group = "SYN03_EC"
 	server_hardware_type = "DL380p Gen8 1 (new name)"
 	network = [{
@@ -135,8 +135,15 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 		id = 1
 		lun_type = "Manual"
 		lun = "10"
-		volume_uri = "/rest/storage-volumes/B9981C13-EED1-4F21-B95F-A93D00D23E3F"
 		boot_volume_priority = "NotBootable"
+		volume = [{
+                        template_uri = "/rest/storage-volume-templates/1a1c6a3c-587e-4930-8b0e-abf40124053e"
+                        properties = [{
+                                name = "vol_name"
+                                size = 268435456
+                                storage_pool = "/rest/storage-pools/9923DE4C-F571-4B64-8C3E-ABF40112FE60"
+                        }]
+		}]
 		storage_paths = [{
 			is_enabled = true
 			connection_id = 3
