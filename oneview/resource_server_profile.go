@@ -445,30 +445,30 @@ func resourceServerProfile() *schema.Resource {
 													Type:     schema.TypeBool,
 													Optional: true,
 												},
-                                                                                                "is_encrypted": {
-                                                                                                        Type:     schema.TypeBool,
-                                                                                                        Optional: true,
-                                                                                                },
-                                                                                                "is_data_reduction_enabled": {
-                                                                                                        Type:     schema.TypeBool,
-                                                                                                        Optional: true,
-                                                                                                },
-                                                                                                "is_adaptive_optimization_enabled": {
-                                                                                                        Type:     schema.TypeBool,
-                                                                                                        Optional: true,
-                                                                                                },
-                                                                                                "is_compressed": {
-                                                                                                        Type:     schema.TypeBool,
-                                                                                                        Optional: true,
-                                                                                                },
-                                                                                                "is_pinned": {
-                                                                                                        Type:     schema.TypeBool,
-                                                                                                        Optional: true,
-                                                                                                },
-                                                                                                "is_deduplicated": {
-                                                                                                        Type:     schema.TypeBool,
-                                                                                                        Optional: true,
-                                                                                                },
+												"is_encrypted": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_data_reduction_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_adaptive_optimization_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_compressed": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_pinned": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_deduplicated": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
 												"name": {
 													Type:     schema.TypeString,
 													Optional: true,
