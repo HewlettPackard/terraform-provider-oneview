@@ -35,13 +35,16 @@ type LogicalDriveV4 struct {
 }
 
 type LogicalJbod struct {
+	Description       string        `json:"description,omitempty"`       // description
 	DeviceSlot        string        `json:"deviceSlot,omitempty"`        // "deviceSlot": "Mezz 1",
 	DriveMaxSizeGB    int           `json:"driveMaxSizeGB,omitempty"`    // "driveMaxSizeGB": 100,
 	DriveMinSizeGB    int           `json:"driveMinSizeGB,omitempty"`    // "driveMinSizeGB": 10,
 	DriveTechnology   string        `json:"driveTechnology,omitempty"`   // "driveTechnology": "SasHdd",
+	EraseData         bool          `json:"eraseData,omitempty"`         //"eraseData": False
 	ID                int           `json:"id,omitempty"`                // "id": 1,
 	Name              string        `json:"name,omitempty"`              // "name": "logical jbod 1",
 	NumPhysicalDrives int           `json:"numPhysicalDrives,omitempty"` // "numPhyricalDrives": 1,
+	Persistent        bool          `json:"persistent,omitempty"`        // "persistent": True
 	SasLogicalJBODUri utils.Nstring `json:"sasLogicalJBODUri,omitempty"` // "sasLogicalJBODUri": nil
 	Status            string        `json:"status,omitempty"`            // "status": "OK",
 }

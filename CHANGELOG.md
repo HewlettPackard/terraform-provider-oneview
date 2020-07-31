@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Hypervisor Manager
 - Interconnect
 - Interconnect Type
+- Logical Enclosure
 - Logical Interconnect
 - Logical Interconnect Group
 - Network Set
@@ -22,6 +23,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Server Certificates
 - Server Hardware
 - Server Hardware Type
+- Server Profile
+- Server Profile Template
 - Storage Pool
 - Storage System
 - Storage Volume

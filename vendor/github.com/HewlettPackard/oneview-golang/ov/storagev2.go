@@ -25,30 +25,36 @@ import (
 
 // LocalStorageSettingsV3 -
 type LocalStorageSettingsV3 struct { // "localStorage": {
-	LocalStorageSettingsV4
-	Controllers []LocalStorageEmbeddedController `json:"controllers,omitempty"` //  The list of embedded local storage controllers.
+	Controllers     []LocalStorageEmbeddedController `json:"controllers,omitempty"`     //  The list of embedded local storage controllers.
+	SasLogicalJBODs []LogicalJbod                    `json:"sasLogicalJBODs,omitempty"` // "sasLogicalJBODs": [],
 }
 
 // LocalStorageEmbeddedController -
 type LocalStorageEmbeddedController struct {
-	LocalStorageEmbeddedControllerV4
-	ImportConfiguration bool             `json:"importConfiguration,omitempty"` // importConfiguration Determines if the logical drives in the current configuration should be imported. Boolean
-	Initialize          bool             `json:"initialize,omitempty"`          // initialize Determines if the controller should be initialized before configuration. Boolean
-	LogicalDrives       []LogicalDriveV3 `json:"logicalDrives,omitempty"`       // LogicalDriveV3 The list of logical drives associated with the controller.
-	Managed             bool             `json:"managed,omitempty"`             // managed Determines if the specific controller is managed by OneView. Boolean
-	Mode                string           `json:"mode,omitempty"`                // mode Determines the mode of operation of the controller. The controller mode can be changed between RAID and HBA mode when supported by the selected server hardware type. string
-	SlotNumber          string           `json:"slotNumber,omitempty"`          // slotNumber The PCI slot number used by the controller. This value will always be set to "0", as only the embedded controller is supported in the current version. string
+	DeviceSlot             string           `json:"deviceSlot,omitempty"`             // "deviceSlot": "Mezz 1",
+	DriveWriteCache        string           `json:"driveWriteCache,omitempty"`        //Determines the write cache configuration of the physical drives attached to the controller.
+	ImportConfiguration    bool             `json:"importConfiguration,omitempty"`    // importConfiguration Determines if the logical drives in the current configuration should be imported. Boolean
+	Initialize             bool             `json:"initialize,omitempty"`             // initialize Determines if the controller should be initialized before configuration. Boolean
+	LogicalDrives          []LogicalDriveV3 `json:"logicalDrives,omitempty"`          // LogicalDriveV3 The list of logical drives associated with the controller.
+	Managed                bool             `json:"managed,omitempty"`                // managed Determines if the specific controller is managed by OneView. Boolean
+	Mode                   string           `json:"mode,omitempty"`                   // mode Determines the mode of operation of the controller. The controller mode can be changed between RAID and HBA mode when supported by the selected server hardware type. string
+	PredictiveSpareRebuild string           `json:"predictiveSpareRebuild,omitempty"` //Enables or disables predictive spare rebuild mode.
+	SlotNumber             string           `json:"slotNumber,omitempty"`             // slotNumber The PCI slot number used by the controller. This value will always be set to "0", as only the embedded controller is supported in the current version. string
 }
 
 // LogicalDriveV3 -
 type LogicalDriveV3 struct {
-	LogicalDriveV4
+	Accelerator       string `json:"accelerator,omitempty"`       //Defines the acceleration method of the logical drive.
 	Bootable          bool   `json:"bootable,omitempty"`          // bootable Indicates if the logical drive is bootable or not. Boolean
-	DriveName         string `json:"driveName,omitempty"`         // driveName The name of the logical drive. string
 	DriveNumber       int    `json:"driveNumber,omitempty"`       // driveNumber The number assigned to the logical drive by HP SSA. This value is read-only and gets automatically populated once the logical drive is created. integer read only
 	DriveTechnology   string `json:"driveTechnology,omitempty"`   // driveTechnology Defines the interface type for drives that will be used to build the logical drive. Supported values depend on the local storage capabilities of the selected server hardware type. string
+	Name              string `json:"name,omitempty"`              // "name": "logical drive name",
+	DriveName         string `json:"driveName,omitempty"`         // driveName The name of the logical drive. string
 	NumPhysicalDrives int    `json:"numPhysicalDrives,omitempty"` // numPhysicalDrives The number of physical drives to be used to build the logical drive. The provided values must be consistent with the selected RAID level and cannot exceed the maximum supported number of drives for the selected server hardware type. integer
+	NumSpareDrives    int    `json:"numSpareDrives,omitempty"`    //The number of spare drives to allocate for a logical drive.
 	RaidLevel         string `json:"raidLevel,omitempty"`         // raidLevel The RAID level of the logical drive. Supported values depend on the local storage capabilities of the selected server hardware type. string
+	SasLogicalJBODId  int    `json:"sasLogicalJBODId,omitempty"`  // "sasLogicalJBODId": 1,
+
 }
 
 // SanStorageV3 -

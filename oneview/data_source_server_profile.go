@@ -239,6 +239,22 @@ func dataSourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"consistency_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"firmware_activation_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"firmware_schedule_date_time": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"manage_firmware": {
 							Type:     schema.TypeBool,
 							Optional: true,
@@ -522,8 +538,6 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	var connections []ov.Connection
 	if len(serverProfile.ConnectionSettings.Connections) != 0 {
 		connections = serverProfile.ConnectionSettings.Connections
-	} else {
-		connections = serverProfile.Connections
 	}
 	if len(connections) != 0 {
 		networks := make([]map[string]interface{}, 0, len(connections))
