@@ -899,26 +899,31 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					tempIsPermanent := volumeItem["is_permanent"].(bool)
 					properties := ov.PropertiesSP{}
 					if volumeItem["properties"] != nil {
-
 						rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
 						for _, rawVolProp := range rawVolumeProperties {
 							propertyItem := rawVolProp.(map[string]interface{})
 							tempIsShareable := propertyItem["is_shareable"].(bool)
 							properties = ov.PropertiesSP{
-								DataProtectionLevel: propertyItem["data_protection_level"].(string),
-								DataTransferLimit:   propertyItem["data_transfer_limit"].(int),
-								Description:         propertyItem["description"].(string),
-								Folder:              propertyItem["folder"].(string),
-								IopsLimit:           propertyItem["iops_limit"].(int),
-								IsShareable:         &tempIsShareable,
-								Name:                propertyItem["name"].(string),
-								PerformancePolicy:   propertyItem["performance_policy"].(string),
-								ProvisioningType:    propertyItem["provisioning_type"].(string),
-								Size:                propertyItem["size"].(int),
-								SnapshotPool:        utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:         utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:     propertyItem["template_version"].(string),
-								VolumeSet:           utils.NewNstring(propertyItem["volume_set"].(string)),
+								DataProtectionLevel:           propertyItem["data_protection_level"].(string),
+								DataTransferLimit:             propertyItem["data_transfer_limit"].(int),
+								Description:                   propertyItem["description"].(string),
+								Folder:                        propertyItem["folder"].(string),
+								IopsLimit:                     propertyItem["iops_limit"].(int),
+								IsShareable:                   &tempIsShareable,
+								IsEncrypted:                   propertyItem["is_encrypted"].(bool),
+								IsDeduplicated:                propertyItem["is_deduplicated"].(bool),
+								IsPinned:                      propertyItem["is_pinned"].(bool),
+								IsCompressed:                  propertyItem["is_compressed"].(bool),
+								IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
+								IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
+								Name:              propertyItem["name"].(string),
+								PerformancePolicy: propertyItem["performance_policy"].(string),
+								ProvisioningType:  propertyItem["provisioning_type"].(string),
+								Size:              propertyItem["size"].(int),
+								SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:   propertyItem["template_version"].(string),
+								VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -1392,25 +1397,31 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						tempIsPermanent := volumeItem["is_permanent"].(bool)
 						properties := ov.PropertiesSP{}
 						if volumeItem["properties"] != nil {
-
 							rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
 							for _, rawVolProp := range rawVolumeProperties {
 								propertyItem := rawVolProp.(map[string]interface{})
 								tempIsShareable := propertyItem["is_shareable"].(bool)
 								properties = ov.PropertiesSP{
-									DataProtectionLevel: propertyItem["data_protection_level"].(string),
-									DataTransferLimit:   propertyItem["data_transfer_limit"].(int),
-									Description:         propertyItem["description"].(string),
-									Folder:              propertyItem["folder"].(string),
-									IsShareable:         &tempIsShareable,
-									Name:                propertyItem["name"].(string),
-									PerformancePolicy:   propertyItem["performance_policy"].(string),
-									ProvisioningType:    propertyItem["provisioning_type"].(string),
-									Size:                propertyItem["size"].(int),
-									SnapshotPool:        utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-									StoragePool:         utils.NewNstring(propertyItem["storage_pool"].(string)),
-									TemplateVersion:     propertyItem["template_version"].(string),
-									VolumeSet:           utils.NewNstring(propertyItem["volume_set"].(string)),
+									DataProtectionLevel:           propertyItem["data_protection_level"].(string),
+									DataTransferLimit:             propertyItem["data_transfer_limit"].(int),
+									Description:                   propertyItem["description"].(string),
+									Folder:                        propertyItem["folder"].(string),
+									IopsLimit:                     propertyItem["iops_limit"].(int),
+									IsShareable:                   &tempIsShareable,
+									IsEncrypted:                   propertyItem["is_encrypted"].(bool),
+									IsDeduplicated:                propertyItem["is_deduplicated"].(bool),
+									IsPinned:                      propertyItem["is_pinned"].(bool),
+									IsCompressed:                  propertyItem["is_compressed"].(bool),
+									IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
+									IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
+									Name:              propertyItem["name"].(string),
+									PerformancePolicy: propertyItem["performance_policy"].(string),
+									ProvisioningType:  propertyItem["provisioning_type"].(string),
+									Size:              propertyItem["size"].(int),
+									SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+									StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
+									TemplateVersion:   propertyItem["template_version"].(string),
+									VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
 								}
 							}
 						}

@@ -60,13 +60,13 @@ type PropertiesSP struct {
 	DataTransferLimit             int           `json:"dataTransferLimit,omitempty"`             //The data transfer limit of the volume in mebibytes.
 	Description                   string        `json:"description,omitempty"`                   //The description of the volume.
 	Folder                        string        `json:"folder,omitempty"`                        //The folder of the volume.
-	IsAdaptiveOptimizationEnabled *bool         `json:"isAdaptiveOptimizationEnabled,omitempty"` //Indicates whether or not the volume will use adaptive optimization.
-	IsCompressed                  *bool         `json:"isCompressed,omitempty"`                  //Indicates whether or not compression is enabled on the volume.
-	IsDataReductionEnabled        *bool         `json:"isDataReductionEnabled,omitempty"`        //Indicates whether or not data reduction, such as deduplication and compression, is enabled on the volume
-	IsDeduplicated                *bool         `json:"isDeduplicated,omitempty"`                //Indicates whether or not deduplication is enabled on the volume.
-	IsEncrypted                   *bool         `json:"isEncrypted,omitempty"`                   //Indicates whether or not encryption is enabled on the volume.
+	IsAdaptiveOptimizationEnabled bool         `json:"isAdaptiveOptimizationEnabled,omitempty"` //Indicates whether or not the volume will use adaptive optimization.
+	IsCompressed                  bool         `json:"isCompressed,omitempty"`                  //Indicates whether or not compression is enabled on the volume.
+	IsDataReductionEnabled        bool         `json:"isDataReductionEnabled,omitempty"`        //Indicates whether or not data reduction, such as deduplication and compression, is enabled on the volume
+	IsDeduplicated                bool         `json:"isDeduplicated,omitempty"`                //Indicates whether or not deduplication is enabled on the volume.
+	IsEncrypted                   bool         `json:"isEncrypted,omitempty"`                   //Indicates whether or not encryption is enabled on the volume.
 	IopsLimit                     int           `json:"iopsLimit,omitempty"`                     //The IOPS (input/output operations per second) limit of the volume.
-	IsPinned                      *bool         `json:"isPinned,omitempty"`                      //Indicates whether or not the volume is cache pinned.
+	IsPinned                      bool         `json:"isPinned,omitempty"`                      //Indicates whether or not the volume is cache pinned.
 	IsShareable                   *bool         `json:"isShareable,omitempty"`                   //Indicates whether the volume is shareable or private
 	Name                          string        `json:"name,omitempty"`                          //The name of the volume.
 	PerformancePolicy             string        `json:"performancePolicy,omitempty"`             //The performance policy of the volume.
