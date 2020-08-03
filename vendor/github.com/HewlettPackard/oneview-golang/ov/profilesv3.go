@@ -26,6 +26,7 @@ import (
 type BootOptionV3 struct {
 	BootTargetLun        string `json:"bootTargetLun,omitempty"`        // "bootTargetLun": "0",
 	BootTargetName       string `json:"bootTargetName,omitempty"`       // "bootTargetName": "iqn.2015-02.com.hpe:iscsi.target",
+	BootVlanId           int    `json:"bootVlanId,omitempty"`           //The virtual LAN ID of the boot connection.
 	BootVolumeSource     string `json:"bootVolumeSource,omitempty"`     // "bootVolumeSource": "",
 	ChapLevel            string `json:"chapLevel,omitempty"`            // "chapLevel": "None",
 	ChapName             string `json:"chapName,omitempty"`             // "chapName": "chap name",
@@ -51,14 +52,21 @@ type ServerProfilev300 struct {
 }
 
 type OSDeploymentSettings struct {
+	DeployMethod        string              `json:"deployMethod,omitempty"`        //The deploy method option to be specified by the user
+	DeploymentMac       string              `json:"deploymentMac,omitempty"`       //The MAC address that is currently programmed on the NIC to be used for deployment
+	DeploymentPortId    string              `json:"deploymentPortId,omitempty"`    //The port/FlexNIC of an adapter to be specified for the OS deployment
+	ForceOsDeployment   bool                `json:"forceOsDeployment,omitempty"`   //Identifies the custom attributes to be configured with the OS deployment plan.
 	OSCustomAttributes  []OSCustomAttribute `json:"osCustomAttributes,omitempty"`  // "osCustomAttributes": [],
 	OSDeploymentPlanUri utils.Nstring       `json:"osDeploymentPlanUri,omitempty"` // "osDeploymentPlanUri": nil,
 	OSVolumeUri         utils.Nstring       `json:"osVolumeUri,omitempty"`         // "osVolumeUri": nil,
+	ReapplyState        string              `json:"reapplyState,omitempty"`        //Current reapply state of the OS Deployment Settings component
 }
 
 type OSCustomAttribute struct {
-	Name  string `json:"name,omitempty"`  // "name": "custom attribute 1",
-	Value string `json:"value,omitempty"` // "value": "custom attribute value"
+	Constraints string `json:"constraints,omitempty"` //Constraints for the custom attribute.
+	Name        string `json:"name,omitempty"`        // "name": "custom attribute 1",
+	Type        string `json:"type,omitempty"`        //Identifies the type of the custom attribute.
+	Value       string `json:"value,omitempty"`       // "value": "custom attribute value"
 }
 
 // create profile from template
@@ -132,7 +140,7 @@ func (c *OVClient) CustomizeServer(cs CustomizeServer) error {
 	s.OSDeploymentSettings.OSDeploymentPlanUri = osDeploymentPlan.URI
 	s.OSDeploymentSettings.OSCustomAttributes = serverDeploymentAttributes
 
-	s.Connections, err = c.ManageI3SConnections(s.Connections, cs.EthernetNetworkName)
+	s.ConnectionSettings.Connections, err = c.ManageI3SConnections(s.ConnectionSettings.Connections, cs.EthernetNetworkName)
 	if err != nil {
 		return err
 	}

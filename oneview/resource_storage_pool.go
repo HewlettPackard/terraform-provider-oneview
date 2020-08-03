@@ -241,5 +241,5 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.SetId(d.Get("name").(string))
 
-	return resourceStorageSystemRead(d, meta)
+	return resourceStoragePoolRead(d, meta)
 }

@@ -1,5 +1,5 @@
 provider "oneview" {
-    ov_username = "<username>"
+        ov_username = "<username>"
 	ov_password = "<password>"
 	ov_endpoint = "<endpoint>"
 	ov_sslverify = false

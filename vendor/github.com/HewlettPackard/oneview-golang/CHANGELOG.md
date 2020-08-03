@@ -1,6 +1,52 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v1.5.1] (unreleased)
+#### Bug fixes & Enhancements:
+- [#239] (https://github.com/HewlettPackard/oneview-golang/issues/239) CreateProfileFromTemplate not working w OV 5.20
+
+# [v1.5.0] (2020-07-17)
+### Notes
+- This release extends supports of the SDK to Oneview API1800.
+- Added support for Id pools IPV4 Ranges.
+- Added support for Email Notifications resource from API 1600.
+- Minor Bug Fixes
+
+### Oneview Features supported
+- Enclosure
+- Enclosure Group
+- Ethernet Network
+- FCOE Network
+- FC Network
+- Hypervisor Cluster Profile
+- Hypervisor Manager
+- Id pools IPV4 Ranges
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnect
+- Logical Interconnect Types
+- Network Set
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Heardware Types
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage System
+- Storage Volume
+- Storage Volume Attachment
+- Storage Volume Template
+- Task
+- Uplink Sets
+
+#### Bug fixes & Enhancements:
+- [#56] (https://github.com/HewlettPackard/oneview-golang/issues/56) Selecting available machines should be atomic
+- [#141] (https://github.com/HewlettPackard/oneview-golang/issues/141) Query Parameter retains in the next endpoint call
+- [#154] (https://github.com/HewlettPackard/oneview-golang/issues/154) Add json configuration file for creating NewOVClient to run examples
+
+ 
 # [v1.4.0] (2020-05-27)
 ### Notes
 - Added support for loginMsgAck attribute in login session POST request.
