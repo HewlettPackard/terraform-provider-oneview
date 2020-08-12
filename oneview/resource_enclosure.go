@@ -309,7 +309,7 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 		Force:                d.Get("force").(bool),
 		UpdateFirmwareOn:     d.Get("update_firmware_on").(string),
 	}
-	rawinitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
+	rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
 	initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
 	for i, rawData := range rawinitialScopeUris {
 		scope, _ := config.ovClient.GetScopeByName(rawData.(string))

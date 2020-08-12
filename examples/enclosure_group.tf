@@ -7,10 +7,6 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
-data "oneview_scope" "scope" {
-	name = "Scope_Sample"
-}
-
 resource "oneview_enclosure_group" "eg_inst" {
 	name = "TestEnclosureGroup"
 	description = "Testing creation of Enclosure Group"
