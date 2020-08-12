@@ -311,7 +311,7 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 	rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
 	initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-	for i, rawData := range rawinitialScopeUris {
+	for i, rawData := range rawInitialScopeUris {
 		scope, _ := config.ovClient.GetScopeByName(rawData.(string))
 		initialScopeUris[i] = utils.Nstring(scope.URI)
 	}
