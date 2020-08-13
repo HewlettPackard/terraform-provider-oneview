@@ -290,7 +290,7 @@ type EnclosureCreateMap struct {
 	ForceInstallFirmware bool          `json:"forceInstallFirmware,omitempty"`
 	FirmwareBaselineUri  string        `json:"firmwareBaselineUri,omitempty"`
 	Force                bool          `json:"force,omitempty"`
-	InitialScopeUris     []string      `json:"initialScopeUris"`
+	InitialScopeUris     utils.Nstring `json:"initialScopeUris"`
 	UpdateFirmwareOn     string        `json:"updateFirmwareOn,omitempty"`
 }
 
