@@ -38,30 +38,37 @@ designed. The server hardware type is determined when the profile template is cr
 hardware is removed or replaced. This can be set to Bay or BayAndServer. 
 This defaults to Bay.
   
+* `bios` - (Optional) Server BIOS settings.
+
+* `boot_mode` - (Optional) Boot mode settings to be configured on the server. For Gen 7 and Gen 8 servers these values should not be specified.
+
+* `boot_order`- (Optional) Defines the order in which boot will be attempted on the available devices. Different hardware take different boot orders. Refer to the api documentation for your specific boot order options.
+
+* `hide_unused_flex_nics` - (Optional) Hides flex nics that aren't in use.
+This defaults to true.
+
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned. It is only meaningful at resource creation time and is not included on resource retrieval.
+
+* `mac_type` - (Optional) Specifies the type of MAC address to be programmed into the IO devices. The value can be 'Virtual' or 'Physical'. Changing this forces a new resource.
+This defaults to 'Virtual'.
+
+* `manage_connections` - (Optional)  Identifies whether connections should be managed by server profile template. If this is false then the compliance check between server profile template and server profile is disabled, this allows a server profile created from a profile template to define any connectivity.
+
 * `network` - (Optional) Network connection to be configured for the server. Can be specified multiple times. 
 Network configuration is specified below.
-  
-* `hide_unused_flex_nics` - (Optional) Hides flex nics that aren't in use.
-  This defaults to true.
 
 * `serial_number_type` - (Optional) Specifies the type of Serial Number and UUID to be programmed into the server ROM. 
 The value can be 'Virtual' or 'Physical'. Changing this forces a new resource.
 This defaults to 'Virtual'.
   
+* `type` - (Optional) Uniquely identifies the type of the JSON object.
+This Defaults to ServerProfileTemplateV1
+
+* `volume_attachments` - (Optional) The list of storage volume attachments.
+
 * `wwn_type` - (Optional) Specifies the type of WWN address to be programmed into the IO devices. The value can be 'Virtual' 
 or 'Physical'. Changing this forces a new resource. 
 This defaults to 'Virtual'.
-
-* `mac_type` - (Optional) Specifies the type of MAC address to be programmed into the IO devices. The value can be 'Virtual'
-or 'Physical'. Changing this forces a new resource.
-This defaults to 'Virtual'.
-
-* `mac_type` - (Optional) Specifies the type of MAC address to be programmed into the IO devices. The value can be 'Virtual'
-or 'Physical'. Changing this forces a new resource.
-This defaults to 'Virtual'.
-
-* `boot_order`- (Optional) Defines the order in which boot will be attempted on the available devices. Different hardware 
-take different boot orders. Refer to the api documentation for your specific boot order options.
 
 Network supports the following:
 
