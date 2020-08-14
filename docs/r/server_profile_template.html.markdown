@@ -39,12 +39,15 @@ hardware is removed or replaced. This can be set to Bay or BayAndServer.
 This defaults to Bay.
   
 * `bios` - (Optional) Server BIOS settings.
+Bios configuration is specified below.
 
 * `boot_mode` - (Optional) Boot mode settings to be configured on the server. For Gen 7 and Gen 8 servers these values should not be specified.
+Boot mode configuration is specified below.
 
 * `boot_order`- (Optional) Defines the order in which boot will be attempted on the available devices. Different hardware take different boot orders. Refer to the api documentation for your specific boot order options.
 
 * `firmware` - (Optional) Firmware attributes required to configure firmware.
+Firmware configuration is specified below.
 
 * `hide_unused_flex_nics` - (Optional) Hides flex nics that aren't in use.
 This defaults to true.
@@ -64,8 +67,10 @@ This defaults to 'Virtual'.
 Network configuration is specified below.
 
 * `os_deployment_settings` - (Optional) OS Deployment settings applicable when deployment is invoked through a server profile.
+OS Deploymennt Stting configuration is specified below.
 
 * `san_storage` - (Optional)The profile SAN storage configuration.
+San Storage configuration is specified below.
 
 * `serial_number_type` - (Optional) Specifies the type of Serial Number and UUID to be programmed into the server ROM. 
 The value can be 'Virtual' or 'Physical'. Changing this forces a new resource.
@@ -75,6 +80,7 @@ This defaults to 'Virtual'.
 This Defaults to ServerProfileTemplateV1
 
 * `volume_attachments` - (Optional) The list of storage volume attachments.
+Volume Attachment configuration is specified below.
 
 * `wwn_type` - (Optional) Specifies the type of WWN address to be programmed into the IO devices. The value can be 'Virtual' 
 or 'Physical'. Changing this forces a new resource. 
@@ -126,6 +132,14 @@ Defaults to `2500`
 
 * `ipv4` - (Optional)  The IP information for a connection. This is only used for iSCSI connections. It must be omitted for other connection types.
 
+Os Deployment Settings support the following:
+
+* `os_deployment_plan_name` - (Optional) Identifies the OS deployment plan.
+
+* `os_volume_uri` - (Optional) Identifies the OS deployment plan. Use GET /rest/os-deployment-plans to retrieve the list of available OS deployment plans.
+
+* `os_custom_attributes` - (Optional) Identifies the custom attributes to be configured with the OS deployment plan.
+
 San Storage Supports the following:
 
 * `host_os_type` - (Optional) The operating system type of the host. To retrieve the list of supported host OS types, issue a REST Get request using the /rest/storage-systems/host-types API.
@@ -153,14 +167,6 @@ Volume Attachments Support the following:
 * `storage_paths` - (Optional) A list of host-to-target path associations.
 
 * `volume` - (Optional) Contains properties describing a volume to be created. This attribute is required when defining a new volume to be created, but is not used when an existing volume is attached.
-
-Os Deployment Settings support the following:
-
-* `os_deployment_plan_name` - (Optional) Identifies the OS deployment plan.
-
-* `os_volume_uri` - (Optional) Identifies the OS deployment plan. Use GET /rest/os-deployment-plans to retrieve the list of available OS deployment plans.
-
-* `os_custom_attributes` - (Optional) Identifies the custom attributes to be configured with the OS deployment plan.
 
 ## Attributes Reference
 
