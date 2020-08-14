@@ -3,7 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v1.4.1] (Unreleased)
 ### Bug fixes & Enhancements:
-- [#239] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/29) Add Description and Bios settings to server template
+- [#29] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/29) Add Description and Bios settings to server template
 
 # [v1.4.0]
 ### Notes
