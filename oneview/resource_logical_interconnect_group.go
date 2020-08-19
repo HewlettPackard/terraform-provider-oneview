@@ -1623,29 +1623,31 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
 
-	igmpSettings := make([]map[string]interface{}, 0, 1)
-	igmpSetting := map[string]interface{}{
-		"category":               logicalInterconnectGroup.IgmpSettings.Category,
-		"consistency_checking":   logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
-		"created":                logicalInterconnectGroup.IgmpSettings.Created,
-		"dependent_resource_uri": logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
-		"description":            logicalInterconnectGroup.IgmpSettings.Description,
-		"etag":                   logicalInterconnectGroup.IgmpSettings.ETAG,
-		"igmp_snooping":          *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
-		"prevent_flooding":       *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
-		"proxy_reporting":        *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
-		"id":                     logicalInterconnectGroup.IgmpSettings.ID,
-		"igmp_idle_timeout_interval": logicalInterconnectGroup.IgmpSettings.IgmpIdleTimeoutInterval,
-		"igmp_snooping_vlan_ids":     logicalInterconnectGroup.IgmpSettings.IgmpSnoopingVlanIds,
-		"modified":                   logicalInterconnectGroup.IgmpSettings.Modified,
-		"name":                       logicalInterconnectGroup.IgmpSettings.Name,
-		"state":                      logicalInterconnectGroup.IgmpSettings.State,
-		"status":                     logicalInterconnectGroup.IgmpSettings.Status,
-		"type":                       logicalInterconnectGroup.IgmpSettings.Type,
-		"uri":                        logicalInterconnectGroup.IgmpSettings.URI,
+	if logicalInterconnectGroup.IgmpSettings != nil {
+		igmpSettings := make([]map[string]interface{}, 0, 1)
+		igmpSetting := map[string]interface{}{
+			"category":               logicalInterconnectGroup.IgmpSettings.Category,
+			"consistency_checking":   logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
+			"created":                logicalInterconnectGroup.IgmpSettings.Created,
+			"dependent_resource_uri": logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
+			"description":            logicalInterconnectGroup.IgmpSettings.Description,
+			"etag":                   logicalInterconnectGroup.IgmpSettings.ETAG,
+			"igmp_snooping":          *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
+			"prevent_flooding":       *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
+			"proxy_reporting":        *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
+			"id":                     logicalInterconnectGroup.IgmpSettings.ID,
+			"igmp_idle_timeout_interval": logicalInterconnectGroup.IgmpSettings.IgmpIdleTimeoutInterval,
+			"igmp_snooping_vlan_ids":     logicalInterconnectGroup.IgmpSettings.IgmpSnoopingVlanIds,
+			"modified":                   logicalInterconnectGroup.IgmpSettings.Modified,
+			"name":                       logicalInterconnectGroup.IgmpSettings.Name,
+			"state":                      logicalInterconnectGroup.IgmpSettings.State,
+			"status":                     logicalInterconnectGroup.IgmpSettings.Status,
+			"type":                       logicalInterconnectGroup.IgmpSettings.Type,
+			"uri":                        logicalInterconnectGroup.IgmpSettings.URI,
+		}
+		igmpSettings = append(igmpSettings, igmpSetting)
+		d.Set("igmp_settings", igmpSettings)
 	}
-	igmpSettings = append(igmpSettings, igmpSetting)
-	d.Set("igmp_settings", igmpSettings)
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
