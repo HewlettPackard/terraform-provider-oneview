@@ -42,12 +42,17 @@ func (c *Config) loadAndValidate() error {
 
 	client := (&ov.OVClient{}).NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.OVIfMatch)
 	c.ovClient = client
-	apiver, _ := c.ovClient.GetAPIVersion()
+	apiver, err := c.ovClient.GetAPIVersion()
+
 	//If no api version is provided use the current version to create client
 	if c.OVAPIVersion == 0 {
+		if err != nil {
+			return errors.New(fmt.Sprintf("Could not fetch the appliance %s api version", c.OVEndpoint))
+		}
 		c.OVAPIVersion = apiver.CurrentVersion
-	} else if c.OVAPIVersion < apiver.MinimumVersion {
-		//Throw error if provided api version is not supported
+	}
+	//Throw error if provided api version is not supported
+	if c.OVAPIVersion < apiver.MinimumVersion {
 		return errors.New(fmt.Sprintf("The minimum api version supported is %d", apiver.MinimumVersion))
 	}
 	client = (&ov.OVClient{}).NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.OVIfMatch)
