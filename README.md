@@ -55,7 +55,7 @@ provider "oneview" {
 }
 ```
 
-Note: Currently this SDK supports OneView API 1800 minimally where we can test OneView API 1800 version with this SDK. No new fields have been added/deleted to support API 1800 version. Complete support will be done in next releases.
+Note: Currently this SDK supports OneView API 1800 minimally where we can test OneView API 1800 version with this SDK. No new fields have been added/deleted to support API 1800 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ### License
 
