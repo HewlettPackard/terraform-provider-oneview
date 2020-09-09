@@ -53,7 +53,7 @@ func Provider() terraform.ResourceProvider {
 			"ov_apiversion": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_API_VERSION", 200),
+				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_API_VERSION", 0),
 			},
 			"ov_ifmatch": {
 				Type:        schema.TypeString,

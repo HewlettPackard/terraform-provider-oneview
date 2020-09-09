@@ -13,7 +13,7 @@ package oneview
 
 import (
 	"errors"
-
+	"fmt"
 	"github.com/HewlettPackard/oneview-golang/i3s"
 	"github.com/HewlettPackard/oneview-golang/ov"
 )
@@ -41,9 +41,21 @@ func (c *Config) loadAndValidate() error {
 	}
 
 	client := (&ov.OVClient{}).NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.OVIfMatch)
-
 	c.ovClient = client
+	apiver, err := c.ovClient.GetAPIVersion()
 
+	//If no api version is provided use the current version to create client
+	if c.OVAPIVersion == 0 {
+		if err != nil {
+			return fmt.Errorf("Could not fetch the appliance %s api version", c.OVEndpoint)
+		}
+		c.OVAPIVersion = apiver.CurrentVersion
+	}
+	//Throw error if provided api version is not supported
+	if c.OVAPIVersion < apiver.MinimumVersion {
+		return fmt.Errorf("The minimum api version supported is %d", apiver.MinimumVersion)
+	}
+	client = (&ov.OVClient{}).NewOVClient(c.OVUsername, c.OVPassword, c.OVDomain, c.OVEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.OVIfMatch)
 	session, err := c.ovClient.SessionLogin()
 	if err != nil {
 		return err

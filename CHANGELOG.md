@@ -1,7 +1,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
-
-# [v1.4.1] (Unreleased)
+# [v1.5.0] (unreleased)
+### Notes
+### Major changes:
+- Refactored SDK to take default API version from Oneview appliance
 ### Bug fixes & Enhancements:
 - [#29] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/29) Add Description and Bios settings to server template
 
