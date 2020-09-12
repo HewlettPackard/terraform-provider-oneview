@@ -6,6 +6,7 @@ provider "oneview" {
   ov_apiversion = <ov_apiversion>
   ov_ifmatch = "*"
 }
+
 data "oneview_scope" "scope_obj" {
         name = "test"
 }
@@ -13,19 +14,19 @@ data "oneview_scope" "scope_obj1" {
         name = "test1"
 }
 
-resource "oneview_fcoe_network" "FCoENetwork" {
-	name = "TestFCoENetwork_Terraform"
-	type = "fcoe-networkV4"
-  vlanId = 202
-  initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}", "${data.oneview_scope.scope_obj1.uri}"]
-}
+# resource "oneview_fcoe_network" "FCoENetwork" {
+# 	name = "TestFCoENetwork_Terraform"
+# 	type = "fcoe-networkV4"
+#   vlanId = 202
+#   initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}", "${data.oneview_scope.scope_obj1.uri}"]
+# }
 
 # Updates the resource created above
 # To update uncomment the below and add the attributes to be updated
 /*resource "oneview_fcoe_network" "FCoENetwork" {
 	name = "TestFCoENetwork_Terraform_Renamed"
 	type = "fcoe-networkV4"
-  vlanId = 202
+   vlanId = 202
 }
 */
 /* Testing data source
@@ -38,8 +39,8 @@ output "oneview_fcoe_network" {
 }
 */
 
-/*
+
 #Importing Existing resource
-resource "oneview_fcor_network_value" "import_fcoe"{
+/*resource "oneview_fcoe_network" "import_fcoe"{
 }
 */
