@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Oneview Features supported
 - Storage Volume
+- Storage Volume Template
 
 ### Major changes:
 - Refactored SDK to take default API version from Oneview appliance
