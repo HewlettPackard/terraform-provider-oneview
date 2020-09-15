@@ -6,9 +6,9 @@ provider "oneview" {
         ov_apiversion = <ov_apiversion>
         ov_ifmatch = "*"
 }
-
+//Get attachment by id
 data "oneview_storage_attachment" "storage_attach" {
-        name = "<name>"
+        name = "<name>" //Give attachment id here
 }
 
 output "oneview_storage_attachment" {

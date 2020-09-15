@@ -13,6 +13,9 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"
+	"encoding/json"
+	"io/ioutil"
+
 )
 
 func dataSourceStorageAttachment() *schema.Resource {
@@ -105,8 +108,8 @@ func dataSourceStorageAttachmentRead(d *schema.ResourceData, meta interface{}) e
 	config := meta.(*Config)
 	id := d.Get("name").(string)
 
-	storageAttachment, err := config.ovClient.GetStorageAttachmentByName(id)
-	if err != nil || storageAttachment.URI.IsNil() {
+	storageAttachment, err := config.ovClient.GetStorageAttachmentById(id)
+	if err != nil || storageAttachment.URI.IsNil() { 
 		d.SetId("")
 		return nil
 	}
