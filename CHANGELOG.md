@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Oneview Features supported
 - Enclosure
 - Enclosure Group
+- Logical Encloure
+- Server Hardware
+- Server Hardware Type
 
 ### Major changes:
 - Refactored SDK to take default API version from Oneview appliance
