@@ -7,24 +7,40 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
+data "oneview_enclosure_group" "enclosure_group" {
+        name = "TestEnclosureGroup_Renamed"
+}
+
+data "oneview_scope" "scope" {
+        name = "test"
+}
+
 resource "oneview_enclosure" "enclosure_inst" {
-	enclosure_group_uri = "/rest/enclosure-groups/22b775e2-57dd-46d1-beb1-b53b14d51ce4"
+	enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
 	host_name = "<enclosure_hostname>"
 	user_name = "<enclosure_username>"
 	password = "<enclosure_password>"
 	licensing_intent = "Oneview"
-	initial_scope_uris = ["/rest/scopes/bf7df2e6-ebbb-4c6b-bc7a-be8cdac930bf"]
+	initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
 	name = "Encl2"
 }
 
-/*resource "oneview_enclosure" "enclosure_inst" {
+#Importing Existing resource to update
+#run the below command to import the resource:
+#terraform import oneview_enclosure.enclosure_inst <your_enclosure_name>
+
+resource "oneview_enclosure" "import_enc"{
+}
+
+# Update Enclosure
+resource "oneview_enclosure" "import_enc" {
 	op = "replace"
 	path = "/name"
 	value = "Enclosure_Renamed"
 	name = "Enclosure_Renamed"
-}*/
+}
 
-/* Testing data source
+# Testing data source
 data "oneview_enclosure" "enclosure" {
         name = "SYN03_Frame1"
 }
@@ -32,5 +48,3 @@ data "oneview_enclosure" "enclosure" {
 output "oneview_enclosure_value" {
         value = "${data.oneview_enclosure.enclosure.uuid}"
 }
-
-*/
