@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 )
 
 type Configuration struct {
@@ -17,22 +19,17 @@ type Configuration struct {
 }
 
 func LoadConfigFile(configFile string) (Configuration, error) {
-	path, errPath := os.Getwd()
-	if errPath != nil {
-		panic(errPath)
-	}
-	configFilePath := path + "/examples/" + configFile
-	configF, err1 := os.Open(configFilePath)
+	_, filename, _, _ := runtime.Caller(1)
+	configFilePath := filepath.Join(filepath.Dir(filename), configFile)
+	configF, err := os.Open(configFilePath)
 	var config Configuration
 	defer configF.Close()
-	if err1 != nil {
-		fmt.Println(err1)
-		return config, err1
+	if err != nil {
+		fmt.Println(err)
+		return config, err
 	}
-
 	jsonParser := json.NewDecoder(configF)
 	jsonParser.Decode(&config)
-	fmt.Println(config.Password)
 
 	return config, nil
 }
