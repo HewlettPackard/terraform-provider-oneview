@@ -13,7 +13,7 @@ resource "oneview_enclosure" "enclosure_inst" {
 	user_name = "<enclosure_username>"
 	password = "<enclosure_password>"
 	licensing_intent = "Oneview"
-	initial_scope_uris = ["scope_1", "scope_2"]
+	initial_scope_uris = ["scope_name1", "scope_name2"]
 	name = "Encl2"
 }
 
@@ -32,5 +32,4 @@ data "oneview_enclosure" "enclosure" {
 output "oneview_enclosure_value" {
         value = "${data.oneview_enclosure.enclosure.uuid}"
 }
-
 */
