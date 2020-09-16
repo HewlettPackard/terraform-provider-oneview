@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Major changes:
 - Refactored SDK to take default API version from Oneview appliance
+- Added support for automatic publish of Docker Image when there is a new release in GitHub.
 
 ### Bug fixes & Enhancements:
 - [#29] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/29) Add Description and Bios settings to server template
