@@ -2,9 +2,15 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 # [v1.5.0] (unreleased)
 ### Notes
+- This release supports API2000 minimally where we can use OneView API2000 with this SDK.
+
+### Oneview Features supported
+- Logical Interconnect
+- Server Profile
+- Server Profile Template
+
 ### Major changes:
-- Refactored SDK to take default API version from Oneview appliance,
-- Added support for automatic publish of Docker Image when there is a new release in GitHub.
+- Refactored SDK to take default API version from Oneview appliance
 
 ### Bug fixes & Enhancements:
 - [#29] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/29) Add Description and Bios settings to server template
