@@ -161,7 +161,7 @@ func dataSourceInterconnects() *schema.Resource {
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
-						"trap_destination": {
+						"trap_destinations": {
 							Type:     schema.TypeList,
 							Computed: true,
 							Elem: &schema.Resource{
@@ -266,6 +266,7 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("type", interconnect.Type)
 	d.Set("uri", interconnect.URI.String())
 
+
 	locationEntries := make([]map[string]interface{}, 0,
 		len(interconnect.InterconnectLocation.LocationEntries))
 	for _, locationEntry := range interconnect.InterconnectLocation.LocationEntries {
@@ -278,6 +279,7 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 	interconnectLocation = append(interconnectLocation, map[string]interface{}{
 		"location_entries": locationEntries,
 	})
+
 	d.Set("interconnect_location", interconnectLocation)
 
 	ipAddressList := make([]map[string]interface{}, 0,
@@ -332,11 +334,15 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 
 	snmpConfiguration := make([]map[string]interface{}, 0, 1)
 	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
-		"enabled":          *interconnect.SnmpConfiguration.Enabled,
-		"v3_enabled":       *interconnect.SnmpConfiguration.V3Enabled,
+		"category":	    interconnect.SnmpConfiguration.Category,
+		"description":      interconnect.SnmpConfiguration.Description,
+		"name":             interconnect.SnmpConfiguration.Name,
+		"uri":		    interconnect.SnmpConfiguration.URI,
+		"enabled":          interconnect.SnmpConfiguration.Enabled,
+		"v3_enabled":       interconnect.SnmpConfiguration.V3Enabled,
 		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
 		"type":             interconnect.SnmpConfiguration.Type,
-		"trap_destination": trapDestinations,
+		"trap_destinations": trapDestinations,
 	})
 	d.Set("snmp_configuration", snmpConfiguration)
 
