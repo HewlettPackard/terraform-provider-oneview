@@ -7,12 +7,20 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
+data "oneview_scope" "scope_obj" {
+        name = "test"
+}
+
+data "oneview_storage_pool" "st_pool" {
+        name = "CPG_FC-AO"
+}
+
 //Creating a storage volume template
 resource "oneview_storage_volume_template" "svt" {
         name = "DemoStorageTemplate"
         description = "Testing creation of storage volume template"
-        root_template_uri = "/rest/storage-volume-templates/09c008a4-10a1-4bf4-9e2f-abf40112fe63"
-        initial_scope_uris = ["/rest/scopes/8ef32b43-2478-4aea-bb68-a65d0fbfea93"]
+        root_template_uri = "/rest/storage-volume-templates/8b1d18f7-3bce-4cd4-80ae-ac2700f27c16"
+        initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]        
         tp_name =[
 	{
                 meta_locked = false
@@ -63,7 +71,7 @@ resource "oneview_storage_volume_template" "svt" {
                 type = "string"
                 title = "Storage Pool"
                 format = "x-uri-reference"
-                default = "/rest/storage-pools/9923DE4C-F571-4B64-8C3E-ABF40112FE60"
+                default = "${data.oneview_storage_pool.st_pool.uri}"
                 required = true
                 description = "A common provisioning group URI reference"
         }]
@@ -74,7 +82,7 @@ resource "oneview_storage_volume_template" "svt" {
                 type = "string"
                 title = "Snapshot Pool"
                 format = "x-uri-reference"
-                default = "/rest/storage-pools/9923DE4C-F571-4B64-8C3E-ABF40112FE60"
+                default = "${data.oneview_storage_pool.st_pool.uri}"
                 required = false
                 description = "A URI reference to the common provisioning group used to create snapshots"
         }]
