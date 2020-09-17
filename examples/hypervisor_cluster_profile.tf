@@ -7,12 +7,21 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
+data "oneview_hypervisor_manager" "hm" {
+        name = "<Hypervisor_manager_hostname>"
+}
+
+data "oneview_server_profile_template" "spt" {
+        name = "<server_profile_template_name>"
+}
+
+
 resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile"{  
     "type"="HypervisorClusterProfileV3",
     "name"="Cluster",
     "description"="cluster profile description",
     "hypervisor_type"="Vmware",
-    "hypervisor_manager_uri"="/rest/hypervisor-managers/4d47b4ca-1c40-47ad-b170-099b04e3691f",
+    "hypervisor_manager_uri"="${data.oneview_hypervisor_manager.hm.uri}",
     "hypervisor_cluster_settings"={  
                                   "type"="Vmware",
                                   "drs_enabled"=true,
@@ -21,7 +30,7 @@ resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile"{
                                   "virtual_switch_type"="Standard"
                                },
     "hypervisor_host_profile_template"={  
-                                  "server_profile_template_uri"="/rest/server-profile-templates/87afd6f4-8b24-4182-8f06-8b5cc5b40786"
+                                  "server_profile_template_uri"="${data.oneview_server_profile_template.spt.uri}"
                                   "host_prefix"="Cluster",
 
      }

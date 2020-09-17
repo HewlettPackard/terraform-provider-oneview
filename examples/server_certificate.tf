@@ -32,11 +32,15 @@ resource "oneview_server_certificate" "ServerCertificate" {
 /* Testing data source
 
 data "oneview_server_certificate" "sc" {
-/* Any one of the these fields can used to get data source
+// Any one of the these fields can used to get data source
          alias_name = "hm_cert"
-         /*remote_ip = "172.18.13.11"*/
+         //remote_ip = "172.18.13.11"
 }
 output "oneview_server_certificate_value" {
         value = "${data.oneview_server_certificate.sc.type}"
 }
 */
+//Import existing certificate
+ /*resource "oneview_server_certificate" "ServerCertificate" {
+ }
+ */

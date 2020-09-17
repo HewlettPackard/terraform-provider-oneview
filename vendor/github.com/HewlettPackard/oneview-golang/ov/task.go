@@ -324,3 +324,47 @@ func (c *OVClient) GetTasks(filter string, sort string, count string, view strin
 	}
 	return tasks, nil
 }
+
+func (c *OVClient) GetTasksById(filter string, sort string, count string, view string, id string) (Task, error) {
+	var (
+		uri   = "/rest/tasks/"
+		q     map[string]interface{}
+		tasks Task
+	)
+	uri = uri + id
+	q = make(map[string]interface{})
+	if len(filter) > 0 {
+		q["filter"] = filter
+	}
+
+	if sort != "" {
+		q["sort"] = sort
+	}
+
+	if view != "" {
+		q["view"] = view
+	}
+
+	if count != "" {
+		q["count"] = count
+	}
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	// Setup query
+	if len(q) > 0 {
+		c.SetQueryString(q)
+	}
+
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return tasks, err
+	}
+
+	log.Debugf("Get Tasks %s", data)
+	if err := json.Unmarshal([]byte(data), &tasks); err != nil {
+		return tasks, err
+	}
+	return tasks, nil
+}
