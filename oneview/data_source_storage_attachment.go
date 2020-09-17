@@ -105,7 +105,7 @@ func dataSourceStorageAttachmentRead(d *schema.ResourceData, meta interface{}) e
 	config := meta.(*Config)
 	id := d.Get("name").(string)
 
-	storageAttachment, err := config.ovClient.GetStorageAttachmentByName(id)
+	storageAttachment, err := config.ovClient.GetStorageAttachmentById(id)
 	if err != nil || storageAttachment.URI.IsNil() {
 		d.SetId("")
 		return nil

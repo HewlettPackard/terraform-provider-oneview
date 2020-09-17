@@ -38,11 +38,17 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
 }
 */
 /* Testing data source*/
-data "oneview_hypervisor_manager" "HypervisorManager" {
+/*data "oneview_hypervisor_manager" "HypervisorManager" {
         name = "<hypervisor_manager_hostname>"
 }
 
 output "oneview_hypervisor_manager_value" {
         value = "${data.oneview_hypervisor_manager.HypervisorManager.type}"
 }
+*/
+//Import existing resource
+/*resource "oneview_hypervisor_manager" "HypervisorManager" {
+}
+*/
+
 

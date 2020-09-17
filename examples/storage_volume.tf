@@ -7,19 +7,30 @@ provider "oneview" {
   ov_ifmatch = "*"
 }
 
+data "oneview_scope" "scope_obj" {
+        name = "test"
+}
+
+data "oneview_storage_pool" "st_pool" {
+        name = "CPG_FC-AO"
+}
+data "oneview_storage_volume_template" "st_vt" {
+        name = "tr_vt"
+}
+
 resource "oneview_volume" "volume" {
   properties = {
     "name" = "testvol"
-    "storage_pool"= "/rest/storage-pools/4EF64D4-FB48-4209-8790-AB200070738C",
+    "storage_pool"= "${data.oneview_storage_pool.st_pool.uri}",
     "size"= 268435456,
     "provisioning_type"= "Thin",
     "is_deduplicated"= false
   }
-  template_uri= "/rest/storage-volume-templates/01953309-b02e-47d2-921b-aaaf0099d392",
+  template_uri= "${data.oneview_storage_volume_template.st_vt.uri}",
   is_permanent= true,
   name = "testvol"
   description = "Test Volume"
-  initial_scope_uris = ["/rest/scopes/4dff2b83-edb0-4629-a002-4a6a18951115"]
+  initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
   provisioned_capacity = "268435456"
 }
 
