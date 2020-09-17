@@ -7,7 +7,6 @@ provider "oneview" {
         ov_ifmatch = "*"
 }
 
-
 /* 
 # Creates a logical interconnect group or updates if already existing
 resource "oneview_logical_interconnect_group" "LIG" {
