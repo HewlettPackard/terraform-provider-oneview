@@ -41,3 +41,8 @@ resource "oneview_server_certificate" "ServerCertificate" {
                         }]
 }
 */
+
+# Import existing certificate
+ /*resource "oneview_server_certificate" "ServerCertificate" {
+ }
+ */

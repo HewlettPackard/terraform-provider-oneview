@@ -26,10 +26,16 @@ resource "oneview_ethernet_network" "ethernetnetwork" {
 /*resource "oneview_ethernet_network" "EthernetNetwork" {
 	name = "TestEthNetwork-updatenew"
 	type = "ethernet-networkV4"
-	vlan_id = "10"
+	vlan_id = "100"
 	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"] 
 	
 }*/
+
+/*
+#Testing data source
+data "oneview_ethernet_network" "ethernetnetwork" {
+  name = "TestEthNetwork-updatenew"
+}
 
 /*
 #Importing Existing resource
