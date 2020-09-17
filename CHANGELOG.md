@@ -28,6 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Bug fixes & Enhancements:
 - [#29] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/29) Add Description and Bios settings to server template
+- [#63] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/63) Create util function to get scope by name while creating a resource instead of hardcoding it
 
 # [v1.4.0]
 ### Notes
