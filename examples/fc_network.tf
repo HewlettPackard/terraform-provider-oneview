@@ -34,6 +34,6 @@ output "oneview_fc_network_value" {
 
 /*
 #Importing Existing resource
-resource "oneview_fc_network_value" "import_fc"{
+resource "oneview_fc_network" "import_fc"{
 }
 */
