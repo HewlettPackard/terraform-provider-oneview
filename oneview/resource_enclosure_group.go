@@ -175,7 +175,8 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 		rawinitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawinitialScopeUris))
 		for i, rawData := range rawinitialScopeUris {
-			initialScopeUris[i] = utils.Nstring(rawData.(string))
+			scope, _ := config.ovClient.GetScopeByName(rawData.(string))
+			initialScopeUris[i] = utils.Nstring(scope.URI)
 		}
 		enclosureGroup.InitialScopeUris = initialScopeUris
 	}
@@ -304,7 +305,8 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 		rawinitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, 0)
 		for _, rawData := range rawinitialScopeUris {
-			initialScopeUris = append(initialScopeUris, utils.Nstring(rawData.(string)))
+			scope, _ := config.ovClient.GetScopeByName(rawData.(string))
+			initialScopeUris[i] = utils.Nstring(scope.URI)
 		}
 		enclosureGroup.InitialScopeUris = initialScopeUris
 	}
