@@ -1149,11 +1149,6 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 			igmpSettings.Created = enabled
 		}
 
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".dependent_resource_uri"); ok {
-			enabled := val1.(string)
-			igmpSettings.DependentResourceUri = enabled
-		}
-
 		if val1, ok := d.GetOk(igmpSettingsPrefix + ".description"); ok {
 			enabled := val1.(string)
 			igmpSettings.Description = enabled
