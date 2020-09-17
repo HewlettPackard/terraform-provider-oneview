@@ -22,10 +22,10 @@ The Docker Store image `tag` consist of two sections: `<sdk_version-OV_version>`
 ```bash
 # Download and store a local copy of hpe-oneview-sdk-for-golang and
 # use it as a Docker image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-golang:v1.5.0-OV5.3
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-golang:v1.6.0-OV5.4
 #Run docker commands and this will in turn create
 # a sh session where you can create files, issue commands and execute the tests
-$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-golang:v1.5.0-OV5.3 /bin/sh
+$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-golang:v1.6.0-OV5.4 /bin/sh
 ```
 
 
@@ -43,7 +43,7 @@ export ONEVIEW_OV_DOMAIN=LOCAL
 export ONEVIEW_SSLVERIFY=false
 export ONEVIEW_APIVERSION=<ov_apiversion>
 ```
-Note: Currently this SDK supports OneView API 1800 minimally where we can test OneView API 1800 version with this SDK. No new fields have been added/deleted to support API 1800 version. Complete support will be done in next releases.
+Note: Currently this SDK supports OneView API 2000 minimally where we can test OneView API 2000 version with this SDK. No new fields have been added/deleted to support API 2000 version. Complete support will be done in next releases. If API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ## Testing your changes
 
