@@ -304,7 +304,7 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawinitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, 0)
-		for _, rawData := range rawinitialScopeUris {
+		for i, rawData := range rawinitialScopeUris {
 			scope, _ := config.ovClient.GetScopeByName(rawData.(string))
 			initialScopeUris[i] = utils.Nstring(scope.URI)
 		}

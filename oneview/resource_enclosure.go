@@ -325,7 +325,6 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 		enclosureCreateMap.InitialScopeUris = initialScopeUris
 	}
-	enclosureCreateMap.InitialScopeUris = initialScopeUris
 
 	enclosureError := config.ovClient.CreateEnclosure(enclosureCreateMap)
 	d.SetId(d.Get("name").(string))
