@@ -21,7 +21,7 @@ resource "oneview_enclosure" "enclosure_inst" {
 	user_name = "<enclosure_username>"
 	password = "<enclosure_password>"
 	licensing_intent = "Oneview"
-	initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
+	initial_scope_uris = ["scope_name1", "scope_name2"]
 	name = "Encl2"
 }
 

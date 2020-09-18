@@ -92,6 +92,13 @@ type LogicalEnclosureFirmware struct {
 	ValidateIfLIFirmwareUpdateIsNonDisruptive bool          `json:"validateIfLIFirmwareUpdateIsNonDisruptive,omitempty"` //"validateIfLIFirmwareUpdateIsNonDisruptive":false,
 }
 
+type SupportDumps struct {
+	Encrypt                 utils.Nstring   `json:"encrypt,omitempty"`                 //""encrypt":"true",
+	ErrorCode               string          `json:"errorCode,omitempty"`               //""errorCode":"MyDump16",
+	ExcludeApplianceDump    bool            `json:"excludeApplianceDump,omitempty"`    //""excludeApplianceDump":false,
+	LogicalInterconnectUris []utils.Nstring `json:"logicalInterconnectUris,omitempty"` //"logicalInterconnectUris":"",
+}
+
 func (c *OVClient) GetLogicalEnclosureByName(name string) (LogicalEnclosure, error) {
 	var (
 		logEn LogicalEnclosure
@@ -150,6 +157,51 @@ func (c *OVClient) GetLogicalEnclosures(start string, count string, filter strin
 		return logicalEnclosures, err
 	}
 	return logicalEnclosures, nil
+}
+func (c *OVClient) CreateSupportDump(supportdump SupportDumps, id string) (map[string]string, error) {
+	var (
+		uri = "/rest/logical-enclosures/"
+		t   *Task
+	)
+	uri = uri + id + "/support-dumps"
+
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Debugf("REST : %s \n %+v\n", uri, supportdump)
+	log.Debugf("task -> %+v", t)
+
+	data, err := c.RestAPICall(rest.POST, uri, supportdump)
+	payload := make(map[string]string)
+
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error submitting new logical Enclosure Support Dump request: %s", err)
+		return payload, err
+	}
+
+	err = json.Unmarshal([]byte(data), &payload)
+
+	if err != nil {
+		log.Errorf("Error with payload un-marshal: %s", err)
+		return payload, err
+	}
+
+	log.Debugf("Response New Support Dump for LogicalEnclosure %s", data)
+	if err = json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return payload, err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return payload, err
+	}
+
+	return payload, nil
 }
 
 func (c *OVClient) CreateLogicalEnclosure(logEn LogicalEnclosure) error {

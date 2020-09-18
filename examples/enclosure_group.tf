@@ -19,8 +19,8 @@ resource "oneview_enclosure_group" "eg_inst" {
 	name = "TestEnclosureGroup"
 	description = "Testing creation of Enclosure Group"
 	ip_addressing_mode = "External"
-	enclosure_count = 1
-	initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
+	enclosure_count = 3
+	initial_scope_uris = ["scope_1", "scope_2"]
 	interconnect_bay_mappings = [
 	{
 		interconnect_bay = 3

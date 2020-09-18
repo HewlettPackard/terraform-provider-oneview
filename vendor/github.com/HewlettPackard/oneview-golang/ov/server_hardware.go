@@ -102,6 +102,7 @@ type ServerHardware struct {
 	SerialNumber          utils.Nstring `json:"serialNumber,omitempty"`          // "serialNumber": "2M25090RMW",
 	ServerGroupURI        utils.Nstring `json:"serverGroupUri,omitempty"`        // "serverGroupUri": "/rest/enclosure-groups/56ad0069-8362-42fd-b4e3-f5c5a69af039",
 	ServerHardwareTypeURI utils.Nstring `json:"serverHardwareTypeUri,omitempty"` // "serverHardwareTypeUri": "/rest/server-hardware-types/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
+	ServerName            string        `json:"servername,omitempty"`            // "serverName": "hostname.hpe.com",
 	ServerProfileURI      utils.Nstring `json:"serverProfileUri,omitempty"`      // "serverProfileUri": "/rest/server-profiles/9979b3a4-646a-4c3e-bca6-80ca0b403a93",
 	ShortModel            string        `json:"shortModel,omitempty"`            // "shortModel": "BL460c Gen9",
 	State                 string        `json:"state,omitempty"`                 // "state": "ProfileApplied",

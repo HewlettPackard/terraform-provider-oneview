@@ -232,6 +232,76 @@ type LogicalInterconnectCompliance struct {
 
 }
 
+type BulkInconsistencyValidation struct {
+	AllowUpdateFromGroup                     bool                        `json:"allowUpdateFromGroup,omitempty"`                     // "allowUpdateFromGroup": false,
+	LogicalInterconnectsReport               []LogicalInterconnectReport `json:"logicalInterconnectsReport,omitempty"`               // "LogicalInterconnectsReport":[]
+	MaximumLimitOnUpdates                    int                         `json:"maximumLimitOnUpdates,omitempty"`                    // "maximumLimitOnUpdates": 1,
+	NoOfConsistentLIs                        int                         `json:"noOfConsistentLIs,omitempty"`                        // "noOfConsistentLIs": 1,
+	NoOfInconsistentLIs                      int                         `json:"noOfInconsistentLIs,omitempty"`                      // "noOfInconsistentLIs": 1,
+	PortMonitoringConfigurationCumulative    bool                        `json:"portMonitoringConfigurationCumulative,omitempty"`    // "portMonitoringConfigurationCumulative": false,
+	PossibleTrafficLossTransactionCumulative bool                        `json:"possibleTrafficLossTransactionCumulative,omitempty"` // "possibleTrafficLossTransactionCumulative": false,
+	TotalNumberOfUpdates                     int                         `json:"totalNumberOfUpdates,omitempty"`                     // "totalNumberOfUpdates": 1,
+}
+
+type LogicalInterconnectReport struct {
+	DeploymentClusterAffected   DepClusterAffected `json:"deploymentClusterAffected,omitempty"`   // "deploymentClusterAffected":[]
+	Name                        string             `json:"name,omitempty"`                        // "name": null,
+	NoOfProfilesAffected        int                `json:"noOfProfilesAffected,omitempty"`        // "noOfProfilesAffected": 1,
+	NoOfUpdates                 int                `json:"noOfUpdates,omitempty"`                 // "noOfUpdates": 1,
+	PortMonitoringConfiguration bool               `json:"portMonitoringConfiguration,omitempty"` // "portMonitoringConfiguration": false,
+	ProfilesAffected            []ProfileAffected  `json:"profilesAffected,omitempty"`            // "profilesAffected":[]
+	Report                      Reports            `json:"report,omitempty"`                      // "report":[]
+	URI                         utils.Nstring      `json:"uri,omitempty"`                         // "uri": null,
+}
+
+type DepClusterAffected struct {
+	ApplianceUri          utils.Nstring `json:"applianceUri,omitempty"`          // "applianceUri": null,
+	DeploymentClusterName string        `json:"deploymentClusterName,omitempty"` // "deploymentClusterName": null,
+	PrimaryClusterName    string        `json:"primaryClusterName,omitempty"`    // "primaryClusterName": null,
+	ServerIP              utils.Nstring `json:"serverIP,omitempty"`              // "serverIP": null,
+	URI                   utils.Nstring `json:"uri,omitempty"`                   // "uri": null,
+}
+
+type ProfileAffected struct {
+	Name   string        `json:"name,omitempty"`   // "name": null,
+	Status string        `json:"status,omitempty"` // "status": null,
+	URI    utils.Nstring `json:"uri,omitempty"`    // "uri": null,
+}
+
+type Reports struct {
+	AutomaticUpdates               []string        `json:"automaticUpdates,omitempty"`               // "automaticUpdates": [],
+	ConnectivityReport             map[string]bool `json:"connectivityReport,omitempty"`             // "connectivityReport:"{},
+	ManualUpdates                  []string        `json:"manualUpdates,omitempty"`                  // "manualUpdates": [],
+	PossibleTrafficLossTransaction bool            `json:"possibleTrafficLossTransaction,omitempty"` // "possibleTrafficLossTransaction": false,
+}
+
+func (c *OVClient) BulkInconsistencyValidations(ligUris map[string][]utils.Nstring) (BulkInconsistencyValidation, error) {
+	var (
+		uri     = "/rest/logical-interconnects/bulk-inconsistency-validation"
+		payload BulkInconsistencyValidation
+	)
+
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	log.Debugf("REST : %s \n %+v\n", uri, ligUris)
+	data, err := c.RestAPICall(rest.POST, uri, ligUris)
+
+	if err != nil {
+
+		log.Errorf("Error submitting new BulkInconsistencyValidations request: %s", err)
+		return payload, err
+	}
+	err = json.Unmarshal([]byte(data), &payload)
+	if err != nil {
+		log.Errorf("Error with payload un-marshal: %s", err)
+		return payload, err
+	}
+	log.Debugf("Response New BulkInconsistencyValidations %s", data)
+
+	return payload, nil
+}
+
 func (c *OVClient) GetLogicalInterconnectById(Id string) (LogicalInterconnect, error) {
 	var (
 		uri                 = "/rest/logical-interconnects/"
