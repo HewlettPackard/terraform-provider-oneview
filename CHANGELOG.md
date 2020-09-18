@@ -12,9 +12,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - FCOE Network
 - Hypervisor Cluster Profile
 - Hypervisor Manager
+- Interconnects
+- Interrconnect Type
 - Logical Encloure
 - Logical Interconnect
+- Logical Interconnect Group
 - Network Set
+- Scope
 - Server Certificates
 - Server Hardware
 - Server Hardware Type
