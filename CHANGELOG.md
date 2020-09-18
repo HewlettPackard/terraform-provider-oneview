@@ -2,19 +2,22 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 # [v1.5.0] (unreleased)
 ### Notes
-
-### Oneview Features supported
 - This release supports API2000 minimally where we can use OneView API2000 with this SDK. No new fields are added/deleted to support API2000.
 
 ### Oneview Features supported
+- Enclosure
+- Enclosure Group
 - Ethernet Network
 - FC Network
 - FCOE Network
 - Hypervisor Cluster Profile
 - Hypervisor Manager
+- Logical Encloure
 - Logical Interconnect
 - Network Set
 - Server Certificates
+- Server Hardware
+- Server Hardware Type
 - Server Profile
 - Server Profile Template
 - Storage Pool

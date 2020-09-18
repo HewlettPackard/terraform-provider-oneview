@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 data "oneview_enclosure_group" "enclosure_group" {
-        name = "EnclosureGroupDemo"
+        name = "enclosureGp"
 }
 
 resource "oneview_logical_enclosure" "LogicalEnclosure" {
@@ -17,25 +17,27 @@ resource "oneview_logical_enclosure" "LogicalEnclosure" {
 	enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
 }
 
-/* Update by Group
+# Import an Exisiting Logical Enclosure
+# terraform import oneview_logical_enclosure.LogicalEnclosure <LE_Name>
+resource "oneview_logical_enclosure" "LogicalEnclosure" {
+}
 
+# Update by Group 
 resource "oneview_logical_enclosure" "LogicalEnclosure" {
   name = "TESTLE"
   enclosure_uris = ["/rest/enclosures/0000000000A66101","/rest/enclosures/0000000000A66102","/rest/enclosures/0000000000A66103"]
   enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
   update_type = "updateByGroup"
 }
-*/
+
 
 # Datasource
-
-/*
 data "oneview_logical_enclosure" "logical_enclosure" {
-    name = "TESTLE"
+	name = "TESTLE"
 	enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
 }
 
 output "oneview_logical_enclosure_value" {
         value = "${data.oneview_logical_enclosure.logical_enclosure.name}"
 }
-*/
+
