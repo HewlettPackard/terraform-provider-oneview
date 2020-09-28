@@ -1,5 +1,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
+
+# [v1.6.0](Unreleased)
+
+### Bug fixes & Enhancements:
+- [#118] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/118) mp_ip_address and mp_dns_name return NULL value.
+
 # [v1.5.0]
 ### Notes
 - This release supports API2000 minimally where we can use OneView API2000 with this SDK. No new fields are added/deleted to support API2000.

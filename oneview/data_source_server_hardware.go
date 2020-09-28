@@ -84,6 +84,7 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	config := meta.(*Config)
 
 	servHard, err := config.ovClient.GetServerHardwareByName(d.Get("name").(string))
+
 	if err != nil || servHard.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -100,7 +101,7 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("uuid", servHard.UUID.String())
 	d.Set("virtual_serial_number", servHard.VirtualSerialNumber.String())
 	d.Set("virtual_uuid", servHard.VirtualUUID)
-	d.Set("mp_ip_address", servHard.MpIpAddress)
+	d.Set("mp_ip_address", servHard.GetIloIPAddress())
 	d.Set("mp_firmware_version", servHard.MpFirwareVersion)
 	d.Set("mp_dns_name", servHard.MpDnsName)
 
