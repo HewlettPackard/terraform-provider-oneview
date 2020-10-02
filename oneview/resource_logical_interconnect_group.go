@@ -1722,7 +1722,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	interconnectSetting := map[string]interface{}{
 		"consistency_checking":           logicalInterconnectGroup.EthernetSettings.ConsistencyChecking,
 		"dependent_resource_uri":         logicalInterconnectGroup.EthernetSettings.DependentResourceUri,
-		"domain_name":                    logicalInterconnectGroup.EthernetSettings.DomainName,
+		//"domain_name":                    *logicalInterconnectGroup.EthernetSettings.DomainName,
 		"enable_cut_through":             *logicalInterconnectGroup.EthernetSettings.EnableCutThrough,
 		"enable_dns":                     *logicalInterconnectGroup.EthernetSettings.EnableDdns,
 		"enable_storm_control":           *logicalInterconnectGroup.EthernetSettings.EnableStormControl,
@@ -1745,6 +1745,12 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		"storm_control_threshold":        logicalInterconnectGroup.EthernetSettings.StormControlThreshold,
 		"type":                           logicalInterconnectGroup.EthernetSettings.Type,
 		"uri":                            logicalInterconnectGroup.EthernetSettings.URI,
+	}
+	if (logicalInterconnectGroup.EthernetSettings.DomainName !=nil){
+		interconnectSetting["domain_name"] = *logicalInterconnectGroup.EthernetSettings.DomainName
+	}else{
+		interconnectSetting["domain_name"] = nil
+
 	}
 
 	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
@@ -2278,7 +2284,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		//   var dName *string = nil
 		//   interconnectSettings.DomainName=dName
 		// }else{
-		   interconnectSettings.DomainName = domainName
+		   interconnectSettings.DomainName = &domainName
 		// }
 		
 		enableCutThrough := d.Get(interconnectSettingsPrefix + ".enable_cut_through").(bool)

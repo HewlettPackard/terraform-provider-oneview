@@ -31,13 +31,7 @@ resource "oneview_ethernet_network" "network_Prod_60" {
 
 
 # /* GETTING ETHERNET NETWORK URIS FROM THE NETWORK SET */
-data "oneview_network_set" "network_set" {
-  name = "Prod"
-}
 
-output "network_set_Prod_uris" {
-  value = "${data.oneview_network_set.network_set.network_uris}"
-}
 
 data "oneview_ethernet_network" "network_Prod_60" {
   name = "Prod_60"
@@ -52,6 +46,13 @@ resource "oneview_network_set" "network_set" {
   type = "network-setV5"
   network_uris = ["${data.oneview_network_set.network_set.network_uris}", "${data.oneview_ethernet_network.network_Prod_60.uri}"]
   depends_on = ["oneview_ethernet_network.network_Prod_60"]
+}
+data "oneview_network_set" "network_set" {
+  name = "Prod"
+}
+
+output "network_set_Prod_uris" {
+  value = "${data.oneview_network_set.network_set.network_uris}"
 }
 
 # /* GETTING NETWORK URIs FOR THE LIG DECLARATION*/
@@ -90,7 +91,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
   interconnect_bay_set  = 3
   enclosure_indexes     = [1, 2, 3]
   redundancy_type       = "HighlyAvailable"
-  name                  = "test"
+  name                  = "test" 
   internal_network_uris = []
   igmp_settings         = []
   sflow_configuration   = []
@@ -129,18 +130,20 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
   
   uplink_set = [
     {
-      name         = "Mgmt"
+      name         = "US-Image Streamer"
       # network_type = "Ethernet"
       # lacp_timer   = "Short"
       # mode         = "Auto"
-      network_uris = ["${data.oneview_ethernet_network.network_Mgmt.uri}"]
+      # //network_uris = ["${data.oneview_ethernet_network.network_Mgmt.uri}"]
+    },  
+      {
+      name         = "US-SAN-B-FC"
+    #   //network_type = "Ethernet"
+    #   //lacp_timer   = "Short"
+    #   mode         = "Auto"
+    #  // network_uris = ["${data.oneview_ethernet_network.network_Mgmt.uri}"]
     },
-    {
-      name         = "US-ESX-vMotion"
-      
-    },
-    
-    {
+     {
       name         = "US-SAN-A-FC"
       # network_type = "Ethernet"
       # lacp_timer   = "Short"
@@ -165,16 +168,9 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
       # ]
     },
     {
-      name         = "US-Image Streamer"
-      # network_type = "Ethernet"
-      # lacp_timer   = "Short"
-      # mode         = "Auto"
-      # //network_uris = ["${data.oneview_ethernet_network.network_Mgmt.uri}"]
-    },
-    {
       name         = "US-Prod"
       //network_type = "FibreChannel"
-      network_uris = ["${data.oneview_network_set.network_set.network_uris}"]
+      network_uris = ["${data.oneview_network_set.network_set.network_uris}","${data.oneview_ethernet_network.network_Prod_60.uri}"]
 
       # logical_port_config = [
       # 	{
@@ -186,12 +182,16 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
       #      }
       # ]
     },
-     {
-      name         = "US-SAN-B-FC"
-    #   //network_type = "Ethernet"
-    #   //lacp_timer   = "Short"
-    #   mode         = "Auto"
-    #  // network_uris = ["${data.oneview_ethernet_network.network_Mgmt.uri}"]
+    {
+      name         = "Mgmt"
+      # network_type = "Ethernet"
+      # lacp_timer   = "Short"
+      # mode         = "Auto"
+      network_uris = ["${data.oneview_ethernet_network.network_Mgmt.uri}"]
+    },
+    {
+      name         = "US-ESX-vMotion"
+      
     },
     {
       name         = "US-ESX-Mgmt"
@@ -199,7 +199,14 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
       # lacp_timer   = "Short"
       # mode         = "Auto"
       # //network_uris = ["${data.oneview_ethernet_network.network_Mgmt.uri}"]
-    },   
+    }, 
+  
+    
+   
+     
+    
+      
+       
     # {
     #   name         = "US-Prod"
     #   network_type = "Ethernet"
@@ -243,7 +250,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
     
   ]
 
-  depends_on = ["oneview_ethernet_network.network_Prod_60"]
+  depends_on = ["oneview_network_set.network_set"]
 }
 
 # /* GETTING THE LI URI*/
