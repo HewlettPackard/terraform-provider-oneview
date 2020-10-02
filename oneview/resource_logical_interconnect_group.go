@@ -474,7 +474,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"domain_name": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default: "null",
+							
 						},
 						"enable_cut_through": {
 							Type:     schema.TypeBool,
@@ -2274,11 +2274,12 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
 		}
 		domainName := d.Get(interconnectSettingsPrefix + ".domain_name").(string)
-		if domainName==""{
-			interconnectSettings.DomainName=null
-		}
-		
-		interconnectSettings.DomainName = domainName
+	    // if domainName==nil{
+		//   var dName *string = nil
+		//   interconnectSettings.DomainName=dName
+		// }else{
+		   interconnectSettings.DomainName = domainName
+		// }
 		
 		enableCutThrough := d.Get(interconnectSettingsPrefix + ".enable_cut_through").(bool)
 		interconnectSettings.EnableCutThrough = &enableCutThrough
