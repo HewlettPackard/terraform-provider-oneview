@@ -53,7 +53,7 @@ type EthernetSettings struct {
 	Created                            string        `json:"created,omitempty"`                            // "created": "20150831T154835.250Z",
 	DependentResourceUri               utils.Nstring `json:"dependentResourceUri,omitempty"`               // "dependentResourceUri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86",
 	Description                        utils.Nstring `json:"description,omitempty"`                        // "description": "Ethernet Settings",
-	DomainName                         string        `json:"domainName"`                                   // "domainName": "ADHS",
+	DomainName                         *string        `json:"domainName"           `              // "domainName": "ADHS",
 	ETAG                               utils.Nstring `json:"eTag,omitempty"`                               // "eTag": "1441036118675/8",
 	EnableCutThrough                   *bool         `json:"enableCutThrough,omitempty"`                   // "enableCutThrough": false,
 	EnableDdns                         *bool         `json:"enableDdns,omitempty"`                         // "enableCutThrough": false,
@@ -75,7 +75,7 @@ type EthernetSettings struct {
 	State                              string        `json:"state,omitempty"`                              // "state": "Normal",
 	Status                             string        `json:"status,omitempty"`                             // "status": "Critical",
 	StormControlPollingInterval        int           `json:"stormControlPollingInterval,omitempty"`        // "stormControlPollingInterval": 10,
-	StormControlThreshold              int           `json:"stormControlThreshold"`             // "stormControlThreshold": 0,
+	StormControlThreshold              int           `json:"stormControlThreshold,,omitempty"`             // "stormControlThreshold": 0,
 	Type                               string        `json:"type,omitempty"`                               // "type": "EthernetInterconnectSettingsV5",
 	URI                                utils.Nstring `json:"uri,omitempty"`                                // "uri": "/rest/logical-interconnect-groups/b7b144e9-1f5e-4d52-8534-2e39280f9e86/ethernetSettings"
 }
@@ -520,11 +520,6 @@ func (c *OVClient) GetLogicalInterconnectGroups(count int, filter string, scopeU
 	if err := json.Unmarshal([]byte(data), &logicalInterconnectGroups); err != nil {
 		return logicalInterconnectGroups, err
 	}
-	//file, _ := json.MarshalIndent(logicalInterconnectGroups, "", " ")
-	//fmt.Println(file)fmt.Printf("%+v\n", orders)
-
-	//log.Infof("%#v\n\n", logicalInterconnectGroups)
-
 	return logicalInterconnectGroups, nil
 }
 
