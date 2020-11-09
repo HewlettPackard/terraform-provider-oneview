@@ -89,10 +89,10 @@
 			"revisionTime": "2020-09-11T06:13:29Z"
 		},
 		{
-			"checksumSHA1": "Ti44nnU/vNKk77isTDO2a6k6mPs=",
+			"checksumSHA1": "uelfvIgGgILro5WoVimlArE6n+I=",
 			"path": "github.com/HewlettPackard/oneview-golang/examples",
-			"revision": "d4c8bf3ea5590be2ba0cd331fa4e595cdfb3a48e",
-			"revisionTime": "2019-09-20T10:51:04Z"
+			"revision": "2141047f0fa16b87702b151715ec18989edbe5c3",
+			"revisionTime": "2020-11-09T12:48:07Z"
 		},
 		{
 			"checksumSHA1": "oywegchJ/g0WLo84ZqD9pLPwajM=",
@@ -1930,5 +1930,5 @@
 			"revision": ""
 		}
 	],
-	"rootPath": "github.com/HewlettPackard/terraform-provider-oneview"
+	"rootPath": "/github.com/HewlettPackard/terraform-provider-oneview"
 }
