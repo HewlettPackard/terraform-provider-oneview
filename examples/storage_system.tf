@@ -1,31 +1,72 @@
 provider "oneview" {
-  ov_username   = "<ov_username>"
-  ov_password   = "<ov_password>"
-  ov_endpoint   = "<ov_endpoint>"
-  ov_sslverify  = false
-  ov_apiversion = <ov_apiversion>
+  ov_username   = "${var.username}"
+  ov_password   = "${var.password}"
+  ov_endpoint   = "${var.endpoint}"
+  ov_sslverify  = "${var.ssl_enabled}"
+  ov_apiversion = 2200
   ov_ifmatch    = "*"
 }
 
-
-resource "oneview_storage_system" "ss_inst" {
-        hostname = "<storage_system_ip>"
-        username = "<storage_system_username>"
-        password = "<storage_system_password>"
-        family   = "StoreServ"
+variable "hostname" {
+  type    = "string"
+  default = "<storage_system_ip>"
+}
+variable "ss_username" {
+  type    = "string"
+  default = "<storage_system_username>"
+}
+variable "ss_password" {
+  type    = "string"
+  default = "<storage_system_password>"
+}
+variable "ss_family" {
+  type    = "string"
+  default = "<storage_system_family>"
+}
+/*
+# Extracting Server Certificate
+data "oneview_server_certificate" "sc" {
+  remote_ip = "${var.hostname}"
 }
 
+# Importing Server Certificate for adding storage system
+resource "oneview_server_certificate" "ServerCertificate" {
+    certificate_details = [{
+                        base64_data="${data.oneview_server_certificate.sc.certificate_details.0.base64_data}"
+                        type="CertificateDetailV2"
+                        alias_name = "TestServerCertificate"
+                        }]
+}
 
-// Uncomment the following resource to update.
-/*resource "oneview_storage_system" "ss_inst" {
+resource "oneview_storage_system" "ss_inst" {
+   hostname = "${var.hostname}"
+   username = "${var.ss_username}"
+   password = "${var.ss_password}"
+   family   = "${var.ss_family}"
+   depends_on = ["oneview_server_certificate.ServerCertificate"]
+}
+*/
+
+/*
+# Extracting Storage System
+data "oneview_storage_system" "ss_inst_data" {
+   name = "ThreePAR-2"
+}
+
+output "oneview_storage_system_value" {
+        value = "${data.oneview_storage_system.ss_int.uri}"
+}
+
+# Uncomment the following resource to update.
+resource "oneview_storage_system" "ss_inst" {
   credentials = [
     {
-      username = "<storage_system_username>"
-      password = "<storage_system_password>"
+      username = "${var.ss_username}"
+      password = "${var.ss_password}"
     },
   ]
 
-  hostname = "<storage_system_ip>"
+  hostname =  "${var.hostname}"
   name     = "ThreePAR-2"
 
   storage_system_device_specific_attributes = {
@@ -34,20 +75,13 @@ resource "oneview_storage_system" "ss_inst" {
 
   eTag        = "--"
   description = "TestStorageSystem"
-  uri         = "/rest/storage-systems/TXQ1010307"
+  uri         = "${data.oneview_storage_system.ss_inst_data.uri}"
 }
 */
-/*
-// Testing the data source
-data "oneview_storage_system" "ss_int" {
-        name = "ThreePAR-2"
-}
 
-output "oneview_storage_system_value" {
-        value = "${data.oneview_storage_system.ss_int.uri}"
+# Testing import of existing resource
+/*
+resource "oneview_storage_system" "ss_import"{
 }
-// Testing import of existing resource
 */
-/*resource "oneview_storage_system" "ss_import"{
-}*/
 
