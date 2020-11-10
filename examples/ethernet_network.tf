@@ -24,17 +24,18 @@ resource "oneview_ethernet_network" "ethernetnetwork" {
 # To update uncomment the below and ad the attributes  to be updated
 
 resource "oneview_ethernet_network" "ethernetnetwork" {
-	depends_on = ["oneview_ethernet_network.ethernetnetwork"]
 	name = "TestEthNetwork_terraform_Rename"
 	type = "ethernet-networkV4"
 	vlan_id = "102"
-	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"] 	
+	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
+	depends_on = ["oneview_ethernet_network.ethernetnetwork"]
 }
 
 /*
 #Testing data source
 data "oneview_ethernet_network" "ethernetnetwork" {
   name = "TestEthNetwork-updatenew"
+  depends_on = ["oneview_ethernet_network.ethernetnetwork"]
 }
 
 
