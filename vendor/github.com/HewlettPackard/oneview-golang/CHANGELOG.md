@@ -1,6 +1,39 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v1.7.0] (2020-11-05)
+### Notes
+- This release extends supports of the SDK to Oneview API Version 2200 and Image Streamer API Version 2000.
+
+### Oneview Features supported
+- Deployment Plan
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Hypervisor Cluster Profiles
+- Hypervisor Manager
+- Interconnects
+- Interconnect Types
+- Logical Interconnect
+- Logical Enclosure
+- Logical Interconnect Group
+- Network Set
+- Scope
+- Server Certificates
+- Server Hardware
+- Server Hardware Types
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage System
+- Storage Template
+- Storage Volume
+- Storage Volume Attachments
+- Tasks
+- Uplink Set
+
 # [v1.6.0] 
 ### Notes
 - This release extends supports of the SDK to Oneview API2000.
