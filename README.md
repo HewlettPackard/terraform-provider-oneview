@@ -32,7 +32,7 @@ $ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.6.0-O
 
 ### Local Setup
 
-Local installation requires 
+Local installation requires
 - Installing Go
 ```bash 
 $ apt-get install build-essential git wget
@@ -70,17 +70,15 @@ go build -o terraform-provider-oneview
 $ mv $GOPATH/bin/terraform-provider-oneview ~/.terraform.d/plugins
 ```
 
-
-
 ## Configuration
 
-- OneView Client Configuration
+### OneView Client Configuration
+
 The OneView Client configuration options that can be passed during OneView Client object creation:
 The variables are defined in [variable.tf](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/variables.tf) file.
 
+Following environment variables can be set for testing:
 ```bash
-# Following environment variables can be set for testing:
-
 # Required
 $ export TF_VAR_endpoint=<ov_endpoint>
 $ export TF_VAR_username=<ov_username>
@@ -88,10 +86,9 @@ $ export TF_VAR_password=<ov_password>
 $ export TF_VAR_ssl_enabled=false
 $ export TF_VAR_ov_domain=<ov_domain>
 ```
+For authentication, you need to provide the provider information in examples:
 
 ```bash
-#For authentication, you need to provide the provider information in examples:
-
 provider "oneview" {
 	ov_username  = "${var.username}"
 	ov_password  = "${var.password}"
@@ -104,20 +101,16 @@ provider "oneview" {
 
 ```
 
-- Image Streamer Client Configuration: 
-
+### Image Streamer Client Configuration: 
+The Image Streamer (I3S) client is very much similar to the OneView client. 
+Following extra environment variables should be set for testing:
 
 ```bash
-# The Image Streamer (I3S) client is very much similar to the OneView client. 
-# Following extra environment variables should be set for testing:
-
 # Required
 $ export TF_VAR_i3s_endpoint=<i3s_endpoint>
 ```
-
+Here we create the Image Streamer(I3S) client.
 ```bash
-# Here we create the Image Streamer(I3S) client.
-
 provider "oneview" {
 	ov_username      = "${var.username}"
 	ov_password      = "${var.password}"
