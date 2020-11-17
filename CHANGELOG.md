@@ -2,6 +2,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 # [v1.6.0](Unreleased)
+
 ### Notes
 - This release supports API2200 minimally where we can use OneView API2200 with this SDK. No new fields are added/deleted to support API2200.
 
@@ -9,8 +10,19 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Ethernet Network
 - FC Network
 - FCOE Network
+- Hypervisor Cluster Profile
+- Hypervisor Manager
 - Network Set
 - Scope
+- Server Certificate
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage System
+- Storage Volume
+- Storage Volume Attachment
+- Storage Volume Template
+- Uplink Set
 
 ### Bug fixes & Enhancements:
 - [#118] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/118) mp_ip_address and mp_dns_name return NULL value.
