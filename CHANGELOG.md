@@ -8,7 +8,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
   No new fields are added/deleted to support API2200. 
 
 ### Oneview Features supported
-- Deployment Plans
 - Enclosure
 - Enclosure Group
 - Ethernet Network
@@ -30,6 +29,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage Volume Attachment
 - Storage Volume Template
 - Uplink Set
+ 
+###Image Streamer resources supported:
+  - Deployment Plans
 
 ### Bug fixes & Enhancements:
 - [#118] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/118) mp_ip_address and mp_dns_name return NULL value.
