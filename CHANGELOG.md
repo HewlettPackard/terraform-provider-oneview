@@ -35,7 +35,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Uplink Set
  
 ###Image Streamer resources supported:
-  - Deployment Plans
+- Deployment Plans
 
 ### Bug fixes & Enhancements:
 - [#118] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/118) mp_ip_address and mp_dns_name return NULL value.
