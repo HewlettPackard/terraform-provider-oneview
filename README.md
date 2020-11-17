@@ -88,7 +88,7 @@ $ export TF_VAR_ov_domain=<ov_domain>
 ```
 For authentication, you need to provide the provider information in examples:
 
-```bash
+```terraform
 provider "oneview" {
 	ov_username  = "${var.username}"
 	ov_password  = "${var.password}"
@@ -110,7 +110,7 @@ Following extra environment variables should be set for testing:
 $ export TF_VAR_i3s_endpoint=<i3s_endpoint>
 ```
 Here we create the Image Streamer(I3S) client.
-```bash
+```terraform
 provider "oneview" {
 	ov_username      = "${var.username}"
 	ov_password      = "${var.password}"
