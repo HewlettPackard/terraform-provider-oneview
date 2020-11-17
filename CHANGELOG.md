@@ -2,11 +2,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 # [v1.6.0](Unreleased)
-- This release supports API2200 minimally where we can use OneView API2200 with this SDK. No new fields are added/deleted to support API2000.
+
+### Notes
+- This release supports API2200 minimally where we can use OneView API2200 with this SDK. No new fields are added/deleted to support API2200.
 
 ### Oneview Features supported
+- Ethernet Network
+- FC Network
+- FCOE Network
 - Hypervisor Cluster Profile
 - Hypervisor Manager
+- Network Set
+- Scope
 - Server Certificate
 - Server Profile
 - Server Profile Template
