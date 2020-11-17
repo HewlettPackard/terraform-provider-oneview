@@ -84,9 +84,6 @@ func (c *OVClient) GetStorageAttachmentById(id string) (StorageAttachment, error
 		uri         = "/rest/storage-volume-attachments"
 	)
 	uri = uri + "/" + id
-	c.RefreshLogin()
-	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
-
 	data, err := c.RestAPICall(rest.GET, uri, nil)
 	if err != nil {
 		return sAttachment, err

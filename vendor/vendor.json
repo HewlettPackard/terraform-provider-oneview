@@ -83,16 +83,16 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "7+IgNfsWkKL3lt/NztR0fqruC5A=",
+			"checksumSHA1": "smljCl37q7lMG/BC9U43CKwrdcM=",
 			"path": "github.com/HewlettPackard/oneview-golang",
-			"revision": "9bab508ade09d56729dccc7c814386c80f5d054c",
-			"revisionTime": "2020-09-11T06:13:29Z"
+			"revision": "2141047f0fa16b87702b151715ec18989edbe5c3",
+			"revisionTime": "2020-11-09T12:48:07Z"
 		},
 		{
-			"checksumSHA1": "Ti44nnU/vNKk77isTDO2a6k6mPs=",
+			"checksumSHA1": "uelfvIgGgILro5WoVimlArE6n+I=",
 			"path": "github.com/HewlettPackard/oneview-golang/examples",
-			"revision": "d4c8bf3ea5590be2ba0cd331fa4e595cdfb3a48e",
-			"revisionTime": "2019-09-20T10:51:04Z"
+			"revision": "2141047f0fa16b87702b151715ec18989edbe5c3",
+			"revisionTime": "2020-11-09T12:48:07Z"
 		},
 		{
 			"checksumSHA1": "oywegchJ/g0WLo84ZqD9pLPwajM=",
@@ -113,19 +113,19 @@
 			"revisionTime": "2020-09-11T06:13:29Z"
 		},
 		{
-			"checksumSHA1": "JtVdRkhW+hvI8sDczwwN9cCQ5Ao=",
+			"checksumSHA1": "EBnpCjoKGHUYLrw/X2cJxAHynX0=",
 			"path": "github.com/HewlettPackard/oneview-golang/ov",
 			"revision": "9bab508ade09d56729dccc7c814386c80f5d054c",
 			"revisionTime": "2020-09-11T06:13:29Z"
 		},
 		{
-			"checksumSHA1": "7xm589M3krk5y01YfsBXgCMEgEg=",
+			"checksumSHA1": "ltPDAcfbCOpU27cjnZpHfOJChaU=",
 			"path": "github.com/HewlettPackard/oneview-golang/rest",
 			"revision": "9bab508ade09d56729dccc7c814386c80f5d054c",
 			"revisionTime": "2020-09-11T06:13:29Z"
 		},
 		{
-			"checksumSHA1": "tSDhcm+zX/nRBHeXiQN2KqaRKu0=",
+			"checksumSHA1": "JFNILAf+iuJsGxJ3mz6GAv0ul0Y=",
 			"path": "github.com/HewlettPackard/oneview-golang/utils",
 			"revision": "9bab508ade09d56729dccc7c814386c80f5d054c",
 			"revisionTime": "2020-09-11T06:13:29Z"
