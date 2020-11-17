@@ -30,12 +30,12 @@ Docker Store image tag consist of two sections: <sdk_version-OV_version>
 ```bash
 # Download and store a local copy of terraform-provider-oneview and
 # use it as a Docker image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.5.0-OV5.4
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.6.0-OV5.5
 
 # Run docker commands using the "ash" shell from Alpine, this will in turn create
 # a sh session where you can create files, issue commands and execute both
 # terraform and the provider with ease.
-$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.5.0-OV5.4 /bin/sh
+$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.6.0-OV5.5 /bin/sh
 ```
 
 ### Provider Information
@@ -55,7 +55,7 @@ provider "oneview" {
 }
 ```
 
-Note: Currently this SDK supports OneView API 2000 minimally where we can test OneView API 2000 version with this SDK. No new fields have been added/deleted to support API2000 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
+Note: Currently this SDK supports OneView API 2200 minimally where we can test OneView API 2200 version with this SDK. No new fields have been added/deleted to support API2200 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ### License
 
