@@ -34,7 +34,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage Volume Template
 - Uplink Set
  
-###Image Streamer resources supported:
+### Image Streamer resources supported:
 - Deployment Plans
 
 ### Bug fixes & Enhancements:
