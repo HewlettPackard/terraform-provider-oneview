@@ -20,19 +20,18 @@ provider "oneview" {
 
 # Create Networks
 resource "oneview_ethernet_network" "ethernetnetwork" {
-  name = "UCENet"
+  name = "<network_name>"
   type = "ethernet-networkV4"
   vlan_id = 100
 }
-
 resource "oneview_fc_network" "fc_network" {
-  name = "UCFCNET"
+  name = "<network_name>"
   type = "fc-networkV4"
 }
 
 # Create Logical Interconnect Group
 resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
-  name = "UCLIG"
+  name = "<LIG_name>"
   type = "logical-interconnect-groupV8"
   interconnect_bay_set = 3
   redundancy_type = "HighlyAvailable"
@@ -93,7 +92,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
 
 # Create Enclosure Group
 resource "oneview_enclosure_group" "enclosure_group" {
-  name = "UCEG"
+  name = "<EG_name>"
   ip_addressing_mode = "DHCP"
   enclosure_count = 3
   type = "EnclosureGroupV7"
@@ -112,7 +111,7 @@ resource "oneview_enclosure_group" "enclosure_group" {
 
 # Create Logical Enclosure
 resource "oneview_logical_enclosure" "logical_enclosure" {
-  name = "UCLE"
+  name = "<LE_name>"
   enclosure_uris = ["/rest/enclosures/0000000000A66101","/rest/enclosures/0000000000A66102","/rest/enclosures/0000000000A66103"]
   enclosure_group_uri = "${oneview_enclosure_group.enclosure_group.uri}"
   depends_on = [ "oneview_enclosure_group.enclosure_group"]
@@ -130,7 +129,7 @@ data "oneview_server_hardware" "server_hardware" {
 
 # Create Server Profile Template with Network and BOOT
 resource "oneview_server_profile_template" "server_profile_template" {
-	name = "UCSPT-US"
+	name = "<SPT_name>"
 	type = "ServerProfileTemplateV8"
 	enclosure_group = "${oneview_enclosure_group.enclosure_group.name}"
 	server_hardware_type = "${data.oneview_server_hardware_type.server_hardware_type.name}"
@@ -160,7 +159,7 @@ resource "oneview_server_profile_template" "server_profile_template" {
 
 # Create Server Profile with Network and BOOT
 resource "oneview_server_profile" "server_profile" {
-  name = "UCSP"
+  name = "<SP_name>"
   template = "${oneview_server_profile_template.server_profile_template.name}"
   hardware_name = "${data.oneview_server_hardware.server_hardware.name}"
   type = "ServerProfileV12"

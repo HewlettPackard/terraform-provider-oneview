@@ -13,13 +13,13 @@ provider "oneview" {
 
 # GET THE ETHERNET NETWORK TO GET THE URI TO ASSIGN TO UPLINKSET
 data "oneview_ethernet_network" "eth_net" {
-        name = "UCENet"
+        name = "<network_name>"
 }
 
 # REMOVING THE NETWORK FROM LIG 
 resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
 	type = "logical-interconnect-groupV8"
-	name = "LIG"
+	name = "<LIG_name>"
 	interconnect_bay_set = 3
 	enclosure_indexes = [1, 2, 3]
 	redundancy_type = "HighlyAvailable"

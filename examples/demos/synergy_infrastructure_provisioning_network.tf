@@ -13,20 +13,20 @@ provider "oneview" {
 
 # CREATION OF ETHERNET NETWORK 
 resource "oneview_ethernet_network" "ethernet_network" {
-	name = "UCENet"
+	name = "<network_name>"
 	type = "ethernet-networkV4"
 	vlan_id = 171
 }
 
 # GET THE ETHERNET NETWORK TO GET THE URI TO ASSIGN TO UPLINKSET 
 data "oneview_ethernet_network" "eth_net" {
-        name = "EthNet"
+        name = "<network_name>"
 }
 
 # ADDING NEWTWORK TO LOGICAL INTERCONNECT GROUP USING 'internalNetworkUris' 
 resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
 	type = "logical-interconnect-groupV8"
-	name = "LIG"
+	name = "<LIG_name>"
 	interconnect_bay_set = 3
 	enclosure_indexes = [1, 2, 3]
 	redundancy_type = "HighlyAvailable"
