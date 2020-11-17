@@ -1,25 +1,27 @@
 provider "oneview" {
-  ov_username   = "<ov_username>"
-  ov_password   = "<ov_password>"
-  ov_endpoint   = "<ov_endpoint>"
-  ov_sslverify  = false
-  ov_apiversion =<ov_apiversion>
+  ov_username   = "${var.username}"
+  ov_password   = "${var.password}"
+  ov_endpoint   = "${var.endpoint}"
+  ov_sslverify  = "${var.ssl_enabled}"
+  ov_apiversion = 2200
   ov_ifmatch    = "*"
 }
 
+/*
+# Extracting Scope 
 data "oneview_scope" "scope_obj" {
-        name = "test"
+        name = "ScopeTest"
 }
 
+# Extracting Storage Pool
 data "oneview_storage_pool" "st_pool" {
-        name = "CPG_FC-AO"
+        name = "Cluster-1"
 }
 
-//Creating a storage volume template
+# Creating a storage volume template
 resource "oneview_storage_volume_template" "svt" {
         name = "DemoStorageTemplate"
         description = "Testing creation of storage volume template"
-        root_template_uri = "/rest/storage-volume-templates/8b1d18f7-3bce-4cd4-80ae-ac2700f27c16"
         initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]        
         tp_name =[
 	{
@@ -37,11 +39,10 @@ resource "oneview_storage_volume_template" "svt" {
                 meta_semantic_type = "capacity"
                 type = "integer"
                 title = "Capacity"
-                default = 268435456
+                default = 1073741824
                 required = true
-                maximum = 1368744177664
-                minimum = 268435456 
-                description = "The capacity of the volume in bytes"
+                minimum = 4194304 
+                description = "Capacity of the volume in bytes"
         }]
         tp_description = [
 	{
@@ -73,7 +74,7 @@ resource "oneview_storage_volume_template" "svt" {
                 format = "x-uri-reference"
                 default = "${data.oneview_storage_pool.st_pool.uri}"
                 required = true
-                description = "A common provisioning group URI reference"
+                description = "StoragePoolURI the volume should be added to"
         }]
 	tp_snapshot_pool = [
 	{
@@ -85,7 +86,7 @@ resource "oneview_storage_volume_template" "svt" {
                 default = "${data.oneview_storage_pool.st_pool.uri}"
                 required = false
                 description = "A URI reference to the common provisioning group used to create snapshots"
-        }]
+        }] 
         tp_is_deduplicated = [
 	{
                 meta_locked = true
@@ -94,7 +95,7 @@ resource "oneview_storage_volume_template" "svt" {
                 default = false
                 required = false
                 description = "Enables or disables deduplication of the volume"
-        }]
+        }] 
         tp_template_version = [
 	{
                 meta_locked = true
@@ -114,18 +115,51 @@ resource "oneview_storage_volume_template" "svt" {
                 default = "Thin"
                 required = false
                 description = "The provisioning type for the volume"
-        }]
+		meta_semantic_type = "device-provisioningType"
 
+        }]
+	tp_data_protection_level=[
+	{
+		meta_locked = false
+		meta_semantic_type =  "device-dataProtectionLevel"
+		enum = ["NetworkRaid0None",
+                        "NetworkRaid5SingleParity",
+                        "NetworkRaid10Mirror2Way",
+                        "NetworkRaid10Mirror3Way",
+                        "NetworkRaid10Mirror4Way",
+                        "NetworkRaid6DualParity"]
+        	type =      "string"
+	        title =       "Data Protection Level"
+	        default =     "NetworkRaid10Mirror2Way"
+	        description = "Indicates the number and configuration of data copies in the Storage Pool"
+	        required = true
+	}]
+	tp_is_adaptive_optimization_enabled = [
+	{
+		meta_locked = true
+		description = ""
+		default = true
+		required = false
+		title = "Adaptive Optimization"
+		type = "boolean"
+	}]
+}
+*/
+
+/*
+# Fetching Existing Template for update
+data "oneview_storage_volume_template" "d_svt" {
+  name = "DemoStorageTemplate"
 }
 
-//Update the storage volume template
-/*resource "oneview_storage_volume_template" "svt" {
+
+# Update the storage volume template
+resource "oneview_storage_volume_template" "svt" {
         name = "RenameDemoStorageTemplate"
         description = "Testing update of storage volume template"
-        root_template_uri = "/rest/storage-volume-templates/96196d4c-3cac-4d6b-ab6b-a93c0143ac75"
-	family = "StoreServ"
-	version = "2.0"
-	storage_pool_uri = "/rest/storage-pools/547F8659-BD66-4775-9943-A93C0143AC70"
+	family = "${data.oneview_storage_volume_template.d_svt.family}"
+	storage_pool_uri = "${data.oneview_storage_volume_template.d_svt.storage_pool_uri}"
+        root_template_uri = "${data.oneview_storage_volume_template.d_svt.root_template_uri}"
         tp_name =[
 	{
                 meta_locked = false
@@ -142,11 +176,10 @@ resource "oneview_storage_volume_template" "svt" {
                 meta_semantic_type = "capacity"
                 type = "integer"
                 title = "Capacity"
-                default = 268435456
+                default = 1073741824
                 required = true
-                maximum = 70368744177664
-                minimum = 268435456 
-                description = "The capacity of the volume in bytes"
+                minimum = 4194304 
+                description = "Capacity of the volume in bytes"
         }]
         tp_description = [
 	{
@@ -176,21 +209,21 @@ resource "oneview_storage_volume_template" "svt" {
                 type = "string"
                 title = "Storage Pool"
                 format = "x-uri-reference"
-                default = "/rest/storage-pools/547F8659-BD66-4775-9943-A93C0143AC70"
+                default = "${data.oneview_storage_volume_template.d_svt.storage_pool_uri}"
                 required = true
-                description = "A common provisioning group URI reference"
+                description = "StoragePoolURI the volume should be added to"
         }]
 	tp_snapshot_pool = [
 	{
                 meta_locked = true
-                meta_semantic_type = "device-snapshot-storage-pool"
+                meta_semantic_type = "device-snapshot-storage-pool*"
                 type = "string"
                 title = "Snapshot Pool"
                 format = "x-uri-reference"
-                default = "/rest/storage-pools/547F8659-BD66-4775-9943-A93C0143AC70"
+                default = "${data.oneview_storage_volume_template.d_svt.storage_pool_uri}"
                 required = false
                 description = "A URI reference to the common provisioning group used to create snapshots"
-        }]
+        }] 
         tp_is_deduplicated = [
 	{
                 meta_locked = true
@@ -198,14 +231,14 @@ resource "oneview_storage_volume_template" "svt" {
                 title = "Is Deduplicated"
                 default = false
                 required = false
-                description = "Enables or disables deduplication of the volume"
-        }]
+                description = "Enables or disables deduplication of the volume*"
+        }] 
         tp_template_version = [
 	{
                 meta_locked = true
                 type = "string"
                 title = "Template version"
-                default = "2.0"
+                default = "1.1"
                 required = true
                 description = "Version of the template"
         }]
@@ -219,19 +252,50 @@ resource "oneview_storage_volume_template" "svt" {
                 default = "Thin"
                 required = false
                 description = "The provisioning type for the volume"
-        }]
-}*/
+		meta_semantic_type = "device-provisioningType"
 
-/*
-// Importing an existing resource from the appliance
-resource "oneview_storage_volume_template" "st" {
+        }]
+	tp_data_protection_level=[
+	{
+		meta_locked = false
+		meta_semantic_type =  "device-dataProtectionLevel"
+		enum = ["NetworkRaid0None",
+                        "NetworkRaid5SingleParity",
+                        "NetworkRaid10Mirror2Way",
+                        "NetworkRaid10Mirror3Way",
+                        "NetworkRaid10Mirror4Way",
+                        "NetworkRaid6DualParity"]
+        	type =      "string"
+	        title =       "Data Protection Level"
+	        default =     "NetworkRaid10Mirror2Way"
+	        description = "Indicates the number and configuration of data copies in the Storage Pool"
+	        required = true
+	}]
+	tp_is_adaptive_optimization_enabled = [
+	{
+		meta_locked = true
+		description = ""
+		default = true
+		required = false
+		title = "Adaptive Optimization"
+		type = "boolean"
+	}]
 }
 */
-//Tetsing data source
-/*data "oneview_storage_volume_template" "d_svt" {
-  name = "vt"
+
+# Importing an existing resource from the appliance.
+/*
+resource "oneview_storage_volume_template" "svt" {
+}
+*/
+
+# Testing data source
+/*
+data "oneview_storage_volume_template" "d_svt" {
+  name = "DemoStorageTemplate"
 }
 
 output "oneview_svt_value" {
   value = "${data.oneview_storage_volume_template.d_svt.root_template_uri}"
-}*/
+}
+*/
