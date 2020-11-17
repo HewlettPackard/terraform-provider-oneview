@@ -132,6 +132,7 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 		Type:                d.Get("type").(string),
 		Description:         utils.NewNstring(d.Get("description").(string)),
 	}
+
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawInitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))

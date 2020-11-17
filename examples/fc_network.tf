@@ -1,14 +1,15 @@
 provider "oneview" {
-	ov_username = "<ov_username>"
-	ov_password = "<ov_password"
-	ov_endpoint = "<ov_endpoint>"
-	ov_sslverify = false
-	ov_apiversion = <ov_apiversion>
-	ov_ifmatch = "*"
+        ov_username =   "${var.username}"
+        ov_password =   "${var.password}"
+        ov_endpoint =   "${var.endpoint}"
+        ov_sslverify =  "${var.ssl_enabled}"
+        ov_apiversion = 2200
+        ov_ifmatch = "*"
+
 }
 
 data "oneview_scope" "scope_obj" {
-        name = "test"
+        name = "testing"
 }
 
 resource "oneview_fc_network" "FCNetwork" {
