@@ -33,7 +33,7 @@ type HypervisorClusterProfile struct {
 	State                         string                         `json:"state,omitempty"`                         //"state":"Active"
 	StateReason                   string                         `json:"stateReason,omitempty"`                   //"stateReason":"None"
 	Status                        string                         `json:"status,omitempty"`                        //"status":"OK"
-	Type                          string                         `json:"type,omitempty"`                          //"type":"HypervisorClusterProfileV3"
+	Type                          string                         `json:"type,omitempty"`                          //"type":"HypervisorClusterProfileV4"
 	URI                           utils.Nstring                  `json:"uri,omitempty"`                           //"uri":"/rest/hypervisor-cluster-profiles/4340293c-0701-4773-b863-32854b0f7d29"
 }
 
