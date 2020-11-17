@@ -1,24 +1,39 @@
+/*   Infrastructure Provisioning with Storage and Image Streamer 
+
+        Be able to provision compute (with server settings), networking, and storage.
+        Create a server profile template with the following options:
+                Network connections
+                Boot mode
+                Boot settings
+		Bios settings
+		Firmware
+		SAN storage 
+		OS deployement settings
+                Create a server profile from a server profile template and assign to hardware
+*/
+
 provider "oneview" {
-	ov_username = <ov-username>
-	ov_password = <ov-password>
-	ov_endpoint = <ov-endpoint>
-	i3s_endpoint = <i3s-endpoint>
-	ov_sslverify = false
-	ov_apiversion = <ov-api-version>
-	ov_ifmatch = "*"
+  ov_username =   "${var.username}"
+  ov_password =   "${var.password}"
+  ov_endpoint =   "${var.endpoint}"
+  ov_sslverify =  "${var.ssl_enabled}"
+  i3s_endpoint =  "https://15.212.167.172" #"${var.i3s_endpoint}"
+  ov_apiversion = 2000
+  ov_ifmatch = "*"
 }
 
+# Creates Sever Profile Templates 
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
 	name = "TestServerProfileTemplateTerraform"
 	type = "ServerProfileTemplateV8"
-	enclosure_group = "SYN03_EC"
-	server_hardware_type = "DL380p Gen8 1 (new name)"
+	enclosure_group = "EG-P"
+	server_hardware_type = "SY 660 Gen9 1"
 	network = [{
 		id = 1
 		name = "Deployment Network A"
 		function_type = "Ethernet"
-		network_uri = "/rest/ethernet-networks/29af1597-7f2e-45d8-aaed-ee1be6c42ae2"
-		port_id = "Mezz 3:1-a"
+		network_uri = "/rest/ethernet-networks/caaa21fc-1b38-4f20-9abb-221e411a5a34"
+		port_id = "Mezz 6:1-a"
 		boot = {
 			priority = "Primary"
 			ethernet_boot_type = "iSCSI"
@@ -36,7 +51,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 		id = 2
 		name = "Deployment Network B"
 		function_type = "Ethernet"
-		network_uri = "/rest/ethernet-networks/29af1597-7f2e-45d8-aaed-ee1be6c42ae2"
+		network_uri = "/rest/ethernet-networks/caaa21fc-1b38-4f20-9abb-221e411a5a34"
 		port_id = "Mezz 3:2-a"
 		boot = {
 			priority = "Secondary"
@@ -129,7 +144,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 	san_storage = {
 		host_os_type = "Windows 2012 / WS2012 R2"
 		manage_san_storage = true
-		//compliance_control = "CheckedMinimum"
+		#compliance_control = "CheckedMinimum"
 	}
 	volume_attachments = [{
 		id = 1
@@ -157,13 +172,11 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 			targets = []
 			}]
 	}]
-	
 	os_deployment_settings = {
-		os_deployment_plan_name = "RHEL"
+		os_deployment_plan_name = "HPE - Foundation 1.0 - create empty OS Volume-2017-10-13"
 		os_custom_attributes = [{
-			 
-            name="DiskName"
-            value="/dev/sda"},
+            name="VolumeSize"
+            value="1"},
          { 
             name="DomainName"
             value="eco.demo.local"
@@ -245,22 +258,20 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
          { 
             name="TotalMgmtNICs"
             value="1" 	        }]
-
 	}
 }
 
-
+# Creates Server Profile with above defined Server Profile Template.
 resource "oneview_server_profile" "SP" {
-	name = "TestSpTerraform"
-	hardware_name = "SYN03_Frame1, bay 3"
-	type = "ServerProfileV12"
-	template = "${oneview_server_profile_template.ServerProfileTemplate.name}"
-	power_state = "off"
-	os_deployment_settings = {
-		os_custom_attributes = [{
-			name="HostName"
-			value="rheltest"
-		}]
-	}
-	depends_on = ["oneview_server_profile_template.ServerProfileTemplate"]
+  name = "TestSpTerraform"
+  hardware_name = "MXQ646057D, bay 4" #"SYN03_Frame1, bay 3"
+  type = "ServerProfileV12"
+  template = "test_withi3S" #"${oneview_server_profile_template.ServerProfileTemplate.name}"
+    power_state = "off"
+    os_deployment_settings = {
+      os_custom_attributes = [{
+        name="VolumeSize"
+        value="1"}]
+    }
+ depends_on = ["oneview_server_profile_template.ServerProfileTemplate"]
 }

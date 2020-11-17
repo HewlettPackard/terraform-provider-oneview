@@ -1,7 +1,7 @@
 /*
-        Use the the below environment varaiables to set the variable values.
+              Set the the below environment varaiables to set the variable values.
         ------------------------------------------------------------------------------------
-        |  No |   Variable Name                             |   value                      |
+        |  No | Variable Name                               | Value                        |
         ------------------------------------------------------------------------------------
         |  1  | TF_VAR_username                             | <oneview_user_name>          |
         ------------------------------------------------------------------------------------
@@ -10,6 +10,8 @@
         |  3  | TF_VAR_endpoint                             | <oneview_ip>                 |
         ------------------------------------------------------------------------------------
         |  4  | TF_VAR_ssl_enabled                          | <false>                      |
+        ------------------------------------------------------------------------------------
+        |  5  | TF_VAR_i3s_endpoint                         | <image_streamer_ip>          |
         ------------------------------------------------------------------------------------
 */
 
@@ -25,10 +27,15 @@ description = "Oneview Appliance Password"
 
 variable "endpoint" {
  type = "string"
- description = "Oneview Appliance Ip Address"
+ description = "Oneview Appliance IP Address"
 }
 
 variable "ssl_enabled" {
  default = false
  description = "SSL Enabled"
+}
+
+variable "i3s_endpoint" {
+ default = false
+ description = "Image Streamer IP Address"
 }
