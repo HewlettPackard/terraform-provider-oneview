@@ -1,14 +1,14 @@
 provider "oneview" {
-        ov_username = "<ov_username>"
-        ov_password = "<ov_password"
-        ov_endpoint = "<ov_endpoint>"
-        ov_sslverify = false
-        ov_apiversion = <ov_apiversion>
-        ov_ifmatch = "*"
+  ov_username =   "${var.username}"
+  ov_password =   "${var.password}"
+  ov_endpoint =   "${var.endpoint}"
+  ov_sslverify =  "${var.ssl_enabled}"
+  ov_apiversion = 2200
+  ov_ifmatch = "*"
 }
 
 data "oneview_scope" "scope" {
-        name = "test"
+        name = "testing"
 }
 
 # Creates a server profile or Updates if already existing
@@ -20,13 +20,16 @@ resource "oneview_server_profile" "SP" {
 }
 
 # Creation of Server Profile without template
-resource "oneview_server_profile" "SP" {
+
+resource "oneview_server_profile" "SP2" {
   name = "TestSP2"
   hardware_name = "SYN03_Frame3, bay 1"
   type = "ServerProfileV12"
   enclosure_group = "SYN03_EC"
   initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
 }
+
+
 
 # Updating Server profile
 resource "oneview_server_profile" "SP" {
@@ -67,6 +70,7 @@ data "oneview_server_profile" "sp" {
 output "oneview_server_profile_value" {
         value = "${data.oneview_server_profile.sp.uri}"
 }
+
 /*
 # To import an existing server profile to terraform, use the below code and run the following command:
 

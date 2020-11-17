@@ -1,26 +1,49 @@
 provider "oneview" {
-        ov_username = "<ov-username>"
-        ov_password = "<ov-password>"
-        ov_endpoint = "<ov-endpoint>"
-        ov_sslverify = false
-        ov_apiversion = <ov-apiversion>
-        ov_ifmatch = "*"
+  ov_username =   "${var.username}"
+  ov_password =   "${var.password}"
+  ov_endpoint =   "${var.endpoint}"
+  ov_sslverify =  "${var.ssl_enabled}"
+  ov_apiversion = 2200
+  ov_ifmatch = "*"
 }
 
-data "oneview_scope" "scope" {
-	name = "test"
+variable "LIG_name" {
+ type = "string"
+ description = "Logical Interconnect Name"
+ default = "LIG-Name"
 }
 
+variable "enc_grp" {
+ type = "string"
+ description = "Name of the Enclosure Group"
+ default = "EG-Name"
+}
+
+variable "scope_name_1" {
+ type = "string"
+ description = "Name of the Scope"
+ default = "Scope-Name"
+}
+
+variable "scope_name_2" {
+ type = "string"
+ description = "Name of the Scope"
+ default = "Scope-Name"
+}
+
+/*
+# Fetching Logical Interconnect Group
 data "oneview_logical_interconnect_group" "logical_interconnect_group" {
-        name = "test"
+        name = "${var.LIG_name}"
 }
 
+# Creating Enclosure Group
 resource "oneview_enclosure_group" "eg_inst" {
-	name = "TestEnclosureGroup"
+	name = "${var.enc_grp}"
 	description = "Testing creation of Enclosure Group"
 	ip_addressing_mode = "External"
 	enclosure_count = 3
-	initial_scope_uris = ["scope_1", "scope_2"]
+	initial_scope_uris = ["${var.scope_name_1}", "${var.scope_name_2}"]
 	interconnect_bay_mappings = [
 	{
 		interconnect_bay = 3
@@ -32,14 +55,27 @@ resource "oneview_enclosure_group" "eg_inst" {
 	}
 	]
 }
+*/
+
+/*
+# Fetching Enclosure Group
+data "oneview_enclosure_group" "enclosure_group" {
+        name = "${var.enc_grp}"
+}
+
+output "oneview_enclosure_group_value" {
+        value = "${data.oneview_enclosure_group.enclosure_group.uri}"
+}
 
 # Updates the resource created above
 # To update uncomment the below lines and add the values to the attributes mentioned
-/* resource "oneview_enclosure_group" "eg_inst" {
-	name = "TestEnclosureGroup_Renamed"
-	enclosure_count = 1
+resource "oneview_enclosure_group" "eg_inst" {
+	name = "${var.enc_grp} Renamed"
+	enclosure_count = 3
 	ip_addressing_mode = "External"
 	power_mode = "RedundantPowerFeed"
+        enclosure_type_uri = "${data.oneview_enclosure_group.enclosure_group.enclosure_type_uri}" 
+	ambient_temperature_mode = "${data.oneview_enclosure_group.enclosure_group.ambient_temperature_mode}"
 	interconnect_bay_mappings = [
         {
                 interconnect_bay = 3
@@ -53,15 +89,5 @@ resource "oneview_enclosure_group" "eg_inst" {
 	interconnect_bay_mapping_count = 2
 	type = "EnclosureGroupV8"
 	stacking_mode = "Enclosure"
-}
-
-# Test for data source 
-
-data "oneview_enclosure_group" "enclosure_group" {
-        name = "TestEnclosureGroup_Renamed"
-}
-
-output "oneview_enclosure_group_value" {
-        value = "${data.oneview_enclosure_group.enclosure_group.uri}"
 }
 */
