@@ -48,10 +48,10 @@ $ apt-get install build-essential git wget
 $ wget https://dl.google.com/go/go1.11.3.linux-amd64.tar.gz
 
 #unzip and untar the file 
-$ tar -zxvf "go1.11.linux-amd64.tar.gz", 
+$ tar -zxvf go1.11.linux-amd64.tar.gz
 
 # move it to /usr/local/ and create directory for Go.
-$ mv go1.11.3.linux-amd64.tar.gz /usr/local/ 
+$ mv go/ /usr/local/ 
 $ mkdir ~/go
 ```
 ```bash 
