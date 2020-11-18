@@ -1,33 +1,42 @@
-# HPE OneView Terraform Provider bindings
-| 5.50 Branch   |
-| ------------- |
-[![Build Status](https://travis-ci.org/HewlettPackard/terraform-provider-oneview.svg?branch=master)](https://travis-ci.org/HewlettPackard/terraform-provider-oneview)
+# HPE OneView SDK for Terraform Provider
+
+## Build Status 
+
+| 5.50 Branch   | 5.40 Branch   | 5.30 Branch   | 5.20 Branch   |
+| ------------- |:-------------:| -------------:| -------------:|
+| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)
 
 ## Introduction
 
 HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud infrastructure. HPE OneView can help you transform your data center to software-defined, and it supports HPE’s broad portfolio of servers, storage, and networking solutions, ensuring the simple and automated management of your hybrid infrastructure. Software-defined intelligence enables a template-driven approach for deploying, provisioning, updating, and integrating compute, storage, and networking infrastructure.
 
-The HPE OneView Terraform Provider SDK dilivers library to easily interact with HPE OneView and HPE Image Streamer REST APIs. The HPE OneView Go SDK enables developers to easily build integrations and scalable solutions with HPE OneView and HPE Image Streamer.
+The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView and HPE Image Streamer.
 
 You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/latest)
 
+## What's New
+
+HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 2200 (OneView v5.50)
+
+Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
+
+## Getting Started 
+
+## Installation and Configuration
+
 ## Installing `terraform-provider-oneview` with Go
 
-HPE OneView SDK for terraform can be installed from Source or Docker container installation methods. You can either use a docker container which will have the HPE OneView SDK for terraform installed or perform local installation manually.
+HPE OneView SDK for Terraform can be installed from Source or Docker container installation methods. You can either use a docker container which will have the HPE OneView SDK for terraform installed or perform local installation manually.
 
-### Docker Container Setup
+### Docker Setup
+The light weight containerized version of the HPE OneView SDK for Terraform is available in the [Docker Store](https://store.docker.com/community/images/hewlettpackardenterprise/hewlettpackardenterprise/hpe-oneview-sdk-for-terraform). The Docker Store image tag consist of two sections: <sdk_version-OV_version>
 
-We also provide a lightweight and easy way to test and run oneview-terraform. The `hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:<tag>` docker image contains an installation of oneview-terraform installation you can use by just pulling down the Docker Image:
-
-The Docker Store image `tag` consist of two sections: `<sdk_version-OV_version>`
-
-Download and store a local copy of hpe-oneview-sdk-for-terraform and use it as a Docker image.
 ```bash
+# Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
 $ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.6.0-OV5.5
-```
-Run docker commands and this will in turn create a sh session where you can create files, issue commands and execute the tests
-```bash
-$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.6.0-OV5.5 /bin/sh
+# Run docker commands below given, which  will in turn create a sh session 
+# where you can create files, issue commands and execute the examples.
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.6.0-OV5.5 /bin/sh
 ```
 
 ### Local Setup
@@ -53,7 +62,9 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 ```
 
 - Installing Terraform
-Install Terraform 0.11.x [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
+
+	Install Terraform 0.11.x [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
+
 ```bash 
 Note: This provider DOES NOT SUPPORT Terraform 0.12 or above.
 ```
@@ -72,12 +83,10 @@ $ mv $GOPATH/bin/terraform-provider-oneview ~/.terraform.d/plugins
 
 ## Configuration
 
-### OneView Client Configuration
-
-The OneView Client configuration options that can be passed during OneView Client object creation:
-The variables are defined in [variable.tf](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/variables.tf) file.
+### Environment Variables
 
 Following environment variables can be set for testing:
+
 ```bash
 # Required
 $ export TF_VAR_endpoint=<ov_endpoint>
@@ -86,9 +95,16 @@ $ export TF_VAR_password=<ov_password>
 $ export TF_VAR_ssl_enabled=false
 $ export TF_VAR_ov_domain=<ov_domain>
 ```
-For authentication, you need to provide the provider information in examples:
+
+### OneView Client Configuration
+
+The OneView Client configuration options that can be passed during OneView Client object creation:
+The variables are defined in [variable.tf](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/variables.tf) file.
+
+For OneView authentication, you need to provide the provider information in examples:
 
 ```terraform
+# Create terraform OneView client
 provider "oneview" {
 	ov_username  = "${var.username}"
 	ov_password  = "${var.password}"
@@ -101,7 +117,10 @@ provider "oneview" {
 
 ```
 
+:lock: Tip: Check the file permissions because the password is stored in clear-text as Environment Variable.
+
 ### Image Streamer Client Configuration: 
+
 The Image Streamer (I3S) client is very much similar to the OneView client. 
 Following extra environment variables should be set for testing:
 
@@ -110,7 +129,9 @@ Following extra environment variables should be set for testing:
 $ export TF_VAR_i3s_endpoint=<i3s_endpoint>
 ```
 Here we create the Image Streamer(I3S) client.
+
 ```terraform
+# Create I3s Client
 provider "oneview" {
 	ov_username      = "${var.username}"
 	ov_password      = "${var.password}"
@@ -123,11 +144,15 @@ provider "oneview" {
 }
 ```
 
-### Testing the resources: 
-In the home directory of project(terraform-provider-oneview) create the file which is to be executed. 
-Find sample example manifests in [example](https://github.com/HewlettPackard/terraform-provider-oneview/tree/master/examples) directory. 
+:lock: Tip: Check the file permissions because the password is stored in clear-text as Environment Variable.
 
-The following commands has to be executed to test the example. 
+### Testing the Terraform Resources: 
+
+In the home directory of project(terraform-provider-oneview) user needs to create (or) copy  the file that is to be executed. 
+
+Sample example manifests are available in [example](https://github.com/HewlettPackard/terraform-provider-oneview/tree/master/examples) directory. 
+
+The following terraform commands has to be executed to test the example. 
 ```terraform
 $ terraform init 
 $ terraform plan 
@@ -187,10 +212,3 @@ This feedback is important for us to deliver a useful product.
 
 Learn more about HPE OneView at [hpe.com/info/oneview](https://hpe.com/info/oneview)
 
-
-## Hacking Guide
-
-Use the [hacking guide](HACKING.md) to run local acceptance testing and debugging local contributions. Currently test cases are not supported portion of our CI/CD approval process but might be made available from this test suite in the future.  Contributions to the test suite is appreciated.
-
-## License
-This project is licensed under the Apache License, Version 2.0.  See LICENSE for full license text.
