@@ -77,8 +77,16 @@ Note: This provider DOES NOT SUPPORT Terraform 0.12 or above.
 go get github.com/HewlettPackard/terraform-provider-oneview
 $ cd $GOPATH/src/github.com/HewlettPackard/terraform-provider-oneview    
 
-go build -o terraform-provider-oneview  
-$ mv $GOPATH/bin/terraform-provider-oneview ~/.terraform.d/plugins
+```bash
+# Download and store a local copy of terraform-provider-oneview and
+# use it as a Docker image.
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.6.0-OV5.5
+
+# Run docker commands using the "ash" shell from Alpine, this will in turn create
+# a sh session where you can create files, issue commands and execute both
+# terraform and the provider with ease.
+$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.6.0-OV5.5 /bin/sh
+
 ```
 
 ## Configuration
@@ -204,7 +212,7 @@ This feedback is important for us to deliver a useful product.
 
 [HPE OneView Firmware Management White Paper](http://hpe.com/info/OneView/docs)
 
-[HPE OneView Deployment and Management White Paper](http://hpe.com/info/OneView/docs)
+Note: Currently this SDK supports OneView API 2200 minimally where we can test OneView API 2200 version with this SDK. No new fields have been added/deleted to support API2200 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ### HPE OneView Community
 
