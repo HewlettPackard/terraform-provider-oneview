@@ -14,8 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup environment for Docker image publish
-      run: |
-        echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
+      run: | 
+        echo "RELEASE_VERSION=$(echo ${GITHUB_REF:10})" >> $GITHUB_ENV
     - name: Login to Docker Hub
       run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
     - name: Build the tagged Docker image
