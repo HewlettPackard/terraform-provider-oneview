@@ -1,8 +1,8 @@
 package getter
 
 import (
+	"context"
 	"fmt"
-	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -18,7 +18,9 @@ import (
 
 // S3Getter is a Getter implementation that will download a module from
 // a S3 bucket.
-type S3Getter struct{}
+type S3Getter struct {
+	getter
+}
 
 func (g *S3Getter) ClientMode(u *url.URL) (ClientMode, error) {
 	// Parse URL
@@ -28,9 +30,10 @@ func (g *S3Getter) ClientMode(u *url.URL) (ClientMode, error) {
 	}
 
 	// Create client config
-	config := g.getAWSConfig(region, creds)
-	sess := session.New(config)
-	client := s3.New(sess)
+	client, err := g.newS3Client(region, u, creds)
+	if err != nil {
+		return 0, err
+	}
 
 	// List the object(s) at the given prefix
 	req := &s3.ListObjectsInput{
@@ -60,6 +63,8 @@ func (g *S3Getter) ClientMode(u *url.URL) (ClientMode, error) {
 }
 
 func (g *S3Getter) Get(dst string, u *url.URL) error {
+	ctx := g.Context()
+
 	// Parse URL
 	region, bucket, path, _, creds, err := g.parseUrl(u)
 	if err != nil {
@@ -80,13 +85,14 @@ func (g *S3Getter) Get(dst string, u *url.URL) error {
 	}
 
 	// Create all the parent directories
-	if err := os.MkdirAll(filepath.Dir(dst), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dst), g.client.mode(0755)); err != nil {
 		return err
 	}
 
-	config := g.getAWSConfig(region, creds)
-	sess := session.New(config)
-	client := s3.New(sess)
+	client, err := g.newS3Client(region, u, creds)
+	if err != nil {
+		return err
+	}
 
 	// List files in path, keep listing until no more objects are found
 	lastMarker := ""
@@ -124,7 +130,7 @@ func (g *S3Getter) Get(dst string, u *url.URL) error {
 			}
 			objDst = filepath.Join(dst, objDst)
 
-			if err := g.getObject(client, objDst, bucket, objPath, ""); err != nil {
+			if err := g.getObject(ctx, client, objDst, bucket, objPath, ""); err != nil {
 				return err
 			}
 		}
@@ -134,18 +140,21 @@ func (g *S3Getter) Get(dst string, u *url.URL) error {
 }
 
 func (g *S3Getter) GetFile(dst string, u *url.URL) error {
+	ctx := g.Context()
 	region, bucket, path, version, creds, err := g.parseUrl(u)
 	if err != nil {
 		return err
 	}
 
-	config := g.getAWSConfig(region, creds)
-	sess := session.New(config)
-	client := s3.New(sess)
-	return g.getObject(client, dst, bucket, path, version)
+	client, err := g.newS3Client(region, u, creds)
+	if err != nil {
+		return err
+	}
+
+	return g.getObject(ctx, client, dst, bucket, path, version)
 }
 
-func (g *S3Getter) getObject(client *s3.S3, dst, bucket, key, version string) error {
+func (g *S3Getter) getObject(ctx context.Context, client *s3.S3, dst, bucket, key, version string) error {
 	req := &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
@@ -160,39 +169,35 @@ func (g *S3Getter) getObject(client *s3.S3, dst, bucket, key, version string) er
 	}
 
 	// Create all the parent directories
-	if err := os.MkdirAll(filepath.Dir(dst), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dst), g.client.mode(0755)); err != nil {
 		return err
 	}
 
-	f, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	_, err = io.Copy(f, resp.Body)
-	return err
+	return copyReader(dst, resp.Body, 0666, g.client.umask())
 }
 
-func (g *S3Getter) getAWSConfig(region string, creds *credentials.Credentials) *aws.Config {
+func (g *S3Getter) getAWSConfig(region string, url *url.URL, creds *credentials.Credentials) *aws.Config {
 	conf := &aws.Config{}
-	if creds == nil {
-		// Grab the metadata URL
-		metadataURL := os.Getenv("AWS_METADATA_URL")
-		if metadataURL == "" {
-			metadataURL = "http://169.254.169.254:80/latest"
-		}
-
+	metadataURLOverride := os.Getenv("AWS_METADATA_URL")
+	if creds == nil && metadataURLOverride != "" {
 		creds = credentials.NewChainCredentials(
 			[]credentials.Provider{
 				&credentials.EnvProvider{},
 				&credentials.SharedCredentialsProvider{Filename: "", Profile: ""},
 				&ec2rolecreds.EC2RoleProvider{
 					Client: ec2metadata.New(session.New(&aws.Config{
-						Endpoint: aws.String(metadataURL),
+						Endpoint: aws.String(metadataURLOverride),
 					})),
 				},
 			})
+	}
+
+	if creds != nil {
+		conf.Endpoint = &url.Host
+		conf.S3ForcePathStyle = aws.Bool(true)
+		if url.Scheme == "http" {
+			conf.DisableSSL = aws.Bool(true)
+		}
 	}
 
 	conf.Credentials = creds
@@ -200,33 +205,73 @@ func (g *S3Getter) getAWSConfig(region string, creds *credentials.Credentials) *
 		conf.Region = aws.String(region)
 	}
 
-	return conf
+	return conf.WithCredentialsChainVerboseErrors(true)
 }
 
 func (g *S3Getter) parseUrl(u *url.URL) (region, bucket, path, version string, creds *credentials.Credentials, err error) {
-	// Expected host style: s3.amazonaws.com. They always have 3 parts,
-	// although the first may differ if we're accessing a specific region.
-	hostParts := strings.Split(u.Host, ".")
-	if len(hostParts) != 3 {
-		err = fmt.Errorf("URL is not a valid S3 URL")
-		return
-	}
+	// This just check whether we are dealing with S3 or
+	// any other S3 compliant service. S3 has a predictable
+	// url as others do not
+	if strings.Contains(u.Host, "amazonaws.com") {
+		// Amazon S3 supports both virtual-hosted–style and path-style URLs to access a bucket, although path-style is deprecated
+		// In both cases few older regions supports dash-style region indication (s3-Region) even if AWS discourages their use.
+		// The same bucket could be reached with:
+		// bucket.s3.region.amazonaws.com/path
+		// bucket.s3-region.amazonaws.com/path
+		// s3.amazonaws.com/bucket/path
+		// s3-region.amazonaws.com/bucket/path
 
-	// Parse the region out of the first part of the host
-	region = strings.TrimPrefix(strings.TrimPrefix(hostParts[0], "s3-"), "s3")
-	if region == "" {
-		region = "us-east-1"
-	}
+		hostParts := strings.Split(u.Host, ".")
+		switch len(hostParts) {
+		// path-style
+		case 3:
+			// Parse the region out of the first part of the host
+			region = strings.TrimPrefix(strings.TrimPrefix(hostParts[0], "s3-"), "s3")
+			if region == "" {
+				region = "us-east-1"
+			}
+			pathParts := strings.SplitN(u.Path, "/", 3)
+			bucket = pathParts[1]
+			path = pathParts[2]
+		// vhost-style, dash region indication
+		case 4:
+			// Parse the region out of the first part of the host
+			region = strings.TrimPrefix(strings.TrimPrefix(hostParts[1], "s3-"), "s3")
+			if region == "" {
+				err = fmt.Errorf("URL is not a valid S3 URL")
+				return
+			}
+			pathParts := strings.SplitN(u.Path, "/", 2)
+			bucket = hostParts[0]
+			path = pathParts[1]
+		//vhost-style, dot region indication
+		case 5:
+			region = hostParts[2]
+			pathParts := strings.SplitN(u.Path, "/", 2)
+			bucket = hostParts[0]
+			path = pathParts[1]
 
-	pathParts := strings.SplitN(u.Path, "/", 3)
-	if len(pathParts) != 3 {
-		err = fmt.Errorf("URL is not a valid S3 URL")
-		return
-	}
+		}
+		if len(hostParts) < 3 && len(hostParts) > 5 {
+			err = fmt.Errorf("URL is not a valid S3 URL")
+			return
+		}
+		version = u.Query().Get("version")
 
-	bucket = pathParts[1]
-	path = pathParts[2]
-	version = u.Query().Get("version")
+	} else {
+		pathParts := strings.SplitN(u.Path, "/", 3)
+		if len(pathParts) != 3 {
+			err = fmt.Errorf("URL is not a valid S3 complaint URL")
+			return
+		}
+		bucket = pathParts[1]
+		path = pathParts[2]
+		version = u.Query().Get("version")
+		region = u.Query().Get("region")
+		if region == "" {
+			region = "us-east-1"
+		}
+	}
 
 	_, hasAwsId := u.Query()["aws_access_key_id"]
 	_, hasAwsSecret := u.Query()["aws_access_key_secret"]
@@ -240,4 +285,26 @@ func (g *S3Getter) parseUrl(u *url.URL) (region, bucket, path, version string, c
 	}
 
 	return
+}
+
+func (g *S3Getter) newS3Client(
+	region string, url *url.URL, creds *credentials.Credentials,
+) (*s3.S3, error) {
+	var sess *session.Session
+
+	if profile := url.Query().Get("aws_profile"); profile != "" {
+		var err error
+		sess, err = session.NewSessionWithOptions(session.Options{
+			Profile:           profile,
+			SharedConfigState: session.SharedConfigEnable,
+		})
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		config := g.getAWSConfig(region, url, creds)
+		sess = session.New(config)
+	}
+
+	return s3.New(sess), nil
 }

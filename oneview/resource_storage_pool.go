@@ -14,13 +14,14 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceStoragePool() *schema.Resource {
 	return &schema.Resource{
 		Read:   resourceStoragePoolRead,
 		Update: resourceStoragePoolUpdate,
+		Delete: resourceStoragePoolDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -50,7 +51,7 @@ func resourceStoragePool() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -141,7 +142,7 @@ func resourceStoragePoolRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.Set("category", storagePool.Category)
-	d.Set("eTag", storagePool.ETAG)
+	d.Set("etag", storagePool.ETAG)
 	d.Set("name", storagePool.Name)
 	d.Set("description", storagePool.Description.String())
 	d.Set("state", storagePool.State)
@@ -157,12 +158,12 @@ func resourceStoragePoolRead(d *schema.ResourceData, meta interface{}) error {
 	rawdevspecificattributes := storagePool.DeviceSpecificAttributes
 	devspecificattributes := make([]map[string]interface{}, 0)
 	devspecificattributes = append(devspecificattributes, map[string]interface{}{
-		"device_id":            rawdevspecificattributes.DeviceID,
-		"capacity_limit":       rawdevspecificattributes.CapacityLimit,
-		"device_speed":         rawdevspecificattributes.DeviceSpeed,
-		"domain":               rawdevspecificattributes.Domain,
-		"supported_raid_level": rawdevspecificattributes.SupportedRaidLevel,
-		"uuid":                 rawdevspecificattributes.Uuid,
+		"device_id":                rawdevspecificattributes.DeviceID,
+		"capacity_limit":           rawdevspecificattributes.CapacityLimit,
+		"device_speed":             rawdevspecificattributes.DeviceSpeed,
+		"domain":                   rawdevspecificattributes.Domain,
+		"supported_raid_level":     rawdevspecificattributes.SupportedRaidLevel,
+		"uuid":                     rawdevspecificattributes.Uuid,
 		"is_deduplication_capable": rawdevspecificattributes.IsDeduplicationCapable,
 	})
 	d.Set("storage_pool_device_specific_attributes", devspecificattributes)
@@ -203,7 +204,7 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 		storagePool.Description = utils.NewNstring(val.(string))
 	}
 
-	if val, ok := d.GetOk("eTag"); ok {
+	if val, ok := d.GetOk("etag"); ok {
 		storagePool.ETAG = val.(string)
 	}
 
@@ -242,4 +243,8 @@ func resourceStoragePoolUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(d.Get("name").(string))
 
 	return resourceStoragePoolRead(d, meta)
+}
+
+func resourceStoragePoolDelete(d *schema.ResourceData, meta interface{}) error {
+	return nil
 }

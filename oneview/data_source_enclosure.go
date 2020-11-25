@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceEnclosure() *schema.Resource {
@@ -109,7 +109,7 @@ func dataSourceEnclosure() *schema.Resource {
 				},
 				Set: schema.HashString,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -298,7 +298,7 @@ func dataSourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("description", enclosure.Description)
 	d.Set("device_bay_count", enclosure.DeviceBayCount)
 	d.Set("device_bays", enclosure.DeviceBays)
-	d.Set("eTag", enclosure.ETAG)
+	d.Set("etag", enclosure.ETAG)
 	d.Set("enclosure_group_uri", enclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_type", enclosure.EnclosureType)
 	d.Set("fw_baseline_name", enclosure.FwBaselineName)

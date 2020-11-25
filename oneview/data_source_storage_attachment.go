@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceStorageAttachment() *schema.Resource {
@@ -40,7 +40,7 @@ func dataSourceStorageAttachment() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -113,12 +113,12 @@ func dataSourceStorageAttachmentRead(d *schema.ResourceData, meta interface{}) e
 
 	d.SetId(id)
 	d.Set("category", storageAttachment.Category)
-	d.Set("eTag", storageAttachment.ETAG)
+	d.Set("etag", storageAttachment.ETAG)
 	d.Set("name", storageAttachment.Name)
 	d.Set("description", storageAttachment.Description.String())
 	d.Set("state", storageAttachment.State)
 	d.Set("status", storageAttachment.Status)
-	d.Set("eTag", storageAttachment.ETAG)
+	d.Set("etag", storageAttachment.ETAG)
 	d.Set("type", storageAttachment.Type)
 	d.Set("uri", storageAttachment.URI.String())
 	d.Set("storage_system_uri", storageAttachment.StorageSystemUri.String())

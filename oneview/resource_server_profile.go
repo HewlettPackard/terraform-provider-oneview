@@ -17,7 +17,7 @@ import (
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"strings"
 )
 
@@ -408,7 +408,7 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 									},
-									"templateUri": {
+									"templateuri": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -940,14 +940,14 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 								IsCompressed:                  propertyItem["is_compressed"].(bool),
 								IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 								IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-								Name:              propertyItem["name"].(string),
-								PerformancePolicy: propertyItem["performance_policy"].(string),
-								ProvisioningType:  propertyItem["provisioning_type"].(string),
-								Size:              propertyItem["size"].(int),
-								SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:   propertyItem["template_version"].(string),
-								VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
+								Name:                          propertyItem["name"].(string),
+								PerformancePolicy:             propertyItem["performance_policy"].(string),
+								ProvisioningType:              propertyItem["provisioning_type"].(string),
+								Size:                          propertyItem["size"].(int),
+								SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:               propertyItem["template_version"].(string),
+								VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -998,11 +998,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 				AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-				State:              volumeAttachmentItem["state"].(string),
-				Status:             volumeAttachmentItem["status"].(string),
-				StoragePaths:       storagePaths,
-				BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
-				Volume:             &volumes,
+				State:                          volumeAttachmentItem["state"].(string),
+				Status:                         volumeAttachmentItem["status"].(string),
+				StoragePaths:                   storagePaths,
+				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+				Volume:                         &volumes,
 			})
 		}
 		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
@@ -1438,14 +1438,14 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 									IsCompressed:                  propertyItem["is_compressed"].(bool),
 									IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 									IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-									Name:              propertyItem["name"].(string),
-									PerformancePolicy: propertyItem["performance_policy"].(string),
-									ProvisioningType:  propertyItem["provisioning_type"].(string),
-									Size:              propertyItem["size"].(int),
-									SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-									StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
-									TemplateVersion:   propertyItem["template_version"].(string),
-									VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
+									Name:                          propertyItem["name"].(string),
+									PerformancePolicy:             propertyItem["performance_policy"].(string),
+									ProvisioningType:              propertyItem["provisioning_type"].(string),
+									Size:                          propertyItem["size"].(int),
+									SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+									StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
+									TemplateVersion:               propertyItem["template_version"].(string),
+									VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
 								}
 							}
 						}
@@ -1496,11 +1496,11 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 					VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 					AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-					State:              volumeAttachmentItem["state"].(string),
-					Status:             volumeAttachmentItem["status"].(string),
-					StoragePaths:       storagePaths,
-					BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
-					Volume:             &volumes,
+					State:                          volumeAttachmentItem["state"].(string),
+					Status:                         volumeAttachmentItem["status"].(string),
+					StoragePaths:                   storagePaths,
+					BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+					Volume:                         &volumes,
 				})
 			}
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments

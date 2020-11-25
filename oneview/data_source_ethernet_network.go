@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceEthernetNetwork() *schema.Resource {
@@ -84,11 +84,11 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scopesUri": {
+			"scopesuri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -127,8 +127,8 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("category", eNet.Category)
 	d.Set("state", eNet.State)
 	d.Set("fabric_uri", eNet.FabricUri.String())
-	d.Set("eTag", eNet.ETAG)
-	d.Set("scopesUri", eNet.ScopesUri.String())
+	d.Set("etag", eNet.ETAG)
+	d.Set("scopesuri", eNet.ScopesUri.String())
 	d.Set("initial_scope_uris", eNet.InitialScopeUris)
 	d.SetId(name)
 	return nil

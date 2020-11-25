@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceNetworkSet() *schema.Resource {
@@ -70,7 +70,7 @@ func dataSourceNetworkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -99,7 +99,7 @@ func dataSourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("type", netSet.Type)
 	d.Set("created", netSet.Created)
 	d.Set("description", netSet.Description)
-	d.Set("eTag", netSet.ETAG)
+	d.Set("etag", netSet.ETAG)
 	d.Set("modified", netSet.Modified)
 	d.Set("native_network_uri", netSet.NativeNetworkUri)
 	d.Set("uri", netSet.URI.String())

@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceStorageSystem() *schema.Resource {
@@ -69,7 +69,7 @@ func dataSourceStorageSystem() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -182,7 +182,7 @@ func dataSourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error
 	d.SetId(id)
 	d.Set("hostname", storageSystem.Hostname)
 	d.Set("category", storageSystem.Category)
-	d.Set("eTag", storageSystem.ETAG)
+	d.Set("etag", storageSystem.ETAG)
 	d.Set("name", storageSystem.Name)
 	d.Set("description", storageSystem.Description.String())
 	d.Set("state", storageSystem.State)

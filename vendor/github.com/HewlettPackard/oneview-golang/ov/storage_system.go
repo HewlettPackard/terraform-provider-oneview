@@ -49,29 +49,15 @@ type Credentials struct {
 
 type Ports struct {
 	PortDeviceSpecificAttributes PortDeviceSpecificAttributes `json:"deviceSpecificAttributes,omitempty"`
-	ExpectedNetworkName          string                       `json:"expectedNetworkName,omitempty"`
-	ExpectedNetworkUri           string                       `json:"expectedNetworkUri,omitempty"`
-	ExpectedSanName              string                       `json:"expectedSanName,omitempty"`
-	ExpectedSanUri               string                       `json:"expectedSanUri,omitempty"`
-	GroupName                    string                       `json:"groupName,omitempty"`
 	Id                           string                       `json:"id,omitempty"`
-	Label                        string                       `json:"label,omitempty"`
 	Mode                         string                       `json:"mode,omitempty"`
-	Name                         string                       `json:"name,omitempty"`
-	ProtocolType                 string                       `json:"protocolType,omitempty"`
-	Status                       string                       `json:"status,omitempty"`
-	TcpPort                      string                       `json:"tcport,omitempty"`
-	Type                         string                       `json:"type,omitempty"`
 }
 
 type PortDeviceSpecificAttributes struct {
-	FailoverState string `json:"failoverState,omitempty"`
-	PartnerPort   string `json:"partnerPort,omitempty"`
+	PartnerPort string `json:"partnerport,omitempty"`
 }
 
 type StorageSystemDeviceSpecificAttributes struct {
-	DiscoveredDomains         []string              `json:"discoveredDomains,omitempty"`
-	DiscoveredPools           []DiscoveredPools     `json:"discoveredPools"`
 	Firmware                  string                `json:"firmware,omitempty"`
 	Model                     string                `json:"model,omitempty"`
 	ManagedPools              []ManagedPools        `json:"managedPools,omitempty"`
@@ -96,16 +82,6 @@ type ProtectionTemplates struct {
 	Name    string `json:"name,omitempty"`
 }
 
-type DiscoveredPools struct {
-	Name          string `json:"name,omitempty"`
-	Domain        string `json:"domain,omitempty"`
-	DeviceType    string `json:"deviceType,omitempty"`
-	FreeCapacity  string `json:"freeCapacity,omitempty"`
-	RaidLevel     string `json:"raidLevel,omitempty"`
-	Totalcapacity string `json:"totalCapacity,omitempty"`
-	Uuid          string `json:"uuid,omitempty"`
-}
-
 type ManagedPools struct {
 	Name          string `json:"name,omitempty"`
 	Domain        string `json:"domain,omitempty"`
@@ -113,7 +89,6 @@ type ManagedPools struct {
 	FreeCapacity  string `json:"freeCapacity,omitempty"`
 	RaidLevel     string `json:"raidLevel,omitempty"`
 	Totalcapacity string `json:"totalCapacity,omitempty"`
-	Uuid          string `json:"uuid,omitempty"`
 }
 
 type StorageSystemsList struct {

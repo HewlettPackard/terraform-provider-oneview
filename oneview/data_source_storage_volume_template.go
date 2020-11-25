@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceStorageVolumeTemplate() *schema.Resource {
@@ -32,7 +32,7 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -1263,7 +1263,7 @@ func dataSourceStorageVolumeTemplateRead(d *schema.ResourceData, meta interface{
 	d.Set("category", template.Category)
 	d.Set("compatible_storage_systems_uri", template.CompatibleStorageSystemsUri.String())
 	d.Set("description", template.Description.String())
-	d.Set("eTag", template.ETAG)
+	d.Set("etag", template.ETAG)
 	d.Set("is_root", template.IsRoot)
 	d.Set("scopes_uri", template.ScopesURI.String())
 	d.Set("name", template.Name)

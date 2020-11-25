@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceInterconnectType() *schema.Resource {
@@ -141,7 +141,7 @@ func dataSourceInterconnectType() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -168,14 +168,14 @@ func dataSourceInterconnectTypeRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("category", interconnectType.Category)
 	d.Set("state", interconnectType.State)
 	d.Set("port_info", interconnectType.PortInfos)
-	d.Set("eTag", interconnectType.ETAG)
+	d.Set("etag", interconnectType.ETAG)
 	d.Set("description", interconnectType.Description)
 
 	DownlinkPortCapability := make([]map[string]interface{}, 0, 1)
 	DownlinkPortCapability = append(DownlinkPortCapability, map[string]interface{}{
 		"created":               interconnectType.DownlinkPortCapability.Created,
 		"max_bandwidth_in_gbps": interconnectType.DownlinkPortCapability.MaxBandwidthInGbps,
-		"uri": interconnectType.DownlinkPortCapability.URI,
+		"uri":                   interconnectType.DownlinkPortCapability.URI,
 	})
 	d.Set("downlink_port_capability", DownlinkPortCapability)
 
