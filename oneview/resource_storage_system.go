@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceStorageSystem() *schema.Resource {
@@ -78,7 +78,7 @@ func resourceStorageSystem() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -225,7 +225,7 @@ func resourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error {
 
 	d.Set("hostname", storageSystem.Hostname)
 	d.Set("category", storageSystem.Category)
-	d.Set("eTag", storageSystem.ETAG)
+	d.Set("etag", storageSystem.ETAG)
 	d.Set("name", storageSystem.Name)
 	d.Set("description", storageSystem.Description.String())
 	d.Set("state", storageSystem.State)
@@ -347,7 +347,7 @@ func resourceStorageSystemUpdate(d *schema.ResourceData, meta interface{}) error
 		storageSystem.Description = utils.NewNstring(val.(string))
 	}
 
-	if val, ok := d.GetOk("eTag"); ok {
+	if val, ok := d.GetOk("etag"); ok {
 		storageSystem.ETAG = val.(string)
 	}
 

@@ -15,7 +15,7 @@ import (
 	"fmt"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceI3SPlan() *schema.Resource {

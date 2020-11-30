@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceUplinkSet() *schema.Resource {
@@ -82,7 +82,7 @@ func resourceUplinkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -154,12 +154,12 @@ func resourceUplinkSetCreate(d *schema.ResourceData, meta interface{}) error {
 	const Port = "Port"
 
 	uplinkSet := ov.UplinkSet{
-		Name: d.Get("name").(string),
-		LogicalInterconnectURI: utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
-		ConnectionMode:         d.Get("connection_mode").(string),
-		NetworkType:            d.Get("network_type").(string),
-		EthernetNetworkType:    d.Get("ethernet_network_type").(string),
-		Type:                   d.Get("type").(string),
+		Name:                           d.Get("name").(string),
+		LogicalInterconnectURI:         utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
+		ConnectionMode:                 d.Get("connection_mode").(string),
+		NetworkType:                    d.Get("network_type").(string),
+		EthernetNetworkType:            d.Get("ethernet_network_type").(string),
+		Type:                           d.Get("type").(string),
 		ManualLoginRedistributionState: d.Get("manual_login_redistribution_state").(string),
 	}
 
@@ -266,7 +266,7 @@ func resourceUplinkSetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("fc_network_uris", uplinkSet.FcNetworkURIs)
 	d.Set("created", uplinkSet.Created)
 	d.Set("modified", uplinkSet.Modified)
-	d.Set("eTag", uplinkSet.Etag)
+	d.Set("etag", uplinkSet.Etag)
 	d.Set("reachability", uplinkSet.Reachability)
 	d.Set("network_type", uplinkSet.NetworkType)
 	d.Set("ethernet_network_type", uplinkSet.EthernetNetworkType)
@@ -287,13 +287,13 @@ func resourceUplinkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 	const Port = "Port"
 
 	uplinkSet := ov.UplinkSet{
-		Name: d.Get("name").(string),
-		LogicalInterconnectURI: utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
-		ConnectionMode:         d.Get("connection_mode").(string),
-		NetworkType:            d.Get("network_type").(string),
-		EthernetNetworkType:    d.Get("ethernet_network_type").(string),
-		Type:                   d.Get("type").(string),
-		URI:                    utils.NewNstring(d.Get("uri").(string)),
+		Name:                           d.Get("name").(string),
+		LogicalInterconnectURI:         utils.NewNstring(d.Get("logical_interconnect_uri").(string)),
+		ConnectionMode:                 d.Get("connection_mode").(string),
+		NetworkType:                    d.Get("network_type").(string),
+		EthernetNetworkType:            d.Get("ethernet_network_type").(string),
+		Type:                           d.Get("type").(string),
+		URI:                            utils.NewNstring(d.Get("uri").(string)),
 		ManualLoginRedistributionState: d.Get("manual_login_redistribution_state").(string),
 	}
 

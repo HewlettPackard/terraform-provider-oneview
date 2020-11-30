@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceFCNetwork() *schema.Resource {
@@ -68,7 +68,7 @@ func dataSourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -80,7 +80,7 @@ func dataSourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scopesUri": {
+			"scopes_uri": {
 				Computed: true,
 				Type:     schema.TypeString,
 			},
@@ -113,7 +113,7 @@ func dataSourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("fabric_uri", fcNet.FabricUri.String())
 	d.Set("created", fcNet.Created)
 	d.Set("modified", fcNet.Modified)
-	d.Set("eTag", fcNet.ETAG)
-	d.Set("scopesUri", fcNet.ScopesUri.String())
+	d.Set("etag", fcNet.ETAG)
+	d.Set("scopes_uri", fcNet.ScopesUri.String())
 	return nil
 }

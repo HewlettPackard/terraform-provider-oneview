@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/i3s"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceDeploymentPlan() *schema.Resource {
@@ -88,7 +88,7 @@ func resourceDeploymentPlan() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"id": {
+			"dp_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -199,7 +199,7 @@ func resourceDeploymentPlanRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("etag", deploymentPlan.ETAG)
 	d.Set("golden_image_uri", deploymentPlan.GoldenImageUri)
 	d.Set("hp_provided", deploymentPlan.HPProvided)
-	d.Set("id", deploymentPlan.ID)
+	d.Set("dp_id", deploymentPlan.ID)
 	d.Set("name", deploymentPlan.Name)
 	d.Set("oe_build_plan_uri", deploymentPlan.OEBuildPlanURI.String())
 	d.Set("status", deploymentPlan.Status)

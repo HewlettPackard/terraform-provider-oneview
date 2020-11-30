@@ -11,7 +11,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceEnclosureGroup() *schema.Resource {
@@ -131,7 +131,7 @@ func dataSourceEnclosureGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"Status": {
+			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},

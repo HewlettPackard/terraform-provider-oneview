@@ -16,7 +16,7 @@ import (
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceLogicalSwitchGroup() *schema.Resource {
@@ -85,7 +85,7 @@ func resourceLogicalSwitchGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -166,7 +166,7 @@ func resourceLogicalSwitchGroupRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("category", logicalSwitchGroup.Category)
 	d.Set("state", logicalSwitchGroup.State)
 	d.Set("fabric_uri", logicalSwitchGroup.FabricUri.String())
-	d.Set("eTag", logicalSwitchGroup.ETAG)
+	d.Set("etag", logicalSwitchGroup.ETAG)
 	d.Set("description", logicalSwitchGroup.Description)
 	return nil
 }
@@ -215,7 +215,7 @@ func resourceLogicalSwitchGroupUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	newLogicalSwitchGroup := ov.LogicalSwitchGroup{
-		ETAG:              d.Get("eTag").(string),
+		ETAG:              d.Get("etag").(string),
 		URI:               utils.NewNstring(d.Get("uri").(string)),
 		Name:              d.Get("name").(string),
 		Type:              d.Get("type").(string),

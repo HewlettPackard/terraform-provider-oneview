@@ -16,8 +16,8 @@ import (
 	"testing"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func TestAccServerProfile_1(t *testing.T) {

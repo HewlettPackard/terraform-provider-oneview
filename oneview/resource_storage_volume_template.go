@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceStorageVolumeTemplate() *schema.Resource {
@@ -40,7 +40,7 @@ func resourceStorageVolumeTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -2319,7 +2319,7 @@ func resourceStorageVolumeTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("category", template.Category)
 	d.Set("compatible_storage_systems_uri", template.CompatibleStorageSystemsUri.String())
 	d.Set("description", template.Description.String())
-	d.Set("eTag", template.ETAG)
+	d.Set("etag", template.ETAG)
 	d.Set("is_root", template.IsRoot)
 	d.Set("scopes_uri", template.ScopesURI.String())
 	d.Set("name", template.Name)
@@ -2835,7 +2835,7 @@ func resourceStorageVolumeTemplateUpdate(d *schema.ResourceData, meta interface{
 
 	template := ov.StorageVolumeTemplate{
 		Name: d.Get("name").(string),
-		ETAG: d.Get("eTag").(string),
+		ETAG: d.Get("etag").(string),
 		URI:  utils.NewNstring(d.Get("uri").(string))}
 
 	if val, ok := d.GetOk("description"); ok {

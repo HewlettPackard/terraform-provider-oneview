@@ -1,21 +1,20 @@
 provider "oneview" {
-  ov_username =   "${var.username}"
-  ov_password =   "${var.password}"
-  ov_endpoint =   "${var.endpoint}"
-  ov_sslverify =  "${var.ssl_enabled}"
+  ov_username   = var.username
+  ov_password   = var.password
+  ov_endpoint   = var.endpoint
+  ov_sslverify  = var.ssl_enabled
   ov_apiversion = 2200
-  ov_ifmatch = "*"
+  ov_ifmatch    = "*"
 }
 
 # Get Logical Interconnect to terraform
 data "oneview_logical_interconnect" "logical_interconnect" {
-	name = "6c9d7d01-c176-43c8-b043-6fc0a65f4f9b"
+  name = "6c9d7d01-c176-43c8-b043-6fc0a65f4f9b"
 }
 
 output "oneview_logical_interconnect_value" {
-	value = "${data.oneview_logical_interconnect.logical_interconnect.uri}"
+  value = data.oneview_logical_interconnect.logical_interconnect.uri
 }
-
 
 /*
 
@@ -46,5 +45,6 @@ resource "oneview_logical_interconnect" "logical_interconnect" {
 # Returns logical interconnects to a consistent state. The current logical interconnect state is compared to the associated logical interconnect group.
 
 resource "oneview_logical_interconnect" "logical_interconnect" {
-update_type = "updateComplianceById"
+  update_type = "updateComplianceById"
 }
+

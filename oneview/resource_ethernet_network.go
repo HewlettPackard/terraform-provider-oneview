@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceEthernetNetwork() *schema.Resource {
@@ -98,11 +98,11 @@ func resourceEthernetNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scopesUri": {
+			"scopes_uri": {
 				Optional: true,
 				Type:     schema.TypeString,
 				Computed: true,
@@ -174,8 +174,8 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("category", eNet.Category)
 	d.Set("state", eNet.State)
 	d.Set("fabric_uri", eNet.FabricUri.String())
-	d.Set("eTag", eNet.ETAG)
-	d.Set("scopesUri", eNet.ScopesUri.String())
+	d.Set("etag", eNet.ETAG)
+	d.Set("scopes_uri", eNet.ScopesUri.String())
 	d.Set("initial_scope_uris", eNet.InitialScopeUris)
 
 	return nil
@@ -185,7 +185,7 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 	config := meta.(*Config)
 
 	newENet := ov.EthernetNetwork{
-		ETAG:                  d.Get("eTag").(string),
+		ETAG:                  d.Get("etag").(string),
 		URI:                   utils.NewNstring(d.Get("uri").(string)),
 		VlanId:                d.Get("vlan_id").(int),
 		Purpose:               d.Get("purpose").(string),
@@ -193,7 +193,7 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 		PrivateNetwork:        d.Get("private_network").(bool),
 		SmartLink:             d.Get("smart_link").(bool),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type: d.Get("type").(string),
+		Type:                  d.Get("type").(string),
 	}
 
 	err := config.ovClient.UpdateEthernetNetwork(newENet)

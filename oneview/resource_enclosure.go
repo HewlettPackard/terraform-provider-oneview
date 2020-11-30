@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceEnclosure() *schema.Resource {
@@ -126,7 +126,7 @@ func resourceEnclosure() *schema.Resource {
 				},
 				Set: schema.HashString,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -349,7 +349,7 @@ func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("created", enclosure.Created)
 	d.Set("description", enclosure.Description)
 	d.Set("device_bay_count", enclosure.DeviceBayCount)
-	d.Set("eTag", enclosure.ETAG)
+	d.Set("etag", enclosure.ETAG)
 	d.Set("enclosure_group_uri", enclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_type", enclosure.EnclosureType)
 	d.Set("fw_baseline_name", enclosure.FwBaselineName)

@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceFCoENetwork() *schema.Resource {
@@ -64,7 +64,7 @@ func dataSourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -76,7 +76,7 @@ func dataSourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scopesUri": {
+			"scopes_uri": {
 				Computed: true,
 				Type:     schema.TypeString,
 			},
@@ -107,7 +107,7 @@ func dataSourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("state", fcoeNet.State)
 	d.Set("created", fcoeNet.Created)
 	d.Set("modified", fcoeNet.Modified)
-	d.Set("eTag", fcoeNet.ETAG)
-	d.Set("scopesUri", fcoeNet.ScopesUri.String())
+	d.Set("etag", fcoeNet.ETAG)
+	d.Set("scopes_uri", fcoeNet.ScopesUri.String())
 	return nil
 }

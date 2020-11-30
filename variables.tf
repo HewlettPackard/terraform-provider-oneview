@@ -16,26 +16,28 @@
 */
 
 variable "username" {
- type = "string"
+ type = string
  description = "Oneview Appliance Username"
 }
 
 variable "password" {
- type = "string"
-description = "Oneview Appliance Password"
+ type = string
+ description = "Oneview Appliance Password"
 }
 
 variable "endpoint" {
- type = "string"
+ type = string
  description = "Oneview Appliance IP Address"
 }
 
 variable "ssl_enabled" {
+ type = bool
  default = false
  description = "SSL Enabled"
 }
 
 variable "i3s_endpoint" {
+ type = string
  default = false
  description = "Image Streamer IP Address"
 }

@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceHypervisorClusterProfile() *schema.Resource {
@@ -848,12 +848,12 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 		HypervisorManagerUri:      utils.Nstring(d.Get("hypervisor_manager_uri").(string)),
 		HypervisorType:            d.Get("hypervisor_type").(string),
 		MgmtIpSettingsOverride:    d.Get("mgmt_ip_settings_override").(string),
-		Name:        d.Get("name").(string),
-		Path:        d.Get("path").(string),
-		ScopesUri:   d.Get("scopes_uri").(string),
-		StateReason: d.Get("state_reason").(string),
-		Type:        d.Get("type").(string),
-		URI:         utils.Nstring(d.Get("uri").(string)),
+		Name:                      d.Get("name").(string),
+		Path:                      d.Get("path").(string),
+		ScopesUri:                 d.Get("scopes_uri").(string),
+		StateReason:               d.Get("state_reason").(string),
+		Type:                      d.Get("type").(string),
+		URI:                       utils.Nstring(d.Get("uri").(string)),
 	}
 	hypClusterSettings := ov.HypervisorClusterSettings{}
 	HypervisorClusterSettingslist := d.Get("hypervisor_cluster_settings").(*schema.Set).List()
