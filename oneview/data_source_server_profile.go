@@ -716,7 +716,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("uri", serverProfile.URI.String())
 	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
 	localStorages := make([]map[string]interface{}, 0, 1)
-	localStorages = append(localStorages, map[string]interface{}{		
+	localStorages = append(localStorages, map[string]interface{}{
 		"reapply_state": serverProfile.LocalStorage.ReapplyState,
 	})
 
