@@ -18,6 +18,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"io/ioutil"
 	"strings"
 )
 
@@ -36,12 +37,58 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"affinity": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "Bay",
+			},
+			"associated_server": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"bios_option": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"consistency_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"manage_bios": {
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+						"overridden_settings": {
+							Optional: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"id": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"value": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"boot_order": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
 			},
+
 			"boot_mode": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -59,75 +106,45 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-					},
-				},
-			},
-			"bios_option": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"manage_bios": {
-							Type:     schema.TypeBool,
+						"secure_boot": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
-						"overridden_settings": {
-							Optional: true,
-							Type:     schema.TypeSet,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"id": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"value": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
-						},
 					},
 				},
 			},
+			"category": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "server-profiles",
+			},
+
 			"network": {
 				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"function_type": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-						},
-						"network_uri": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"port_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "Lom 1:1-a",
-						},
-						"requested_mbps": {
+						"allocated_mbps": {
 							Type:     schema.TypeString,
 							Optional: true,
 							Default:  "2500",
 						},
-						"id": {
-							Type:     schema.TypeInt,
+						"allocated_vfs": {
+							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "2500",
 						},
 						"boot": {
 							Optional: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"priority": {
+									"boot_vlanid": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+
+									"boot_volume_source": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -135,10 +152,7 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"boot_volume_source": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
+
 									"iscsi": {
 										Type:     schema.TypeSet,
 										Optional: true,
@@ -172,8 +186,26 @@ func resourceServerProfile() *schema.Resource {
 											},
 										},
 									},
+									"priority": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"targets": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 								},
 							},
+						},
+
+						"function_type": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+						"id": {
+							Type:     schema.TypeInt,
+							Optional: true,
 						},
 						"ipv4": {
 							Type:     schema.TypeSet,
@@ -191,6 +223,24 @@ func resourceServerProfile() *schema.Resource {
 								},
 							},
 						},
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"network_uri": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"port_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "Lom 1:1-a",
+						},
+						"requested_mbps": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "2500",
+						},
 					},
 				},
 			},
@@ -204,11 +254,7 @@ func resourceServerProfile() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 			},
-			"affinity": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "Bay",
-			},
+
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -297,6 +343,42 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"controllers": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"device_slot": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"drive_write_cache": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"import_configuration": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"initialize": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"predictive_spare_rebuild": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -305,17 +387,102 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"accelerator": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"bootable": {
 							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"drive_number": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"drive_technology": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"num_physical_drives": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"num_spare_drives": {
+							Type:     schema.TypeInt,
 							Optional: true,
 						},
 						"raid_level": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"sas_logical_jbod_id": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
 					},
 				},
 			},
+			"logical_jbod": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"device_slot": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"drive_max_size_gb": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"drive_min_size_gb": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"drive_technology": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"erase_data": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"num_physical_drives": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"persistent": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"sas_logical_jbod_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+
 			"san_storage": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -940,14 +1107,14 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 								IsCompressed:                  propertyItem["is_compressed"].(bool),
 								IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 								IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-								Name:              propertyItem["name"].(string),
-								PerformancePolicy: propertyItem["performance_policy"].(string),
-								ProvisioningType:  propertyItem["provisioning_type"].(string),
-								Size:              propertyItem["size"].(int),
-								SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:   propertyItem["template_version"].(string),
-								VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
+								Name:                          propertyItem["name"].(string),
+								PerformancePolicy:             propertyItem["performance_policy"].(string),
+								ProvisioningType:              propertyItem["provisioning_type"].(string),
+								Size:                          propertyItem["size"].(int),
+								SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:               propertyItem["template_version"].(string),
+								VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -998,11 +1165,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 				AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-				State:              volumeAttachmentItem["state"].(string),
-				Status:             volumeAttachmentItem["status"].(string),
-				StoragePaths:       storagePaths,
-				BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
-				Volume:             &volumes,
+				State:                          volumeAttachmentItem["state"].(string),
+				Status:                         volumeAttachmentItem["status"].(string),
+				StoragePaths:                   storagePaths,
+				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+				Volume:                         &volumes,
 			})
 		}
 		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
@@ -1036,6 +1203,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 		}
 	}
+
+	file, _ := json.MarshalIndent(serverProfile, "", " ")
+	_ = ioutil.WriteFile("sp.json", file, 0644)
+
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
 
@@ -1047,8 +1218,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			return err
 		}
 	}
-
-	return resourceServerProfileRead(d, meta)
+	return nil
+	//return resourceServerProfileRead(d, meta)
 }
 
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
@@ -1081,6 +1252,8 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", serverProfile.Name)
 	d.Set("type", serverProfile.Type)
 	d.Set("uri", serverProfile.URI.String())
+	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
+	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName)
 
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(serverProfile.EnclosureGroupURI)
 	if err != nil {
@@ -1117,6 +1290,24 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("network", networks)
 	}
+	overriddenSettings := make([]interface{}, 0, len(serverProfile.Bios.OverriddenSettings))
+	for _, overriddenSetting := range serverProfile.Bios.OverriddenSettings {
+		overriddenSettings = append(overriddenSettings, map[string]interface{}{
+			"id":    overriddenSetting.ID,
+			"value": overriddenSetting.Value,
+		})
+	}
+	if serverProfile.Bios != nil {
+		biosOptions := make([]map[string]interface{}, 0, 1)
+		biosOptions = append(biosOptions, map[string]interface{}{
+			"manage_bios":         serverProfile.Bios.ManageBios,
+			"reapply_state":       serverProfile.Bios.ReapplyState,
+			"consistency_state":   serverProfile.Bios.ConsistencyState,
+			"overridden_settings": overriddenSettings,
+		})
+
+		d.Set("bios_option", biosOptions)
+	}
 
 	if serverProfile.Boot.ManageBoot {
 		bootOrder := make([]interface{}, 0)
@@ -1130,6 +1321,67 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("boot_order", bootOrder)
 	}
+
+	localStorages := make([]map[string]interface{}, 0, 1)
+	localStorages = append(localStorages, map[string]interface{}{
+		//"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
+		//"initialize":  serverProfile.LocalStorage.Initialize,
+		"reapply_state": serverProfile.LocalStorage.ReapplyState,
+	})
+
+	d.Set("local_storage", localStorages)
+	controllers := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers))
+	for _, controller := range serverProfile.LocalStorage.Controllers {
+
+		controllers = append(controllers, map[string]interface{}{
+			"device_slot":              controller.DeviceSlot,
+			"drive_write_cache":        controller.DriveWriteCache,
+			"import_configuration":     controller.ImportConfiguration,
+			"initialize":               controller.Initialize,
+			"mode":                     controller.Mode,
+			"predictive_spare_rebuild": controller.PredictiveSpareRebuild,
+		})
+		logicaldrives := make([]map[string]interface{}, 0, len(controller.LogicalDrives))
+		for _, logicaldrive := range controller.LogicalDrives {
+
+			logicaldrives = append(logicaldrives, map[string]interface{}{
+				"accelerator":         logicaldrive.Accelerator,
+				"bootable":            logicaldrive.Bootable,
+				"drive_number":        logicaldrive.DriveNumber,
+				"drive_technology":    logicaldrive.DriveTechnology,
+				"name":                logicaldrive.Name,
+				"num_physical_drives": logicaldrive.NumPhysicalDrives,
+				"num_spare_drives":    logicaldrive.NumSpareDrives,
+				"raid_level":          logicaldrive.RaidLevel,
+				"sas_logical_jbod_id": logicaldrive.SasLogicalJBODId,
+			})
+		}
+
+		d.Set("logical_drives", logicaldrives)
+
+	}
+
+	d.Set("controllers", controllers)
+
+	saslogicaljbods := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
+	for _, saslogicaljbod := range serverProfile.LocalStorage.SasLogicalJBODs {
+
+		saslogicaljbods = append(saslogicaljbods, map[string]interface{}{
+			"description":          saslogicaljbod.Description,
+			"device_slot":          saslogicaljbod.DeviceSlot,
+			"drive_max_size_gb":    saslogicaljbod.DriveMaxSizeGB,
+			"drive_min_size_gb":    saslogicaljbod.DriveMinSizeGB,
+			"drive_technology":     saslogicaljbod.DriveTechnology,
+			"erase_data":           saslogicaljbod.EraseData,
+			"id":                   saslogicaljbod.ID,
+			"name":                 saslogicaljbod.Name,
+			"num_physical_drives":  saslogicaljbod.NumPhysicalDrives,
+			"persistent":           saslogicaljbod.Persistent,
+			"sas_logical_jbod_uri": saslogicaljbod.SasLogicalJBODUri,
+			"status":               saslogicaljbod.Status,
+		})
+	}
+	d.Set("logical_jbod", saslogicaljbods)
 
 	return nil
 }
@@ -1438,14 +1690,14 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 									IsCompressed:                  propertyItem["is_compressed"].(bool),
 									IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 									IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-									Name:              propertyItem["name"].(string),
-									PerformancePolicy: propertyItem["performance_policy"].(string),
-									ProvisioningType:  propertyItem["provisioning_type"].(string),
-									Size:              propertyItem["size"].(int),
-									SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-									StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
-									TemplateVersion:   propertyItem["template_version"].(string),
-									VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
+									Name:                          propertyItem["name"].(string),
+									PerformancePolicy:             propertyItem["performance_policy"].(string),
+									ProvisioningType:              propertyItem["provisioning_type"].(string),
+									Size:                          propertyItem["size"].(int),
+									SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+									StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
+									TemplateVersion:               propertyItem["template_version"].(string),
+									VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
 								}
 							}
 						}
@@ -1496,11 +1748,11 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 					VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 					AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-					State:              volumeAttachmentItem["state"].(string),
-					Status:             volumeAttachmentItem["status"].(string),
-					StoragePaths:       storagePaths,
-					BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
-					Volume:             &volumes,
+					State:                          volumeAttachmentItem["state"].(string),
+					Status:                         volumeAttachmentItem["status"].(string),
+					StoragePaths:                   storagePaths,
+					BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+					Volume:                         &volumes,
 				})
 			}
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments
