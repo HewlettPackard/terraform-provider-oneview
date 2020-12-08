@@ -474,27 +474,26 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"domain_name": {
 							Type:     schema.TypeString,
 							Optional: true,
-							
 						},
 						"enable_cut_through": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Default: false,
+							Default:  false,
 						},
 						"enable_dns": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Default: false,
+							Default:  false,
 						},
 						"enable_storm_control": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Default: false,
+							Default:  false,
 						},
 						"enable_tagged_lldp": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Default: false,
+							Default:  false,
 						},
 						"ethernet_setting_id": {
 							Type:     schema.TypeString,
@@ -1720,8 +1719,8 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSetting := map[string]interface{}{
-		"consistency_checking":           logicalInterconnectGroup.EthernetSettings.ConsistencyChecking,
-		"dependent_resource_uri":         logicalInterconnectGroup.EthernetSettings.DependentResourceUri,
+		"consistency_checking":   logicalInterconnectGroup.EthernetSettings.ConsistencyChecking,
+		"dependent_resource_uri": logicalInterconnectGroup.EthernetSettings.DependentResourceUri,
 		//"domain_name":                    *logicalInterconnectGroup.EthernetSettings.DomainName,
 		"enable_cut_through":             *logicalInterconnectGroup.EthernetSettings.EnableCutThrough,
 		"enable_dns":                     *logicalInterconnectGroup.EthernetSettings.EnableDdns,
@@ -1736,20 +1735,20 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		"lldp_ipv6_address":              logicalInterconnectGroup.EthernetSettings.LldpIpv6Address,
 		"mac_refresh_interval":           logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
 		"name":                           logicalInterconnectGroup.EthernetSettings.Name,
-		"network_loop_protection":        *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
-		"pause_flood_protection":         *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
-		"rich_tlv":                       *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
-		"state":                          logicalInterconnectGroup.EthernetSettings.State,
-		"status":                         logicalInterconnectGroup.EthernetSettings.Status,
+		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
+		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
+		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
+		"state":                   logicalInterconnectGroup.EthernetSettings.State,
+		"status":                  logicalInterconnectGroup.EthernetSettings.Status,
 		"storm_control_polling_interval": logicalInterconnectGroup.EthernetSettings.StormControlPollingInterval,
 		"storm_control_threshold":        logicalInterconnectGroup.EthernetSettings.StormControlThreshold,
-		"type":                           logicalInterconnectGroup.EthernetSettings.Type,
-		"uri":                            logicalInterconnectGroup.EthernetSettings.URI,
+		"type": logicalInterconnectGroup.EthernetSettings.Type,
+		"uri":  logicalInterconnectGroup.EthernetSettings.URI,
 	}
-	if (logicalInterconnectGroup.EthernetSettings.DomainName !=nil){
+	if logicalInterconnectGroup.EthernetSettings.DomainName != nil {
 		interconnectSetting["domain_name"] = *logicalInterconnectGroup.EthernetSettings.DomainName
-	}else{
-		interconnectSetting["domain_name"] = nil
+	} else {
+		interconnectSetting["domain_name"] = "null"
 
 	}
 
@@ -1759,16 +1758,16 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	igmpSettings := make([]map[string]interface{}, 0, 1)
 	igmpSetting := map[string]interface{}{
-		"category":                   logicalInterconnectGroup.IgmpSettings.Category,
-		"consistency_checking":       logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
-		"created":                    logicalInterconnectGroup.IgmpSettings.Created,
-		"dependent_resource_uri":     logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
-		"description":                logicalInterconnectGroup.IgmpSettings.Description,
-		"etag":                       logicalInterconnectGroup.IgmpSettings.ETAG,
-		"igmp_snooping":              *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
-		"prevent_flooding":           *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
-		"proxy_reporting":            *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
-		"id":                         logicalInterconnectGroup.IgmpSettings.ID,
+		"category":               logicalInterconnectGroup.IgmpSettings.Category,
+		"consistency_checking":   logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
+		"created":                logicalInterconnectGroup.IgmpSettings.Created,
+		"dependent_resource_uri": logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
+		"description":            logicalInterconnectGroup.IgmpSettings.Description,
+		"etag":                   logicalInterconnectGroup.IgmpSettings.ETAG,
+		"igmp_snooping":          *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
+		"prevent_flooding":       *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
+		"proxy_reporting":        *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
+		"id":                     logicalInterconnectGroup.IgmpSettings.ID,
 		"igmp_idle_timeout_interval": logicalInterconnectGroup.IgmpSettings.IgmpIdleTimeoutInterval,
 		"igmp_snooping_vlan_ids":     logicalInterconnectGroup.IgmpSettings.IgmpSnoopingVlanIds,
 		"modified":                   logicalInterconnectGroup.IgmpSettings.Modified,
@@ -1822,7 +1821,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	qualityOfService := make([]map[string]interface{}, 0, 1)
 	qualityOfService = append(qualityOfService, map[string]interface{}{
-		"type":                         logicalInterconnectGroup.QosConfiguration.Type,
+		"type": logicalInterconnectGroup.QosConfiguration.Type,
 		"active_qos_config_type":       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
 		"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
 		"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
@@ -2265,10 +2264,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
 
 		enableRichTLV := d.Get(interconnectSettingsPrefix + ".rich_tlv").(bool)
-		interconnectSettings.EnableRichTLV = &enableRichTLV	
+		interconnectSettings.EnableRichTLV = &enableRichTLV
 
 		enableInterconnectUtilizationAlert := d.Get(interconnectSettingsPrefix + ".interconnect_utilization_alert").(bool)
-		interconnectSettings.EnableInterconnectUtilizationAlert = &enableInterconnectUtilizationAlert	
+		interconnectSettings.EnableInterconnectUtilizationAlert = &enableInterconnectUtilizationAlert
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
 			interconnectSettings.MacRefreshInterval = val1.(int)
@@ -2280,25 +2279,27 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
 		}
 		domainName := d.Get(interconnectSettingsPrefix + ".domain_name").(string)
-	    // if domainName==nil{
-		//   var dName *string = nil
-		//   interconnectSettings.DomainName=dName
-		// }else{
-		   interconnectSettings.DomainName = &domainName
-		// }
-		
+
+		//Sometimes domain name is set as null and same is needed in creation
+		var dName *string = nil
+		if domainName != "null" { //else domain name will be set to null as indirection of nil is null
+			dName = &domainName
+		}
+
+		interconnectSettings.DomainName = dName
+
 		enableCutThrough := d.Get(interconnectSettingsPrefix + ".enable_cut_through").(bool)
 		interconnectSettings.EnableCutThrough = &enableCutThrough
-		
+
 		enableDdns := d.Get(interconnectSettingsPrefix + ".enable_dns").(bool)
 		interconnectSettings.EnableDdns = &enableDdns
-		
+
 		enableStormControl := d.Get(interconnectSettingsPrefix + ".enable_storm_control").(bool)
 		interconnectSettings.EnableStormControl = &enableStormControl
-		
+
 		enableTaggedLldp := d.Get(interconnectSettingsPrefix + ".enable_tagged_lldp").(bool)
 		interconnectSettings.EnableTaggedLldp = &enableTaggedLldp
-		
+
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".ethernet_setting_id"); ok {
 			interconnectSettings.ID = val1.(string)
 		}
