@@ -1,20 +1,20 @@
 provider "oneview" {
-  ov_username   = "administrator"
+  ov_username   = "Administrator"
   ov_password   = "admin123"
-  ov_endpoint   = "https://10.1.20.12"
+  ov_endpoint   = "https://10.1.19.143"
   ov_sslverify  = false
   ov_apiversion = 2200
   ov_ifmatch    = "*"
 }
-
+/*
 data "oneview_scope" "scope_obj" {
   name = "testing"
 }
-
+*/
 resource "oneview_fc_network" "FCNetwork" {
   name               = "TestFCNetwork6"
   type               = "fc-networkV4"
-  initial_scope_uris = [data.oneview_scope.scope_obj.uri]
+//  initial_scope_uris = [data.oneview_scope.scope_obj.uri]
 }
 
 /*resource "oneview_fc_network" "FCNetwork" {

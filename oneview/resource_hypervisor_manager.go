@@ -15,7 +15,6 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"io/ioutil"
 )
 
 func resourceHypervisorManager() *schema.Resource {
@@ -269,7 +268,6 @@ func resourceHypervisorManagerRead(d *schema.ResourceData, meta interface{}) err
 	})
 	d.Set("preferences", hypManPreferences)
 	d.Set("refresh_state", hypMan.RefreshState)
-	_ = ioutil.WriteFile("error.txt", []byte(string(len(hypMan.ResourcePaths))), 0644)
 
 	hypManResourcePaths := make([]map[string]interface{}, 0, len(hypMan.ResourcePaths))
 	for _, hypManResourcePath := range hypMan.ResourcePaths {

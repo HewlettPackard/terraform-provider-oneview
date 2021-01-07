@@ -282,16 +282,16 @@ type EnclosurePatchMap struct {
 }
 
 type EnclosureCreateMap struct {
-	EnclosureGroupUri    utils.Nstring `json:"enclosureGroupUri"`
-	Hostname             string        `json:"hostname"`
-	Username             string        `json:"username"`
-	Password             string        `json:"password"`
-	LicensingIntent      string        `json:"licensingIntent"`
-	ForceInstallFirmware bool          `json:"forceInstallFirmware,omitempty"`
-	FirmwareBaselineUri  string        `json:"firmwareBaselineUri,omitempty"`
-	Force                bool          `json:"force,omitempty"`
-	InitialScopeUris     []utils.Nstring      `json:"initialScopeUris"`
-	UpdateFirmwareOn     string        `json:"updateFirmwareOn,omitempty"`
+	EnclosureGroupUri    utils.Nstring   `json:"enclosureGroupUri"`
+	Hostname             string          `json:"hostname"`
+	Username             string          `json:"username"`
+	Password             string          `json:"password"`
+	LicensingIntent      string          `json:"licensingIntent"`
+	ForceInstallFirmware bool            `json:"forceInstallFirmware,omitempty"`
+	FirmwareBaselineUri  string          `json:"firmwareBaselineUri,omitempty"`
+	Force                bool            `json:"force,omitempty"`
+	InitialScopeUris     []utils.Nstring `json:"initialScopeUris"`
+	UpdateFirmwareOn     string          `json:"updateFirmwareOn,omitempty"`
 }
 
 func (c *OVClient) GetEnclosureByName(name string) (Enclosure, error) {
