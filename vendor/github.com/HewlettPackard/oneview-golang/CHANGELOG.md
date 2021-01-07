@@ -1,11 +1,6 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.7.1]
-#### Bug fixes & Enhancements:
-- [#285] (https://github.com/HewlettPackard/oneview-golang/issues/285) Fix Docker Setup section in README.md
-- [#286] (https://github.com/HewlettPackard/oneview-golang/issues/286) GetIloIPAddress() does not work with GetServerHardwareList()
-
 # [v1.7.0] (2020-11-05)
 ### Notes
 - This release extends supports of the SDK to Oneview API Version 2200 and Image Streamer API Version 2000.

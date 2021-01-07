@@ -10,12 +10,11 @@ import (
 
 func main() {
 	var (
-		clientOV                          *ov.OVClient
-		server_profile_template_name      = "Test SPT"
-		server_profile_template_name_auto = "Auto-SPT"
-		enclosure_group_name              = "Auto-TestEG"
-		server_hardware_type_name         = "SY 480 Gen9 1"
-		scope                             = "Auto-Scope"
+		clientOV                     *ov.OVClient
+		server_profile_template_name = "Test SPT"
+		enclosure_group_name         = "TESTEG"
+		server_hardware_type_name    = "SY 480 Gen9 1"
+		scope                        = "ScopeTest"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 	ovc := clientOV.NewOVClient(
@@ -28,7 +27,9 @@ func main() {
 		"*")
 
 	server_hardware_type, err := ovc.GetServerHardwareTypeByName(server_hardware_type_name)
+
 	enc_grp, err := ovc.GetEnclosureGroupByName(enclosure_group_name)
+
 	conn_settings := ov.ConnectionSettings{
 		ManageConnections: true,
 	}
@@ -47,17 +48,7 @@ func main() {
 		InitialScopeUris:      *initialScopeUris,
 	}
 
-	server_profile_template_auto := ov.ServerProfile{
-		Type:                  "ServerProfileTemplateV8",
-		Name:                  server_profile_template_name_auto,
-		EnclosureGroupURI:     enc_grp.URI,
-		ServerHardwareTypeURI: server_hardware_type.URI,
-		ConnectionSettings:    conn_settings,
-		InitialScopeUris:      *initialScopeUris,
-	}
-
 	err = ovc.CreateProfileTemplate(server_profile_template)
-	err = ovc.CreateProfileTemplate(server_profile_template_auto)
 	if err != nil {
 		fmt.Println("Server Profile Template Creation Failed: ", err)
 	} else {

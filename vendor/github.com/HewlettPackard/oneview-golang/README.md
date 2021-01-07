@@ -1,10 +1,7 @@
-# HPE OneView SDK for GoLang
-
-## Build Status 
-
-| 5.50 Branch   | 5.40 Branch   | 5.30 Branch   | 5.20 Branch   |
-| ------------- |:-------------:| -------------:| -------------:|
-| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)
+# HPE OneView golang bindings
+| 5.50 Branch   |
+| ------------- |
+[![Build Status](https://travis-ci.org/HewlettPackard/oneview-golang.svg?branch=master)](https://travis-ci.org/HewlettPackard/oneview-golang)
 
 ## Introduction
 
@@ -20,56 +17,54 @@ HPE OneView Go library extends support of the SDK to OneView REST API version 22
 
 Please refer to [notes](https://github.com/HewlettPackard/oneview-golang/blob/master/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
 
-## Getting Started 
-
-## Installation and Configuration
-
 ## Installation
 HPE OneView SDK for Go can be installed from Source or Docker container installation methods. You can either use a docker container which will have the HPE OneView SDK for Go installed or perform local installation.
 
-###  Docker Setup
-The light weight containerized version of the HPE OneView SDK for Go is available in the [Docker Store](https://hub.docker.com/r/hewlettpackardenterprise/hpe-oneview-sdk-for-golang). The Docker Store image tag consist of two sections: <sdk_version-OV_version>
+### Docker Container Setup
 
+We also provide a lightweight and easy way to test and run oneview-golang. The `hewlettpackardenterprise/hpe-oneview-sdk-for-golang:<tag>` docker image contains an installation of oneview-golang installation you can use by just pulling down the Docker Image:
+
+The Docker Store image `tag` consist of two sections: `<sdk_version-OV_version>`
+
+Download and store a local copy of hpe-oneview-sdk-for-golang and use it as a Docker image.
 ```bash
-# Download and store a local copy of oneview-golang and use it as a Docker Image.
 $ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-golang:v1.7.0-OV5.5
-# Run docker commands below given, which  will in turn create a sh session 
-# where you can create files, issue commands and execute the examples.
+```
+Run docker commands and this will in turn create a sh session where you can create files, issue commands and execute the tests
+```bash
 $ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-golang:v1.7.0-OV5.5 /bin/sh
 ```
 
 ### Local Setup
-
-- Local installation requires Installing Go
-
+- Local installation requires 
+Installing Go
 ```bash 
-# Install the dependent packages
 $ apt-get install build-essential git wget
 $ wget https://dl.google.com/go/go1.11.3.linux-amd64.tar.gz
 ```
-
+unzip and untar  with "tar -zxvf go1.11.linux-amd64.tar.gz", move it to /usr/local/ and create directory for Go.
 ```bash 
-# untar with "tar -zxvf go1.11.3.linux-amd64.tar.gz"
-# move go/ to /usr/local/ 
-# mv go1.11.3.linux-amd64.tar.gz /usr/local/ 
-# mkdir ~/go
+$ mv go1.11.3.linux-amd64.tar.gz /usr/local/ 
+$ mkdir ~/go
 ```
-
+Setting Environment Variable 
 ```bash 
-# Setting GO Environment Variable and adding the GO installed directory to PATH 
 $ export GOROOT=/usr/local/go
 $ export GOPATH=$HOME/go 
 $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 ```
-
+Install Oneview Go SDK
 ```go
-# Install Oneview Go SDK
-$ go get -u github.com/HewlettPackard/oneview-golang 
+go get -u github.com/HewlettPackard/oneview-golang 
 ```
+
 
 ## Configuration
 
-### Environment Variables
+### OneView Client Configuration
+The OneView Client configuration options that can be passed during OneView Client object creation:
+
+Following environment variables can be set for testing:
 
 ```bash
 # Required
@@ -82,37 +77,34 @@ $ export ONEVIEW_APIVERSION=<ov_apiversion>
 ```
 Note: Currently this SDK supports OneView API 2200 minimally, where we can test OneView API 2200 version with this SDK. If API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
-### OneView Client Configuration
-
-The OneView Client configuration options that can be passed during OneView Client object creation:
-
 ```go
 # Create a OneView client object:
+
 import "github.com/HewlettPackard/oneview-golang/ov"
 
 var ClientOV    *ov.OVClient
+
 apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 
 ovc := ClientOV.NewOVClient(
-  os.Getenv("ONEVIEW_OV_USER"),      # This is to set the Oneview UserName
-  os.Getenv("ONEVIEW_OV_PASSWORD"),  # This is to set the Oneview Password
-  os.Getenv("ONEVIEW_OV_DOMAIN"),    # This is to set the Domain, default is LOCAL
-  os.Getenv("ONEVIEW_OV_ENDPOINT"),  # This is to set the IP Address of the Oneview Appliance
-  false,                             # This is to set the SSL, default is false
-  apiversion,                        # This is to set OV REST API Version. Defaults to OneView Max supported REST API Version.
-    "*")                              
+  os.Getenv("ONEVIEW_OV_USER"),       # This is to set the Oneview UserName
+  os.Getenv("ONEVIEW_OV_PASSWORD"),   # This is to set the Oneview Password
+  os.Getenv("ONEVIEW_OV_DOMAIN"),     # This is to set the Domain, default is LOCAL
+  os.Getenv("ONEVIEW_OV_ENDPOINT"),   # This is to set the IP Address of the Oneview Appliance
+  false,                              # This is to set the SSL, default is false
+  apiversion,                         # This is to set the OneView REST API Version. Defaults to oneview appliance maximum supported REST API Version
+  "*")
 ```
+:lock: Tip: Check the file permissions because the password is stored in clear-text as Environment Variable.
 
-:lock: Tip: Check the file permissions because the password is stored in clear-text.
 
 ### Image Streamer Client Configuration
-The Image Streamer (I3S) client is very much similar to the OneView client, but has one key difference:
-it cannot generate it's own token. However, it uses the same token given to or generated by the OneView client,
-so if you need to generate a token, create a OneView client using a user & password, then pass the generated token
-into the Image Streamer client.
+The Image Streamer (I3S) client is very much similar to the OneView client. 
+Here we create the Image Streamer(I3S) client through the Oneview client instance.
+Following extra environment variables should be set for testing:
 
 ```bash
-# Additional environment variable for I3S END POINT should be set.
+# Required
 $ export ONEVIEW_I3S_ENDPOINT=<i3s_endpoint>
 ```
 
@@ -152,20 +144,18 @@ i3sc := i3sClient.NewI3SClient(i3sc_endpoint, false, i3s_apiversion, ovc.APIKey)
 
 Configuration files can also be used to define client configuration (json or yaml formats). Here's an example json file:
 
-```json
-# oneview_config.json
+```bash
+Update the ``` oneview_config.json ``` file in example directory as below.
 {
   "username":     "<ov_username>",  
   "password":     "<ov_password>",
   "endpoint":     "<ov_ip>",
   "domain":       "LOCAL",
-  "apiversion":   "<ov_apiversion>",
+  "apiversion":   <ov_apiversion>,
   "sslverify":    false,
   "ifmatch":      "*"
 }
 ```
-
-and load via:
 
 ```go
 # Create a OneView client object:
@@ -175,12 +165,12 @@ var	ClientOV    *ov.OVClient
 config, _ := ov.LoadConfigFile("oneview_config.json")
 
 ovc := ClientOV.NewOVClient(
-  config.UserName,       # This is to set the Oneview UserName
-  config.Password,       # This is to set the Oneview Password
-  config.Domain,         # This is to set the Domain, default is LOCAL
-  config.Endpoint,       # This is to set the IP Address of the 
-  config.SslVerify,      # This is to set the SSL, default is false
-  config.ApiVersion,     # This is to set OV REST API Version. Defaults to OneView Max supported REST API Version.
+  config.UserName,        # This is to set the Oneview UserName
+  config.Password,        # This is to set the Oneview Password
+  config.Domain,          # This is to set the Domain, default is LOCAL
+  config.Endpoint,        # This is to set the IP Address of the 
+  config.SslVerify,       # This is to set the SSL, default is false
+  config.ApiVersion,      # This is to set the OneView REST API Version. Defaults to oneview appliance maximum supported REST API Version
   config.IfMatch)
 ```
 :lock: Tip: Check the file permissions if the password or token is stored in clear-text.
@@ -189,6 +179,47 @@ ovc := ClientOV.NewOVClient(
 
 A detailed list of the HPE OneView REST interfaces that have been implemented in this SDK can be found in the [endpoints-support.md](https://github.com/HewlettPackard/oneview-golang/blob/master/endpoints-support.md) file.
 
+
+## Testing your changes
+
+We use docker to build and test, run this project on a system that has docker. If you don't use docker, you will need to install and setup go-lang locally as well as any other make requirements.  
+You can use `USE_CONTAINER=false` environment setting for make to avoid using docker. Otherwise make sure to have these tools:
+- docker client and daemon
+- gnu make tools
+
+The Tests in GoLang are divided into two segments one is doing the acceptance test and another drives the Unit Tests.
+
+### With Docker
+
+```
+make test
+```
+
+### Without docker
+
+* Install golang 1.5 or higher(We recommend using Go 1.11)
+* Install go packages listed in .travis.yml
+
+The Test Data for these Tests are  supplied through JSON file stored at `test/data config_EGSL_tb200.json`
+
+These Tests can be run locally, you must install the below dependencies as mention in .travis.yml and do export USE_CONTAINER=false
+
+```go
+go get github.com/mattn/goveralls
+go get -u golang.org/x/lint/golint
+```
+
+These Tests are using make files to save the compile time. 
+Below are the commands to run the tests.
+
+```bash
+$ sudo make vet
+$ sudo make test-short
+$ sudo make test-long
+$ sudo make coverage-send
+```
+
+Note: ```make test``` runs all the above mentioned tests.
 
 ## Getting Help 
 
@@ -209,46 +240,6 @@ NOTE: We reserve the right to reject changes that we feel do not fit the scope o
 
 **Feature Requests:** If you have a need that is not met by the current implementation, please let us know opening an new enhancement request/issue.
 This feedback is important for us to deliver a useful product. 
-
-
-## Testing your changes
-
-We use docker to build and test, run this project on a system that has docker. If you don't use docker, you will need to install and setup go-lang locally as well as any other make requirements.  
-
-You can use `USE_CONTAINER=false` environment setting for make to avoid using docker. Otherwise make sure to have these tools:
-- docker client and daemon
-- gnu make tools
-
-The Tests in GoLang are divided into two segments one is doing the acceptance test and another drives the Unit Tests.
-
-#### With Docker
-```
-$ make test
-```
-
-#### Without docker
-* Install golang 1.5 or higher(We recommend using Go 1.11)
-* Install go packages listed in .travis.yml
-
-The Test Data for these Tests are  supplied through JSON file stored at `test/data for example config_EGSL_tb200.json`
-
-These Tests can be run locally, you must install the below dependencies as mention in .travis.yml and do export USE_CONTAINER=false
-
-```go
-$ go get github.com/mattn/goveralls
-$ go get -u golang.org/x/lint/golint
-```
-
-These Tests are using make files to save the compile time. Below are the commands to run the tests.
-
-```bash
-$ sudo make vet
-$ sudo make test-short
-$ sudo make test-long
-$ sudo make coverage-send
-```
-
-Note: ```$ make test``` runs all the above mentioned tests.
 
 ## Additional Resources 
 
@@ -275,3 +266,11 @@ Note: ```$ make test``` runs all the above mentioned tests.
 [HPE OneView Community Forums](http://hpe.com/info/oneviewcommunity)
 
 Learn more about HPE OneView at [hpe.com/info/oneview](https://hpe.com/info/oneview)
+
+
+## Hacking Guide
+
+Use the [hacking guide](HACKING.md) to run local acceptance testing and debugging local contributions. Currently test cases are not supported portion of our CI/CD approval process but might be made available from this test suite in the future.  Contributions to the test suite is appreciated.
+
+## License
+This project is licensed under the Apache License, Version 2.0.  See LICENSE for full license text.

@@ -11,7 +11,7 @@ func main() {
 
 	var (
 		ClientOV     *ov.OVClient
-		storage_pool = "CPG-SSD"
+		storage_pool = "Cluster-1"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 	ovc := ClientOV.NewOVClient(

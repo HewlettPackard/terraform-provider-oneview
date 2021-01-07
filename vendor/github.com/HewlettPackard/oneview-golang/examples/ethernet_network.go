@@ -37,9 +37,7 @@ func main() {
 	ethernetNetwork := ov.EthernetNetwork{Name: ethernet_network, VlanId: 9, Purpose: "General", SmartLink: false, PrivateNetwork: false, ConnectionTemplateUri: "", EthernetNetworkType: "Tagged", Type: "ethernet-networkV4", InitialScopeUris: *initialScopeUris}
 	er := ovc.CreateEthernetNetwork(ethernetNetwork)
 
-	ethernetNetworkAuto := ov.EthernetNetwork{Name: "Auto-ethernet_network", VlanId: 9, Purpose: "General", SmartLink: false, PrivateNetwork: false, ConnectionTemplateUri: "", EthernetNetworkType: "Tagged", Type: "ethernet-networkV4"}
-	er = ovc.CreateEthernetNetwork(ethernetNetworkAuto)
-
+	fmt.Println("#................... Ethernet Network by Name ...............#")
 	ethernet_nw, err := ovc.GetEthernetNetworkByName(ethernet_network)
 	if err != nil {
 		fmt.Println(err)

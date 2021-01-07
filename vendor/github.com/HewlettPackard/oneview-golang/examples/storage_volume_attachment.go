@@ -12,7 +12,7 @@ func main() {
 
 	var (
 		ClientOV    *ov.OVClient
-		name_to_get = "Auto-Volume"
+		name_to_get = "<vol_attachment_name>"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 	ovc := ClientOV.NewOVClient(

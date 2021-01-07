@@ -11,7 +11,7 @@ func main() {
 
 	var (
 		ClientOV        *ov.OVClient
-		st_vol_template = "Auto-VolumeTemplate"
+		st_vol_template = "template"
 		new_volume      = "TestVolume"
 		name_to_update  = "UpdatedName"
 	)
@@ -33,12 +33,7 @@ func main() {
 		Storagepool:      st_pool.URI,
 		Size:             268435456,
 		ProvisioningType: "Thin",
-	}
-	properties_auto := &ov.Properties{
-		Name:             "Auto-Volume",
-		Storagepool:      st_pool.URI,
-		Size:             268435456,
-		ProvisioningType: "Thin",
+		//	DataProtectionLevel: "NetworkRaid10Mirror2Way",
 	}
 	trueVal := true
 	vol_template, err := ovc.GetStorageVolumeTemplateByName(st_vol_template)
@@ -46,9 +41,8 @@ func main() {
 		fmt.Println(err)
 	}
 	storageVolume := ov.StorageVolume{TemplateURI: vol_template.URI, Properties: properties, IsPermanent: &trueVal}
-	storageVolume_auto := ov.StorageVolume{TemplateURI: vol_template.URI, Properties: properties_auto, IsPermanent: &trueVal}
+
 	err = ovc.CreateStorageVolume(storageVolume)
-	err = ovc.CreateStorageVolume(storageVolume_auto)
 	if err != nil {
 		fmt.Println("Could not create the volume", err)
 	}
