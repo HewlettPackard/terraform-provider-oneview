@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 2200
+  ov_apiversion = 2400
   ov_ifmatch    = "*"
 }
 
@@ -32,7 +32,8 @@ resource "oneview_logical_interconnect_group" "LIG" {
 
 # Test for data source  
 data "oneview_logical_interconnect_group" "logical_interconnect_group" {
-  name = "TestLIG4"
+  name = "TestLIG5"
+  depends_on = [oneview_logical_interconnect_group.LIG ]
 }
 
 output "lig_value" {

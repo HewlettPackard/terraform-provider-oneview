@@ -8,14 +8,7 @@ provider "oneview" {
 }
 
 data "oneview_scope" "scope" {
-  name = "Auto-Scope"
-}
-
-# Creates a server profile or Updates if already existing
-resource "oneview_server_profile" "SP" {
-  name          = "TestSP"
-  hardware_name = "0000A66101, bay 3"
-  type          = "ServerProfileV12"
+  name = "test"
 }
 
 # Creation of Server Profile without template
@@ -23,17 +16,18 @@ resource "oneview_server_profile" "SP" {
   name               = "TestSP2"
   hardware_name      = "0000A66101, bay 3"
   type               = "ServerProfileV12"
-  enclosure_group    = "SYN03_EC"
+  enclosure_group    = "test_EG"
   initial_scope_uris = [data.oneview_scope.scope.uri]
 }
+
 
 # Updating Server profile
 resource "oneview_server_profile" "SP" {
   name                 = "TestSP_Renamed"
   hardware_name        = "0000A66101, bay 3"
   type                 = "ServerProfileV12"
-  enclosure_group      = "Auto-TestEG"
-  server_hardware_type = "SY 660 Gen9 1"
+  enclosure_group      = "test_EG"
+  server_hardware_type = "SY 660 Gen9 2"
   initial_scope_uris   = [data.oneview_scope.scope.uri]
   update_type          = "put"
 }
@@ -49,8 +43,8 @@ resource "oneview_server_profile" "SP" {
   }
   name                 = "TestSP_Renamed"
   type                 = "ServerProfileV12"
-  server_hardware_type = "SY 660 Gen9 1"
-  enclosure_group      = "Auto-TestEG"
+  server_hardware_type = "SY 660 Gen9 2"
+  enclosure_group      = "test_EG"
   hardware_name        = "0000A66101, bay 3"
 }
 

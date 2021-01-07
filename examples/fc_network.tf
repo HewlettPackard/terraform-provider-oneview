@@ -1,26 +1,28 @@
 provider "oneview" {
-	ov_username = "<ov_username>"
-	ov_password = "<ov_password"
-	ov_endpoint = "<ov_endpoint>"
-	ov_sslverify = false
-	ov_apiversion = <ov_apiversion>
-	ov_ifmatch = "*"
+  ov_username =   var.username
+  ov_password =   var.password
+  ov_endpoint =   var.endpoint
+  ov_sslverify =  var.ssl_enabled
+  ov_apiversion = 2400
+  ov_ifmatch = "*"
 }
 
 data "oneview_scope" "scope_obj" {
-        name = "test"
+  name = "testing"
 }
 
 resource "oneview_fc_network" "FCNetwork" {
-	name = "TestFCNetwork"
-	type = "fc-networkV4"
-	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
+  name               = "TestFCNetwork6"
+  type               = "fc-networkV4"
+  initial_scope_uris = [data.oneview_scope.scope_obj.uri]
 }
 
-/*resource "oneview_fc_network" "FCNetwork" {
+/*
+resource "oneview_fc_network" "FCNetwork" {
 	name = "TestFCNetwork_Renamed"
 	type = "fc-networkV4"
-}*/
+}
+*/
 
 /* Testing data source
 data "oneview_fc_network" "fc_network" {

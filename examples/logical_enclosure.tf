@@ -3,12 +3,12 @@ provider "oneview" {
   ov_password =   var.password
   ov_endpoint =   var.endpoint
   ov_sslverify =  var.ssl_enabled
-  ov_apiversion = 2200
+  ov_apiversion = 2400
   ov_ifmatch = "*"
 }
 
 data "oneview_enclosure_group" "enclosure_group" {
-  name = "Auto-TestEG"
+  name = "test_EG"
 }
 
 resource "oneview_logical_enclosure" "LogicalEnclosure" {
@@ -19,8 +19,8 @@ resource "oneview_logical_enclosure" "LogicalEnclosure" {
 
 # Import an Exisiting Logical Enclosure
 # terraform import oneview_logical_enclosure.LogicalEnclosure <LE_Name>
-resource "oneview_logical_enclosure" "LogicalEnclosure" {
-}
+#resource "oneview_logical_enclosure" "LogicalEnclosure" {
+#}
 
 # Update by Group 
 resource "oneview_logical_enclosure" "LogicalEnclosure" {
@@ -34,6 +34,7 @@ resource "oneview_logical_enclosure" "LogicalEnclosure" {
 data "oneview_logical_enclosure" "logical_enclosure" {
   name                = "TESTLE"
   enclosure_group_uri = data.oneview_enclosure_group.enclosure_group.uri
+  depends_on = [oneview_logical_enclosure.LogicalEnclosure]
 }
 
 output "oneview_logical_enclosure_value" {

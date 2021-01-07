@@ -108,7 +108,7 @@ func resourceUplinkSet() *schema.Resource {
 			},
 			"port_config_infos": {
 				Type:     schema.TypeSet,
-				Required: true,
+				Optional: true ,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"desired_speed": {
