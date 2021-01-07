@@ -21,7 +21,7 @@ func newFalse() *bool {
 func main() {
 	var (
 		clientOV         *ov.OVClient
-		ethernet_network = "testeth1"
+		ethernet_network = "Auto-ethernet_network"
 		tcId             = "1"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))

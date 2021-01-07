@@ -10,14 +10,16 @@ import (
 func main() {
 
 	var (
-		ClientOV       *ov.OVClient
-		name_to_create = "ThreePAR-1"
-		managed_domain = "TestDomain" //Variable to update the managedDomain
-		username       = "<user_name>"
-		password       = "<password>"
-		host_ip        = "<host_ip_address>"
-		family         = "<storage_system_family>"
-		description    = "<description>"
+		ClientOV        *ov.OVClient
+		name2_to_create = "ThreePAR-2"
+		name_to_create  = "ThreePAR-1"
+		managed_domain  = "TestDomain" //Variable to update the managedDomain
+		username        = "<storage_password>"
+		password        = "<storage_username>"
+		host_ip         = "<storage_IP>"
+		host2_ip        = "<another_Storage_IP>"
+		family          = "StoreServ"
+		//		description    = ""
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 	ovc := ClientOV.NewOVClient(
@@ -30,9 +32,10 @@ func main() {
 		"*")
 
 	// Create storage system
-	storageSystem := ov.StorageSystem{Hostname: host_ip, Username: username, Password: password, Family: family, Description: description}
-
+	storageSystem := ov.StorageSystem{Hostname: host_ip, Username: username, Password: password, Family: family}
+	storageSystem_2 := ov.StorageSystem{Hostname: host2_ip, Username: username, Password: password, Family: family}
 	err := ovc.CreateStorageSystem(storageSystem)
+	err = ovc.CreateStorageSystem(storageSystem_2)
 	if err != nil {
 		fmt.Println("Could not create the system", err)
 	}
@@ -87,8 +90,8 @@ func main() {
 	fmt.Println(volume_sets.Members)
 
 	// Delete the created system
-	fmt.Println("\nDeleting the system with name : ", name_to_create)
-	err = ovc.DeleteStorageSystem(name_to_create)
+	fmt.Println("\nDeleting the system with name : ", name2_to_create)
+	err = ovc.DeleteStorageSystem(name2_to_create)
 	if err != nil {
 		fmt.Println("Delete Unsuccessful", err)
 	}

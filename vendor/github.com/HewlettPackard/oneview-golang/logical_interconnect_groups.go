@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/docker/machine/libmachine/log"
 	"os"
-	"strconv"
 )
 
 func newTrue() *bool {
@@ -19,19 +20,18 @@ func newFalse() *bool {
 func main() {
 	var (
 		clientOV     *ov.OVClient
-		lig_name     = "TestLIG-GO"
+		lig_name     = "LIG-FlexFabric3"
 		lig_type     = "logical-interconnect-groupV8"
 		new_lig_name = "RenamedLogicalInterConnectGroup"
+		nw_set_name  = "Prod"
 	)
-	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
-
 	ovc := clientOV.NewOVClient(
 		os.Getenv("ONEVIEW_OV_USER"),
 		os.Getenv("ONEVIEW_OV_PASSWORD"),
 		os.Getenv("ONEVIEW_OV_DOMAIN"),
 		os.Getenv("ONEVIEW_OV_ENDPOINT"),
 		false,
-		apiversion,
+		2000,
 		"*")
 
 	fmt.Println("#..........Creating Logical Interconnect Group.....#")
@@ -50,80 +50,32 @@ func main() {
 	logicalLocation1 := ov.LogicalLocation{LocationEntries: *locationEntries1}
 	logicalLocation2 := ov.LogicalLocation{LocationEntries: *locationEntries2}
 
-	locationEntry_five := ov.LocationEntry{Type: "Bay", RelativeValue: 3}
-	locationEntry_six := ov.LocationEntry{Type: "Enclosure", RelativeValue: 2}
-	locationEntries3 := new([]ov.LocationEntry)
-	*locationEntries3 = append(*locationEntries3, locationEntry_five)
-	*locationEntries3 = append(*locationEntries3, locationEntry_six)
-
-	locationEntry_seven := ov.LocationEntry{Type: "Bay", RelativeValue: 6}
-	locationEntry_eight := ov.LocationEntry{Type: "Enclosure", RelativeValue: 2}
-	locationEntries4 := new([]ov.LocationEntry)
-	*locationEntries4 = append(*locationEntries4, locationEntry_seven)
-	*locationEntries4 = append(*locationEntries4, locationEntry_eight)
-
-	logicalLocation3 := ov.LogicalLocation{LocationEntries: *locationEntries3}
-	logicalLocation4 := ov.LogicalLocation{LocationEntries: *locationEntries4}
-
-	locationEntry_nine := ov.LocationEntry{Type: "Bay", RelativeValue: 3}
-	locationEntry_ten := ov.LocationEntry{Type: "Enclosure", RelativeValue: 3}
-	locationEntries5 := new([]ov.LocationEntry)
-	*locationEntries5 = append(*locationEntries5, locationEntry_nine)
-	*locationEntries5 = append(*locationEntries5, locationEntry_ten)
-
-	locationEntry_eleven := ov.LocationEntry{Type: "Bay", RelativeValue: 6}
-	locationEntry_twelle := ov.LocationEntry{Type: "Enclosure", RelativeValue: 3}
-	locationEntries6 := new([]ov.LocationEntry)
-	*locationEntries6 = append(*locationEntries6, locationEntry_eleven)
-	*locationEntries6 = append(*locationEntries6, locationEntry_twelle)
-
-	logicalLocation5 := ov.LogicalLocation{LocationEntries: *locationEntries5}
-	logicalLocation6 := ov.LogicalLocation{LocationEntries: *locationEntries6}
-
-	interconnect1, err := ovc.GetInterconnectTypeByName("Virtual Connect SE 40Gb F8 Module for Synergy")
-	interconnect2, err := ovc.GetInterconnectTypeByName("Synergy 10Gb Interconnect Link Module")
-
-	if err != nil {
-		fmt.Println(err)
-	}
+	// interconnect1, err := ovc.GetInterconnectTypeByName("Synergy 40Gb F8 Switch Module")
+	// interconnect2, err := ovc.GetInterconnectTypeByName("Synergy 40Gb F8 Switch Module")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
 	interconnectMapEntryTemplate1 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation1,
-		PermittedInterconnectTypeUri: interconnect1.URI,
+		PermittedInterconnectTypeUri: "/rest/interconnect-types/c657e79f-464f-422c-b556-8b92ef6da6a4",
 		EnclosureIndex:               1}
 	interconnectMapEntryTemplate2 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation2,
-		PermittedInterconnectTypeUri: interconnect1.URI,
+		PermittedInterconnectTypeUri: "/rest/interconnect-types/c657e79f-464f-422c-b556-8b92ef6da6a4",
 		EnclosureIndex:               1}
-
-	interconnectMapEntryTemplate3 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation3,
-		PermittedInterconnectTypeUri: interconnect2.URI,
-		EnclosureIndex:               2}
-	interconnectMapEntryTemplate4 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation4,
-		PermittedInterconnectTypeUri: interconnect2.URI,
-		EnclosureIndex:               2}
-
-	interconnectMapEntryTemplate5 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation5,
-		PermittedInterconnectTypeUri: interconnect2.URI,
-		EnclosureIndex:               3}
-	interconnectMapEntryTemplate6 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation6,
-		PermittedInterconnectTypeUri: interconnect2.URI,
-		EnclosureIndex:               3}
-
 	interconnectMapEntryTemplates := new([]ov.InterconnectMapEntryTemplate)
 	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate1)
+
 	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate2)
-	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate3)
-	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate4)
-	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate5)
-	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate6)
 
 	interconnectMapTemplate := ov.InterconnectMapTemplate{InterconnectMapEntryTemplates: *interconnectMapEntryTemplates}
 	fmt.Println(&interconnectMapTemplate)
 
-	enclosureIndexes := []int{1, 2, 3}
+	enclosureIndexes := []int{1}
 
 	ethernetSettings := ov.EthernetSettings{Type: "EthernetInterconnectSettingsV7",
 		URI:                                "/settings",
 		Name:                               "defaultEthernetSwitchSettings",
+		ID:                                 "cf3509e5-5330-4464-8d4c-fc679bc3ad0b",
 		InterconnectType:                   "Ethernet",
 		EnableInterconnectUtilizationAlert: newFalse(),
 		EnableFastMacCacheFailover:         newTrue(),
@@ -155,6 +107,66 @@ func main() {
 		Type:     "qos-aggregated-configuration",
 		Category: "qos-aggregated-configuration"}
 
+	le1 := ov.LocationEntry{
+		RelativeValue: 1,
+		Type:          "Enclosure",
+	}
+	le2 := ov.LocationEntry{
+		RelativeValue: 3,
+		Type:          "Bay",
+	}
+	le3 := ov.LocationEntry{
+		RelativeValue: 62,
+		Type:          "Port",
+	}
+	locationentries1 := new([]ov.LocationEntry)
+	*locationentries1 = append(*locationentries1, le1)
+	*locationentries1 = append(*locationentries1, le2)
+	*locationentries1 = append(*locationentries1, le3)
+
+	le4 := ov.LocationEntry{
+		RelativeValue: 1,
+		Type:          "Enclosure",
+	}
+	le5 := ov.LocationEntry{
+		RelativeValue: 6,
+		Type:          "Bay",
+	}
+	le6 := ov.LocationEntry{
+		RelativeValue: 67,
+		Type:          "Port",
+	}
+	locationentries2 := new([]ov.LocationEntry)
+	*locationentries2 = append(*locationentries2, le4)
+	*locationentries2 = append(*locationentries2, le5)
+	*locationentries2 = append(*locationentries2, le6)
+	ll1 := ov.LogicalLocation{LocationEntries: *locationentries1}
+	ll2 := ov.LogicalLocation{LocationEntries: *locationentries2}
+
+	lcp1 := ov.LogicalPortConfigInfo{DesiredSpeed: "Auto",
+		LogicalLocation: ll1,
+	}
+	lcp2 := ov.LogicalPortConfigInfo{DesiredSpeed: "Auto",
+		LogicalLocation: ll2,
+	}
+	logicalPortConfigInfos := new([]ov.LogicalPortConfigInfo)
+	*logicalPortConfigInfos = append(*logicalPortConfigInfos, lcp1)
+	*logicalPortConfigInfos = append(*logicalPortConfigInfos, lcp2)
+	networkuris := &[]utils.Nstring{utils.NewNstring("/rest/ethernet-networks/1642c0c9-4e0d-4710-a25d-35180711720b")}
+	up1 := ov.UplinkSets{
+		EthernetNetworkType:    "Tagged",
+		LacpTimer:              "Short",
+		LogicalPortConfigInfos: *logicalPortConfigInfos,
+		Mode:                   "Auto",
+		LoadBalancingMode:      "SourceAndDestinationMac",
+		Name:                   "up1",
+		NativeNetworkUri:       "",
+		NetworkType:            "Ethernet",
+		NetworkUris:            *networkuris,
+	}
+	uplinksets := new([]ov.UplinkSets)
+	*uplinksets = append(*uplinksets, up1)
+
 	logicalInterconnectGroup := ov.LogicalInterconnectGroup{Type: lig_type,
 		EthernetSettings:        &ethernetSettings,
 		IgmpSettings:            &igmpSettings,
@@ -166,23 +178,12 @@ func main() {
 		InterconnectBaySet:      3,
 		RedundancyType:          "Redundant",
 		SnmpConfiguration:       &snmpConfig,
-		QosConfiguration:        &qosConfig}
+		QosConfiguration:        &qosConfig,
+		UplinkSets:              *uplinksets,
+	}
+	log.Infof("%#v", logicalInterconnectGroup)
+
 	er := ovc.CreateLogicalInterconnectGroup(logicalInterconnectGroup)
-
-	logicalInterconnectGroupAuto := ov.LogicalInterconnectGroup{Type: lig_type,
-		EthernetSettings:        &ethernetSettings,
-		IgmpSettings:            &igmpSettings,
-		Name:                    "Auto-LIG",
-		TelemetryConfiguration:  &telemetryConfig,
-		InterconnectMapTemplate: &interconnectMapTemplate,
-		EnclosureType:           "SY12000",
-		EnclosureIndexes:        enclosureIndexes,
-		InterconnectBaySet:      3,
-		RedundancyType:          "Redundant",
-		SnmpConfiguration:       &snmpConfig,
-		QosConfiguration:        &qosConfig}
-	er = ovc.CreateLogicalInterconnectGroup(logicalInterconnectGroupAuto)
-
 	if er != nil {
 		fmt.Println("........Logical Interconnect Group Creation failed:", er)
 	} else {
@@ -196,6 +197,7 @@ func main() {
 
 	fmt.Println("....  Logical Interconnect Group by Name.....")
 	lig, _ := ovc.GetLogicalInterconnectGroupByName(lig_name)
+
 	fmt.Println(lig)
 
 	fmt.Println("... Logical Interconnect Group by URI ....")
@@ -214,12 +216,32 @@ func main() {
 	fmt.Println("... Updating LogicalInterconnectGroup ...")
 	fmt.Println("")
 	lig_uri.Name = new_lig_name
-	err = ovc.UpdateLogicalInterconnectGroup(lig_uri)
-	if err != nil {
-		panic(err)
+	err1 := ovc.UpdateLogicalInterconnectGroup(lig_uri)
+	if err1 != nil {
+		panic(err1)
 	} else {
 		fmt.Println(".....Updated Logical Interconnect Group Successfully....")
 	}
+	lig1, _ := ovc.GetLogicalInterconnectGroupByName(new_lig_name)
+
+	fmt.Println("... Logical Interconnect Group by URI ....")
+	uri1 := lig1.URI
+	lig_uri1, _ := ovc.GetLogicalInterconnectGroupByUri(uri1)
+
+	fmt.Println("... Updating LogicalInterconnectGroup uplink set...")
+	fmt.Println("")
+	nw_set, _ := ovc.GetNetworkSetByName(nw_set_name)
+	fmt.Println(nw_set.NetworkUris)
+	//Adding the network set to first uplink set
+	lig_uri1.UplinkSets[0].NetworkUris = append(lig_uri1.UplinkSets[0].NetworkUris, nw_set.NetworkUris...)
+
+	err2 := ovc.UpdateLogicalInterconnectGroup(lig_uri1)
+	if err2 != nil {
+		panic(err2)
+	} else {
+		fmt.Println(".....Updated Logical Interconnect Group uplink set Successfully....")
+	}
+
 	fmt.Println("... Deleting LogicalInterconnectGroup ...")
 	del_err := ovc.DeleteLogicalInterconnectGroup(lig_uri.Name)
 	if del_err != nil {

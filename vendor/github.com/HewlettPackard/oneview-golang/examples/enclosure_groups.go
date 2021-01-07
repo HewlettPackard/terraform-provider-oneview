@@ -5,6 +5,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -12,7 +13,7 @@ func main() {
 		clientOV    *ov.OVClient
 		eg_name     = "TestEG"
 		new_eg_name = "RenamedEnclosureGroup"
-		script      = "#TEST COMMAND"
+		//script      = "#TEST COMMAND"
 	)
 
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
@@ -25,26 +26,28 @@ func main() {
 		apiversion,
 		"*")
 
-	lig, _ := ovc.GetLogicalInterconnectGroupByName("LIG-FC")
+	lig, _ := ovc.GetLogicalInterconnectGroupByName("Auto-LIG")
 
 	ibMappings := new([]ov.InterconnectBayMap)
-	interconnectBay1 := ov.InterconnectBayMap{InterconnectBay: 2, LogicalInterconnectGroupUri: lig.URI}
-	interconnectBay2 := ov.InterconnectBayMap{InterconnectBay: 5, LogicalInterconnectGroupUri: lig.URI}
+	interconnectBay1 := ov.InterconnectBayMap{InterconnectBay: 3, LogicalInterconnectGroupUri: lig.URI}
+	interconnectBay2 := ov.InterconnectBayMap{InterconnectBay: 6, LogicalInterconnectGroupUri: lig.URI}
 
 	*ibMappings = append(*ibMappings, interconnectBay1)
 	*ibMappings = append(*ibMappings, interconnectBay2)
 
-	scp, _ := ovc.GetScopeByName("testing")
+	scp, _ := ovc.GetScopeByName("Auto-Scope")
 	initialScopeUris := new([]utils.Nstring)
 	*initialScopeUris = append(*initialScopeUris, scp.URI)
 
-	enclosureGroup := ov.EnclosureGroup{Name: eg_name, InterconnectBayMappings: *ibMappings, InitialScopeUris: *initialScopeUris, IpAddressingMode: "External", EnclosureCount: 1}
+	enclosureGroup := ov.EnclosureGroup{Name: eg_name, InterconnectBayMappings: *ibMappings, InitialScopeUris: *initialScopeUris, IpAddressingMode: "External", EnclosureCount: 3}
+	enclosureGroup_auto := ov.EnclosureGroup{Name: "Auto-TestEG", InterconnectBayMappings: *ibMappings, InitialScopeUris: *initialScopeUris, IpAddressingMode: "External", EnclosureCount: 3}
 	/*
 		 This is used for C7000 only
 		enclosureGroup := ov.EnclosureGroup{Name: eg_name, InitialScopeUris: *initialScopeUris, InterconnectBayMappings: *ibMappings}
 	*/
 
 	err := ovc.CreateEnclosureGroup(enclosureGroup)
+	_ = ovc.CreateEnclosureGroup(enclosureGroup_auto)
 	if err != nil {
 		fmt.Println("Enclosure Group Creation Failed: ", err)
 	} else {
@@ -107,7 +110,7 @@ func main() {
 		fmt.Println(enc_grp_list.Members[i].Name)
 	}
 
-	// This method is only available on C7000
+	/* This method is only available on C7000
 	update_script, err := ovc.UpdateConfigurationScript(enc_grp.URI, script)
 	if err != nil {
 		panic(err)
@@ -115,13 +118,13 @@ func main() {
 
 	fmt.Println("Update Configuration Script result:", update_script)
 
-	// This method is only available on C700
+	// This method is only available on C7000
 	conf_script, err := ovc.GetConfigurationScript(enc_grp.URI)
 	if err != nil {
 		fmt.Println("Error in getting configuration Script: ", err)
 	}
 	fmt.Println("Configuation Script: ", conf_script)
-	fmt.Println(script)
+	fmt.Println(script) */
 
 	err = ovc.DeleteEnclosureGroup(new_eg_name)
 	if err != nil {
