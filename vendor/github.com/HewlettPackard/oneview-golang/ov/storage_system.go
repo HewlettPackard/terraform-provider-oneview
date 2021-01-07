@@ -145,6 +145,24 @@ func (c *OVClient) GetStorageSystemByName(name string) (StorageSystem, error) {
 	}
 }
 
+func (c *OVClient) GetStorageSystemByUri(uri string) (StorageSystem, error) {
+	var (
+		sSystem StorageSystem
+	)
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return sSystem, err
+	}
+	log.Debugf("GetStorageSystem %s", data)
+	if err := json.Unmarshal([]byte(data), &sSystem); err != nil {
+		return sSystem, err
+	}
+	return sSystem, nil
+}
+
 func (c *OVClient) GetStorageSystems(filter string, sort string) (StorageSystemsList, error) {
 	var (
 		uri     = "/rest/storage-systems"
