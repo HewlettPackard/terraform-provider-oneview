@@ -83,6 +83,24 @@ func (c *OVClient) GetStoragePoolByName(name string) (StoragePool, error) {
 	}
 }
 
+func (c *OVClient) GetStoragePoolByUri(uri string) (StoragePool, error) {
+	var (
+		sPool StoragePool
+	)
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return sPool, err
+	}
+	log.Debugf("GetStoragePool %s", data)
+	if err := json.Unmarshal([]byte(data), &sPool); err != nil {
+		return sPool, err
+	}
+	return sPool, nil
+}
+
 func (c *OVClient) GetStoragePools(filter string, sort string, start string, count string) (StoragePoolsList, error) {
 	var (
 		uri    = "/rest/storage-pools"

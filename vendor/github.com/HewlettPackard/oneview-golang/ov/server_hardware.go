@@ -254,6 +254,7 @@ func (c *OVClient) GetServerHardwareList(filters []string, sort string, start st
 		serverlist ServerHardwareList
 	)
 	q = make(map[string]interface{})
+
 	if len(filters) > 0 {
 		q["filter"] = filters
 	}
@@ -291,6 +292,11 @@ func (c *OVClient) GetServerHardwareList(filters []string, sort string, start st
 	if err := json.Unmarshal([]byte(data), &serverlist); err != nil {
 		return serverlist, err
 	}
+
+	for i := 0; i < serverlist.Total; i++ {
+		serverlist.Members[i].Client = c
+	}
+
 	return serverlist, nil
 }
 
