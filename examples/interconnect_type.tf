@@ -1,16 +1,17 @@
 provider "oneview" {
-        ov_username = "<ov-username>"
-        ov_password = "<ov-password>"
-        ov_endpoint = "<ov-endpoint>"
-        ov_sslverify = false
-        ov_apiversion = <ov_apiversion>
-        ov_ifmatch = "*"
+  ov_username =   var.username
+  ov_password =   var.password
+  ov_endpoint =   var.endpoint
+  ov_sslverify =  var.ssl_enabled
+  ov_apiversion = 2400
+  ov_ifmatch = "*"
 }
 
 data "oneview_interconnect_type" "interconnect_type" {
-	name = "Virtual Connect SE 40Gb F8 Module for Synergy"
+  name = "Virtual Connect SE 40Gb F8 Module for Synergy"
 }
 
 output "oneview_interconnect_type_value" {
-	value = "${data.oneview_interconnect_type.interconnect_type.type}"
+  value = data.oneview_interconnect_type.interconnect_type.type
 }
+
