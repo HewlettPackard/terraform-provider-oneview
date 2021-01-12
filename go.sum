@@ -15,6 +15,8 @@ github.com/HewlettPackard/oneview-golang v1.6.1-0.20201105100610-6e51790885f9 h1
 github.com/HewlettPackard/oneview-golang v1.6.1-0.20201105100610-6e51790885f9/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/HewlettPackard/oneview-golang v1.6.1-0.20210107062749-1c0b0b5a2b2a h1:xcSyoBm7mzBw8H8WKlJoN9y/CNUDDMJYXIx45N1JeBU=
 github.com/HewlettPackard/oneview-golang v1.6.1-0.20210107062749-1c0b0b5a2b2a/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
+github.com/HewlettPackard/oneview-golang v1.7.0 h1:9TJcMEtuejWQ0NCDUAZC9doOlmXW4QcRBHV0VHMhGNE=
+github.com/HewlettPackard/oneview-golang v1.7.0/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
 github.com/agext/levenshtein v1.2.2 h1:0S/Yg6LYmFJ5stwQeRp6EeOcCbj7xiqQSdNelsXvaqE=
 github.com/agext/levenshtein v1.2.2/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
