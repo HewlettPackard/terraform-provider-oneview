@@ -56,6 +56,11 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 						},
+						"secure_boot": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
 					},
 				},
 			},
@@ -701,6 +706,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			ManageMode:    rawBootMode["manage_mode"].(bool),
 			Mode:          rawBootMode["mode"].(string),
 			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+			SecureBoot:    rawBootMode["secure_boot"].(string),
 		}
 
 	}
