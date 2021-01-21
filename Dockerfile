@@ -1,7 +1,7 @@
 FROM golang:alpine
-MAINTAINER "Priyanka Sood <priyanka.sood@hpe.com>"
+MAINTAINER "Nabhajit Ray <nabhajit.ray@hpe.com>"
 
-ENV TERRAFORM_VERSION=0.11.10
+ENV TERRAFORM_VERSION=0.12.29
 
 ENV USER root
 RUN mkdir -p /usr/local/terraform
