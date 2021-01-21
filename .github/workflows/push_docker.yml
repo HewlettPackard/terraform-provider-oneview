@@ -21,4 +21,4 @@ jobs:
     - name: Build the tagged Docker image
       run: docker build . --file Dockerfile --tag hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:${{ env.RELEASE_VERSION }}-OV5.4
     - name: Push the tagged Docker image
-      run: docker push hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:${{ env.RELEASE_VERSION }}-OV5.4
+      run: docker push hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:${{ env.RELEASE_VERSION }}-OV5.6
