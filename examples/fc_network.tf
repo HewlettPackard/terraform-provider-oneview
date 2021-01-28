@@ -3,7 +3,7 @@ provider "oneview" {
         ov_password =   "${var.password}"
         ov_endpoint =   "${var.endpoint}"
         ov_sslverify =  "${var.ssl_enabled}"
-        ov_apiversion = 2200
+        ov_apiversion = 2400
         ov_ifmatch = "*"
 
 }
@@ -25,7 +25,7 @@ resource "oneview_fc_network" "FCNetwork" {
 
 /* Testing data source
 data "oneview_fc_network" "fc_network" {
-        name = "SYN03_Frame1"
+        name = "TestFCNetwork_Renamed"
 }
 
 output "oneview_fc_network_value" {
