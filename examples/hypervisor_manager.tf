@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2200
+  ov_apiversion = 2400
   ov_ifmatch = "*"
 }
 
@@ -90,5 +90,3 @@ data "oneview_hypervisor_manager" "HypervisorManager" {
 /*resource "oneview_hypervisor_manager" "HypervisorManager" {
 }
 */
-
-
