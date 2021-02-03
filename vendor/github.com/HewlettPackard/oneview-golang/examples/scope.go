@@ -14,7 +14,7 @@ func main() {
 		scp_name    = "ScopeTest"
 		new_scope   = "new-scope"
 		upd_scope   = "update-scope"
-		eth_network = "testing"
+		eth_network = "Auto-ethernet_network"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 
@@ -26,6 +26,13 @@ func main() {
 		false,
 		apiversion,
 		"*")
+	scope_test := ov.Scope{Name: scp_name, Description: "Test from script", Type: "ScopeV3"}
+
+	er_test := ovc.CreateScope(scope_test)
+
+	if er_test != nil {
+		fmt.Println("Error Creating Scope: ", er_test)
+	}
 
 	fmt.Println("#................... Scope by Name ...............#")
 	scp, scperr := ovc.GetScopeByName(scp_name)
@@ -54,7 +61,7 @@ func main() {
 
 	er := ovc.CreateScope(scope)
 	if er != nil {
-		fmt.Println("............... Scope Creation Failed:", err)
+		fmt.Println("............... Scope Creation Failed:", er)
 	} else {
 		fmt.Println("# ................... Scope Created Successfully.................#")
 	}

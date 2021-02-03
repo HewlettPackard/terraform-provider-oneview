@@ -32,6 +32,7 @@ type LogicalInterconnectGroup struct {
 	RedundancyType                         string                   `json:"redundancyType,omitempty"`         // "redundancyType": "HighlyAvailable"
 	ScopesUri                              utils.Nstring            `json:"scopesUri,omitempty"`              // "scopesUri":""
 	NextPageUri                            string                   `json:"NextPageUri,omitempty"`            // "NextPageUri":""
+	PortFlapProtection                     *PortFlapProtection      `json:"portFlapProtection,omitempty"`     // "portFlapProtection": {...}
 	PrevPageUri                            string                   `json:"prevPageUri,omitempty"`            // "PrevPageUri":""
 	Start                                  int                      `json:"start,omitempty"`                  // "start":""
 	Total                                  int                      `json:"total,omitempty"`                  // "total":""
@@ -241,6 +242,27 @@ type QosTrafficClass struct {
 	RealTime         *bool  `json:"realTime,omitempty"`       // "realTime": true,
 }
 
+//portFlapProtection added in OV 2400
+type PortFlapProtection struct {
+	Category                     utils.Nstring `json:"category,omitempty"`                     // "category": "snmp-configuration",
+	ConsistencyChecking          string        `json:"consistencyChecking,omitempty"`          // "consistencyChecking":"ExactMatch"
+	Created                      string        `json:"created,omitempty"`                      // "created": "20150831T154835.250Z",
+	Description                  utils.Nstring `json:"description,omitempty"`                  // "description": null,
+	DetectionInterval            int           `json:"detectionInterval,omitempty"`            //"detectionInterval"
+	ETAG                         string        `json:"eTag,omitempty"`                         // "eTag": "1441036118675/8",
+	ID                           string        `json:"id,omitempty"`                           // "id": "0c398238-2d35-48eb-9eb5-7560d59f94b3",
+	Modified                     string        `json:"modified,omitempty"`                     // "modified": "20150831T154835.250Z",
+	Name                         string        `json:"name,omitempty"`                         // "name": "Portflap",
+	NoOfSamplesDeclareFailures   int           `json:"noOfSamplesDeclareFailures,omitempty"`   //"noOfSamplesDeclareFailures" :2,
+	PortFlapProtectionMode       string        `json:"portFlapProtectionMode,omitempty"`       //"portFlapProtectionMode":Detect,
+	PortFlapThresholdPerInterval int           `json:"portFlapThresholdPerInterval,omitempty"` //"portFlapThresholdPerInterval" :2,
+	State                        string        `json:"state,omitempty"`                        // "state": "Normal",
+	Status                       string        `json:"status,omitempty"`                       // "status": "Critical",
+	Type                         string        `json:"type,omitempty"`                         // "type": "portFlapProtection",
+	URI                          utils.Nstring `json:"uri,omitempty"`                          // "uri": null,
+
+}
+
 //TODO SNMPConfiguration
 type SnmpConfiguration struct {
 	Category         utils.Nstring     `json:"category,omitempty"`         // "category": "snmp-configuration",
@@ -252,7 +274,7 @@ type SnmpConfiguration struct {
 	Name             string            `json:"name,omitempty"`             // "name": "Snmp Config",
 	ReadCommunity    string            `json:"readCommunity,omitempty"`    // "readCommunity": "public",
 	SnmpAccess       []string          `json:"snmpAccess,omitempty"`       // "snmpAccess": [],
-	snmpUsers        []Snmpv3User      `json:"snmpUsers,omitempty"`        // "snmpUsers": []
+	SnmpUsers        []Snmpv3User      `json:"snmpUsers,omitempty"`        // "snmpUsers": []
 	State            string            `json:"state,omitempty"`            // "state": "Normal",
 	Status           string            `json:"status,omitempty"`           // "status": "Critical",
 	SystemContact    string            `json:"systemContact,omitempty"`    // "systemContact": "",
