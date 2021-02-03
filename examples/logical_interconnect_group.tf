@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2200
+  ov_apiversion = 2400
   ov_ifmatch = "*"
 }
 
@@ -26,7 +26,17 @@ resource "oneview_logical_interconnect_group" "LIG" {
       proxy_reporting =  true,
    },
   ]
-
+  port_flap_settings = [
+    {
+      type = "portFlapProtection"
+      port_flap_protection_mode = "Detect"
+      port_flap_threshold_per_interval =  2
+      detection_interval = 20
+      no_of_samples_declare_failures = 3
+      name = "PortFlapSettings"
+      consistency_checking = "ExactMatch"
+    },
+  ]
   interconnect_map_entry_template = [
     {
       bay_number             = 1

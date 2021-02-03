@@ -324,7 +324,6 @@ func resourceLogicalInterconnect() *schema.Resource {
 					},
 				},
 			},
-
 			"stacking_health": {
 				Type:     schema.TypeString,
 				Optional: true,
