@@ -1280,9 +1280,9 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		lig.IgmpSettings = &igmpSettings
 	}
 
-	portFlapSettings_data := d.Get("port_flap_settings").(*schema.Set).List()
+	portFlapSettingsData := d.Get("port_flap_settings").(*schema.Set).List()
 
-	for _, raw := range portFlapSettings_data {
+	for _, raw := range portFlapSettingsData {
 
 		portFlapSettingRawData := raw.(map[string]interface{})
 
