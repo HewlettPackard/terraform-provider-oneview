@@ -2,9 +2,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 # [v1.7.0](unreleased)
 ### Notes
-- This release supports API2400 minimally where we can use OneView API2400 with this SDK and ImageStreamer REST API version 2000 (I3S v5.40).  
-- This release adds variable.tf file to provide easy access for adding Appliance Credentials through environment variables or during runtime. 
-- No new fields are added/deleted to support API2400. 
+- This release supports API2400 minimally where we can use OneView API2400 with this SDK.
 
 ### Oneview Features supported
 - Enclosure
@@ -32,9 +30,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage Volume Attachment
 - Storage Volume Template
 - Uplink Set
-
-### Image Streamer resources supported:
-- Deployment Plans
 
 # [v1.6.0]
 ### Notes

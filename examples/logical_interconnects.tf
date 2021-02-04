@@ -7,8 +7,8 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
-/*
 
+/* 
    Import the existing the resource from appliance into the terraform instance.
    Create a empty resource and execute the following command.
 	
@@ -35,3 +35,18 @@ resource "oneview_logical_interconnect" "li" {
 /*resource "oneview_logical_interconnect" "li" {
 	update_type = "updateComplianceById"
 }*/
+
+# Update PortFlapProtection Settings.
+
+resource "oneview_logical_interconnect" "logical_interconnect" {
+  update_type = "updatePortFlapSettings"
+  port_flap_settings {
+    port_flap_protection_mode        = "Detect"
+    port_flap_threshold_per_interval = 2
+    detection_interval               = 20
+    no_of_samples_declare_failures   = 2
+    name                             = "PortFlapSettingsUpdated"
+    consistency_checking             = "ExactMatch"
+  }
+}
+
