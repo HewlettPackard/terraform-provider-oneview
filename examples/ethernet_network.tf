@@ -3,7 +3,7 @@ provider "oneview" {
         ov_password =   "${var.password}"
         ov_endpoint =   "${var.endpoint}"
         ov_sslverify =  "${var.ssl_enabled}"
-        ov_apiversion = 2200
+        ov_apiversion = 2400
         ov_ifmatch = "*"
 
 }
@@ -26,15 +26,15 @@ resource "oneview_ethernet_network" "ethernetnetwork" {
 resource "oneview_ethernet_network" "ethernetnetwork" {
 	name = "TestEthNetwork_terraform_Rename"
 	type = "ethernet-networkV4"
-	vlan_id = "102"
+	vlan_id = 100
 	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
 	depends_on = ["oneview_ethernet_network.ethernetnetwork"]
 }
 
 /*
 #Testing data source
-data "oneview_ethernet_network" "ethernetnetwork" {
-  name = "TestEthNetwork-updatenew"
+data "oneview_ethernet_network" "ethernetnetworks" {
+  name = "TestEthNetwork_terraform_Rename"
   depends_on = ["oneview_ethernet_network.ethernetnetwork"]
 }
 
