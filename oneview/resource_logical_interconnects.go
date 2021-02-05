@@ -161,7 +161,7 @@ func resourceLogicalInterconnect() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"eTag": {
+						"etag": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -453,7 +453,7 @@ func resourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) e
 			"type":                             logInt.PortFlapProtection.Type,
 			"uri":                              logInt.PortFlapProtection.URI,
 			"category":                         logInt.PortFlapProtection.Category,
-			"eTag":                             logInt.PortFlapProtection.ETAG,
+			"etag":                             logInt.PortFlapProtection.ETAG,
 			"created":                          logInt.PortFlapProtection.Created,
 			"modified":                         logInt.PortFlapProtection.Modified,
 			"id":                               logInt.PortFlapProtection.ID,
@@ -496,7 +496,7 @@ func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{})
 			portFlapSettings.URI = utils.Nstring(rawlval["uri"].(string))
 			portFlapSettings.Created = rawlval["created"].(string)
 			portFlapSettings.Category = utils.Nstring(rawlval["category"].(string))
-			portFlapSettings.ETAG = rawlval["eTag"].(string)
+			portFlapSettings.ETAG = rawlval["etag"].(string)
 			portFlapSettings.Modified = rawlval["modified"].(string)
 			portFlapSettings.ID = rawlval["id"].(string)
 			portFlapSettings.Name = rawlval["name"].(string)
