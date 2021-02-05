@@ -60,7 +60,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-
 					},
 				},
 			},
