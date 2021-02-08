@@ -234,4 +234,12 @@ func main() {
 		fmt.Println("Could not update Igmp Configuration of Logical Interconnect", err_is)
 	}
 
+	fmt.Println("....  Updating Logical Interconnect PortFlap Configuration.....")
+	portFlapConfig := ov.PortFlapProtection{Name: "portFlapProtection-Update", DetectionInterval: 30, PortFlapThresholdPerInterval: 3, NoOfSamplesDeclareFailures: 3, ConsistencyChecking: "ExactMatch"}
+
+	err_pf := ovc.UpdateLogicalInterconnectPortFlapSettings(portFlapConfig, id)
+	if err_pf != nil {
+		fmt.Println("Could not update PortFlap Configuration of Logical Interconnect", err_pf)
+	}
+
 }
