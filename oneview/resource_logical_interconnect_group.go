@@ -13,12 +13,11 @@ package oneview
 
 import (
 	"fmt"
-	"reflect"
-	"strconv"
-
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"reflect"
+	"strconv"
 )
 
 func resourceLogicalInterconnectGroup() *schema.Resource {
@@ -652,6 +651,79 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 					},
 				},
 			},
+			"port_flap_settings": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"eTag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"created": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"modified": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"detection_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"port_flap_threshold_per_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"no_of_samples_declare_failures": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"port_flap_protection_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -1208,6 +1280,32 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		lig.IgmpSettings = &igmpSettings
 	}
 
+	portFlapSettingsData := d.Get("port_flap_settings").(*schema.Set).List()
+
+	for _, raw := range portFlapSettingsData {
+
+		portFlapSettingRawData := raw.(map[string]interface{})
+
+		portFlapSettingStructure := ov.PortFlapProtection{}
+		portFlapSettingStructure.Type = portFlapSettingRawData["type"].(string)
+		portFlapSettingStructure.URI = utils.Nstring(portFlapSettingRawData["uri"].(string))
+		portFlapSettingStructure.Category = utils.Nstring(portFlapSettingRawData["category"].(string))
+		portFlapSettingStructure.ETAG = portFlapSettingRawData["eTag"].(string)
+		portFlapSettingStructure.Created = portFlapSettingRawData["created"].(string)
+		portFlapSettingStructure.Modified = portFlapSettingRawData["modified"].(string)
+		portFlapSettingStructure.ID = portFlapSettingRawData["id"].(string)
+		portFlapSettingStructure.Name = portFlapSettingRawData["name"].(string)
+		portFlapSettingStructure.DetectionInterval = portFlapSettingRawData["detection_interval"].(int)
+		portFlapSettingStructure.PortFlapThresholdPerInterval = portFlapSettingRawData["port_flap_threshold_per_interval"].(int)
+		portFlapSettingStructure.NoOfSamplesDeclareFailures = portFlapSettingRawData["no_of_samples_declare_failures"].(int)
+		portFlapSettingStructure.ConsistencyChecking = portFlapSettingRawData["consistency_checking"].(string)
+		portFlapSettingStructure.PortFlapProtectionMode = portFlapSettingRawData["port_flap_protection_mode"].(string)
+		portFlapSettingStructure.Description = utils.Nstring(portFlapSettingRawData["description"].(string))
+		portFlapSettingStructure.State = portFlapSettingRawData["state"].(string)
+		portFlapSettingStructure.Status = portFlapSettingRawData["status"].(string)
+		lig.PortFlapProtection = &portFlapSettingStructure
+	}
+
 	qualityOfServicePrefix := fmt.Sprintf("quality_of_service.0")
 	activeQosConfig := ov.ActiveQosConfig{}
 
@@ -1295,6 +1393,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		d.SetId("")
 		return ligError
 	}
+
 	return resourceLogicalInterconnectGroupRead(d, meta)
 }
 
@@ -1302,10 +1401,9 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	config := meta.(*Config)
 
 	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
-
 	if err != nil || logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
-		return nil
+		return err
 	}
 
 	d.Set("name", logicalInterconnectGroup.Name)
@@ -1651,6 +1749,30 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		}
 		igmpSettings = append(igmpSettings, igmpSetting)
 		d.Set("igmp_settings", igmpSettings)
+	}
+
+	if logicalInterconnectGroup.PortFlapProtection != nil {
+		portFlapSettings := make([]map[string]interface{}, 0, 1)
+		portFlapSetting := map[string]interface{}{
+			"type":                             logicalInterconnectGroup.PortFlapProtection.Type,
+			"uri":                              logicalInterconnectGroup.PortFlapProtection.URI,
+			"category":                         logicalInterconnectGroup.PortFlapProtection.Category,
+			"eTag":                             logicalInterconnectGroup.PortFlapProtection.ETAG,
+			"created":                          logicalInterconnectGroup.PortFlapProtection.Created,
+			"modified":                         logicalInterconnectGroup.PortFlapProtection.Modified,
+			"id":                               logicalInterconnectGroup.PortFlapProtection.ID,
+			"name":                             logicalInterconnectGroup.PortFlapProtection.Name,
+			"detection_interval":               logicalInterconnectGroup.PortFlapProtection.DetectionInterval,
+			"port_flap_threshold_per_interval": logicalInterconnectGroup.PortFlapProtection.PortFlapThresholdPerInterval,
+			"no_of_samples_declare_failures":   logicalInterconnectGroup.PortFlapProtection.NoOfSamplesDeclareFailures,
+			"consistency_checking":             logicalInterconnectGroup.PortFlapProtection.ConsistencyChecking,
+			"port_flap_protection_mode":        logicalInterconnectGroup.PortFlapProtection.PortFlapProtectionMode,
+			"description":                      logicalInterconnectGroup.PortFlapProtection.Description,
+			"state":                            logicalInterconnectGroup.PortFlapProtection.State,
+			"status":                           logicalInterconnectGroup.PortFlapProtection.Status,
+		}
+		portFlapSettings = append(portFlapSettings, portFlapSetting)
+		d.Set("port_flap_settings", portFlapSettings)
 	}
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
@@ -2186,6 +2308,30 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		igmpSetting.URI = utils.Nstring(rawlval["uri"].(string))
 	}
 	lig.IgmpSettings = &igmpSetting
+
+	rawPortFlapSetting := d.Get("port_flap_settings").(*schema.Set).List()
+	PortFlapSetting := ov.PortFlapProtection{}
+	for _, val := range rawPortFlapSetting {
+
+		rawlval := val.(map[string]interface{})
+		PortFlapSetting.Type = rawlval["type"].(string)
+		PortFlapSetting.URI = utils.Nstring(rawlval["uri"].(string))
+		PortFlapSetting.Category = utils.Nstring(rawlval["category"].(string))
+		PortFlapSetting.ETAG = rawlval["eTag"].(string)
+		PortFlapSetting.Created = rawlval["created"].(string)
+		PortFlapSetting.Modified = rawlval["modified"].(string)
+		PortFlapSetting.ID = rawlval["id"].(string)
+		PortFlapSetting.Name = rawlval["name"].(string)
+		PortFlapSetting.DetectionInterval = rawlval["detection_interval"].(int)
+		PortFlapSetting.PortFlapThresholdPerInterval = rawlval["port_flap_threshold_per_interval"].(int)
+		PortFlapSetting.NoOfSamplesDeclareFailures = rawlval["no_of_samples_declare_failures"].(int)
+		PortFlapSetting.ConsistencyChecking = rawlval["consistency_checking"].(string)
+		PortFlapSetting.PortFlapProtectionMode = rawlval["port_flap_protection_mode"].(string)
+		PortFlapSetting.Description = utils.Nstring(rawlval["description"].(string))
+		PortFlapSetting.State = rawlval["state"].(string)
+		PortFlapSetting.Status = rawlval["status"].(string)
+	}
+	lig.PortFlapProtection = &PortFlapSetting
 
 	qualityOfServicePrefix := fmt.Sprintf("quality_of_service.0")
 	activeQosConfig := ov.ActiveQosConfig{}

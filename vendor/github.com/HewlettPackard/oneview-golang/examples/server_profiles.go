@@ -11,12 +11,12 @@ import (
 func main() {
 	var (
 		clientOV          *ov.OVClient
-		sp_name           = "SP_test"
-		sp_sn             = "VCGXC30000"
+		sp_name           = "SP"
+		sp_by_spt         = "SP-From-SPT"
 		new_sp_name       = "Renamed Server Profile"
 		server_hardware_1 = "0000A66101, bay 5"
-		server_hardware_2 = "0000A66101, bay 7"
-		scope             = "ScopeTest"
+		scope             = "Auto-Scope"
+		spt_name          = "Auto-SPT"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 	ovc := clientOV.NewOVClient(
@@ -34,7 +34,6 @@ func main() {
 		*initialScopeUris = append(*initialScopeUris, scp.URI)
 	}
 	serverName, err := ovc.GetServerHardwareByName(server_hardware_1)
-
 	server_profile_create_map := ov.ServerProfile{
 		Type:              "ServerProfileV12",
 		Name:              sp_name,
@@ -50,16 +49,23 @@ func main() {
 	}
 
 	sort := ""
-
-	spt, err := ovc.GetProfileTemplateByName("test_SP")
+	server_name := ov.ServerHardwareType{}
+	spt, err := ovc.GetProfileTemplateByName(spt_name)
 	if err != nil {
 		fmt.Println("Server Profile Template Retrieval By Name Failed: ", err)
 	} else {
-		serverName, err := ovc.GetServerHardwareByName(server_hardwar_2)
+		ServerList, err := ovc.GetServerHardwareList([]string{""}, "", "", "", "")
+		hw_name, _ := ovc.GetServerHardwareTypeByUri(spt.ServerHardwareTypeURI)
+		for i := 0; i < len(ServerList.Members); i++ {
+			server_name, _ = ovc.GetServerHardwareTypeByUri(ServerList.Members[i].ServerHardwareTypeURI)
+			if server_name.Name == hw_name.Name {
+				serverName = ServerList.Members[i]
+			}
+		}
 		if err != nil {
 			fmt.Println("Failed to fetch server hardware name: ", err)
 		} else {
-			err = ovc.CreateProfileFromTemplate(sp_name, spt, serverName)
+			err = ovc.CreateProfileFromTemplate(sp_by_spt, spt, serverName)
 			if err != nil {
 				fmt.Println("Server Profile Create Failed: ", err)
 			} else {
@@ -87,7 +93,7 @@ func main() {
 		fmt.Println(sp1.Name)
 	}
 
-	sp2, err := ovc.GetProfileBySN(sp_sn)
+	sp2, err := ovc.GetProfileBySN(string(sp1.SerialNumber))
 	if err != nil {
 		fmt.Println("Server Profile Retrieval By Serial Number Failed: ", err)
 	} else {
@@ -149,6 +155,7 @@ func main() {
 	}
 
 	err = ovc.DeleteProfile(new_sp_name)
+	err = ovc.DeleteProfile(sp_by_spt)
 	if err != nil {
 		fmt.Println("Server Profile Delete Failed: ", err)
 	} else {

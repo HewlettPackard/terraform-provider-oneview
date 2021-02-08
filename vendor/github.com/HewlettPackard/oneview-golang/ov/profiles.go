@@ -323,14 +323,18 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 	log.Debugf("task -> %+v", t)
 
 	// Get available server hardwares to assign it to SP
-	isHardwareAvailable, err := c.GetAvailableServers(p.ServerHardwareURI.String())
+	if p.ServerHardwareURI != "" {
+		isHardwareAvailable, err := c.GetAvailableServers(p.ServerHardwareURI.String())
 
-	if err != nil || isHardwareAvailable == false {
-		log.Errorf("Error getting available Hardware: %s", p.ServerHardwareURI.String())
-		if err != nil {
-			log.Warnf("Error: %s", err)
+		if err != nil || isHardwareAvailable == false {
+			log.Errorf("Error getting available Hardware: %s", p.ServerHardwareURI.String())
+			if err != nil {
+				log.Warnf("Error: %s", err)
+			}
+			os.Exit(1)
 		}
-		os.Exit(1)
+
+		server, err = c.GetServerHardwareByUri(p.ServerHardwareURI)
 	}
 
 	server, err = c.GetServerHardwareByUri(p.ServerHardwareURI)

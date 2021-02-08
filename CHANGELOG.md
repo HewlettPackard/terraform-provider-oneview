@@ -16,6 +16,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Interconnects
 - Interconnect Types
 - Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups 
 - Network Set
 - Scope
 - Server Certificate

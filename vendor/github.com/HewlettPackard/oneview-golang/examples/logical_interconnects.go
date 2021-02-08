@@ -21,7 +21,7 @@ func newFalse() *bool {
 func main() {
 	var (
 		clientOV         *ov.OVClient
-		ethernet_network = "testeth1"
+		ethernet_network = "Auto-ethernet_network"
 		tcId             = "1"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
@@ -232,6 +232,14 @@ func main() {
 	err_is := ovc.UpdateLogicalInterconnectIgmpSettings(liIgmpConfig, id)
 	if err_is != nil {
 		fmt.Println("Could not update Igmp Configuration of Logical Interconnect", err_is)
+	}
+
+	fmt.Println("....  Updating Logical Interconnect PortFlap Configuration.....")
+	portFlapConfig := ov.PortFlapProtection{Name: "portFlapProtection-Update", DetectionInterval: 30, PortFlapThresholdPerInterval: 3, NoOfSamplesDeclareFailures: 3, ConsistencyChecking: "ExactMatch"}
+
+	err_pf := ovc.UpdateLogicalInterconnectPortFlapSettings(portFlapConfig, id)
+	if err_pf != nil {
+		fmt.Println("Could not update PortFlap Configuration of Logical Interconnect", err_pf)
 	}
 
 }

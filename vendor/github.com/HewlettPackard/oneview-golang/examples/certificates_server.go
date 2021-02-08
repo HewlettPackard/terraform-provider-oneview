@@ -11,7 +11,7 @@ import (
 func main() {
 	var (
 		ClientOV                *ov.OVClient
-		server_certificate_ip                 = "<source_ip>"
+		server_certificate_ip                 = "<Server IP>"
 		server_certificate_name               = "new_test_certificate"
 		new_cert_base64data     utils.Nstring = "---BEGIN CERTIFICATE----END CERTIFICATE------"
 	)
