@@ -17,6 +17,28 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
         enclosure_group = "EG-Synergy-Local"
         server_hardware_type = "SY 480 Gen9 1"
         initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
+	boot_order = ["HardDisk"]
+
+	boot_mode = {
+		manage_mode = true
+		mode = "UEFIOptimized"
+		pxe_boot_policy = "Auto"
+	}
+	local_storage = {
+		controller = [{
+			device_slot =  "Embedded",
+			drive_write_cache =  "Unmanaged",
+			initialize = true,
+			logical_drives = [{
+				accelerator = "Unmanaged",
+				bootable = true,
+				drive_technology =  "SasHdd",
+				name =  "TestLd",
+				num_physical_drives =  2,
+				raid_level =  "RAID1",
+			}]
+		}]
+	}
 }
 */
 /* 	Update 
