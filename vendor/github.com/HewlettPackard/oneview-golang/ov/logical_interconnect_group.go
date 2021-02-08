@@ -124,7 +124,7 @@ type LocationEntry struct {
 type NtpConfiguration struct {
 	RelativeValue       int             `json:"relativeValue,omitempty"`       //"relativeValue": 2,
 	AddressingMode      *AddressingMode `json:"addressingMode,omitempty"`      //addressingMode": "StackingMemberId",
-	AuthId              string          `json:"authId,omitempty"`              //"authId": "StackingMemberId",
+	AuthId              int             `json:"authId,omitempty"`              //"authId": "StackingMemberId",
 	AuthKey             string          `json:"authKey,omitempty"`             //"authKey": "StackingMemberId",
 	AuthProtocol        string          `json:"authProtocol,omitempty"`        //"authProtocol": "StackingMemberId",
 	Category            string          `json:"category,omitempty"`            //"category": "StackingMemberId",
@@ -132,7 +132,7 @@ type NtpConfiguration struct {
 	ClockFormat         string          `json:"clockFormat,omitempty"`         //"clockFormat": "StackingMemberId",
 	ConsistencyChecking string          `json:"consistencyChecking,omitempty"` //"consistencyChecking": "StackingMemberId",
 	Created             string          `json:"created,omitempty"`             //"created": "StackingMemberId",
-	Custom              string          `json:"custom,omitempty"`              //"custom": "StackingMemberId",
+	Custom              bool            `json:"custom,omitempty"`              //"custom": "StackingMemberId",
 	Description         string          `json:"description,omitempty"`         //"description": "StackingMemberId",
 	DstStartTime        string          `json:"dstStartTime,omitempty"`        //"dstStartTime": "StackingMemberId",
 	DstEndTime          string          `json:"dstEndTime,omitempty"`          //"dstEndTime": "StackingMemberId",

@@ -244,6 +244,79 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 					},
 				},
 			},
+			"port_flap_settings": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"eTag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"created": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"modified": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"detection_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"port_flap_threshold_per_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"no_of_samples_declare_failures": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"port_flap_protection_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"stacking_health": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -334,6 +407,29 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 		}
 
 		d.Set("interconnects", interconnects)
+	}
+
+	if logInt.PortFlapProtection != nil {
+		portFlapSettings := make([]map[string]interface{}, 0, 1)
+		portFlapSettings = append(portFlapSettings, map[string]interface{}{
+			"type":                             logInt.PortFlapProtection.Type,
+			"uri":                              logInt.PortFlapProtection.URI,
+			"category":                         logInt.PortFlapProtection.Category,
+			"eTag":                             logInt.PortFlapProtection.ETAG,
+			"created":                          logInt.PortFlapProtection.Created,
+			"modified":                         logInt.PortFlapProtection.Modified,
+			"id":                               logInt.PortFlapProtection.ID,
+			"name":                             logInt.PortFlapProtection.Name,
+			"detection_interval":               logInt.PortFlapProtection.DetectionInterval,
+			"port_flap_threshold_per_interval": logInt.PortFlapProtection.PortFlapThresholdPerInterval,
+			"no_of_samples_declare_failures":   logInt.PortFlapProtection.NoOfSamplesDeclareFailures,
+			"consistency_checking":             logInt.PortFlapProtection.ConsistencyChecking,
+			"port_flap_protection_mode":        logInt.PortFlapProtection.PortFlapProtectionMode,
+			"description":                      logInt.PortFlapProtection.Description,
+			"state":                            logInt.PortFlapProtection.State,
+			"status":                           logInt.PortFlapProtection.Status,
+		})
+		d.Set("port_flap_settings", portFlapSettings)
 	}
 
 	if logInt.SnmpConfiguration != nil {
