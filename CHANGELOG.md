@@ -6,8 +6,21 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - This release supports API2400 minimally where we can use OneView v5.60 with this SDK. 
 
 ### Oneview Features supported
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
 - Logical Interconnects
 - Logical Interconnect Groups 
+- Network Set
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
 
 # [v1.6.0]
 ### Notes
