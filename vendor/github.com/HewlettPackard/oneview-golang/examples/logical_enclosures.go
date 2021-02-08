@@ -13,10 +13,10 @@ func main() {
 	var (
 		ClientOV            *ov.OVClient
 		logical_enclosure   = "TestLE"
-		logical_enclosure_1 = "TestLE"
-		logical_enclosure_2 = "log_enclosure88"
-		scope_name          = "testing"
-		li_name             = "<logical_interconnect_name>"
+		logical_enclosure_1 = "TestLE-Renamed"
+		scope_name          = "Auto-Scope"
+		eg_name             = "Auto-TestEG"
+		//		li_name             = "<logical_interconnect_name>"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 
@@ -35,9 +35,9 @@ func main() {
 	*enclosureUris = append(*enclosureUris, utils.NewNstring("/rest/enclosures/0000000000A66102"))
 	*enclosureUris = append(*enclosureUris, utils.NewNstring("/rest/enclosures/0000000000A66103"))
 
-	enc_grp, err := ovc.GetEnclosureGroupByName("EG-Synergy-Local")
+	enc_grp, err := ovc.GetEnclosureGroupByName(eg_name)
 
-	logicalEnclosure := ov.LogicalEnclosure{Name: logical_enclosure_1,
+	logicalEnclosure := ov.LogicalEnclosure{Name: logical_enclosure,
 		EnclosureUris:     *enclosureUris,
 		EnclosureGroupUri: enc_grp.URI}
 
@@ -48,10 +48,18 @@ func main() {
 		fmt.Println(".... Logical Enclosure Created Success")
 	}
 
+	fmt.Println("#................... Logical Enclosure by Name ...............#")
+	log_en, err := ovc.GetLogicalEnclosureByName(logical_enclosure)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(log_en)
+	}
+
 	logicalInterconnect, _ := ovc.GetLogicalInterconnects("", "", "")
 	li := ov.LogicalInterconnect{}
 	for i := 0; i < len(logicalInterconnect.Members); i++ {
-		if logicalInterconnect.Members[i].Name == li_name {
+		if logicalInterconnect.Members[i].URI == log_en.LogicalInterconnectUris[0] {
 			li = logicalInterconnect.Members[i]
 		}
 	}
@@ -62,9 +70,9 @@ func main() {
 		ExcludeApplianceDump:    false,
 		LogicalInterconnectUris: []utils.Nstring{li.URI}}
 
-	li_id := strings.Replace(string(li.URI), "/rest/logical-interconnects/", "", 1)
+	le_id := strings.Replace(string(log_en.URI), "/rest/logical-enclosures/", "", 1)
 
-	data, er := ovc.CreateSupportDump(supportdmp, li_id)
+	data, er := ovc.CreateSupportDump(supportdmp, le_id)
 
 	if er != nil {
 		fmt.Println("............... Logical Enclosure Support Dump Creation Failed:", er)
@@ -79,18 +87,7 @@ func main() {
 		fmt.Println(task)
 	}
 
-	log_enc, _ := ovc.GetLogicalEnclosureByName(logical_enclosure_1)
-
-	fmt.Println("#................... Logical Enclosure by Name ...............#")
-	log_en, err := ovc.GetLogicalEnclosureByName(logical_enclosure)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(log_en)
-	}
-
-	// Update From Group
-
+	// Update Logical Enslosure From Logical Interconnect Group
 	err = ovc.UpdateFromGroupLogicalEnclosure(log_en)
 	if err != nil {
 		fmt.Println(err)
@@ -103,19 +100,13 @@ func main() {
 	scope_Uris := new([]string)
 	*scope_Uris = append(*scope_Uris, scope_uri.String())
 
-	sort := "name:desc"
-	log_en_list, err := ovc.GetLogicalEnclosures("", "", "", *scope_Uris, sort)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("# ................... Logical Enclosures List .................#")
-		for i := 0; i < len(log_en_list.Members); i++ {
-			fmt.Println(log_en_list.Members[i].Name)
-		}
-	}
-
-	log_enc.Name = logical_enclosure_2
+	// Update Logical Enclosure
+	log_enc, _ := ovc.GetLogicalEnclosureByName(logical_enclosure)
+	log_enc.Name = logical_enclosure_1
+	log_enc.ScopesUri = scope_uri
 	err = ovc.UpdateLogicalEnclosure(log_enc)
+	sort := "name:desc"
+
 	if err != nil {
 		fmt.Println(err)
 	} else {
@@ -130,11 +121,23 @@ func main() {
 		}
 	}
 
-	err = ovc.DeleteLogicalEnclosure(logical_enclosure_2)
+	// Filtering Logical Enclosure with Scope
+	log_en_list, err := ovc.GetLogicalEnclosures("", "", "", *scope_Uris, sort)
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println("#...................... Deleted Logical Enclosure Successfully .....#")
+		fmt.Println("# ................... Logical Enclosures List .................#")
+		for i := 0; i < len(log_en_list.Members); i++ {
+			fmt.Println(log_en_list.Members[i].Name)
+		}
 	}
 
+	// Deleting Logical Enclosure
+	/*	err = ovc.DeleteLogicalEnclosure(logical_enclosure_1)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("#...................... Deleted Logical Enclosure Successfully .....#")
+		}
+	*/
 }

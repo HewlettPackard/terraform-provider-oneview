@@ -50,8 +50,39 @@ func main() {
 	logicalLocation1 := ov.LogicalLocation{LocationEntries: *locationEntries1}
 	logicalLocation2 := ov.LogicalLocation{LocationEntries: *locationEntries2}
 
+	locationEntry_five := ov.LocationEntry{Type: "Bay", RelativeValue: 3}
+	locationEntry_six := ov.LocationEntry{Type: "Enclosure", RelativeValue: 2}
+	locationEntries3 := new([]ov.LocationEntry)
+	*locationEntries3 = append(*locationEntries3, locationEntry_five)
+	*locationEntries3 = append(*locationEntries3, locationEntry_six)
+
+	locationEntry_seven := ov.LocationEntry{Type: "Bay", RelativeValue: 6}
+	locationEntry_eight := ov.LocationEntry{Type: "Enclosure", RelativeValue: 2}
+	locationEntries4 := new([]ov.LocationEntry)
+	*locationEntries4 = append(*locationEntries4, locationEntry_seven)
+	*locationEntries4 = append(*locationEntries4, locationEntry_eight)
+
+	logicalLocation3 := ov.LogicalLocation{LocationEntries: *locationEntries3}
+	logicalLocation4 := ov.LogicalLocation{LocationEntries: *locationEntries4}
+
+	locationEntry_nine := ov.LocationEntry{Type: "Bay", RelativeValue: 3}
+	locationEntry_ten := ov.LocationEntry{Type: "Enclosure", RelativeValue: 3}
+	locationEntries5 := new([]ov.LocationEntry)
+	*locationEntries5 = append(*locationEntries5, locationEntry_nine)
+	*locationEntries5 = append(*locationEntries5, locationEntry_ten)
+
+	locationEntry_eleven := ov.LocationEntry{Type: "Bay", RelativeValue: 6}
+	locationEntry_twelle := ov.LocationEntry{Type: "Enclosure", RelativeValue: 3}
+	locationEntries6 := new([]ov.LocationEntry)
+	*locationEntries6 = append(*locationEntries6, locationEntry_eleven)
+	*locationEntries6 = append(*locationEntries6, locationEntry_twelle)
+
+	logicalLocation5 := ov.LogicalLocation{LocationEntries: *locationEntries5}
+	logicalLocation6 := ov.LogicalLocation{LocationEntries: *locationEntries6}
+
 	interconnect1, err := ovc.GetInterconnectTypeByName("Virtual Connect SE 40Gb F8 Module for Synergy")
-	interconnect2, err := ovc.GetInterconnectTypeByName("Virtual Connect SE 40Gb F8 Module for Synergy")
+	interconnect2, err := ovc.GetInterconnectTypeByName("Synergy 10Gb Interconnect Link Module")
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -60,17 +91,35 @@ func main() {
 		PermittedInterconnectTypeUri: interconnect1.URI,
 		EnclosureIndex:               1}
 	interconnectMapEntryTemplate2 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation2,
-		PermittedInterconnectTypeUri: interconnect2.URI,
+		PermittedInterconnectTypeUri: interconnect1.URI,
 		EnclosureIndex:               1}
+
+	interconnectMapEntryTemplate3 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation3,
+		PermittedInterconnectTypeUri: interconnect2.URI,
+		EnclosureIndex:               2}
+	interconnectMapEntryTemplate4 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation4,
+		PermittedInterconnectTypeUri: interconnect2.URI,
+		EnclosureIndex:               2}
+
+	interconnectMapEntryTemplate5 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation5,
+		PermittedInterconnectTypeUri: interconnect2.URI,
+		EnclosureIndex:               3}
+	interconnectMapEntryTemplate6 := ov.InterconnectMapEntryTemplate{LogicalLocation: logicalLocation6,
+		PermittedInterconnectTypeUri: interconnect2.URI,
+		EnclosureIndex:               3}
+
 	interconnectMapEntryTemplates := new([]ov.InterconnectMapEntryTemplate)
 	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate1)
-
 	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate2)
+	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate3)
+	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate4)
+	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate5)
+	*interconnectMapEntryTemplates = append(*interconnectMapEntryTemplates, interconnectMapEntryTemplate6)
 
 	interconnectMapTemplate := ov.InterconnectMapTemplate{InterconnectMapEntryTemplates: *interconnectMapEntryTemplates}
 	fmt.Println(&interconnectMapTemplate)
 
-	enclosureIndexes := []int{1}
+	enclosureIndexes := []int{1, 2, 3}
 
 	ethernetSettings := ov.EthernetSettings{Type: "EthernetInterconnectSettingsV7",
 		URI:                                "/settings",
@@ -119,6 +168,21 @@ func main() {
 		SnmpConfiguration:       &snmpConfig,
 		QosConfiguration:        &qosConfig}
 	er := ovc.CreateLogicalInterconnectGroup(logicalInterconnectGroup)
+
+	logicalInterconnectGroupAuto := ov.LogicalInterconnectGroup{Type: lig_type,
+		EthernetSettings:        &ethernetSettings,
+		IgmpSettings:            &igmpSettings,
+		Name:                    "Auto-LIG",
+		TelemetryConfiguration:  &telemetryConfig,
+		InterconnectMapTemplate: &interconnectMapTemplate,
+		EnclosureType:           "SY12000",
+		EnclosureIndexes:        enclosureIndexes,
+		InterconnectBaySet:      3,
+		RedundancyType:          "Redundant",
+		SnmpConfiguration:       &snmpConfig,
+		QosConfiguration:        &qosConfig}
+	er = ovc.CreateLogicalInterconnectGroup(logicalInterconnectGroupAuto)
+
 	if er != nil {
 		fmt.Println("........Logical Interconnect Group Creation failed:", er)
 	} else {
