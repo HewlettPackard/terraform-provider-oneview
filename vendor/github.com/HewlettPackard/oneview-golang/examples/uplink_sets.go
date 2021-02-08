@@ -13,8 +13,8 @@ func main() {
 		ClientOV         *ov.OVClient
 		new_uplink       = "test_new"
 		upd_uplink       = "test_update"
-		ethernet_network = "testeth1"
-		li_name          = "LE-TESTLIG" //"<logical_interconnect_name>"
+		ethernet_network = "Auto-ethernet_network"
+		li_name          = "TestLE-Renamed-Auto-LIG"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
 

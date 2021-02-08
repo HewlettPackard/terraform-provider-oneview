@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2200
+  ov_apiversion = 2400
   ov_ifmatch = "*"
 }
 
@@ -47,4 +47,20 @@ resource "oneview_logical_interconnect" "logical_interconnect" {
 
 resource "oneview_logical_interconnect" "logical_interconnect" {
 update_type = "updateComplianceById"
+}
+
+# Update PortFlapProtection Settings.
+
+resource "oneview_logical_interconnect" "logical_interconnect" {
+  update_type = "updatePortFlapSettings"
+  port_flap_settings = [
+    {
+      port_flap_protection_mode = "Detect"
+      port_flap_threshold_per_interval =  2
+      detection_interval = 20
+      no_of_samples_declare_failures = 2
+      name = "PortFlapSettingsUpdated"
+      consistency_checking = "ExactMatch"
+    },
+  ]
 }
