@@ -32,6 +32,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage System
 - Uplink Set
 
+### Bug fixes & Enhancements:
+- [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
+
 # [v1.6.0]
 ### Notes
 - This release supports API2200 minimally where we can use OneView API2200 with this SDK and ImageStreamer REST API version 2000 (I3S v5.40).  
