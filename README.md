@@ -2,7 +2,7 @@
 
 ## Build Status 
 
-| 5.50 Branch   | 5.40 Branch   | 5.30 Branch   | 5.20 Branch   |
+| 5.60 Branch   | 5.50 Branch   | 5.40 Branch   | 5.30 Branch   |
 | ------------- |:-------------:| -------------:| -------------:|
 | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)
 
@@ -33,10 +33,10 @@ The light weight containerized version of the HPE OneView SDK for Terraform is a
 
 ```bash
 # Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-OV5.6
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-12-OV5.6
 # Run docker commands below given, which  will in turn create a sh session 
 # where you can create files, issue commands and execute the examples.
-$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-OV5.6 /bin/sh
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-12-OV5.6 /bin/sh
 ```
 
 ### Local Setup
@@ -74,8 +74,13 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 # Build the needed binary
 # Get the branch 'Terraform-0.12' terraform-provider-oneview which is supports Terraform v0.12.x.
 
-$ go get github.com/HewlettPackard/terraform-provider-oneview@Terraform-0.12
-$ cd $GOPATH/src/github.com/HewlettPackard/terraform-provider-oneview    
+$ git clone -b Terraform-0.12  https://github.com/HewlettPackard/terraform-provider-oneview.git
+$ cd terraform-provider-oneview
+# Build the provider
+$ go build -o terraform-provider-oneview
+# Create the plugin location if it does not exist and copy the  provider binary there.
+$ mkdir -p ~/.terraform.d/plugins/
+$ mv terraform-provder ~/.terraform.d./plugins/
 
 ```bash
 # Download and store a local copy of terraform-provider-oneview and
@@ -168,7 +173,7 @@ $ terraform apply
 ```
 Note: Only a single terraform file (example file) should exist in the home folder to execute the above mentioned three commands. Once the resource is tested move that file to examples folder. 
 
-Note: Currently this SDK supports OneView API 2200 minimally, where we can test OneView API 2200 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
+Note: Currently this SDK supports OneView API 2400 minimally, where we can test OneView API 2400 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
 
 ## API Implementation
 
@@ -212,7 +217,7 @@ This feedback is important for us to deliver a useful product.
 
 [HPE OneView Firmware Management White Paper](http://hpe.com/info/OneView/docs)
 
-Note: Currently this SDK supports OneView API 2200 minimally where we can test OneView API 2200 version with this SDK. No new fields have been added/deleted to support API2200 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
+Note: Currently this SDK supports OneView API 2400 minimally where we can test OneView API 2400 version with this SDK. No new fields have been added/deleted to support API2400 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ### HPE OneView Community
 
