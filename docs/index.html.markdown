@@ -19,7 +19,7 @@ provider "oneview" {
   ov_password = "password123"
   ov_endpoint = oneview_url.com
   ov_sslverify = true
-  ov_apiversion = 800
+  ov_apiversion = 2400
   ov_domain = "Local"
   ov_ifmatch = "*"
 }
