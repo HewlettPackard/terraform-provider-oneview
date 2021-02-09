@@ -1,5 +1,5 @@
 FROM golang:alpine
-MAINTAINER "Priyanka Sood <priyanka.sood@hpe.com>"
+MAINTAINER "Priyanka Sood <priyanka.sood@hpe.com>" 
 
 ENV TERRAFORM_VERSION=0.11.10
 
