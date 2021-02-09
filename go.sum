@@ -9,12 +9,6 @@ cloud.google.com/go/bigquery v1.0.1/go.mod h1:i/xbL2UlR5RvWAURpBYZTtm/cXjCha9lbf
 cloud.google.com/go/datastore v1.0.0/go.mod h1:LXYbyblFSglQ5pkeyhO+Qmw7ukd3C+pD7TKLgZqpHYE=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/HewlettPackard/oneview-golang v1.6.0 h1:c8ShEK5i21/lhoOG76YgRPiPMdmkmJaa6K8nlbqJ/bg=
-github.com/HewlettPackard/oneview-golang v1.6.0/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
-github.com/HewlettPackard/oneview-golang v1.6.1-0.20201105100610-6e51790885f9 h1:A5ybj/nbV1ntIOdmZP3Nhe28OQy56mBys4CmpxRJhdM=
-github.com/HewlettPackard/oneview-golang v1.6.1-0.20201105100610-6e51790885f9/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
-github.com/HewlettPackard/oneview-golang v1.6.1-0.20210107062749-1c0b0b5a2b2a h1:xcSyoBm7mzBw8H8WKlJoN9y/CNUDDMJYXIx45N1JeBU=
-github.com/HewlettPackard/oneview-golang v1.6.1-0.20210107062749-1c0b0b5a2b2a/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/HewlettPackard/oneview-golang v1.7.0 h1:9TJcMEtuejWQ0NCDUAZC9doOlmXW4QcRBHV0VHMhGNE=
 github.com/HewlettPackard/oneview-golang v1.7.0/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
@@ -93,8 +87,6 @@ github.com/hashicorp/go-cleanhttp v0.5.1/go.mod h1:JpRdi6/HCYpAwUzNwuwqhbovhLtng
 github.com/hashicorp/go-getter v1.4.0/go.mod h1:7qxyCd8rBfcShwsvxgIguu4KbS3l8bUCwg2Umn7RjeY=
 github.com/hashicorp/go-getter v1.4.1 h1:3A2Mh8smGFcf5M+gmcv898mZdrxpseik45IpcyISLsA=
 github.com/hashicorp/go-getter v1.4.1/go.mod h1:7qxyCd8rBfcShwsvxgIguu4KbS3l8bUCwg2Umn7RjeY=
-github.com/hashicorp/go-getter v1.5.1 h1:lM9sM02nvEApQGFgkXxWbhfqtyN+AyhQmi+MaMdBDOI=
-github.com/hashicorp/go-getter v1.5.1/go.mod h1:a7z7NPPfNQpJWcn4rSWFtdrSldqLdLPEF3d8nFMsSLM=
 github.com/hashicorp/go-hclog v0.0.0-20180709165350-ff2cf002a8dd/go.mod h1:9bjs9uLqI8l75knNv3lV1kA55veR+WUPSiKIWcQHudI=
 github.com/hashicorp/go-hclog v0.9.2/go.mod h1:5CU+agLiy3J7N7QjHK5d05KxGsuXiQLrjA0H7acj2lQ=
 github.com/hashicorp/go-hclog v0.14.1 h1:nQcJDQwIAGnmoUWp8ubocEX40cCml/17YkF6csQLReU=
