@@ -68,10 +68,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeBool,
 							Required: true,
 						},
-						// "compliance_control":{
-						// 	Type:     schema.TypeString,
-						// 	Required: true,
-						// },
 						"overridden_settings": {
 							Optional: true,
 							Type:     schema.TypeList,
@@ -390,8 +386,6 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 
 	localStorages := make([]map[string]interface{}, 0, 1)
 	localStorages = append(localStorages, map[string]interface{}{
-		//"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
-		//"initialize":  serverProfile.LocalStorage.Initialize,
 		"reapply_state": spt.LocalStorage.ReapplyState,
 	})
 
