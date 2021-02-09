@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Notes
 - This release supports API2400 minimally where we can use OneView API2400 with this SDK.
 
+#### Major changes
+2. Added support for a new endpoints in logical interconnect.
+   - PUT /rest/logical-interconnects/{id}/portFlapSettings
+   
 ### Oneview Features supported
 - Enclosure
 - Enclosure Group
