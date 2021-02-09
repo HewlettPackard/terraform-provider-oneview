@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2019 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/schema"
-
-	"encoding/json"
-	"io/ioutil"
 )
 
 func dataSourceServerProfileTemplate() *schema.Resource {
@@ -41,6 +38,58 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 			"affinity": {
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+			"boot_mode": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_mode": {
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+						"mode": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"pxe_boot_policy": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+			},
+			"bios_option": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_bios": {
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+						// "compliance_control":{
+						// 	Type:     schema.TypeString,
+						// 	Required: true,
+						// },
+						"overridden_settings": {
+							Optional: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"id": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"value": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 			"network": {
 				Optional: true,
@@ -85,126 +134,140 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 							Optional: true,
 						},
 						"initialize": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"controllers": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"device_slot": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"drive_write_cache": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"import_configuration": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"controller": {
+						"initialize": {
+							Type:     schema.TypeBool,
 							Optional: true,
-							Type:     schema.TypeSet,
-							MaxItems: 1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"device_slot": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"initialize": {
-										Type:     schema.TypeBool,
-										Optional: true,
-									},
-									"drive_write_cache": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"mode": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"predictive_spare_rebuild": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"logical_drives": {
-										Optional: true,
-										Type:     schema.TypeSet,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"bootable": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
-												"accelerator": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"drive_technology": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"name": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"num_physical_drives": {
-													Type:     schema.TypeInt,
-													Optional: true,
-												},
-												"num_spare_drives": {
-													Type:     schema.TypeInt,
-													Optional: true,
-												},
-												"sas_logical_jbod_id": {
-													Type:     schema.TypeInt,
-													Optional: true,
-												},
-												"raid_level": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-											},
-										},
-									},
-								},
-							},
 						},
-						"sas_logical_jbod": {
+						"mode": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Type:     schema.TypeSet,
-							MaxItems: 1,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"description": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"drive_slot": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"drive_max_size_gb": {
-										Type:     schema.TypeInt,
-										Optional: true,
-									},
-									"drive_min_size_gb": {
-										Type:     schema.TypeInt,
-										Optional: true,
-									},
-									"drive_technology": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"erase_data": {
-										Type:     schema.TypeBool,
-										Optional: true,
-									},
-									"id": {
-										Type:     schema.TypeInt,
-										Optional: true,
-									},
-									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"num_physical_drive": {
-										Type:     schema.TypeInt,
-										Optional: true,
-									},
-									"persistent": {
-										Type:     schema.TypeBool,
-										Optional: true,
-									},
-								},
-							},
+						},
+						"predictive_spare_rebuild": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"logical_drives": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"accelerator": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"bootable": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"drive_number": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"drive_technology": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"num_physical_drives": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"num_spare_drives": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"raid_level": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"sas_logical_jbod_id": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"logical_jbod": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"device_slot": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"drive_max_size_gb": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"drive_min_size_gb": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"drive_technology": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"erase_data": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"num_physical_drives": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"persistent": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"sas_logical_jbod_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 					},
 				},
@@ -307,59 +370,84 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 		}
 		d.Set("boot_order", bootOrder)
 	}
-	// Gets Local Storage Body
-	local_storage := make(map[string]interface{})
-	// Gets Storage Controller Body
+
+	overriddenSettings := make([]interface{}, 0, len(spt.Bios.OverriddenSettings))
+	for _, overriddenSetting := range spt.Bios.OverriddenSettings {
+		overriddenSettings = append(overriddenSettings, map[string]interface{}{
+			"id":    overriddenSetting.ID,
+			"value": overriddenSetting.Value,
+		})
+	}
+	if spt.Bios != nil {
+		biosOptions := make([]map[string]interface{}, 0, 1)
+		biosOptions = append(biosOptions, map[string]interface{}{
+			"manage_bios":         spt.Bios.ManageBios,
+			"overridden_settings": overriddenSettings,
+		})
+
+		d.Set("bios_option", biosOptions)
+	}
+
+	localStorages := make([]map[string]interface{}, 0, 1)
+	localStorages = append(localStorages, map[string]interface{}{
+		//"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
+		//"initialize":  serverProfile.LocalStorage.Initialize,
+		"reapply_state": spt.LocalStorage.ReapplyState,
+	})
+
+	d.Set("local_storage", localStorages)
 	controllers := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers))
-	for i := 0; i < len(spt.LocalStorage.Controllers); i++ {
-		logicalDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers[i].LogicalDrives))
-		for j := 0; j < len(spt.LocalStorage.Controllers[i].LogicalDrives); j++ {
-			logicalDrives = append(logicalDrives, map[string]interface{}{
-				"bootable":            spt.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
-				"accelerator":         spt.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
-				"drive_technology":    spt.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
-				"name":                spt.LocalStorage.Controllers[i].LogicalDrives[j].Name,
-				"num_physical_drives": spt.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
-				"num_spare_drives":    spt.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
-				"sas_logical_jbod_id": spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
-				"raid_level":          spt.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
+	for _, controller := range spt.LocalStorage.Controllers {
+
+		controllers = append(controllers, map[string]interface{}{
+			"device_slot":          controller.DeviceSlot,
+			"drive_write_cache":    controller.DriveWriteCache,
+			"import_configuration": controller.ImportConfiguration,
+			"initialize":           controller.Initialize,
+			"mode":                 controller.Mode,
+			"predictive_spare_rebuild": controller.PredictiveSpareRebuild,
+		})
+		logicaldrives := make([]map[string]interface{}, 0, len(controller.LogicalDrives))
+		for _, logicaldrive := range controller.LogicalDrives {
+
+			logicaldrives = append(logicaldrives, map[string]interface{}{
+				"accelerator":         logicaldrive.Accelerator,
+				"bootable":            logicaldrive.Bootable,
+				"drive_number":        logicaldrive.DriveNumber,
+				"drive_technology":    logicaldrive.DriveTechnology,
+				"name":                logicaldrive.Name,
+				"num_physical_drives": logicaldrive.NumPhysicalDrives,
+				"num_spare_drives":    logicaldrive.NumSpareDrives,
+				"raid_level":          logicaldrive.RaidLevel,
+				"sas_logical_jbod_id": logicaldrive.SasLogicalJBODId,
 			})
 		}
-		controllers = append(controllers, map[string]interface{}{
-			"device_slot":       spt.LocalStorage.Controllers[i].DeviceSlot,
-			"initialize":        spt.LocalStorage.Controllers[i].Initialize,
-			"drive_write_cache": spt.LocalStorage.Controllers[i].DriveWriteCache,
-			"mode":              spt.LocalStorage.Controllers[i].Mode,
-			"predictive_spare_rebuild": spt.LocalStorage.Controllers[i].PredictiveSpareRebuild,
-			"logical_drive":            logicalDrives,
-		})
-	}
-	// Gets Sas Logical Jbod Controller Body
-	sasLogDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.SasLogicalJBODs))
-	for i := 0; i < len(spt.LocalStorage.SasLogicalJBODs); i++ {
-		sasLogDrives = append(sasLogDrives, map[string]interface{}{
-			"description":        spt.LocalStorage.SasLogicalJBODs[i].Description,
-			"device_slot":        spt.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
-			"drive_max_size_gb":  spt.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
-			"drive_min_size_sb":  spt.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
-			"drive_technology":   spt.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
-			"erase_data":         spt.LocalStorage.SasLogicalJBODs[i].EraseData,
-			"id":                 spt.LocalStorage.SasLogicalJBODs[i].ID,
-			"name":               spt.LocalStorage.SasLogicalJBODs[i].Name,
-			"num_physical_drive": spt.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
-			"persistent":         spt.LocalStorage.SasLogicalJBODs[i].Persistent,
-		})
-	}
-	local_storage = map[string]interface{}{
-		"manage_local_storage": spt.LocalStorage.ManageLocalStorage,
-		"initialize":           spt.LocalStorage.Initialize,
-		"controller":           controllers,
-		"sas_logical_jbod":     sasLogDrives,
+
+		d.Set("logical_drives", logicaldrives)
+
 	}
 
-	file, _ := json.MarshalIndent(local_storage, "", " ")
-	_ = ioutil.WriteFile("test.json", file, 0644)
+	d.Set("controllers", controllers)
 
-	d.Set("local_storage", local_storage)
+	saslogicaljbods := make([]map[string]interface{}, 0, len(spt.LocalStorage.SasLogicalJBODs))
+	for _, saslogicaljbod := range spt.LocalStorage.SasLogicalJBODs {
+
+		saslogicaljbods = append(saslogicaljbods, map[string]interface{}{
+			"description":          saslogicaljbod.Description,
+			"device_slot":          saslogicaljbod.DeviceSlot,
+			"drive_max_size_gb":    saslogicaljbod.DriveMaxSizeGB,
+			"drive_min_size_gb":    saslogicaljbod.DriveMinSizeGB,
+			"drive_technology":     saslogicaljbod.DriveTechnology,
+			"erase_data":           saslogicaljbod.EraseData,
+			"id":                   saslogicaljbod.ID,
+			"name":                 saslogicaljbod.Name,
+			"num_physical_drives":  saslogicaljbod.NumPhysicalDrives,
+			"persistent":           saslogicaljbod.Persistent,
+			"sas_logical_jbod_uri": saslogicaljbod.SasLogicalJBODUri,
+			"status":               saslogicaljbod.Status,
+		})
+	}
+	d.Set("logical_jbod", saslogicaljbods)
+
 	return nil
 }
