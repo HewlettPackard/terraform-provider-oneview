@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2200
+  ov_apiversion = 2400
   ov_ifmatch = "*"
 }
 
@@ -15,7 +15,7 @@ data "oneview_scope" "scope_obj" {
 data "oneview_server_certificate" "sc" {
 # Any one of the these fields can used to get data source
 #         alias_name = "hm_cert"
-         remote_ip = "172.18.13.11"
+         remote_ip = "<ServerIp>"
 }
 
 output "oneview_server_certificate_value" {

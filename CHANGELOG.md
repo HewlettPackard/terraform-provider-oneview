@@ -11,16 +11,26 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Enclosure Group
 - FC Network
 - FCOE Network
+- Hypervisor Manager
+- Hypervisor Cluster Profile
 - Interconnects
 - Interconnect Types
 - Logical Enclosure
 - Logical Interconnects
 - Logical Interconnect Groups 
 - Network Set
+- Scope
+- Server Certificate
 - Server Hardware
 - Server Hardware Type
 - Server Profile
 - Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
 
 ### Bug fixes & Enhancements:
 - [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
