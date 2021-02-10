@@ -2,11 +2,13 @@
 
 ## Build Status 
 
-OV Version | 5.60   | 5.50   | 5.40    | 5.30    |
-| ------------- |:-------------:| -------------:| -------------:| -------------:|
-SDK Version/Tag | [Terraform-0.12](https://github.com/HewlettPackard/terraform-provider-oneview/tree/Terraform-0.12) | [Terraform-0.12](https://github.com/HewlettPackard/terraform-provider-oneview/tree/Terraform-0.12) |[Terraform-0.12](https://github.com/HewlettPackard/terraform-provider-oneview/tree/Terraform-0.12) | [Terraform-0.12](https://github.com/HewlettPackard/terraform-provider-oneview/tree/Terraform-0.12) |
-Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)
-
+OV Version | 5.60   | 5.50   | 5.40    
+| ------------- |:-------------:| -------------:| -------------:|
+SDK Version/Tag | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/tree/Terraform-0.12) | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/tree/Terraform-0.12) |[v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/tree/Terraform-0.12) |
+Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| 
+```
+Note: v1.7.0-12 supports Terraform 0.12.xx
+```
 ## Introduction
 
 HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud infrastructure. HPE OneView can help you transform your data center to software-defined, and it supports HPE’s broad portfolio of servers, storage, and networking solutions, ensuring the simple and automated management of your hybrid infrastructure. Software-defined intelligence enables a template-driven approach for deploying, provisioning, updating, and integrating compute, storage, and networking infrastructure.
