@@ -1,24 +1,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
-# [v1.7.0](unreleased)
+
+# [v1.7.0] (Unreleased)
 ### Notes
-- This release supports API2400 minimally where we can use OneView API2400 with this SDK and ImageStreamer REST API version 2000 (I3S v5.40).  
-- This release adds variable.tf file to provide easy access for adding Appliance Credentials through environment variables or during runtime. 
-- No new fields are added/deleted to support API2400. 
+- This release supports API2400 minimally where we can use OneView v5.60 with this SDK. 
 
 ### Oneview Features supported
+- Ethernet Network
 - Enclosure
 - Enclosure Group
-- Ethernet Network
 - FC Network
 - FCOE Network
-- Interconnects
-- Hypervisor Cluster Profile
 - Hypervisor Manager
+- Hypervisor Cluster Profile
+- Interconnects
 - Interconnect Types
 - Logical Enclosure
-- Logical Interconnect
-- Logical Interconnect Group
+- Logical Interconnects
+- Logical Interconnect Groups 
 - Network Set
 - Scope
 - Server Certificate
@@ -27,14 +26,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Server Profile
 - Server Profile Template
 - Storage Pool
-- Storage System
 - Storage Volume
-- Storage Volume Attachment
+- Storage Volume Attachments
 - Storage Volume Template
+- Storage System
 - Uplink Set
 
-### Image Streamer resources supported:
-- Deployment Plans
+### Bug fixes & Enhancements:
+- [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
 
 # [v1.6.0]
 ### Notes

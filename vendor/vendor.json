@@ -1,0 +1,42 @@
+{
+	"comment": "",
+	"ignore": "",
+	"package": [
+		{
+			"checksumSHA1": "oywegchJ/g0WLo84ZqD9pLPwajM=",
+			"origin": "github.com/HewlettPackard/terraform-provider-oneview/vendor/github.com/HewlettPackard/oneview-golang/i3s",
+			"path": "github.com/HewlettPackard/oneview-golang/i3s",
+			"revision": "0f86e1a1cb0a6fb59fcb00e67992e6e942c939d2",
+			"revisionTime": "2021-01-29T12:48:44Z"
+		},
+		{
+			"checksumSHA1": "weAUOr/mQa1C43v5v//GYW6cTKE=",
+			"origin": "github.com/HewlettPackard/terraform-provider-oneview/vendor/github.com/HewlettPackard/oneview-golang/liboneview",
+			"path": "github.com/HewlettPackard/oneview-golang/liboneview",
+			"revision": "0f86e1a1cb0a6fb59fcb00e67992e6e942c939d2",
+			"revisionTime": "2021-01-29T12:48:44Z"
+		},
+		{
+			"checksumSHA1": "cqsThZKFeHIkrinkSusRVVS/Y4I=",
+			"origin": "github.com/HewlettPackard/terraform-provider-oneview/vendor/github.com/HewlettPackard/oneview-golang/ov",
+			"path": "github.com/HewlettPackard/oneview-golang/ov",
+			"revision": "0f86e1a1cb0a6fb59fcb00e67992e6e942c939d2",
+			"revisionTime": "2021-01-29T12:48:44Z"
+		},
+		{
+			"checksumSHA1": "qfHAY8jONFO/AMFnd7egnPkDrp8=",
+			"origin": "github.com/HewlettPackard/terraform-provider-oneview/vendor/github.com/HewlettPackard/oneview-golang/rest",
+			"path": "github.com/HewlettPackard/oneview-golang/rest",
+			"revision": "0f86e1a1cb0a6fb59fcb00e67992e6e942c939d2",
+			"revisionTime": "2021-01-29T12:48:44Z"
+		},
+		{
+			"checksumSHA1": "JFNILAf+iuJsGxJ3mz6GAv0ul0Y=",
+			"origin": "github.com/HewlettPackard/terraform-provider-oneview/vendor/github.com/HewlettPackard/oneview-golang/utils",
+			"path": "github.com/HewlettPackard/oneview-golang/utils",
+			"revision": "0f86e1a1cb0a6fb59fcb00e67992e6e942c939d2",
+			"revisionTime": "2021-01-29T12:48:44Z"
+		}
+	],
+	"rootPath": "github.com/HewlettPackard/terraform-provider-oneview"
+}

@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -137,6 +139,79 @@ func resourceLogicalInterconnect() *schema.Resource {
 									},
 								},
 							},
+						},
+					},
+				},
+			},
+			"port_flap_settings": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"etag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"created": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"modified": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"detection_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"port_flap_threshold_per_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"no_of_samples_declare_failures": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"port_flap_protection_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 					},
 				},
@@ -372,6 +447,28 @@ func resourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) e
 		})
 		d.Set("snmp_configuration", snmpConfiguration)
 	}
+	if logInt.PortFlapProtection != nil {
+		portFlapSettings := make([]map[string]interface{}, 0, 1)
+		portFlapSettings = append(portFlapSettings, map[string]interface{}{
+			"type":                             logInt.PortFlapProtection.Type,
+			"uri":                              logInt.PortFlapProtection.URI,
+			"category":                         logInt.PortFlapProtection.Category,
+			"etag":                             logInt.PortFlapProtection.ETAG,
+			"created":                          logInt.PortFlapProtection.Created,
+			"modified":                         logInt.PortFlapProtection.Modified,
+			"id":                               logInt.PortFlapProtection.ID,
+			"name":                             logInt.PortFlapProtection.Name,
+			"detection_interval":               logInt.PortFlapProtection.DetectionInterval,
+			"port_flap_threshold_per_interval": logInt.PortFlapProtection.PortFlapThresholdPerInterval,
+			"no_of_samples_declare_failures":   logInt.PortFlapProtection.NoOfSamplesDeclareFailures,
+			"consistency_checking":             logInt.PortFlapProtection.ConsistencyChecking,
+			"port_flap_protection_mode":        logInt.PortFlapProtection.PortFlapProtectionMode,
+			"description":                      logInt.PortFlapProtection.Description,
+			"state":                            logInt.PortFlapProtection.State,
+			"status":                           logInt.PortFlapProtection.Status,
+		})
+		d.Set("port_flap_settings", portFlapSettings)
+	}
 	return nil
 }
 
@@ -389,6 +486,35 @@ func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{})
 		d.SetId(id)
 	}
 
+	if updateType == "updatePortFlapSettings" {
+		id := d.Id()
+		rawPortFlapSetting := d.Get("port_flap_settings").(*schema.Set).List()
+		portFlapSettings := ov.PortFlapProtection{}
+		for _, val := range rawPortFlapSetting {
+			rawlval := val.(map[string]interface{})
+			portFlapSettings.Type = rawlval["type"].(string)
+			portFlapSettings.URI = utils.Nstring(rawlval["uri"].(string))
+			portFlapSettings.Created = rawlval["created"].(string)
+			portFlapSettings.Category = utils.Nstring(rawlval["category"].(string))
+			portFlapSettings.ETAG = rawlval["etag"].(string)
+			portFlapSettings.Modified = rawlval["modified"].(string)
+			portFlapSettings.ID = rawlval["id"].(string)
+			portFlapSettings.Name = rawlval["name"].(string)
+			portFlapSettings.DetectionInterval = rawlval["detection_interval"].(int)
+			portFlapSettings.PortFlapThresholdPerInterval = rawlval["port_flap_threshold_per_interval"].(int)
+			portFlapSettings.NoOfSamplesDeclareFailures = rawlval["no_of_samples_declare_failures"].(int)
+			portFlapSettings.ConsistencyChecking = rawlval["consistency_checking"].(string)
+			portFlapSettings.PortFlapProtectionMode = rawlval["port_flap_protection_mode"].(string)
+			portFlapSettings.Description = utils.Nstring(rawlval["description"].(string))
+			portFlapSettings.State = rawlval["state"].(string)
+			portFlapSettings.Status = rawlval["status"].(string)
+		}
+		err := config.ovClient.UpdateLogicalInterconnectPortFlapSettings(portFlapSettings, id)
+		if err != nil {
+			return err
+		}
+		d.SetId(id)
+	}
 	return resourceLogicalInterconnectRead(d, meta)
 }
 func resourceLogicalInterconnectDelete(d *schema.ResourceData, meta interface{}) error {

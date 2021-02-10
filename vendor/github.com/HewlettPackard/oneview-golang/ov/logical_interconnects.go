@@ -42,7 +42,7 @@ type LogicalInterconnect struct {
 	State                                string                  `json:"state,omitempty"`                                // "state": "Normal",
 	Status                               string                  `json:"status,omitempty"`                               // "status": "Critical",
 	Name                                 string                  `json:"name"`                                           // "name": "Logical Interconnect1",
-
+	PortFlapProtection                   *PortFlapProtection     `json:"portFlapProtection,omitempty"`                   // "portFlapProtection": [...],
 }
 
 type IcmLicenses struct {
@@ -479,6 +479,52 @@ func (c *OVClient) UpdateLogicalInterconnectIgmpSettings(IgmpConfig IgmpSettings
 	}
 
 	log.Debugf("Response update LogicalInterConnect Igmp Settings %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *OVClient) UpdateLogicalInterconnectPortFlapSettings(PortFlapSetting PortFlapProtection, Id string) error {
+	var (
+		uri = "/rest/logical-interconnects/"
+		t   *Task
+	)
+
+	if c.APIVersion <= 2200 {
+		log.Errorf("PortFlap Configuration is supported on API 2400 or greater")
+		return nil
+	}
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	logicalInt, er_li := c.GetLogicalInterconnectByUri(uri + Id)
+	if er_li != nil {
+		t.TaskIsDone = true
+		log.Errorf("Logical Interconnect Not Found: %s", uri+Id)
+		return er_li
+	}
+	PortFlapSetting.ID = logicalInt.PortFlapProtection.ID
+	PortFlapSetting.Type = "portFlapProtection"
+	uri = uri + Id + "/portFlapSettings"
+	log.Infof("REST : %s \n %+v\n", uri, PortFlapSetting)
+	log.Infof("task -> %+v", t)
+	data, err := c.RestAPICall(rest.PUT, uri, PortFlapSetting)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error updating logicalInterConnect PortFlap Setting update request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response update LogicalInterConnect PortFlap Setting  %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
