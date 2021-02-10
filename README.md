@@ -80,7 +80,7 @@ $ cd terraform-provider-oneview
 $ go build -o terraform-provider-oneview
 # Create the plugin location if it does not exist and copy the  provider binary there.
 $ mkdir -p ~/.terraform.d/plugins/
-$ mv terraform-provder ~/.terraform.d./plugins/
+$ mv terraform-provider-oneview ~/.terraform.d./plugins/
 
 ```bash
 # Download and store a local copy of terraform-provider-oneview and
