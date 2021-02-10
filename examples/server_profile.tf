@@ -29,8 +29,6 @@ resource "oneview_server_profile" "SP2" {
   initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
 }
 
-
-
 # Updating Server profile
 resource "oneview_server_profile" "SP" {
   name = "TestSP_Renamed"

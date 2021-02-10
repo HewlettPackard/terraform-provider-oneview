@@ -75,6 +75,14 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeBool,
 							Required: true,
 						},
+						"consistency_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"overridden_settings": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -298,24 +306,126 @@ func resourceServerProfile() *schema.Resource {
 							Optional: true,
 						},
 						"initialize": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
-			"logical_drives": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"bootable": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"raid_level": {
-							Type:     schema.TypeString,
+						"controller": {
 							Optional: true,
+							Type:     schema.TypeSet,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"device_slot": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"initialize": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"drive_write_cache": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mode": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"predictive_spare_rebuild": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"logical_drives": {
+										Optional: true,
+										Type:     schema.TypeSet,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"bootable": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"accelerator": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"drive_technology": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"num_physical_drives": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"num_spare_drives": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"sas_logical_jbod_id": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"raid_level": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						"sas_logical_jbod": {
+							Optional: true,
+							Type:     schema.TypeSet,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"description": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"drive_slot": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"drive_max_size_gb": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"drive_min_size_gb": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"drive_technology": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"erase_data": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"num_physical_drive": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"persistent": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -869,33 +979,67 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 		serverProfile.Firmware = firmware
 	}
-
 	// Get local storage data if provided
-	if _, ok := d.GetOk("local_storage"); ok {
-		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
-		localStorage := ov.LocalStorageOptions{}
-		for _, raw := range rawLocalStorage {
-			localStorageItem := raw.(map[string]interface{})
-			localStorage = ov.LocalStorageOptions{
-				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				Initialize:         localStorageItem["initialize"].(bool),
+	rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+	localStorage := ov.LocalStorageOptions{}
+	for _, raw := range rawLocalStorage {
+		localStorageItem := raw.(map[string]interface{})
+		// Gets Local Storage Controller body
+		rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+		localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
+		for _, raw2 := range rawLocalStorageController {
+			controllerData := raw2.(map[string]interface{})
+			// Gets Local Storage Controller's Logical Drives
+			rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+			logicalDrives := make([]ov.LogicalDriveV3, 0)
+			for _, rawLogicalDrive := range rawLogicalDrives {
+				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+				logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
+					Bootable:          logicalDrivesItem["bootable"].(bool),
+					RaidLevel:         logicalDrivesItem["raid_level"].(string),
+					Accelerator:       logicalDrivesItem["accelerator"].(string),
+					DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
+					Name:              logicalDrivesItem["name"].(string),
+					NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
+					NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
+					SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+				})
 			}
-		}
-		serverProfile.LocalStorage = localStorage
-	}
-
-	if _, ok := d.GetOk("logical_drives"); ok {
-		rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
-		logicalDrives := make([]ov.LogicalDrive, 0)
-		for _, rawLogicalDrive := range rawLogicalDrives {
-			logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-			logicalDrives = append(logicalDrives, ov.LogicalDrive{
-				Bootable:  logicalDrivesItem["bootable"].(bool),
-				RaidLevel: logicalDrivesItem["raid_level"].(string),
+			localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
+				DeviceSlot:      controllerData["device_slot"].(string),
+				DriveWriteCache: controllerData["drive_write_cache"].(string),
+				Initialize:      controllerData["initialize"].(bool),
+				Mode:            controllerData["mode"].(string),
+				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
+				LogicalDrives:          logicalDrives,
 			})
 		}
-		serverProfile.LocalStorage.LogicalDrives = logicalDrives
+		// Gets Local Storage Sas Jbods Body
+		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
+		logicalJbod := make([]ov.LogicalJbod, 0)
+		for _, raw3 := range rawLocalStorageSasJbod {
+			sasLogicalJbodData := raw3.(map[string]interface{})
+			logicalJbod = append(logicalJbod, ov.LogicalJbod{
+				Description:       sasLogicalJbodData["description"].(string),
+				DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
+				DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
+				DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
+				DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
+				EraseData:         sasLogicalJbodData["erase_data"].(bool),
+				ID:                sasLogicalJbodData["id"].(int),
+				Name:              sasLogicalJbodData["name"].(string),
+				NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
+				Persistent:        sasLogicalJbodData["persistent"].(bool),
+			})
+		}
+		localStorage = ov.LocalStorageOptions{
+			ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+			Initialize:         localStorageItem["initialize"].(bool),
+			Controllers:        localStorageEmbeddedController,
+			SasLogicalJBODs:    logicalJbod,
+		}
 	}
+	serverProfile.LocalStorage = localStorage
 
 	// get SAN storage data if provided
 	if _, ok := d.GetOk("san_storage"); ok {
@@ -1136,6 +1280,76 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("boot_order", bootOrder)
 	}
 
+	overriddenSettings := make([]interface{}, 0, len(serverProfile.Bios.OverriddenSettings))
+	for _, overriddenSetting := range serverProfile.Bios.OverriddenSettings {
+		overriddenSettings = append(overriddenSettings, map[string]interface{}{
+			"id":    overriddenSetting.ID,
+			"value": overriddenSetting.Value,
+		})
+	}
+	if serverProfile.Bios != nil {
+		biosOptions := make([]map[string]interface{}, 0, 1)
+		biosOptions = append(biosOptions, map[string]interface{}{
+			"manage_bios":         serverProfile.Bios.ManageBios,
+			"reapply_state":       serverProfile.Bios.ReapplyState,
+			"consistency_state":   serverProfile.Bios.ConsistencyState,
+			"overridden_settings": overriddenSettings,
+		})
+
+		d.Set("bios_option", biosOptions)
+	}
+
+	// Gets Local Storage Body
+	localStorage := make([]map[string]interface{}, 0, 1)
+	// Gets Storage Controller Body
+	controllers := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers))
+	for i := 0; i < len(serverProfile.LocalStorage.Controllers); i++ {
+		logicalDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers[i].LogicalDrives))
+		for j := 0; j < len(serverProfile.LocalStorage.Controllers[i].LogicalDrives); j++ {
+			logicalDrives = append(logicalDrives, map[string]interface{}{
+				"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
+				"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+				"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
+				"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
+				"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
+				"num_spare_drives":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
+				"sas_logical_jbod_id": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
+				"raid_level":          serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
+			})
+		}
+		controllers = append(controllers, map[string]interface{}{
+			"device_slot":       serverProfile.LocalStorage.Controllers[i].DeviceSlot,
+			"initialize":        serverProfile.LocalStorage.Controllers[i].Initialize,
+			"drive_write_cache": serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
+			"mode":              serverProfile.LocalStorage.Controllers[i].Mode,
+			"predictive_spare_rebuild": serverProfile.LocalStorage.Controllers[i].PredictiveSpareRebuild,
+			"logical_drive":            logicalDrives,
+		})
+	}
+	// Gets Sas Logical Jbod Controller Body
+	sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
+	for i := 0; i < len(serverProfile.LocalStorage.SasLogicalJBODs); i++ {
+		sasLogDrives = append(sasLogDrives, map[string]interface{}{
+			"description":        serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
+			"device_slot":        serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
+			"drive_max_size_gb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
+			"drive_min_size_sb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
+			"drive_technology":   serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
+			"erase_data":         serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
+			"id":                 serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
+			"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
+			"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
+			"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+		})
+	}
+	localStorage = append(localStorage, map[string]interface{}{
+		"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
+		"initialize":           serverProfile.LocalStorage.Initialize,
+		"controller":           controllers,
+		"sas_logical_jbod":     sasLogDrives,
+	})
+	d.Set("local_storage", localStorage)
+
 	return nil
 }
 
@@ -1367,33 +1581,63 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			}
 			serverProfile.Firmware = firmware
 		}
-
-		// Get local storage data if provided
-		if _, ok := d.GetOk("local_storage"); ok {
-			rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
-			localStorage := ov.LocalStorageOptions{}
-			for _, raw := range rawLocalStorage {
-				localStorageItem := raw.(map[string]interface{})
-				localStorage = ov.LocalStorageOptions{
-					ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-					Initialize:         localStorageItem["initialize"].(bool),
+		rawLocalStorage := d.Get("localStorage").(*schema.Set).List()
+		localStorage := ov.LocalStorageOptions{}
+		for _, raw := range rawLocalStorage {
+			localStorageItem := raw.(map[string]interface{})
+			rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+			localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
+			for _, raw2 := range rawLocalStorageController {
+				controllerData := raw2.(map[string]interface{})
+				rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+				logicalDrives := make([]ov.LogicalDriveV3, 0)
+				for _, rawLogicalDrive := range rawLogicalDrives {
+					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+					logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
+						Bootable:          logicalDrivesItem["bootable"].(bool),
+						RaidLevel:         logicalDrivesItem["raid_level"].(string),
+						Accelerator:       logicalDrivesItem["accelerator"].(string),
+						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
+						Name:              logicalDrivesItem["name"].(string),
+						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
+						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
+						SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+					})
 				}
-			}
-			serverProfile.LocalStorage = localStorage
-		}
-
-		if _, ok := d.GetOk("logical_drives"); ok {
-			rawLogicalDrives := d.Get("logical_drives").(*schema.Set).List()
-			logicalDrives := make([]ov.LogicalDrive, 0)
-			for _, rawLogicalDrive := range rawLogicalDrives {
-				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-				logicalDrives = append(logicalDrives, ov.LogicalDrive{
-					Bootable:  logicalDrivesItem["bootable"].(bool),
-					RaidLevel: logicalDrivesItem["raid_level"].(string),
+				localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
+					DeviceSlot:      controllerData["device_slot"].(string),
+					DriveWriteCache: controllerData["drive_write_cache"].(string),
+					Initialize:      controllerData["initialize"].(bool),
+					Mode:            controllerData["mode"].(string),
+					PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
+					LogicalDrives:          logicalDrives,
 				})
 			}
-			serverProfile.LocalStorage.LogicalDrives = logicalDrives
+			rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
+			logicalJbod := make([]ov.LogicalJbod, 0)
+			for _, raw3 := range rawLocalStorageSasJbod {
+				sasLogicalJbodData := raw3.(map[string]interface{})
+				logicalJbod = append(logicalJbod, ov.LogicalJbod{
+					Description:       sasLogicalJbodData["description"].(string),
+					DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
+					DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
+					DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
+					DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
+					EraseData:         sasLogicalJbodData["erase_data"].(bool),
+					ID:                sasLogicalJbodData["id"].(int),
+					Name:              sasLogicalJbodData["name"].(string),
+					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
+					Persistent:        sasLogicalJbodData["persistent"].(bool),
+				})
+			}
+			localStorage = ov.LocalStorageOptions{
+				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				Initialize:         localStorageItem["initialize"].(bool),
+				Controllers:        localStorageEmbeddedController,
+				SasLogicalJBODs:    logicalJbod,
+			}
 		}
+		serverProfile.LocalStorage = localStorage
 
 		// get SAN storage data if provided
 		if _, ok := d.GetOk("san_storage"); ok {
