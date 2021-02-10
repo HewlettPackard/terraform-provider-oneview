@@ -2,7 +2,7 @@
 
 ## Build Status 
 
-OV Version | 5.60 Branch   | 5.50 Branch   | 5.40 Branch   | 5.30 Branch   |
+OV Version | 5.60   | 5.50   | 5.40    | 5.30    |
 | ------------- |:-------------:| -------------:| -------------:| -------------:|
 Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)
 
