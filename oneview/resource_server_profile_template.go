@@ -1312,17 +1312,17 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.Boot.Order = bootOrder
 	}
 
-        if val, ok := d.GetOk("bios_option"); ok{
+	if val, ok := d.GetOk("bios_option"); ok {
 		// Gets Bios Options
 		rawBiosOption := val.(*schema.Set).List()
 		biosOption := ov.BiosOption{}
-		for _, raw := range rawBiosOption{
+		for _, raw := range rawBiosOption {
 			rawBiosItem := raw.(map[string]interface{})
 			// Gets OverRiddenSettings for Bios Options
 			overriddenSettings := make([]ov.BiosSettings, 0)
 			rawoverRiddenSettings := rawBiosItem["overridden_settings"].(*schema.Set).List()
-			// Gets OverRidden Settings on overriddenSettings 
-			for _, vall := range rawoverRiddenSettings{
+			// Gets OverRidden Settings on overriddenSettings
+			for _, vall := range rawoverRiddenSettings {
 				rawOverriddenSettingItem := vall.(map[string]interface{})
 				overriddenSettings = append(overriddenSettings, ov.BiosSettings{
 					ID:    rawOverriddenSettingItem["id"].(string),
@@ -1331,13 +1331,13 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			// Gets Bios Options with OverRidden Settings on biosOption
 			biosOption = ov.BiosOption{
-				ManageBios:	rawBiosItem["manage_bios"].(bool),
+				ManageBios:         rawBiosItem["manage_bios"].(bool),
 				OverriddenSettings: overriddenSettings,
 			}
 		}
 		// Applies biosOption to Payload
 		serverProfileTemplate.Bios = &biosOption
-       }
+	}
 
 	if _, ok := d.GetOk("firmware"); ok {
 		rawFirmware := d.Get("firmware").(*schema.Set).List()
