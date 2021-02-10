@@ -388,7 +388,7 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"drive_slot": {
+									"device_slot": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -522,7 +522,7 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 									},
-									"templateUri": {
+									"template_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -1021,7 +1021,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			sasLogicalJbodData := raw3.(map[string]interface{})
 			logicalJbod = append(logicalJbod, ov.LogicalJbod{
 				Description:       sasLogicalJbodData["description"].(string),
-				DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
+				DeviceSlot:        sasLogicalJbodData["device_slot"].(string),
 				DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
 				DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
 				DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
@@ -1581,63 +1581,65 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			}
 			serverProfile.Firmware = firmware
 		}
-		rawLocalStorage := d.Get("localStorage").(*schema.Set).List()
-		localStorage := ov.LocalStorageOptions{}
-		for _, raw := range rawLocalStorage {
-			localStorageItem := raw.(map[string]interface{})
-			rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
-			localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
-			for _, raw2 := range rawLocalStorageController {
-				controllerData := raw2.(map[string]interface{})
-				rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
-				logicalDrives := make([]ov.LogicalDriveV3, 0)
-				for _, rawLogicalDrive := range rawLogicalDrives {
-					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-					logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
-						Bootable:          logicalDrivesItem["bootable"].(bool),
-						RaidLevel:         logicalDrivesItem["raid_level"].(string),
-						Accelerator:       logicalDrivesItem["accelerator"].(string),
-						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
-						Name:              logicalDrivesItem["name"].(string),
-						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-						SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+		if _, ok := d.GetOk("local_storage"); ok {
+			rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+			localStorage := ov.LocalStorageOptions{}
+			for _, raw := range rawLocalStorage {
+				localStorageItem := raw.(map[string]interface{})
+				rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+				localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
+				for _, raw2 := range rawLocalStorageController {
+					controllerData := raw2.(map[string]interface{})
+					rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+					logicalDrives := make([]ov.LogicalDriveV3, 0)
+					for _, rawLogicalDrive := range rawLogicalDrives {
+						logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+						logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
+							Bootable:          logicalDrivesItem["bootable"].(bool),
+							RaidLevel:         logicalDrivesItem["raid_level"].(string),
+							Accelerator:       logicalDrivesItem["accelerator"].(string),
+							DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
+							Name:              logicalDrivesItem["name"].(string),
+							NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
+							NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
+							SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+						})
+					}
+					localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
+						DeviceSlot:      controllerData["device_slot"].(string),
+						DriveWriteCache: controllerData["drive_write_cache"].(string),
+						Initialize:      controllerData["initialize"].(bool),
+						Mode:            controllerData["mode"].(string),
+						PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
+						LogicalDrives:          logicalDrives,
 					})
 				}
-				localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-					DeviceSlot:      controllerData["device_slot"].(string),
-					DriveWriteCache: controllerData["drive_write_cache"].(string),
-					Initialize:      controllerData["initialize"].(bool),
-					Mode:            controllerData["mode"].(string),
-					PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
-					LogicalDrives:          logicalDrives,
-				})
+				rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
+				logicalJbod := make([]ov.LogicalJbod, 0)
+				for _, raw3 := range rawLocalStorageSasJbod {
+					sasLogicalJbodData := raw3.(map[string]interface{})
+					logicalJbod = append(logicalJbod, ov.LogicalJbod{
+						Description:       sasLogicalJbodData["description"].(string),
+						DeviceSlot:        sasLogicalJbodData["device_slot"].(string),
+						DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
+						DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
+						DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
+						EraseData:         sasLogicalJbodData["erase_data"].(bool),
+						ID:                sasLogicalJbodData["id"].(int),
+						Name:              sasLogicalJbodData["name"].(string),
+						NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
+						Persistent:        sasLogicalJbodData["persistent"].(bool),
+					})
+				}
+				localStorage = ov.LocalStorageOptions{
+					ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+					Initialize:         localStorageItem["initialize"].(bool),
+					Controllers:        localStorageEmbeddedController,
+					SasLogicalJBODs:    logicalJbod,
+				}
 			}
-			rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
-			logicalJbod := make([]ov.LogicalJbod, 0)
-			for _, raw3 := range rawLocalStorageSasJbod {
-				sasLogicalJbodData := raw3.(map[string]interface{})
-				logicalJbod = append(logicalJbod, ov.LogicalJbod{
-					Description:       sasLogicalJbodData["description"].(string),
-					DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
-					DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
-					DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
-					DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
-					EraseData:         sasLogicalJbodData["erase_data"].(bool),
-					ID:                sasLogicalJbodData["id"].(int),
-					Name:              sasLogicalJbodData["name"].(string),
-					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
-					Persistent:        sasLogicalJbodData["persistent"].(bool),
-				})
-			}
-			localStorage = ov.LocalStorageOptions{
-				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				Initialize:         localStorageItem["initialize"].(bool),
-				Controllers:        localStorageEmbeddedController,
-				SasLogicalJBODs:    logicalJbod,
-			}
+			serverProfile.LocalStorage = localStorage
 		}
-		serverProfile.LocalStorage = localStorage
 
 		// get SAN storage data if provided
 		if _, ok := d.GetOk("san_storage"); ok {
