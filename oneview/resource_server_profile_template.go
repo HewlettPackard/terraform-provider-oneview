@@ -1145,13 +1145,13 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		d.Set("boot_order", bootOrder)
 	}
 	// Gets Local Storage Body
-	local_storage := make([]map[string]interface{}, 0, 1)
+	localStorage := make([]map[string]interface{}, 0, 1)
 	// Gets Storage Controller Body
 	controllers := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers))
 	for i := 0; i < len(spt.LocalStorage.Controllers); i++ {
-		logical_drives := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers[i].LogicalDrives))
+		logicalDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers[i].LogicalDrives))
 		for j := 0; j < len(spt.LocalStorage.Controllers[i].LogicalDrives); j++ {
-			logical_drives = append(logical_drives, map[string]interface{}{
+			logicalDrives = append(logicalDrives, map[string]interface{}{
 				"bootable":            spt.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 				"accelerator":         spt.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
 				"drive_technology":    spt.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
@@ -1168,13 +1168,13 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			"drive_write_cache": spt.LocalStorage.Controllers[i].DriveWriteCache,
 			"mode":              spt.LocalStorage.Controllers[i].Mode,
 			"predictive_spare_rebuild": spt.LocalStorage.Controllers[i].PredictiveSpareRebuild,
-			"logical_drive":            logical_drives,
+			"logical_drive":            logicalDrives,
 		})
 	}
 	// Gets Sas Logical Jbod Controller Body
-	sas_logDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.SasLogicalJBODs))
+	sasLogDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.SasLogicalJBODs))
 	for i := 0; i < len(spt.LocalStorage.SasLogicalJBODs); i++ {
-		sas_logDrives = append(sas_logDrives, map[string]interface{}{
+		sasLogDrives = append(sasLogDrives, map[string]interface{}{
 			"description":        spt.LocalStorage.SasLogicalJBODs[i].Description,
 			"device_slot":        spt.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
 			"drive_max_size_gb":  spt.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
@@ -1187,13 +1187,13 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			"persistent":         spt.LocalStorage.SasLogicalJBODs[i].Persistent,
 		})
 	}
-	local_storage = append(local_storage, map[string]interface{}{
+	localStorage = append(localStorage, map[string]interface{}{
 		"manage_local_storage": spt.LocalStorage.ManageLocalStorage,
 		"initialize":           spt.LocalStorage.Initialize,
 		"controller":           controllers,
-		"sas_logical_jbod":     sas_logDrives,
+		"sas_logical_jbod":     sasLogDrives,
 	})
-	d.Set("local_storage", local_storage)
+	d.Set("local_storage", localStorage)
 
 	return nil
 }
