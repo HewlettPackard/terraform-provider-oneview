@@ -75,6 +75,14 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeBool,
 							Required: true,
 						},
+						"consistency_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"overridden_settings": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -1270,6 +1278,25 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 		d.Set("boot_order", bootOrder)
+	}
+
+	overriddenSettings := make([]interface{}, 0, len(serverProfile.Bios.OverriddenSettings))
+	for _, overriddenSetting := range serverProfile.Bios.OverriddenSettings {
+		overriddenSettings = append(overriddenSettings, map[string]interface{}{
+			"id":    overriddenSetting.ID,
+			"value": overriddenSetting.Value,
+		})
+	}
+	if serverProfile.Bios != nil {
+		biosOptions := make([]map[string]interface{}, 0, 1)
+		biosOptions = append(biosOptions, map[string]interface{}{
+			"manage_bios":         serverProfile.Bios.ManageBios,
+			"reapply_state":       serverProfile.Bios.ReapplyState,
+			"consistency_state":   serverProfile.Bios.ConsistencyState,
+			"overridden_settings": overriddenSettings,
+		})
+
+		d.Set("bios_option", biosOptions)
 	}
 
 	// Gets Local Storage Body

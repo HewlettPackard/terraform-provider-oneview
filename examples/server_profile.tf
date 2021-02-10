@@ -12,6 +12,7 @@ data "oneview_scope" "scope" {
 }
 
 # Creates a server profile or Updates if already existing
+
 resource "oneview_server_profile" "SP" {
   name = "TestSP"
   hardware_name = "Synergy-Encl-2, bay 8"
@@ -19,41 +20,14 @@ resource "oneview_server_profile" "SP" {
 }
 
 # Creation of Server Profile without template
+
 resource "oneview_server_profile" "SP2" {
- 
-  name = "TestSP2jhg"
-  hardware_name = "0000A66101, bay 8"
+  name = "TestSP2"
+  hardware_name = "SYN03_Frame3, bay 1"
   type = "ServerProfileV12"
-  enclosure_group = "EG"
+  enclosure_group = "SYN03_EC"
   initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
-
-  boot_order = ["HardDisk"]
-  boot_mode = {
-    manage_mode = true
-    mode = "UEFIOptimized"
-    pxe_boot_policy = "Auto"
-  }
-
-  local_storage = {
-    controller = [{
-      device_slot =  "Embedded",
-      drive_write_cache = "Unmanaged",
-      initialize = false,
-      mode = "RAID",
-      predictive_spare_rebuild = "Unmanaged",
-      logical_drives = [{
-	accelerator = "Unmanaged",
-	bootable = false,
-	drive_technology = "SasHdd",
-	name = "TestLd",
-	num_physical_drives = 2,
-	raid_level = "RAID1"
-      }]
-    }]
-  }
-
 }
-
 
 # Updating Server profile
 resource "oneview_server_profile" "SP" {
@@ -86,19 +60,20 @@ resource "oneview_server_profile" "SP" {
 
 
 #Data source for server profile
+
 data "oneview_server_profile" "sp" {
-        name = "TestSP2"
+        name = "TestSP_Renamed"
 }
 
 output "oneview_server_profile_value" {
         value = "${data.oneview_server_profile.sp.uri}"
 }
 
-
+/*
 # To import an existing server profile to terraform, use the below code and run the following command:
+
 # terraform import <resource>.<instance_name> <resource_name>
 # Eg: terraform import oneview_server_profile.serverProfile Test
 
 resource "oneview_server_profile" "serverProfile" {
-}
-
+}*/
