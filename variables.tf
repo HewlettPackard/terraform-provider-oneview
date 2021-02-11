@@ -35,7 +35,7 @@ variable "ssl_enabled" {
  default = false
  description = "SSL Enabled"
 }
-
+ 
 variable "i3s_endpoint" {
  type = string
  default = false
