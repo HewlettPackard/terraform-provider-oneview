@@ -2,14 +2,10 @@
 
 ## Build Status 
 
-| 5.50 Branch   | 5.40 Branch   | 5.30 Branch   | 5.20 Branch   |
-| ------------- |:-------------:| -------------:| -------------:|
-| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)
-
 OV Version | 5.60 | 5.50 | 5.40 | 5.30 |
 | ------------- |:-------------:| -------------:| -------------:| -------------:|
 SDK Version/Tag | [v1.7.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0) | [v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) | [v1.4.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.4.0) |
-Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)|
+Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)|
 
 ## Introduction
 
@@ -81,7 +77,7 @@ Note: This provider SUPPORT Terraform 0.12 or above on master branch.
 # Download the source code for terraform-provider-oneview
 # Build the needed binary
 
-go get github.com/HewlettPackard/terraform-provider-oneview
+$ go get github.com/HewlettPackard/terraform-provider-oneview
 $ cd $GOPATH/src/github.com/HewlettPackard/terraform-provider-oneview    
 $ go build -o terraform-provider-oneview
 ```
