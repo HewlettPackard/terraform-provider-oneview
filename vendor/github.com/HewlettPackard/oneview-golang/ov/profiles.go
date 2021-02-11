@@ -44,7 +44,7 @@ type BootModeOption struct {
 	ManageMode    bool          `json:"manageMode"`              // "manageMode": true,
 	Mode          string        `json:"mode,omitempty"`          // "mode": "BIOS",
 	PXEBootPolicy utils.Nstring `json:"pxeBootPolicy,omitempty"` // "pxeBootPolicy": null
-	secureBoot    string        `json:"secureBoot,omitempty"`    // Enable or disable UEFI Secure Boot
+	SecureBoot    string        `json:"secureBoot,omitempty"`    // Enable or disable UEFI Secure Boot
 }
 
 // BootManagement management

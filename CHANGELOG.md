@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Notes
 - This release supports API2400 minimally where we can use OneView v5.60 with this SDK. 
 
+#### Major changes
+1. Added support for new endpoints in logical interconnect resource, logical interconnect data source and logical interconnect group data source.
+   - PUT /rest/logical-interconnects/{id}/portFlapSettings
+
 ### Oneview Features supported
 - Ethernet Network
 - Enclosure
@@ -33,6 +37,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Uplink Set
 
 ### Bug fixes & Enhancements:
+- [#233] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/233) terraform import oneview_server_profile_template missing settings.
+- [#234] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/234) local storage configuration.
 - [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
 
 # [v1.6.0]
