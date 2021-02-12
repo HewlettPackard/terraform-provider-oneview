@@ -68,7 +68,7 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 	Install Terraform 0.11.x [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
 
 ```bash 
-Note: This provider SUPPORT Terraform 0.12 or above on Terraform-0.12 branch.
+Note: This provider SUPPORT Terraform 0.12 on Terraform-0.12 branch.
 ```
 
 - Install Oneview Terraform Provider SDK
