@@ -85,18 +85,6 @@ $ go build -o terraform-provider-oneview
 $ mkdir -p ~/.terraform.d/plugins/
 $ mv terraform-provider-oneview ~/.terraform.d./plugins/
 
-```bash
-# Download and store a local copy of terraform-provider-oneview and
-# use it as a Docker image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-12-OV5.6
-
-# Run docker commands using the "ash" shell from Alpine, this will in turn create
-# a sh session where you can create files, issue commands and execute both
-# terraform and the provider with ease.
-$ docker run -it hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-12-OV5.6 /bin/sh
-
-```
-
 ## Configuration
 
 ### Environment Variables
