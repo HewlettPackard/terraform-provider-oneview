@@ -66,7 +66,7 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 - Installing Terraform
 
-	Install Terraform 0.12.x [from here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
+	Install Terraform 0.12.x from [here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
 
 ```bash 
 ```
