@@ -4,7 +4,7 @@
 
 OV Version | 5.60 | 5.50 | 5.40 | 5.30 |
 | ------------- |:-------------:| -------------:| -------------:| -------------:|
-SDK Version/Tag | [v1.7.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0) | [v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) | [v1.4.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.4.0) |
+SDK Version/Tag | [v1.7.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0) |[v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) | [v1.4.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.4.0) |
 Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)|
 
 ## Introduction
