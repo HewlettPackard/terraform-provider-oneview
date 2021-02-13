@@ -15,13 +15,13 @@ HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud 
 
 The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView and HPE Image Streamer.
 
-You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/latest)
+You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12)
 
 ## What's New
 
 HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 2400 (OneView v5.60)
 
-Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
+Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
 
 ## Getting Started 
 
@@ -103,7 +103,7 @@ $ export TF_VAR_ov_domain=<ov_domain>
 ### OneView Client Configuration
 
 The OneView Client configuration options that can be passed during OneView Client object creation:
-The variables are defined in [variable.tf](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/variables.tf) file.
+The variables are defined in [variable.tf](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/variables.tf) file.
 
 For OneView authentication, you need to provide the provider information in examples:
 
@@ -154,7 +154,7 @@ provider "oneview" {
 
 In the home directory of project(terraform-provider-oneview) user needs to create (or) copy  the file that is to be executed. 
 
-Sample example manifests are available in [example](https://github.com/HewlettPackard/terraform-provider-oneview/tree/master/examples) directory. 
+Sample example manifests are available in [example](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/examples) directory. 
 
 The following terraform commands has to be executed to test the example. 
 ```terraform
@@ -183,7 +183,7 @@ We welcome your contributions to the HPE OneView for Terraform Provider SDK.
 
 **Contributing:** You know the drill. Fork it, branch it, change it, commit it, and pull-request it.
 We are passionate about improving this project, and glad to accept help to make it better.
-For more information refer [CONTRIBUTING.md](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CONTRIBUTING.md) file.
+For more information refer [CONTRIBUTING.md](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/CONTRIBUTING.md) file.
 
 NOTE: We reserve the right to reject changes that we feel do not fit the scope of this project, so for feature additions, please open an issue to discuss your ideas before doing the work.
 
