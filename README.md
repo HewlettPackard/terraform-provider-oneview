@@ -4,7 +4,7 @@
 
 OV Version | 5.60 | 5.50 | 5.40 | 5.30 |
 | ------------- |:-------------:| -------------:| -------------:| -------------:|
-SDK Version/Tag | [v1.7.0-0.11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0) |[v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) | [v1.4.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.4.0) |
+SDK Version/Tag | [v1.7.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-11) |[v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) | [v1.4.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.4.0) |
 Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)|
 
 ## Introduction
@@ -34,10 +34,10 @@ The light weight containerized version of the HPE OneView SDK for Terraform is a
 
 ```bash
 # Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-0.11-OV5.6
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-11-OV5.6
 # Run docker commands below given, which  will in turn create a sh session 
 # where you can create files, issue commands and execute the examples.
-$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-0.11-OV5.6 /bin/sh
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-11-OV5.6 /bin/sh
 ```
 
 ### Local Setup
