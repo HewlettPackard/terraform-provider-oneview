@@ -386,7 +386,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"drive_slot": {
+									"device_slot": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -901,7 +901,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			sasLogicalJbodData := raw3.(map[string]interface{})
 			logicalJbod = append(logicalJbod, ov.LogicalJbod{
 				Description:       sasLogicalJbodData["description"].(string),
-				DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
+				DeviceSlot:        sasLogicalJbodData["device_slot"].(string),
 				DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
 				DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
 				DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
@@ -1397,7 +1397,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			sasLogicalJbodData := raw3.(map[string]interface{})
 			logicalJbod = append(logicalJbod, ov.LogicalJbod{
 				Description:       sasLogicalJbodData["description"].(string),
-				DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
+				DeviceSlot:        sasLogicalJbodData["device_slot"].(string),
 				DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
 				DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
 				DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
