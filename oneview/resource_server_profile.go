@@ -15,10 +15,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	"strings"
 )
 
 func resourceServerProfile() *schema.Resource {
@@ -1794,6 +1795,42 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 	}
 
+	serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(d.Get("template").(string))
+	if err != nil || serverProfileTemplate.URI.IsNil() {
+		return fmt.Errorf("Could not find Server Profile Template\n%+v", d.Get("template").(string))
+	}
+
+	serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
+
+	// ----------------------------------------------------------------------------------
+	// var serverHardware ov.ServerHardware
+	// if val, ok := d.GetOk("hardware_name"); ok {
+	//     serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
+	//     if err != nil {
+	//         return err
+	//     }
+	// } else {
+	//     var hwFilters = []string{}
+	//     for _, filter := range d.Get("hw_filter").([]interface{}) {
+	//         hwFilters = append(hwFilters, filter.(string))
+	//     }
+	//     serverHardware, err = getServerHardware(config, serverProfileTemplate, hwFilters)
+	//     if err != nil {
+	//         return err
+	//     }
+	// }
+	//
+	// if d.Get("power_state").(string) == "on" {
+	//     if err = serverHardware.PowerOn(); err != nil {
+	//         return err
+	//     }
+	// }
+	// ----------------------------------------------------------------------------------
+
+	if err := config.ovClient.UpdateServerProfile(serverProfile); err != nil {
+		return err
+	}
+
 	return resourceServerProfileRead(d, meta)
 
 }
@@ -1814,9 +1851,11 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, f
 
 	var (
 		hwlist ov.ServerHardwareList
-		f      = []string{"serverHardwareTypeUri='" + serverProfileTemplate.ServerHardwareTypeURI.String() + "'",
-			"serverGroupUri='" + serverProfileTemplate.EnclosureGroupURI.String() + "'",
-			"state='NoProfileApplied'"}
+		f      = []string{
+			fmt.Sprintf("serverHardwareTypeUri=%q", serverProfileTemplate.ServerHardwareTypeURI),
+			fmt.Sprintf("serverGroupUri=%q", serverProfileTemplate.EnclosureGroupURI),
+			`state="NoProfileApplied"`,
+		}
 	)
 
 	f = append(f, filters...)
@@ -1827,6 +1866,7 @@ func getServerHardware(config *Config, serverProfileTemplate ov.ServerProfile, f
 		}
 		return hw, err
 	}
+
 	for _, h := range hwlist.Members {
 		if _, reserved := serverHardwareURIs[h.URI.String()]; !reserved {
 			serverHardwareURIs[h.URI.String()] = true // Mark as reserved
