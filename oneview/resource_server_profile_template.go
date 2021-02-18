@@ -799,9 +799,9 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.Boot.ManageBoot = true
 		serverProfileTemplate.Boot.Order = bootOrder
 		rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-		manage_mode := rawBootMode["manage_mode"].(bool)
+		manageMode := rawBootMode["manage_mode"].(bool)
 		serverProfileTemplate.BootMode = ov.BootModeOption{
-			ManageMode:    &manage_mode,
+			ManageMode:    &manageMode,
 			Mode:          rawBootMode["mode"].(string),
 			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
 		}
@@ -824,9 +824,9 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					Value: rawOverriddenSettingItem["value"].(string),
 				})
 			}
-			manage_bios := rawBiosItem["manage_bios"].(bool)
+			manageBios := rawBiosItem["manage_bios"].(bool)
 			biosOption = ov.BiosOption{
-				ManageBios:         &manage_bios,
+				ManageBios:         &manageBios,
 				OverriddenSettings: overriddenSettings,
 			}
 		}
@@ -1334,9 +1334,9 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				})
 			}
 			// Gets Bios Options with OverRidden Settings on biosOption
-			manage_bios := rawBiosItem["manage_bios"].(bool)
+			manageBios := rawBiosItem["manage_bios"].(bool)
 			biosOption = ov.BiosOption{
-				ManageBios:         &manage_bios,
+				ManageBios:         &manageBios,
 				OverriddenSettings: overriddenSettings,
 			}
 		}

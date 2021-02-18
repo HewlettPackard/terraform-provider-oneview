@@ -918,9 +918,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.Boot.ManageBoot = true
 		serverProfile.Boot.Order = bootOrder
 		rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-		manage_mode := rawBootMode["manage_mode"].(bool)
+		manageMode := rawBootMode["manage_mode"].(bool)
 		serverProfile.BootMode = ov.BootModeOption{
-			ManageMode:    &manage_mode,
+			ManageMode:    &manageMode,
 			Mode:          rawBootMode["mode"].(string),
 			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
 			SecureBoot:    rawBootMode["secure_boot"].(string),
@@ -944,9 +944,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Value: rawOverriddenSettingItem["value"].(string),
 				})
 			}
-			manage_bios := rawBiosItem["manage_bios"].(bool)
+			manageBios := rawBiosItem["manage_bios"].(bool)
 			biosOption = ov.BiosOption{
-				ManageBios:         &manage_bios,
+				ManageBios:         &manageBios,
 				OverriddenSettings: overriddenSettings,
 			}
 		}
@@ -1525,9 +1525,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.Boot.ManageBoot = true
 			serverProfile.Boot.Order = bootOrder
 			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-			manage_mode := rawBootMode["manage_mode"].(bool)
+			manageMode := rawBootMode["manage_mode"].(bool)
 			serverProfile.BootMode = ov.BootModeOption{
-				ManageMode:    &manage_mode,
+				ManageMode:    &manageMode,
 				Mode:          rawBootMode["mode"].(string),
 				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
 			}
@@ -1550,9 +1550,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Value: rawOverriddenSettingItem["value"].(string),
 					})
 				}
-				manage_bios := rawBiosItem["manage_bios"].(bool)
+				manageBios := rawBiosItem["manage_bios"].(bool)
 				biosOption = ov.BiosOption{
-					ManageBios:         &manage_bios,
+					ManageBios:         &manageBios,
 					OverriddenSettings: overriddenSettings,
 				}
 			}
