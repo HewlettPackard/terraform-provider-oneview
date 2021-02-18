@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2200
   ov_ifmatch = "*"
 }
 
@@ -18,7 +18,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
         server_hardware_type = "SY 480 Gen9 1"
         initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
         bios_option = {
-      		manage_bios = "true"	
+      		manage_bios = true
 		overridden_settings = [
 		{
 			id =  "TimeFormat"
@@ -27,7 +27,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 	}
 	boot_order = ["HardDisk"]
 	boot_mode = {
-		manage_mode = "true"
+		manage_mode = true
 		mode = "UEFIOptimized"
 		pxe_boot_policy = "Auto"
 	}
@@ -35,17 +35,17 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 		controller = [{
 			device_slot =  "Embedded"
 			drive_write_cache = "Unmanaged"
-			initialize = "true"
+			initialize = false
 			mode = "RAID"
 			predictive_spare_rebuild = "Unmanaged"
 			logical_drives = [{
 				accelerator = "Unmanaged"
-				bootable = "true"
+				bootable = false
 				drive_technology = "SasHdd"
 				name = "TestLd"
 				num_physical_drives = 2
 				raid_level = "RAID1"
-			}]
+			},]
 		}]
 	}
 }
@@ -56,7 +56,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
         name = "TestServerProfileTemplate"
         type = "ServerProfileTemplateV8"
-        enclosure_group = "EG-Synergy-Local"
+        enclosure_group = "EG"
         server_hardware_type = "SY 480 Gen9 1"
         initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
 	boot_order = ["HardDisk"]
@@ -69,7 +69,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 		controller = [{
 			device_slot =  "Embedded",
 			drive_write_cache = "Unmanaged",
-			initialize = false,
+			initialize = true,
 			mode = "RAID",
 			predictive_spare_rebuild = "Unmanaged",
 			logical_drives = [{

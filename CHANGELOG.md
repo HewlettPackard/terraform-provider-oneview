@@ -1,7 +1,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.7.0] (Unreleased)
+# [v1.7.0] 
 ### Notes
 - This release supports API2400 minimally where we can use OneView v5.60 with this SDK. 
 
@@ -37,9 +37,10 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Uplink Set
 
 ### Bug fixes & Enhancements:
-- [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
 - [#233] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/233) terraform import oneview_server_profile_template missing settings.
 - [#234] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/234) local storage configuration.
+- [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
+- [#267] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/267) local_storage not working as expected.
 
 # [v1.6.0]
 ### Notes

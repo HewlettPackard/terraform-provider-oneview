@@ -918,8 +918,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.Boot.ManageBoot = true
 		serverProfile.Boot.Order = bootOrder
 		rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+		manage_mode := rawBootMode["manage_mode"].(bool)
 		serverProfile.BootMode = ov.BootModeOption{
-			ManageMode:    rawBootMode["manage_mode"].(bool),
+			ManageMode:    &manage_mode,
 			Mode:          rawBootMode["mode"].(string),
 			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
 			SecureBoot:    rawBootMode["secure_boot"].(string),
@@ -943,8 +944,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Value: rawOverriddenSettingItem["value"].(string),
 				})
 			}
+			manage_bios := rawBiosItem["manage_bios"].(bool)
 			biosOption = ov.BiosOption{
-				ManageBios:         rawBiosItem["manage_bios"].(bool),
+				ManageBios:         &manage_bios,
 				OverriddenSettings: overriddenSettings,
 			}
 		}
@@ -994,8 +996,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			logicalDrives := make([]ov.LogicalDriveV3, 0)
 			for _, rawLogicalDrive := range rawLogicalDrives {
 				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+				boot := logicalDrivesItem["bootable"].(bool)
 				logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
-					Bootable:          logicalDrivesItem["bootable"].(bool),
+					Bootable:          &boot,
 					RaidLevel:         logicalDrivesItem["raid_level"].(string),
 					Accelerator:       logicalDrivesItem["accelerator"].(string),
 					DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
@@ -1005,10 +1008,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
 				})
 			}
+			init := controllerData["initialize"].(bool)
 			localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
 				DeviceSlot:      controllerData["device_slot"].(string),
 				DriveWriteCache: controllerData["drive_write_cache"].(string),
-				Initialize:      controllerData["initialize"].(bool),
+				Initialize:      &init,
 				Mode:            controllerData["mode"].(string),
 				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 				LogicalDrives:          logicalDrives,
@@ -1521,8 +1525,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.Boot.ManageBoot = true
 			serverProfile.Boot.Order = bootOrder
 			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+			manage_mode := rawBootMode["manage_mode"].(bool)
 			serverProfile.BootMode = ov.BootModeOption{
-				ManageMode:    rawBootMode["manage_mode"].(bool),
+				ManageMode:    &manage_mode,
 				Mode:          rawBootMode["mode"].(string),
 				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
 			}
@@ -1545,8 +1550,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Value: rawOverriddenSettingItem["value"].(string),
 					})
 				}
+				manage_bios := rawBiosItem["manage_bios"].(bool)
 				biosOption = ov.BiosOption{
-					ManageBios:         rawBiosItem["manage_bios"].(bool),
+					ManageBios:         &manage_bios,
 					OverriddenSettings: overriddenSettings,
 				}
 			}
@@ -1594,8 +1600,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					logicalDrives := make([]ov.LogicalDriveV3, 0)
 					for _, rawLogicalDrive := range rawLogicalDrives {
 						logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+						boot := logicalDrivesItem["bootable"].(bool)
 						logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
-							Bootable:          logicalDrivesItem["bootable"].(bool),
+							Bootable:          &boot,
 							RaidLevel:         logicalDrivesItem["raid_level"].(string),
 							Accelerator:       logicalDrivesItem["accelerator"].(string),
 							DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
@@ -1605,10 +1612,11 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
 						})
 					}
+					init := controllerData["initialize"].(bool)
 					localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
 						DeviceSlot:      controllerData["device_slot"].(string),
 						DriveWriteCache: controllerData["drive_write_cache"].(string),
-						Initialize:      controllerData["initialize"].(bool),
+						Initialize:      &init,
 						Mode:            controllerData["mode"].(string),
 						PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 						LogicalDrives:          logicalDrives,
