@@ -11,12 +11,15 @@ data "oneview_scope" "scope" {
         name = "testing"
 }
 
-# Creates a server profile or Updates if already existing
+# Creates a server profile from server profile tempalte
 
-resource "oneview_server_profile" "SP" {
+resource "oneview_server_profile" "SP2" {
   name = "TestSP"
   hardware_name = "Synergy-Encl-2, bay 8"
   type = "ServerProfileV12"
+  enclosure_group = "SYN03_EC"
+  initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
+  template = "TestServerProfileTemplate"
 }
 
 # Creation of Server Profile without template
