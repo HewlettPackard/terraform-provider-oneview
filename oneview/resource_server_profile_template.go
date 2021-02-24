@@ -16,8 +16,6 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
-	//	"encoding/json"
-	//	"io/ioutil"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
@@ -98,6 +96,14 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"compliance_control": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"connections": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -107,13 +113,21 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Required: true,
 									},
+									"allocated_mbps": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"allocated_vfs": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
 									"function_type": {
 										Type:     schema.TypeString,
-										Required: true,
+										Optional: true,
 									},
 									"network_uri": {
 										Type:     schema.TypeString,
-										Required: true,
+										Optional: true,
 									},
 									"port_id": {
 										Type:     schema.TypeString,
@@ -125,8 +139,76 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Optional: true,
 										Default:  "2500",
 									},
+									"requested_vfs": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"state": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwnn": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwpn": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwpn_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 									"id": {
 										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"interconnect_port": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"interconnect_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"isolated_trunk": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"lag_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mac": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mac_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"managed": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"maximum_mbps": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"network_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"private_vlan_port_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"request_": {
+										Type:     schema.TypeString,
 										Optional: true,
 									},
 									"boot": {
@@ -138,6 +220,11 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
+												"boot_vlan_id": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+
 												"ethernet_boot_type": {
 													Type:     schema.TypeString,
 													Optional: true,
@@ -156,15 +243,39 @@ func resourceServerProfileTemplate() *schema.Resource {
 																Type:     schema.TypeString,
 																Optional: true,
 															},
+															"chap_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"chap_secret": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"initiator_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"initiator_name_source": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"mutual_chap_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"boot_target_lun": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"boot_target_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
 															"first_boot_target_ip": {
 																Type:     schema.TypeString,
 																Optional: true,
 															},
 															"first_boot_target_port": {
-																Type:     schema.TypeString,
-																Optional: true,
-															},
-															"initiator_name_source": {
 																Type:     schema.TypeString,
 																Optional: true,
 															},
@@ -188,6 +299,14 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"gateway": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"ip_address": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"subnet_mask": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
@@ -764,9 +883,12 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 								}
 							}
 						}
-
+						bootOptionV3 := ov.BootOptionV3{
+							BootVlanId: bootItem["boot_vlan_id"].(int),
+						}
 						bootOptions = ov.BootOption{
 							Priority:         bootItem["priority"].(string),
+							BootOptionV3:     bootOptionV3,
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
@@ -781,6 +903,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 						rawIpv4Item := rawIpv4.(map[string]interface{})
 						ipv4 = ov.Ipv4Option{
 							Gateway:         rawIpv4Item["gateway"].(string),
+							SubnetMask:      rawIpv4Item["subnet_mask"].(string),
 							IpAddressSource: rawIpv4Item["ip_address_source"].(string),
 						}
 					}
@@ -789,6 +912,10 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				networks = append(networks, ov.Connection{
 					ID:            rawNetworkItem["id"].(int),
 					Name:          rawNetworkItem["name"].(string),
+					IsolatedTrunk: rawNetworkItem["isolated_trunk"].(bool),
+					LagName:       rawNetworkItem["lag_name"].(string),
+					Managed:       rawNetworkItem["managed"].(bool),
+					NetworkName:   rawNetworkItem["network_name"].(string),
 					FunctionType:  rawNetworkItem["function_type"].(string),
 					NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
 					PortID:        rawNetworkItem["port_id"].(string),
@@ -799,6 +926,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			serverProfileTemplate.ConnectionSettings = ov.ConnectionSettings{
 				Connections:       networks,
+				ComplianceControl: rawConSetting["compliance_control"].(string),
 				ManageConnections: rawConSetting["manage_connections"].(bool),
 			}
 		}
@@ -1295,11 +1423,15 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 								}
 							}
 						}
+						bootOptionV3 := ov.BootOptionV3{
+							BootVlanId: bootItem["boot_vlan_id"].(int),
+						}
 
 						bootOptions = ov.BootOption{
 							Priority:         bootItem["priority"].(string),
-							EthernetBootType: bootItem["ethernet_boot_type"].(string),
+							BootOptionV3:     bootOptionV3,
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
+							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							Iscsi:            &iscsi,
 						}
 					}
@@ -1312,6 +1444,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 						rawIpv4Item := rawIpv4.(map[string]interface{})
 						ipv4 = ov.Ipv4Option{
 							Gateway:         rawIpv4Item["gateway"].(string),
+							SubnetMask:      rawIpv4Item["subnet_mask"].(string),
 							IpAddressSource: rawIpv4Item["ip_address_source"].(string),
 						}
 					}
@@ -1324,12 +1457,17 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
 					PortID:        rawNetworkItem["port_id"].(string),
 					RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+					IsolatedTrunk: rawNetworkItem["isolated_trunk"].(bool),
+					LagName:       rawNetworkItem["lag_name"].(string),
+					Managed:       rawNetworkItem["managed"].(bool),
+					NetworkName:   rawNetworkItem["network_name"].(string),
 					Ipv4:          &ipv4,
 					Boot:          &bootOptions,
 				})
 			}
 			serverProfileTemplate.ConnectionSettings = ov.ConnectionSettings{
 				Connections:       networks,
+				ComplianceControl: rawConSetting["compliance_control"].(string),
 				ManageConnections: rawConSetting["manage_connections"].(bool),
 			}
 		}
