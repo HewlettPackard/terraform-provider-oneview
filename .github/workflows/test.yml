@@ -3,7 +3,7 @@ name: Run Tests
 on:
     pull_request:
         branches:
-            - Terraform-0.12
+            - master
  
  
 jobs:
