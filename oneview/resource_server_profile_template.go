@@ -16,6 +16,8 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	//	"encoding/json"
+	//	"io/ioutil"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
@@ -87,103 +89,114 @@ func resourceServerProfileTemplate() *schema.Resource {
 					},
 				},
 			},
-			"network": {
+			"connection_settings": {
 				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"function_type": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-						},
-						"network_uri": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"port_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "Lom 1:1-a",
-						},
-						"requested_mbps": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "2500",
-						},
-						"id": {
-							Type:     schema.TypeInt,
+						"manage_connections": {
+							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"boot": {
+						"connections": {
 							Optional: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"priority": {
+									"name": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"function_type": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"network_uri": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"port_id": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Default:  "Lom 1:1-a",
 									},
-									"ethernet_boot_type": {
+									"requested_mbps": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Default:  "2500",
 									},
-									"boot_volume_source": {
-										Type:     schema.TypeString,
+									"id": {
+										Type:     schema.TypeInt,
 										Optional: true,
 									},
-									"iscsi": {
+									"boot": {
+										Optional: true,
 										Type:     schema.TypeSet,
-										Optional: true,
-										MaxItems: 1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"chap_level": {
+												"priority": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"first_boot_target_ip": {
+												"ethernet_boot_type": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"first_boot_target_port": {
+												"boot_volume_source": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"initiator_name_source": {
+												"iscsi": {
+													Type:     schema.TypeSet,
+													Optional: true,
+													MaxItems: 1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"chap_level": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"first_boot_target_ip": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"first_boot_target_port": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"initiator_name_source": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"second_boot_target_ip": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"second_boot_target_port": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"ipv4": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"gateway": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"second_boot_target_ip": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"second_boot_target_port": {
+												"ip_address_source": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
 											},
 										},
-									},
-								},
-							},
-						},
-						"ipv4": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"gateway": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"ip_address_source": {
-										Type:     schema.TypeString,
-										Optional: true,
 									},
 								},
 							},
@@ -215,10 +228,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
-			},
-			"manage_connections": {
-				Type:     schema.TypeBool,
-				Optional: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -727,67 +736,72 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
-	rawNetwork := d.Get("network").(*schema.Set).List()
-	networks := make([]ov.Connection, 0)
-	for _, rawNet := range rawNetwork {
-		rawNetworkItem := rawNet.(map[string]interface{})
+	if val, ok := d.GetOk("connection_settings"); ok {
+		connections := val.(*schema.Set).List()
+		for _, rawConSettings := range connections {
+			rawConSetting := rawConSettings.(map[string]interface{})
+			rawNetwork := rawConSetting["connections"].(*schema.Set).List()
+			networks := make([]ov.Connection, 0)
+			for _, rawNet := range rawNetwork {
+				rawNetworkItem := rawNet.(map[string]interface{})
+				bootOptions := ov.BootOption{}
+				if rawNetworkItem["boot"] != nil {
+					rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+					for _, rawBoot := range rawBoots {
+						bootItem := rawBoot.(map[string]interface{})
 
-		bootOptions := ov.BootOption{}
-		if rawNetworkItem["boot"] != nil {
-			rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
-			for _, rawBoot := range rawBoots {
-				bootItem := rawBoot.(map[string]interface{})
+						iscsi := ov.BootIscsi{}
+						if bootItem["iscsi"] != nil {
+							rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+							for _, rawIscsi := range rawIscsis {
+								rawIscsiItem := rawIscsi.(map[string]interface{})
+								iscsi = ov.BootIscsi{
+									Chaplevel:            rawIscsiItem["chap_level"].(string),
+									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
+									FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+									SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
+									SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+								}
+							}
+						}
 
-				iscsi := ov.BootIscsi{}
-				if bootItem["iscsi"] != nil {
-					rawIscsis := bootItem["iscsi"].(*schema.Set).List()
-					for _, rawIscsi := range rawIscsis {
-						rawIscsiItem := rawIscsi.(map[string]interface{})
-						iscsi = ov.BootIscsi{
-							Chaplevel:            rawIscsiItem["chap_level"].(string),
-							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
-							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
-							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+						bootOptions = ov.BootOption{
+							Priority:         bootItem["priority"].(string),
+							EthernetBootType: bootItem["ethernet_boot_type"].(string),
+							BootVolumeSource: bootItem["boot_volume_source"].(string),
+							Iscsi:            &iscsi,
 						}
 					}
 				}
 
-				bootOptions = ov.BootOption{
-					Priority:         bootItem["priority"].(string),
-					EthernetBootType: bootItem["ethernet_boot_type"].(string),
-					BootVolumeSource: bootItem["boot_volume_source"].(string),
-					Iscsi:            &iscsi,
+				ipv4 := ov.Ipv4Option{}
+				if rawNetworkItem["ipv4"] != nil {
+					rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+					for _, rawIpv4 := range rawIpv4s {
+						rawIpv4Item := rawIpv4.(map[string]interface{})
+						ipv4 = ov.Ipv4Option{
+							Gateway:         rawIpv4Item["gateway"].(string),
+							IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+						}
+					}
 				}
+
+				networks = append(networks, ov.Connection{
+					ID:            rawNetworkItem["id"].(int),
+					Name:          rawNetworkItem["name"].(string),
+					FunctionType:  rawNetworkItem["function_type"].(string),
+					NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+					PortID:        rawNetworkItem["port_id"].(string),
+					RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+					Ipv4:          &ipv4,
+					Boot:          &bootOptions,
+				})
+			}
+			serverProfileTemplate.ConnectionSettings = ov.ConnectionSettings{
+				Connections:       networks,
+				ManageConnections: rawConSetting["manage_connections"].(bool),
 			}
 		}
-
-		ipv4 := ov.Ipv4Option{}
-		if rawNetworkItem["ipv4"] != nil {
-			rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
-			for _, rawIpv4 := range rawIpv4s {
-				rawIpv4Item := rawIpv4.(map[string]interface{})
-				ipv4 = ov.Ipv4Option{
-					Gateway:         rawIpv4Item["gateway"].(string),
-					IpAddressSource: rawIpv4Item["ip_address_source"].(string),
-				}
-			}
-		}
-
-		networks = append(networks, ov.Connection{
-			ID:            rawNetworkItem["id"].(int),
-			Name:          rawNetworkItem["name"].(string),
-			FunctionType:  rawNetworkItem["function_type"].(string),
-			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
-			PortID:        rawNetworkItem["port_id"].(string),
-			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
-			Ipv4:          &ipv4,
-			Boot:          &bootOptions,
-		})
-	}
-	if val, ok := d.GetOk("manage_connections"); ok {
-		serverProfileTemplate.ConnectionSettings.ManageConnections = val.(bool)
-		serverProfileTemplate.ConnectionSettings.Connections = networks
 	}
 
 	if val, ok := d.GetOk("boot_order"); ok {
@@ -1134,8 +1148,14 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"requested_mbps": rawNet.RequestedMbps,
 			})
 		}
-		d.Set("network", networks)
+		connection_settings := make([]map[string]interface{}, 0, 1)
+		connection_settings = append(connection_settings, map[string]interface{}{
+			"connections":        networks,
+			"manage_connections": spt.ConnectionSettings.ManageConnections,
+		})
+		d.Set("connection_settings", connection_settings)
 	}
+
 	if spt.Boot.ManageBoot {
 		bootOrder := make([]interface{}, 0)
 		for _, currBoot := range spt.Boot.Order {
@@ -1247,65 +1267,73 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
-	rawNetwork := d.Get("network").(*schema.Set).List()
-	networks := make([]ov.Connection, 0)
-	for _, rawNet := range rawNetwork {
-		rawNetworkItem := rawNet.(map[string]interface{})
+	if val, ok := d.GetOk("connection_settings"); ok {
+		connections := val.(*schema.Set).List()
+		for _, rawConSettings := range connections {
+			rawConSetting := rawConSettings.(map[string]interface{})
+			rawNetwork := rawConSetting["connections"].(*schema.Set).List()
+			networks := make([]ov.Connection, 0)
+			for _, rawNet := range rawNetwork {
+				rawNetworkItem := rawNet.(map[string]interface{})
+				bootOptions := ov.BootOption{}
+				if rawNetworkItem["boot"] != nil {
+					rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+					for _, rawBoot := range rawBoots {
+						bootItem := rawBoot.(map[string]interface{})
 
-		bootOptions := ov.BootOption{}
-		if rawNetworkItem["boot"] != nil {
-			rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
-			for _, rawBoot := range rawBoots {
-				bootItem := rawBoot.(map[string]interface{})
+						iscsi := ov.BootIscsi{}
+						if bootItem["iscsi"] != nil {
+							rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+							for _, rawIscsi := range rawIscsis {
+								rawIscsiItem := rawIscsi.(map[string]interface{})
+								iscsi = ov.BootIscsi{
+									Chaplevel:            rawIscsiItem["chap_level"].(string),
+									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
+									FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+									SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
+									SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+								}
+							}
+						}
 
-				iscsi := ov.BootIscsi{}
-				if bootItem["iscsi"] != nil {
-					rawIscsis := bootItem["iscsi"].(*schema.Set).List()
-					for _, rawIscsi := range rawIscsis {
-						rawIscsiItem := rawIscsi.(map[string]interface{})
-						iscsi = ov.BootIscsi{
-							Chaplevel:            rawIscsiItem["chap_level"].(string),
-							FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-							FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
-							SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
-							SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
+						bootOptions = ov.BootOption{
+							Priority:         bootItem["priority"].(string),
+							EthernetBootType: bootItem["ethernet_boot_type"].(string),
+							BootVolumeSource: bootItem["boot_volume_source"].(string),
+							Iscsi:            &iscsi,
 						}
 					}
 				}
 
-				bootOptions = ov.BootOption{
-					Priority:         bootItem["priority"].(string),
-					EthernetBootType: bootItem["ethernet_boot_type"].(string),
-					BootVolumeSource: bootItem["boot_volume_source"].(string),
-					Iscsi:            &iscsi,
+				ipv4 := ov.Ipv4Option{}
+				if rawNetworkItem["ipv4"] != nil {
+					rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+					for _, rawIpv4 := range rawIpv4s {
+						rawIpv4Item := rawIpv4.(map[string]interface{})
+						ipv4 = ov.Ipv4Option{
+							Gateway:         rawIpv4Item["gateway"].(string),
+							IpAddressSource: rawIpv4Item["ip_address_source"].(string),
+						}
+					}
 				}
+
+				networks = append(networks, ov.Connection{
+					ID:            rawNetworkItem["id"].(int),
+					Name:          rawNetworkItem["name"].(string),
+					FunctionType:  rawNetworkItem["function_type"].(string),
+					NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+					PortID:        rawNetworkItem["port_id"].(string),
+					RequestedMbps: rawNetworkItem["requested_mbps"].(string),
+					Ipv4:          &ipv4,
+					Boot:          &bootOptions,
+				})
+			}
+			serverProfileTemplate.ConnectionSettings = ov.ConnectionSettings{
+				Connections:       networks,
+				ManageConnections: rawConSetting["manage_connections"].(bool),
 			}
 		}
-
-		ipv4 := ov.Ipv4Option{}
-		if rawNetworkItem["ipv4"] != nil {
-			rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
-			for _, rawIpv4 := range rawIpv4s {
-				rawIpv4Item := rawIpv4.(map[string]interface{})
-				ipv4 = ov.Ipv4Option{
-					Gateway:         rawIpv4Item["gateway"].(string),
-					IpAddressSource: rawIpv4Item["ip_address_source"].(string),
-				}
-			}
-		}
-
-		networks = append(networks, ov.Connection{
-			ID:            rawNetworkItem["id"].(int),
-			Name:          rawNetworkItem["name"].(string),
-			FunctionType:  rawNetworkItem["function_type"].(string),
-			NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
-			PortID:        rawNetworkItem["port_id"].(string),
-			RequestedMbps: rawNetworkItem["requested_mbps"].(string),
-			Ipv4:          &ipv4,
-			Boot:          &bootOptions,
-		})
 	}
-
 	if val, ok := d.GetOk("boot_order"); ok {
 		rawBootOrder := val.(*schema.Set).List()
 		bootOrder := make([]string, len(rawBootOrder))

@@ -38,9 +38,11 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Bug fixes & Enhancements:
 - [#233] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/233) terraform import oneview_server_profile_template missing settings.
+- [#238] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/238) server profile connection settings
 - [#234] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/234) local storage configuration.
 - [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
 - [#267] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/267) local_storage not working as expected.
+- [#268] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/268) local storage issue ( defined in server profile template). 
 
 # [v1.6.0]
 ### Notes

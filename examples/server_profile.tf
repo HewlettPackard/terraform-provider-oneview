@@ -26,23 +26,39 @@ resource "oneview_server_profile" "SP2" {
 
 resource "oneview_server_profile" "SP2" {
   name = "TestSP2"
-  hardware_name = "SYN03_Frame3, bay 1"
+  hardware_name = "0000A66101, bay 5"
   type = "ServerProfileV12"
-  enclosure_group = "SYN03_EC"
-  initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
+  enclosure_group = "EG"
+  boot_order = ["HardDisk"]
+  boot_mode = {
+	manage_mode = true
+	mode = "UEFIOptimized"
+	pxe_boot_policy = "Auto"
+  }
+  connection_settings = {
+    connections = [{
+	  id = 1
+  	  name = "Deployment Network A"
+	  function_type = "Ethernet"
+	  network_uri = "/rest/ethernet-networks/728af64d-c9aa-4287-a331-ba4c6654dd15"
+	  port_id = "Mezz 3:1-a"
+	  boot = {
+		priority = "Primary"
+		ethernet_boot_type = "PXE"
+	  }
+    }]
+  }
 }
 
 # Updating Server profile
-resource "oneview_server_profile" "SP" {
-  name = "TestSP_Renamed"
-  hardware_name = "Synergy-Encl-2, bay 8"
+resource "oneview_server_profile" "SP2" {
+  name = "TestSP_Renamed_withCon2"
+  hardware_name = "0000A66101, bay 5"
   type = "ServerProfileV12"
-  enclosure_group = "EG-Synergy-Local"
+  enclosure_group = "EG"
   server_hardware_type = "SY 480 Gen9 1"
-  initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
   update_type = "put"
 }
-
 
 # Patch request - Server profile Refresh
 resource "oneview_server_profile" "SP" {
@@ -61,9 +77,7 @@ resource "oneview_server_profile" "SP" {
         hardware_name = "Synergy-Encl-2, bay 8"
 }
 
-
 #Data source for server profile
-
 data "oneview_server_profile" "sp" {
         name = "TestSP_Renamed"
 }
@@ -72,11 +86,10 @@ output "oneview_server_profile_value" {
         value = "${data.oneview_server_profile.sp.uri}"
 }
 
-/*
 # To import an existing server profile to terraform, use the below code and run the following command:
 
 # terraform import <resource>.<instance_name> <resource_name>
 # Eg: terraform import oneview_server_profile.serverProfile Test
 
 resource "oneview_server_profile" "serverProfile" {
-}*/
+}
