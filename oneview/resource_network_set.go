@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceNetworkSet() *schema.Resource {
@@ -79,7 +79,7 @@ func resourceNetworkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -153,7 +153,7 @@ func resourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("type", netSet.Type)
 	d.Set("created", netSet.Created)
 	d.Set("description", netSet.Description)
-	d.Set("eTag", netSet.ETAG)
+	d.Set("etag", netSet.ETAG)
 	d.Set("modified", netSet.Modified)
 	d.Set("native_network_uri", netSet.NativeNetworkUri)
 	d.Set("uri", netSet.URI.String())
@@ -193,13 +193,13 @@ func resourceNetworkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 		netUris[i] = utils.NewNstring(raw.(string))
 	}
 	newNetSet := ov.NetworkSet{
-		ETAG: d.Get("eTag").(string),
-		URI:  utils.NewNstring(d.Get("uri").(string)),
-		Name: d.Get("name").(string),
+		ETAG:                  d.Get("etag").(string),
+		URI:                   utils.NewNstring(d.Get("uri").(string)),
+		Name:                  d.Get("name").(string),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Type:             d.Get("type").(string),
-		NativeNetworkUri: utils.NewNstring(d.Get("native_network_uri").(string)),
-		NetworkUris:      netUris,
+		Type:                  d.Get("type").(string),
+		NativeNetworkUri:      utils.NewNstring(d.Get("native_network_uri").(string)),
+		NetworkUris:           netUris,
 	}
 
 	if val, ok := d.GetOk("network_set_type"); ok {

@@ -16,17 +16,17 @@
 */
 
 variable "username" {
- type = "string"
+ type = string
  description = "Oneview Appliance Username"
 }
 
 variable "password" {
- type = "string"
+ type = string
 description = "Oneview Appliance Password"
 }
 
 variable "endpoint" {
- type = "string"
+ type = string
  description = "Oneview Appliance IP Address"
 }
 

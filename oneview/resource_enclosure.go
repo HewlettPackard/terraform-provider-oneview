@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceEnclosure() *schema.Resource {
@@ -126,7 +126,7 @@ func resourceEnclosure() *schema.Resource {
 				},
 				Set: schema.HashString,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -311,9 +311,9 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	rawInitialScopeUris := d.Get("initial_scope_uris").(*schema.Set).List()
-	initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+	initialScopeUris := make([]string, len(rawInitialScopeUris))
 	for i, raw := range rawInitialScopeUris {
-		initialScopeUris[i] = utils.Nstring(raw.(string))
+		initialScopeUris[i] = raw.(string)
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
@@ -321,7 +321,7 @@ func resourceEnclosureCreate(d *schema.ResourceData, meta interface{}) error {
 		initialScopeUris := make([]utils.Nstring, len(rawinitialScopeUris))
 		for i, rawData := range rawinitialScopeUris {
 			scope, _ := config.ovClient.GetScopeByName(rawData.(string))
-			initialScopeUris[i] = scope.URI
+			initialScopeUris[i] = utils.Nstring(scope.URI)
 		}
 		enclosureCreateMap.InitialScopeUris = initialScopeUris
 	}
@@ -349,7 +349,7 @@ func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("created", enclosure.Created)
 	d.Set("description", enclosure.Description)
 	d.Set("device_bay_count", enclosure.DeviceBayCount)
-	d.Set("eTag", enclosure.ETAG)
+	d.Set("etag", enclosure.ETAG)
 	d.Set("enclosure_group_uri", enclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_type", enclosure.EnclosureType)
 	d.Set("fw_baseline_name", enclosure.FwBaselineName)

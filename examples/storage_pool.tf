@@ -1,8 +1,8 @@
 provider "oneview" {
-  ov_username   = "${var.username}"
-  ov_password   = "${var.password}"
-  ov_endpoint   = "${var.endpoint}"
-  ov_sslverify  = "${var.ssl_enabled}"
+  ov_username   = var.username
+  ov_password   = var.password
+  ov_endpoint   = var.endpoint
+  ov_sslverify  = var.ssl_enabled
   ov_apiversion = 2400
   ov_ifmatch    = "*"
 }
@@ -11,17 +11,17 @@ provider "oneview" {
 // Use `terraform import oneview_storage_pool.<instance name> <name of the resource>
 // Eg. terraform import oneview_storage_pool.storage_pool CPG-SSD
 resource "oneview_storage_pool" "storage_pool" {
-	name = "CPG-SSD"
-	is_managed = false
+  name       = "CPG-SSD"
+  is_managed = true
 }
 
 // Data source example
-/*
+
 data "oneview_storage_pool" "storage_pool" {
-        name = "Cluster-1"
+  name = "Cluster-1"
 }
 
 output "oneview_storage_pool_value" {
-        value = "${data.oneview_storage_pool.storage_pool.uri}"
+  value = data.oneview_storage_pool.storage_pool.uri
 }
-*/
+

@@ -8,7 +8,30 @@ import (
 	"github.com/mitchellh/reflectwalk"
 )
 
+const tagKey = "copy"
+
 // Copy returns a deep copy of v.
+//
+// Copy is unable to copy unexported fields in a struct (lowercase field names).
+// Unexported fields can't be reflected by the Go runtime and therefore
+// copystructure can't perform any data copies.
+//
+// For structs, copy behavior can be controlled with struct tags. For example:
+//
+//   struct {
+//     Name string
+//     Data *bytes.Buffer `copy:"shallow"`
+//   }
+//
+// The available tag values are:
+//
+// * "ignore" - The field will be ignored, effectively resulting in it being
+//   assigned the zero value in the copy.
+//
+// * "shallow" - The field will be be shallow copied. This means that references
+//   values such as pointers, maps, slices, etc. will be directly assigned
+//   versus deep copied.
+//
 func Copy(v interface{}) (interface{}, error) {
 	return Config{}.Copy(v)
 }
@@ -156,9 +179,13 @@ func (w *walker) Exit(l reflectwalk.Location) error {
 	}
 
 	switch l {
+	case reflectwalk.Array:
+		fallthrough
 	case reflectwalk.Map:
 		fallthrough
 	case reflectwalk.Slice:
+		w.replacePointerMaybe()
+
 		// Pop map off our container
 		w.cs = w.cs[:len(w.cs)-1]
 	case reflectwalk.MapValue:
@@ -171,16 +198,27 @@ func (w *walker) Exit(l reflectwalk.Location) error {
 		// or in this case never adds it. We need to create a properly typed
 		// zero value so that this key can be set.
 		if !mv.IsValid() {
-			mv = reflect.Zero(m.Type().Elem())
+			mv = reflect.Zero(m.Elem().Type().Elem())
 		}
-		m.SetMapIndex(mk, mv)
+		m.Elem().SetMapIndex(mk, mv)
+	case reflectwalk.ArrayElem:
+		// Pop off the value and the index and set it on the array
+		v := w.valPop()
+		i := w.valPop().Interface().(int)
+		if v.IsValid() {
+			a := w.cs[len(w.cs)-1]
+			ae := a.Elem().Index(i) // storing array as pointer on stack - so need Elem() call
+			if ae.CanSet() {
+				ae.Set(v)
+			}
+		}
 	case reflectwalk.SliceElem:
 		// Pop off the value and the index and set it on the slice
 		v := w.valPop()
 		i := w.valPop().Interface().(int)
 		if v.IsValid() {
 			s := w.cs[len(w.cs)-1]
-			se := s.Index(i)
+			se := s.Elem().Index(i)
 			if se.CanSet() {
 				se.Set(v)
 			}
@@ -220,9 +258,9 @@ func (w *walker) Map(m reflect.Value) error {
 	// Create the map. If the map itself is nil, then just make a nil map
 	var newMap reflect.Value
 	if m.IsNil() {
-		newMap = reflect.Indirect(reflect.New(m.Type()))
+		newMap = reflect.New(m.Type())
 	} else {
-		newMap = reflect.MakeMap(m.Type())
+		newMap = wrapPtr(reflect.MakeMap(m.Type()))
 	}
 
 	w.cs = append(w.cs, newMap)
@@ -287,9 +325,9 @@ func (w *walker) Slice(s reflect.Value) error {
 
 	var newS reflect.Value
 	if s.IsNil() {
-		newS = reflect.Indirect(reflect.New(s.Type()))
+		newS = reflect.New(s.Type())
 	} else {
-		newS = reflect.MakeSlice(s.Type(), s.Len(), s.Cap())
+		newS = wrapPtr(reflect.MakeSlice(s.Type(), s.Len(), s.Cap()))
 	}
 
 	w.cs = append(w.cs, newS)
@@ -303,6 +341,31 @@ func (w *walker) SliceElem(i int, elem reflect.Value) error {
 	}
 
 	// We don't write the slice here because elem might still be
+	// arbitrarily complex. Just record the index and continue on.
+	w.valPush(reflect.ValueOf(i))
+
+	return nil
+}
+
+func (w *walker) Array(a reflect.Value) error {
+	if w.ignoring() {
+		return nil
+	}
+	w.lock(a)
+
+	newA := reflect.New(a.Type())
+
+	w.cs = append(w.cs, newA)
+	w.valPush(newA)
+	return nil
+}
+
+func (w *walker) ArrayElem(i int, elem reflect.Value) error {
+	if w.ignoring() {
+		return nil
+	}
+
+	// We don't write the array here because elem might still be
 	// arbitrarily complex. Just record the index and continue on.
 	w.valPush(reflect.ValueOf(i))
 
@@ -326,7 +389,10 @@ func (w *walker) Struct(s reflect.Value) error {
 			return err
 		}
 
-		v = reflect.ValueOf(dup)
+		// We need to put a pointer to the value on the value stack,
+		// so allocate a new pointer and set it.
+		v = reflect.New(s.Type())
+		reflect.Indirect(v).Set(reflect.ValueOf(dup))
 	} else {
 		// No copier, we copy ourselves and allow reflectwalk to guide
 		// us deeper into the structure for copying.
@@ -353,9 +419,29 @@ func (w *walker) StructField(f reflect.StructField, v reflect.Value) error {
 		return reflectwalk.SkipEntry
 	}
 
+	switch f.Tag.Get(tagKey) {
+	case "shallow":
+		// If we're shallow copying then assign the value directly to the
+		// struct and skip the entry.
+		if v.IsValid() {
+			s := w.cs[len(w.cs)-1]
+			sf := reflect.Indirect(s).FieldByName(f.Name)
+			if sf.CanSet() {
+				sf.Set(v)
+			}
+		}
+
+		return reflectwalk.SkipEntry
+
+	case "ignore":
+		// Do nothing
+		return reflectwalk.SkipEntry
+	}
+
 	// Push the field onto the stack, we'll handle it when we exit
 	// the struct field in Exit...
 	w.valPush(reflect.ValueOf(f))
+
 	return nil
 }
 
@@ -405,6 +491,23 @@ func (w *walker) replacePointerMaybe() {
 	}
 
 	v := w.valPop()
+
+	// If the expected type is a pointer to an interface of any depth,
+	// such as *interface{}, **interface{}, etc., then we need to convert
+	// the value "v" from *CONCRETE to *interface{} so types match for
+	// Set.
+	//
+	// Example if v is type *Foo where Foo is a struct, v would become
+	// *interface{} instead. This only happens if we have an interface expectation
+	// at this depth.
+	//
+	// For more info, see GH-16
+	if iType, ok := w.ifaceTypes[ifaceKey(w.ps[w.depth], w.depth)]; ok && iType.Kind() == reflect.Interface {
+		y := reflect.New(iType)           // Create *interface{}
+		y.Elem().Set(reflect.Indirect(v)) // Assign "Foo" to interface{} (dereferenced)
+		v = y                             // v is now typed *interface{} (where *v = Foo)
+	}
+
 	for i := 1; i < w.ps[w.depth]; i++ {
 		if iType, ok := w.ifaceTypes[ifaceKey(w.ps[w.depth]-i, w.depth)]; ok {
 			iface := reflect.New(iType).Elem()
@@ -474,4 +577,15 @@ func (w *walker) lock(v reflect.Value) {
 
 	locker.Lock()
 	w.locks[w.depth] = locker
+}
+
+// wrapPtr is a helper that takes v and always make it *v. copystructure
+// stores things internally as pointers until the last moment before unwrapping
+func wrapPtr(v reflect.Value) reflect.Value {
+	if !v.IsValid() {
+		return v
+	}
+	vPtr := reflect.New(v.Type())
+	vPtr.Elem().Set(v)
+	return vPtr
 }
