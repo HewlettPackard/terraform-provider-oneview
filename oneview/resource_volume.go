@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceVolume() *schema.Resource {
@@ -114,7 +114,7 @@ func resourceVolume() *schema.Resource {
 					},
 				},
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -265,7 +265,7 @@ func resourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	})
 
 	d.Set("device_specific_attributes", &deviceSpecificAttributesTemplates)
-	d.Set("eTag", storageVolume.ETAG)
+	d.Set("etag", storageVolume.ETAG)
 	d.Set("is_permanent", storageVolume.IsPermanent)
 	d.Set("is_shareable", storageVolume.IsShareable)
 	d.Set("name", storageVolume.Name)
@@ -312,7 +312,7 @@ func resourceVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 	volume.DeviceSpecificAttributes = &deviceSpecificAttributes
 	volume.Category = d.Get("category").(string)
 	volume.Type = d.Get("type").(string)
-	volume.ETAG = d.Get("eTag").(string)
+	volume.ETAG = d.Get("etag").(string)
 	volume.ProvisionedCapacity = d.Get("provisioned_capacity").(string)
 	volume.TemplateVersion = d.Get("template_version").(string)
 	volume.VolumeTemplateUri = utils.NewNstring(d.Get("volume_template_uri").(string))

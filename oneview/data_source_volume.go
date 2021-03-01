@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceVolume() *schema.Resource {
@@ -52,7 +52,7 @@ func dataSourceVolume() *schema.Resource {
 					},
 				},
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -141,7 +141,7 @@ func dataSourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	})
 
 	d.Set("device_specific_attributes", &deviceSpecificAttributesTemplates)
-	d.Set("eTag", storageVolume.ETAG)
+	d.Set("etag", storageVolume.ETAG)
 	d.Set("is_permanent", storageVolume.IsPermanent)
 	d.Set("is_shareable", storageVolume.IsShareable)
 	d.Set("name", storageVolume.Name)

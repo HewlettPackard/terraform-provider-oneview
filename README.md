@@ -1,25 +1,27 @@
-# HPE OneView SDK for Terraform Provider 
+# HPE OneView SDK for Terraform Provider
 
 ## Build Status 
 
-OV Version | 5.60 | 5.50 | 5.40 | 5.30 |
-| ------------- |:-------------:| -------------:| -------------:| -------------:|
-SDK Version/Tag | [v1.7.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-11) |[v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) | [v1.4.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.4.0) |
-Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)|
-
+OV Version | 5.60   | 5.50   | 5.40    
+| ------------- |:-------------:| -------------:| -------------:|
+SDK Version/Tag | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |[v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |
+Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| 
+```
+Note: v1.7.0-12 supports Terraform 0.12.xx
+```
 ## Introduction
 
 HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud infrastructure. HPE OneView can help you transform your data center to software-defined, and it supports HPE’s broad portfolio of servers, storage, and networking solutions, ensuring the simple and automated management of your hybrid infrastructure. Software-defined intelligence enables a template-driven approach for deploying, provisioning, updating, and integrating compute, storage, and networking infrastructure.
 
 The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView and HPE Image Streamer.
 
-You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/latest)
+You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12)
 
 ## What's New
 
 HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 2400 (OneView v5.60)
 
-Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
+Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
 
 ## Getting Started 
 
@@ -34,10 +36,10 @@ The light weight containerized version of the HPE OneView SDK for Terraform is a
 
 ```bash
 # Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-11-OV5.6
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-12-OV5.6
 # Run docker commands below given, which  will in turn create a sh session 
 # where you can create files, issue commands and execute the examples.
-$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-11-OV5.6 /bin/sh
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-12-OV5.6 /bin/sh
 ```
 
 ### Local Setup
@@ -46,16 +48,15 @@ Local installation requires
 - Installing Go
 ```bash 
 $ apt-get install build-essential git wget
-$ wget https://dl.google.com/go/go1.11.3.linux-amd64.tar.gz
+$ wget https://golang.org/dl/go1.15.7.linux-amd64.tar.gz
 
-# unzip and untar the file 
-$ tar -zxvf go1.11.3.linux-amd64.tar.gz
+#unzip and untar the file 
+$ tar -zxvf go1.15.7.linux-amd64.tar.gz
 
 # move it to /usr/local/ and create directory for Go.
 $ mv go/ /usr/local/ 
 $ mkdir ~/go
 ```
-
 ```bash 
 # Setting Environment Variable 
 $ export GOROOT=/usr/local/go
@@ -65,22 +66,24 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 - Installing Terraform
 
-	Donwload Terraform 0.11.x [from here](https://releases.hashicorp.com/terraform/), unzip and save it into `/usr/local/bin/` folder (create it if it doesn't exists).
+	Install Terraform 0.12.x from [here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
 
 ```bash 
-Note: If you are looking to install this provider on Terraform 0.12, this provider SUPPORT Terraform 0.12 on Terraform-0.12 branch.
 ```
 
 - Install Oneview Terraform Provider SDK
-
 ```go
 # Download the source code for terraform-provider-oneview
 # Build the needed binary
+# Get the branch 'Terraform-0.12' terraform-provider-oneview which is supports Terraform v0.12.x.
 
-$ go get github.com/HewlettPackard/terraform-provider-oneview
-$ cd $GOPATH/src/github.com/HewlettPackard/terraform-provider-oneview    
+$ git clone -b Terraform-0.12  https://github.com/HewlettPackard/terraform-provider-oneview.git
+$ cd terraform-provider-oneview
+# Build the provider
 $ go build -o terraform-provider-oneview
-```
+# Create the plugin location if it does not exist and copy the  provider binary there.
+$ mkdir -p ~/.terraform.d/plugins/
+$ mv terraform-provider-oneview ~/.terraform.d./plugins/
 
 ## Configuration
 
@@ -100,7 +103,7 @@ $ export TF_VAR_ov_domain=<ov_domain>
 ### OneView Client Configuration
 
 The OneView Client configuration options that can be passed during OneView Client object creation:
-The variables are defined in [variable.tf](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/variables.tf) file.
+The variables are defined in [variable.tf](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/variables.tf) file.
 
 For OneView authentication, you need to provide the provider information in examples:
 
@@ -151,7 +154,7 @@ provider "oneview" {
 
 In the home directory of project(terraform-provider-oneview) user needs to create (or) copy  the file that is to be executed. 
 
-Sample example manifests are available in [example](https://github.com/HewlettPackard/terraform-provider-oneview/tree/master/examples) directory. 
+Sample example manifests are available in [example](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/examples) directory. 
 
 The following terraform commands has to be executed to test the example. 
 ```terraform
@@ -180,7 +183,7 @@ We welcome your contributions to the HPE OneView for Terraform Provider SDK.
 
 **Contributing:** You know the drill. Fork it, branch it, change it, commit it, and pull-request it.
 We are passionate about improving this project, and glad to accept help to make it better.
-For more information refer [CONTRIBUTING.md](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CONTRIBUTING.md) file.
+For more information refer [CONTRIBUTING.md](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/CONTRIBUTING.md) file.
 
 NOTE: We reserve the right to reject changes that we feel do not fit the scope of this project, so for feature additions, please open an issue to discuss your ideas before doing the work.
 
@@ -205,10 +208,12 @@ This feedback is important for us to deliver a useful product.
 
 [HPE OneView Firmware Management White Paper](http://hpe.com/info/OneView/docs)
 
+Note: Currently this SDK supports OneView API 2400 minimally where we can test OneView API 2400 version with this SDK. No new fields have been added/deleted to support API2400 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ### HPE OneView Community
 
 [HPE OneView Community Forums](http://hpe.com/info/oneviewcommunity)
 
 Learn more about HPE OneView at [hpe.com/info/oneview](https://hpe.com/info/oneview)
+
 

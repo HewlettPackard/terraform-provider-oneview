@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceFCNetwork() *schema.Resource {
@@ -81,7 +81,7 @@ func resourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -93,7 +93,7 @@ func resourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scopesUri": {
+			"scopesuri": {
 				Optional: true,
 				Type:     schema.TypeString,
 				Computed: true,
@@ -119,8 +119,8 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		ManagedSanURI:           utils.NewNstring(d.Get("managed_san_uri").(string)),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type:        d.Get("type").(string),
-		Description: utils.NewNstring(d.Get("description").(string)),
+		Type:                    d.Get("type").(string),
+		Description:             utils.NewNstring(d.Get("description").(string)),
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
@@ -163,8 +163,8 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("fabric_uri", fcNet.FabricUri.String())
 	d.Set("created", fcNet.Created)
 	d.Set("modified", fcNet.Modified)
-	d.Set("eTag", fcNet.ETAG)
-	d.Set("scopesUri", fcNet.ScopesUri.String())
+	d.Set("etag", fcNet.ETAG)
+	d.Set("scopeuri", fcNet.ScopesUri.String())
 	d.Set("initial_scope_uris", fcNet.InitialScopeUris)
 	return nil
 }
@@ -173,15 +173,15 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	fcNet := ov.FCNetwork{
-		ETAG:                    d.Get("eTag").(string),
+		ETAG:                    d.Get("etag").(string),
 		URI:                     utils.NewNstring(d.Get("uri").(string)),
 		Name:                    d.Get("name").(string),
 		FabricType:              d.Get("fabric_type").(string),
 		LinkStabilityTime:       d.Get("link_stability_time").(int),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
-		Type: d.Get("type").(string),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Description:           utils.NewNstring(d.Get("description").(string)),
+		Type:                    d.Get("type").(string),
+		ConnectionTemplateUri:   utils.NewNstring(d.Get("connection_template_uri").(string)),
+		Description:             utils.NewNstring(d.Get("description").(string)),
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)

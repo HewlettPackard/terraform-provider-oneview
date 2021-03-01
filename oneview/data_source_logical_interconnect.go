@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceLogicalInterconnect() *schema.Resource {
@@ -149,6 +149,79 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"port_flap_settings": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"etag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"created": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"modified": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"detection_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"port_flap_threshold_per_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"no_of_samples_declare_failures": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"port_flap_protection_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"snmp_configuration": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -240,79 +313,6 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 						"v3_enabled": {
 							Type:     schema.TypeBool,
 							Computed: true,
-						},
-					},
-				},
-			},
-			"port_flap_settings": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"category": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"eTag": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"created": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"modified": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"detection_interval": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"port_flap_threshold_per_interval": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"no_of_samples_declare_failures": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"consistency_checking": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"port_flap_protection_mode": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
 						},
 					},
 				},
@@ -415,7 +415,7 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 			"type":                             logInt.PortFlapProtection.Type,
 			"uri":                              logInt.PortFlapProtection.URI,
 			"category":                         logInt.PortFlapProtection.Category,
-			"eTag":                             logInt.PortFlapProtection.ETAG,
+			"etag":                             logInt.PortFlapProtection.ETAG,
 			"created":                          logInt.PortFlapProtection.Created,
 			"modified":                         logInt.PortFlapProtection.Modified,
 			"id":                               logInt.PortFlapProtection.ID,

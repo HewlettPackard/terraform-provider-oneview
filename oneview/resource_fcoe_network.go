@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceFCoENetwork() *schema.Resource {
@@ -32,12 +32,12 @@ func resourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"vlanId": {
+			"vlanid": {
 				Type:     schema.TypeInt,
 				Required: true,
 				ForceNew: true,
 			},
-			"connectionTemplateUri": {
+			"connectiontemplateuri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -46,11 +46,11 @@ func resourceFCoENetwork() *schema.Resource {
 				Optional: true,
 				Default:  "fcoe-network",
 			},
-			"managedSanUri": {
+			"managedsanuri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"fabricUri": {
+			"fabricuri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -66,7 +66,7 @@ func resourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -86,7 +86,7 @@ func resourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"scopesUri": {
+			"scopesuri": {
 				Optional: true,
 				Type:     schema.TypeString,
 				Computed: true,
@@ -108,7 +108,7 @@ func resourceFCoENetworkCreate(d *schema.ResourceData, meta interface{}) error {
 
 	fcoeNet := ov.FCoENetwork{
 		Name:   d.Get("name").(string),
-		VlanId: d.Get("vlanId").(int),
+		VlanId: d.Get("vlanid").(int),
 		Type:   d.Get("type").(string),
 	}
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
@@ -137,19 +137,19 @@ func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 		d.SetId("")
 		return nil
 	}
-	d.Set("vlanId", fcoeNet.VlanId)
+	d.Set("vlanid", fcoeNet.VlanId)
 	d.Set("created", fcoeNet.Created)
 	d.Set("modified", fcoeNet.Modified)
 	d.Set("uri", fcoeNet.URI.String())
-	d.Set("connectionTemplateUri", fcoeNet.ConnectionTemplateUri.String())
+	d.Set("connectiontemplateuri", fcoeNet.ConnectionTemplateUri.String())
 	d.Set("status", fcoeNet.Status)
 	d.Set("category", fcoeNet.Category)
 	d.Set("state", fcoeNet.State)
-	d.Set("fabric_uri", fcoeNet.FabricUri.String())
-	d.Set("eTag", fcoeNet.ETAG)
-	d.Set("managedSanUri", fcoeNet.ManagedSanUri)
+	d.Set("fabricuri", fcoeNet.FabricUri.String())
+	d.Set("etag", fcoeNet.ETAG)
+	d.Set("managedsanuri", fcoeNet.ManagedSanUri)
 	d.Set("description", fcoeNet.Description)
-	d.Set("scopesUri", fcoeNet.ScopesUri.String())
+	d.Set("scopesuri", fcoeNet.ScopesUri.String())
 	d.Set("initial_scope_uris", fcoeNet.InitialScopeUris)
 	return nil
 }
@@ -158,12 +158,12 @@ func resourceFCoENetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	newFCoENet := ov.FCoENetwork{
-		ETAG:   d.Get("eTag").(string),
-		URI:    utils.NewNstring(d.Get("uri").(string)),
-		VlanId: d.Get("vlanId").(int),
-		Name:   d.Get("name").(string),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connectionTemplateUri").(string)),
-		Type: d.Get("type").(string),
+		ETAG:                  d.Get("etag").(string),
+		URI:                   utils.NewNstring(d.Get("uri").(string)),
+		VlanId:                d.Get("vlanid").(int),
+		Name:                  d.Get("name").(string),
+		ConnectionTemplateUri: utils.NewNstring(d.Get("connectiontemplateuri").(string)),
+		Type:                  d.Get("type").(string),
 	}
 
 	err := config.ovClient.UpdateFCoENetwork(newFCoENet)
