@@ -2,9 +2,9 @@ name: Terraform CICD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ Terraform-0.11 ]
   pull_request:
-    branches: [ master ]
+    branches: [ Terraform-0.11 ]
 
 jobs:
   build:
