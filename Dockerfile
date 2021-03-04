@@ -21,7 +21,7 @@ WORKDIR /go/src/github.com/HewlettPackard/terraform-provider-oneview
 COPY . /go/src/github.com/HewlettPackard/terraform-provider-oneview
 
 RUN cd $GOPATH/src/github.com/HewlettPackard/terraform-provider-oneview
-RUN go build -o $GOPATH/bin/terraform-provider-oneview
+RUN export GO111MODULE=auto;go build -o $GOPATH/bin/terraform-provider-oneview
 RUN mv $GOPATH/bin/terraform-provider-oneview /usr/local/terraform/
 
 RUN go get github.com/kardianos/govendor
