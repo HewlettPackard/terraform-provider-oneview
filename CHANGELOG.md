@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 #### Major changes
 1. Added support for new endpoints in logical interconnect resource, logical interconnect data source and logical interconnect group data source.
-   - PUT /rest/logical-interconnects/{id}/portFlapSettings
+   - PUT /rest/logical-interconnects/{id}/portFlapSettings 
 
 ### Oneview Features supported
 - Ethernet Network
