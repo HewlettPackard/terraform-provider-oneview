@@ -319,16 +319,27 @@ func dataSourceHypervisorClusterProfile() *schema.Resource {
 			"shared_storage_volumes": {
 				Optional: true,
 				Type:     schema.TypeSet,
+<<<<<<< HEAD
 				Elem: &schema.Resource{
+=======
+				Computed: true,
+				Elem: &schema.Schema{
+>>>>>>> fd6d5499c7e8b8c81eba59f51bbfb1a774930305
 					Schema: map[string]*schema.Schema{
 						"action": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 						"hypervisor_cluster_volume": {
+<<<<<<< HEAD
 							Optional: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
+=======
+							Type:     schema.TypeSet,
+							Computed: true,
+							Elem: &schema.Schema{
+>>>>>>> fd6d5499c7e8b8c81eba59f51bbfb1a774930305
 								Schema: map[string]*schema.Schema{
 									"action": {
 										Type:     schema.TypeString,
@@ -349,6 +360,57 @@ func dataSourceHypervisorClusterProfile() *schema.Resource {
 								},
 							},
 						},
+<<<<<<< HEAD
+=======
+
+						"lun_id": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"lun_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"permanent": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"protocol_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"provision_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"requested_capacity": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"storage_pool_uri": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"storage_volume_uri": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"volume_file_system_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"volume_source": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
+>>>>>>> fd6d5499c7e8b8c81eba59f51bbfb1a774930305
 
 						"lun_id": {
 							Type:     schema.TypeString,
@@ -610,7 +672,7 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 			"volumeFile_system_type":    sharedStorageVolume.VolumeFileSystemType,
 			"volume_source":             sharedStorageVolume.VolumeSource,
 		})
-	}
+	}	
 	d.Set("shared_storage_volumes", sharedStorageVolumes)
 	d.Set("state", hypCP.State)
 	d.Set("state_reason", hypCP.StateReason)
