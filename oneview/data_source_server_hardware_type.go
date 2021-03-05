@@ -32,6 +32,14 @@ func dataSourceServerHardwareType() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"family": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"model": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -63,14 +71,6 @@ func dataSourceServerHardwareType() *schema.Resource {
 				},
 			},
 			"uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"family": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"model": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
