@@ -322,8 +322,82 @@ func dataSourceHypervisorClusterProfile() *schema.Resource {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Schema{
-					Type: schema.TypeString},
-				Set: schema.HashString,
+					Schema: map[string]*schema.Schema{
+						"action": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"hypervisor_cluster_volume": {
+							Type:     schema.TypeSet,
+							Computed: true,
+							Elem: &schema.Schema{
+								Schema: map[string]*schema.Schema{
+									"action": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"in_use": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"volume_id": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
+						},
+
+						"lun_id": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"lun_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"permanent": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"protocol_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"provision_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"requested_capacity": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"storage_pool_uri": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"storage_volume_uri": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"volume_file_system_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"volume_source": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
 			},
 
 			"state": {
@@ -514,10 +588,47 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 	d.Set("path", hypCP.Path)
 	d.Set("refresh_state", hypCP.RefreshState)
 	d.Set("scopes_uri", hypCP.ScopesUri)
-	sharedStorageVolumes := make([]interface{}, len(hypCP.SharedStorageVolumes))
-	for i, sharedStorageVolume := range hypCP.SharedStorageVolumes {
-		sharedStorageVolumes[i] = sharedStorageVolume
+	// ###########
+	// // hypManResourcePaths := make([]map[string]interface{}, 0, len(hypMan.ResourcePaths))
+	// // for _, hypManResourcePath := range hypMan.ResourcePaths {
+	// // 	hypManResourcePaths = append(hypManResourcePaths, map[string]interface{}{
+	// // 		"user_path":   hypManResourcePath.UserPath,
+	// // 		"actual_path": hypManResourcePath.ActualPath,
+	// // 	})
+	// // }
+	// // d.Set("resource_paths", hypManResourcePaths)
+	// ###########
+	hypervisorClusterVolumelist := make([]map[string]interface{}, 0, 1)
+	hypervisorClusterVolumelist = append(hypervisorClusterVolumelist, map[string]interface{}{
+		"action":    hypCP.SharedStorageVolumes.HypervisorClusterVolumeaction.Action,
+		"in_use":    hypCP.SharedStorageVolumes.HypervisorClusterVolumeaction.InUse,
+		"name":      hypCP.SharedStorageVolumes.HypervisorClusterVolumeaction.Name,
+		"volume_id": hypCP.SharedStorageVolumes.HypervisorClusterVolumeaction.VolumeId,
+	})
+
+	sharedStorageVolumes := make([]map[string]interface{}, 0, len(hypCP.SharedStorageVolumes))
+	for _, sharedStorageVolume := range hypCP.SharedStorageVolumes {
+		sharedStorageVolumes = append(sharedStorageVolumes, map[string]interface{}{
+			"action":                    sharedStorageVolume.Action,
+			"hypervisor_Cluster_volume": hypervisorClusterVolumeslist,
+			"lun_id":                    sharedStorageVolume.LunId,
+			"lun_type":                  sharedStorageVolume.LunType,
+			"name":                      sharedStorageVolume.Name,
+			"permanent":                 sharedStorageVolume.Permanent,
+			"protocol_type":             sharedStorageVolume.ProtocolType,
+			"provision_type":            sharedStorageVolume.ProvisionType,
+			"requested_capacity":        sharedStorageVolume.RequestedCapacity,
+			"storage_pool_uri":          sharedStorageVolume.StoragePoolUri,
+			"storage_volume_uri":        sharedStorageVolume.StorageVolumeUri,
+			"volumeFile_system_type":    sharedStorageVolume.VolumeFileSystemType,
+			"volume_source":             sharedStorageVolume.VolumeSource,
+		})
 	}
+	// d.Set("shared_storage_volumes", sharedStorageVolumes)
+	// sharedStorageVolumes := make([]interface{}, len(hypCP.SharedStorageVolumes))
+	// for i, sharedStorageVolume := range hypCP.SharedStorageVolumes {
+	// 	sharedStorageVolumes[i] = sharedStorageVolume
+	// }
 	d.Set("shared_storage_volumes", sharedStorageVolumes)
 	d.Set("state", hypCP.State)
 	d.Set("state_reason", hypCP.StateReason)
