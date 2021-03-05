@@ -34,7 +34,7 @@ type LocalStorageEmbeddedController struct {
 	DeviceSlot             string           `json:"deviceSlot,omitempty"`             // "deviceSlot": "Mezz 1",
 	DriveWriteCache        string           `json:"driveWriteCache,omitempty"`        //Determines the write cache configuration of the physical drives attached to the controller.
 	ImportConfiguration    bool             `json:"importConfiguration,omitempty"`    // importConfiguration Determines if the logical drives in the current configuration should be imported. Boolean
-	Initialize             bool             `json:"initialize,omitempty"`             // initialize Determines if the controller should be initialized before configuration. Boolean
+	Initialize             *bool            `json:"initialize,omitempty"`             // initialize Determines if the controller should be initialized before configuration. Boolean
 	LogicalDrives          []LogicalDriveV3 `json:"logicalDrives,omitempty"`          // LogicalDriveV3 The list of logical drives associated with the controller.
 	Managed                bool             `json:"managed,omitempty"`                // managed Determines if the specific controller is managed by OneView. Boolean
 	Mode                   string           `json:"mode,omitempty"`                   // mode Determines the mode of operation of the controller. The controller mode can be changed between RAID and HBA mode when supported by the selected server hardware type. string
@@ -45,7 +45,7 @@ type LocalStorageEmbeddedController struct {
 // LogicalDriveV3 -
 type LogicalDriveV3 struct {
 	Accelerator       string `json:"accelerator,omitempty"`       //Defines the acceleration method of the logical drive.
-	Bootable          bool   `json:"bootable,omitempty"`          // bootable Indicates if the logical drive is bootable or not. Boolean
+	Bootable          *bool  `json:"bootable,omitempty"`          // bootable Indicates if the logical drive is bootable or not. Boolean
 	DriveNumber       int    `json:"driveNumber,omitempty"`       // driveNumber The number assigned to the logical drive by HP SSA. This value is read-only and gets automatically populated once the logical drive is created. integer read only
 	DriveTechnology   string `json:"driveTechnology,omitempty"`   // driveTechnology Defines the interface type for drives that will be used to build the logical drive. Supported values depend on the local storage capabilities of the selected server hardware type. string
 	Name              string `json:"name,omitempty"`              // "name": "logical drive name",
