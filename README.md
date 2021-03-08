@@ -2,12 +2,12 @@
 
 ## Build Status 
 
-OV Version | 5.60   | 5.50   | 5.40    
+OV Version |6.00| 5.60   | 5.50   
 | ------------- |:-------------:| -------------:| -------------:|
-SDK Version/Tag | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |[v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |
-Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| 
+SDK Version/Tag  |[v6.0.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-12)| [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |
+Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)|
 ```
-Note: v1.7.0-12 supports Terraform 0.12.xx
+Note: v1.7.0-12 onwards supports Terraform 0.12.xx
 ```
 ## Introduction
 
@@ -15,7 +15,7 @@ HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud 
 
 The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView and HPE Image Streamer.
 
-You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12)
+You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-12)
 
 ## What's New
 
@@ -36,10 +36,10 @@ The light weight containerized version of the HPE OneView SDK for Terraform is a
 
 ```bash
 # Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-12-OV5.6
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-12-OV6.0
 # Run docker commands below given, which  will in turn create a sh session 
 # where you can create files, issue commands and execute the examples.
-$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v1.7.0-12-OV5.6 /bin/sh
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-12-OV5.6 /bin/sh
 ```
 
 ### Local Setup
@@ -215,5 +215,6 @@ Note: Currently this SDK supports OneView API 2400 minimally where we can test O
 [HPE OneView Community Forums](http://hpe.com/info/oneviewcommunity)
 
 Learn more about HPE OneView at [hpe.com/info/oneview](https://hpe.com/info/oneview)
+
 
 

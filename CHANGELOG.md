@@ -1,6 +1,41 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v6.0.0-12] (Unreleased)
+### Notes
+- This release supports API2600 minimally where we can use OneView v6.00 with this SDK. 
+### Oneview Features supported
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Hypervisor Manager
+- Hypervisor Cluster Profile
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups 
+- Network Set
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
+
+### Bug fixes & Enhancements:
+- [#238] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/238) server profile connection settings
+- [#267] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/267) local_storage not working as expected.
+- [#268] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/268) local storage issue ( defined in server profile template). 
+
 # [v1.7.0-12]
 ### Notes
 - This release supports API2400 minimally where we can use OneView v5.60 with this SDK. 
