@@ -29,12 +29,35 @@ type HypervisorClusterProfile struct {
 	Path                          string                         `json:"path,omitempty"`                          //"path":"DC1"
 	RefreshState                  string                         `json:"refreshState,omitempty"`                  //"refreshState":"NotRefreshing"
 	ScopesUri                     string                         `json:"scopesUri,omitempty"`                     //"scopesUri":"/rest/scopes/resources/rest/hypervisor-cluster-profiles/4340293c-0701-4773"
-	SharedStorageVolumes          []utils.Nstring                `json:"sharedStorageVolumes,omitempty"`          //"sharedStorageVolumes":"[]"
+	SharedStorageVolumes          []SharedStorageVolumes         `json:"sharedStorageVolumes,omitempty"`          //"sharedStorageVolumes":"[]"
 	State                         string                         `json:"state,omitempty"`                         //"state":"Active"
 	StateReason                   string                         `json:"stateReason,omitempty"`                   //"stateReason":"None"
 	Status                        string                         `json:"status,omitempty"`                        //"status":"OK"
 	Type                          string                         `json:"type,omitempty"`                          //"type":"HypervisorClusterProfileV4"
 	URI                           utils.Nstring                  `json:"uri,omitempty"`                           //"uri":"/rest/hypervisor-cluster-profiles/4340293c-0701-4773-b863-32854b0f7d29"
+}
+
+type SharedStorageVolumes struct {
+	Action                  string                  `json:"action, omitempty"`                  //"action":"",
+	HypervisorClusterVolume HypervisorClusterVolume `json:"hypervisorClusterVolume, omitempty"` //"hypervisorClusterVolume":{},
+	LunId                   string                  `json:"lunId, omitempty"`                   //"lunId":"",
+	LunType                 string                  `json:"lunType, omitempty"`                 //"lunType":"",
+	Name                    string                  `json:"name, omitempty"`                    //"name":"",
+	Permanent               bool                    `json:"permanent, omitempty"`               //"permanent":"",
+	ProtocolType            string                  `json:"protocolType, omitempty"`            //"protocolType":"",
+	ProvisionType           string                  `json:"provisionType, omitempty"`           //"provisionType":"",
+	RequestedCapacity       string                  `json:"requestedCapacity, omitempty"`       //"requestedCapacity":"",
+	StoragePoolUri          utils.Nstring           `json:"storagePoolUri, omitempty"`          //"storagePoolUri":"",
+	StorageVolumeUri        utils.Nstring           `json:"storageVolumeUri, omitempty"`        //"storageVolumeUri":"",
+	VolumeFileSystemType    string                  `json:"volumeFileSystemType, omitempty"`    //"volumeFileSystemType":"",
+	VolumeSource            string                  `json:"volumeSource, omitempty"`            //"volumeSource":"",
+}
+
+type HypervisorClusterVolume struct {
+	Action   string `json:"action, omitempty"`   //"action":"",
+	InUse    bool   `json:"inUse, omitempty"`    //"inUse":"",
+	Name     string `json:"name, omitempty"`     //"name":"",
+	VolumeId string `json:"volumeId, omitempty"` //"volumeId":"",
 }
 
 type HypervisorClusterSettings struct {
