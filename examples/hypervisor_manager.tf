@@ -24,6 +24,7 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
 resource "oneview_hypervisor_manager" "HypervisorManager" {
   display_name = "TestHypervisorManager_Renamed"
   name         = "172.18.13.11"
+  query_params = "true"
   type         = "HypervisorManagerV2"
   username     = "dcs1"
   preferences {

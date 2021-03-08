@@ -1199,7 +1199,7 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 func resourceHypervisorClusterProfileDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	var softdelete = true
-	if config.OVAPIVersion == 1600 {
+	if config.OVAPIVersion >= 1600 {
 
 		err := config.ovClient.DeleteHypervisorClusterProfileSoftDelete(d.Id(), softdelete)
 		if err != nil {
