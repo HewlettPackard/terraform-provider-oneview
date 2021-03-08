@@ -3,14 +3,13 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2600
   ov_ifmatch = "*"
 }
 
-/*
 # Add Enclosure to Oneview Appliance
 
-variable "enc_hostname" {
+/*variable "enc_hostname" {
  type = "string"
  description = "Enclosure IP Address"
   default = "https://x.x.x.x"
@@ -53,31 +52,8 @@ resource "oneview_enclosure" "enclosure_inst" {
 }
 */
 
-#Importing Existing resource to update
-#run the below command to import the resource:
+#Importing Existing Enclosure 
 #terraform import oneview_enclosure.enclosure_inst <your_enclosure_name>
 
-/*
 resource "oneview_enclosure" "import_enc"{
 }
-*/
-
-/*
-# Testing data source
-data "oneview_enclosure" "enclosure" {
-        name = "Synergy-Encl-1"
-}
-
-output "oneview_enclosure_value" {
-        value = "${data.oneview_enclosure.enclosure.uuid}"
-}
-
-# Update Enclosure
-resource "oneview_enclosure" "import_enc" {
-	op = "replace"
-	path = "/name"
-	value = "Synergy-Encl 1"
-	name = "Synergy-Encl 1"
-	enclosure_group_uri = "${data.oneview_enclosure.enclosure.enclosure_group_uri}"
-}
-*/

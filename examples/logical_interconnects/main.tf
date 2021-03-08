@@ -3,19 +3,9 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2600
   ov_ifmatch = "*"
 }
-
-# Get Logical Interconnect to terraform
-data "oneview_logical_interconnect" "logical_interconnect" {
-	name = "6c9d7d01-c176-43c8-b043-6fc0a65f4f9b"
-}
-
-output "oneview_logical_interconnect_value" {
-	value = "${data.oneview_logical_interconnect.logical_interconnect.uri}"
-}
-
 
 /*
 
@@ -41,26 +31,4 @@ output "oneview_logical_interconnect_value" {
 */
 
 resource "oneview_logical_interconnect" "logical_interconnect" {
-}
-
-# Returns logical interconnects to a consistent state. The current logical interconnect state is compared to the associated logical interconnect group.
-
-resource "oneview_logical_interconnect" "logical_interconnect" {
-update_type = "updateComplianceById"
-}
-
-# Update PortFlapProtection Settings.
-
-resource "oneview_logical_interconnect" "logical_interconnect" {
-  update_type = "updatePortFlapSettings"
-  port_flap_settings = [
-    {
-      port_flap_protection_mode = "Detect"
-      port_flap_threshold_per_interval =  2
-      detection_interval = 20
-      no_of_samples_declare_failures = 2
-      name = "PortFlapSettingsUpdated"
-      consistency_checking = "ExactMatch"
-    },
-  ]
 }

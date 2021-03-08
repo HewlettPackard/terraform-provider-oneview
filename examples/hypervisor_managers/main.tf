@@ -3,38 +3,38 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2600
   ov_ifmatch = "*"
 }
 
 variable "hm_endpoint" {
  type = "string"
  description = "Hypervisor Manager IP"
- default = "<HM-IP>"
+ default = "172.18.13.11" #"<HM-IP>"
 }
 
 variable "hm_username" {
  type = "string"
  description = "Hypervisor Manager Username"
- default = "<HM-Username>"
+ default = "dcs" #"<HM-Username>"
 }
 
 variable "hm_password" {
  type = "string"
  description = "Hypervisor Manager Password"
- default = "<HM-Password>"
+ default = "dcs" #"<HM-Password>"
 }
 
 data "oneview_scope" "scope_obj" {
-        name = "testing"
+        name = "Auto-Scope"
 }
 
-/*
+
 # Fetching Server Certificate
 data "oneview_server_certificate" "sc" {
          remote_ip = "${var.hm_endpoint}"
 }
-#<hypervisor_manager_port_num>
+
 # Importing Server Certificate from Hypervisor Manager
 resource "oneview_server_certificate" "ServerCertificate" {
     certificate_details = [{
@@ -55,38 +55,3 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
 	type = "HypervisorManagerV2"
 	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
 }
-*/
-
-/*
-# Uncomment following to run update
-resource "oneview_hypervisor_manager" "HypervisorManager" {
-	display_name = "TestHypervisorManager_Renamed"
-        name = "${var.hm_endpoint}"
-	type = "HypervisorManagerV2"
-        username= "${var.hm_username}"
-        hypervisor_type=  "Vmware"
-        preferences= {   type= "Vmware"
-			 virtual_switch_type= "Standard"
-			 distributed_switch_version=""
-			 distributed_switch_usage=""
-			 multi_nic_v_motion="false"
-			 drs_enabled="true"
-			 ha_enabled="false"
-	} 
-}
-*/
-
-/* Testing data source*/
-data "oneview_hypervisor_manager" "HypervisorManager" {
-        name = "${var.hm_endpoint}"
-}
-
-#output "oneview_hypervisor_manager_value" {
-#        value = "${data.oneview_hypervisor_manager.HypervisorManager.type}"
-#}
-
-
-//Import existing resource
-/*resource "oneview_hypervisor_manager" "HypervisorManager" {
-}
-*/

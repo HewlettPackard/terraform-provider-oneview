@@ -8,22 +8,7 @@ provider "oneview" {
 
 }
 
-data "oneview_scope" "scope_obj" {
-        name = "testing"
-}
-
-resource "oneview_fc_network" "FCNetwork" {
-	name = "TestFCNetwork"
-	type = "fc-networkV4"
-	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
-}
-
-/*resource "oneview_fc_network" "FCNetwork" {
-	name = "TestFCNetwork_Renamed"
-	type = "fc-networkV4"
-}*/
-
-/* Testing data source
+# Testing data source
 data "oneview_fc_network" "fc_network" {
         name = "TestFCNetwork_Renamed"
 }
@@ -31,7 +16,7 @@ data "oneview_fc_network" "fc_network" {
 output "oneview_fc_network_value" {
         value = "${data.oneview_fc_network.fc_network.fabric_type}"
 }
-*/
+
 
 /*
 #Importing Existing resource

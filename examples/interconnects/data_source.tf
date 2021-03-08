@@ -3,12 +3,12 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2600
   ov_ifmatch = "*"
 }
 
 data "oneview_interconnect" "interconnect" {
-	name = "Synergy-Encl-1, interconnect 6"
+	name = "0000A66102, interconnect 2"
 }
 
 output "oneiew_interconnect_value" {

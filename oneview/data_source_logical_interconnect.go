@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -336,8 +337,14 @@ func dataSourceLogicalInterconnect() *schema.Resource {
 func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	id := d.Get("name").(string)
-	logInt, err := config.ovClient.GetLogicalInterconnectById(id)
 
+	logInt := ov.LogicalInterconnect{}
+	all_li, err := config.ovClient.GetLogicalInterconnects("", "", "")
+	for _, li := range all_li.Members {
+		if id == li.Name {
+			logInt = li
+		}
+	}
 	if err != nil || logInt.URI.IsNil() {
 		d.SetId("")
 		return nil
