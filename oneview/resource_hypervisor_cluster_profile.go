@@ -542,15 +542,10 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 			VolumeSource:            sharedStorageVolumes["volume_source"].(string),
 		}
 		sharedStorageVolumesCollect = append(sharedStorageVolumesCollect, hypCPSharedStorageVolumes)
-		hypCP.SharedStorageVolumes = sharedStorageVolumesCollect
-	}
 
-	// rawSharedStorageVolumes := d.Get("ip_pools").(*schema.Set).List()
-	// sharedStorageVolumes := make([]utils.Nstring, len(rawSharedStorageVolumes))
-	// for i, rawshsvol := range rawSharedStorageVolumes {
-	// 	sharedStorageVolumes[i] = utils.Nstring(rawshsvol.(string))
-	// }
-	// hypCP.SharedStorageVolumes = sharedStorageVolumes
+	}
+	hypCP.SharedStorageVolumes = sharedStorageVolumesCollect
+
 	/*********************Shared Storage Volumes end***********************/
 	/*********************Hypervisor cluster settings start***********************/
 
@@ -757,6 +752,7 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 	/*********************Hypervisor Host Profile Template end***********************/
 
 	hypCP.HypervisorHostProfileTemplate = &hypervisorProfileTemplate
+
 	hypCPError := config.ovClient.CreateHypervisorClusterProfile(hypCP)
 	d.SetId(d.Get("name").(string))
 	if hypCPError != nil {
