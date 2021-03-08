@@ -10,13 +10,13 @@ provider "oneview" {
 variable "hm_endpoint" {
  type = "string"
  description = "Hypervisor Manager IP"
- default = "<Hypervisor-Manager-IP>"
+ default = "178.18.13.11"//"<Hypervisor-Manager-IP>"
 }
 
 varaible "deployment_plan_password"{
  type = "string"
  description = "Deployement Plan Server Password"
- default = "<password>"
+ default = "dcs" //"<password>"
 }
 
 data "oneview_hypervisor_manager" "hm" {

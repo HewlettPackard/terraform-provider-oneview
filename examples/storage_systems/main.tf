@@ -3,27 +3,27 @@ provider "oneview" {
   ov_password   = "${var.password}"
   ov_endpoint   = "${var.endpoint}"
   ov_sslverify  = "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2600
   ov_ifmatch    = "*"
 }
 
 variable "hostname" {
   type    = "string"
-  default = "<storage_system_ip>"
+  default = "172.18.11.12" //"<storage_system_ip>"
 }
 variable "ss_username" {
   type    = "string"
-  default = "<storage_system_username>"
+  default = "dcs" //"<storage_system_username>"
 }
 variable "ss_password" {
   type    = "string"
-  default = "<storage_system_password>"
+  default = "dcs" //"<storage_system_password>"
 }
 variable "ss_family" {
   type    = "string"
-  default = "<storage_system_family>"
+  default = "StoreServ" //"<storage_system_family>"
 }
-/*
+
 # Extracting Server Certificate
 data "oneview_server_certificate" "sc" {
   remote_ip = "${var.hostname}"
@@ -38,6 +38,7 @@ resource "oneview_server_certificate" "ServerCertificate" {
                         }]
 }
 
+# Adds Storage System to OneView
 resource "oneview_storage_system" "ss_inst" {
    hostname = "${var.hostname}"
    username = "${var.ss_username}"
@@ -45,43 +46,3 @@ resource "oneview_storage_system" "ss_inst" {
    family   = "${var.ss_family}"
    depends_on = ["oneview_server_certificate.ServerCertificate"]
 }
-*/
-
-/*
-# Extracting Storage System
-data "oneview_storage_system" "ss_inst_data" {
-   name = "ThreePAR-2"
-}
-
-output "oneview_storage_system_value" {
-        value = "${data.oneview_storage_system.ss_int.uri}"
-}
-
-# Uncomment the following resource to update.
-resource "oneview_storage_system" "ss_inst" {
-  credentials = [
-    {
-      username = "${var.ss_username}"
-      password = "${var.ss_password}"
-    },
-  ]
-
-  hostname =  "${var.hostname}"
-  name     = "ThreePAR-2"
-
-  storage_system_device_specific_attributes = {
-    managed_domain = "TestDomain"
-  }
-
-  eTag        = "--"
-  description = "TestStorageSystem"
-  uri         = "${data.oneview_storage_system.ss_inst_data.uri}"
-}
-*/
-
-# Testing import of existing resource
-/*
-resource "oneview_storage_system" "ss_import"{
-}
-*/
-

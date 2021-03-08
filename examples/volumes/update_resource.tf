@@ -3,21 +3,23 @@ provider "oneview" {
   ov_password   = "${var.password}"
   ov_endpoint   = "${var.endpoint}"
   ov_sslverify  = "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2600
   ov_ifmatch    = "*"
 }
 
+# Extracting required resource 
 data "oneview_scope" "scope_obj" {
-        name = "ScopeTest"
+        name = "Auto-Scope"
 }
 
 data "oneview_storage_pool" "st_pool" {
-        name = "CPG_FC-AO"
+        name = "CPG-SSD-AO"
 }
 data "oneview_storage_volume_template" "st_vt" {
-        name = "tr_vt"
+        name = "RenameDemoStorageTemplate"
 }
 
+# Updates the volume resource created through main.tf
 resource "oneview_volume" "volume" {
   properties = {
     "name" = "testvol"
@@ -33,14 +35,3 @@ resource "oneview_volume" "volume" {
   initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
   provisioned_capacity = "268435456"
 }
-
-/* Datasource
-
-data "oneview_volume" "volume" {
-  name = "testvol2"
-}
-
-output "oneview_volume_value" {
-  value = "${data.oneview_volume.volume.uri}"
-}
-*/

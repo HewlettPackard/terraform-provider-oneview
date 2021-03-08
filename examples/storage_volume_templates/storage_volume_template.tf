@@ -10,12 +10,12 @@ provider "oneview" {
 /*
 # Extracting Scope 
 data "oneview_scope" "scope_obj" {
-        name = "ScopeTest"
+        name = "Auto-Scope"
 }
 
 # Extracting Storage Pool
 data "oneview_storage_pool" "st_pool" {
-        name = "Cluster-1"
+        name = "CPG-SSD-AO"
 }
 
 # Creating a storage volume template
@@ -39,10 +39,11 @@ resource "oneview_storage_volume_template" "svt" {
                 meta_semantic_type = "capacity"
                 type = "integer"
                 title = "Capacity"
-                default = 1073741824
+                default = 268435456
                 required = true
-                minimum = 4194304 
-                description = "Capacity of the volume in bytes"
+                minimum = 268435456 
+		maximum = 17592186044416
+                description = "The capacity of the volume in bytes"
         }]
         tp_description = [
 	{
@@ -74,7 +75,7 @@ resource "oneview_storage_volume_template" "svt" {
                 format = "x-uri-reference"
                 default = "${data.oneview_storage_pool.st_pool.uri}"
                 required = true
-                description = "StoragePoolURI the volume should be added to"
+                description = "A common provisioning group URI reference"
         }]
 	tp_snapshot_pool = [
 	{
@@ -115,43 +116,41 @@ resource "oneview_storage_volume_template" "svt" {
                 default = "Thin"
                 required = false
                 description = "The provisioning type for the volume"
-		meta_semantic_type = "device-provisioningType"
+//		meta_semantic_type = "device-provisioningType"
 
         }]
-	tp_data_protection_level=[
-	{
-		meta_locked = false
-		meta_semantic_type =  "device-dataProtectionLevel"
-		enum = ["NetworkRaid0None",
-                        "NetworkRaid5SingleParity",
-                        "NetworkRaid10Mirror2Way",
-                        "NetworkRaid10Mirror3Way",
-                        "NetworkRaid10Mirror4Way",
-                        "NetworkRaid6DualParity"]
-        	type =      "string"
-	        title =       "Data Protection Level"
-	        default =     "NetworkRaid10Mirror2Way"
-	        description = "Indicates the number and configuration of data copies in the Storage Pool"
-	        required = true
-	}]
-	tp_is_adaptive_optimization_enabled = [
-	{
-		meta_locked = true
-		description = ""
-		default = true
-		required = false
-		title = "Adaptive Optimization"
-		type = "boolean"
-	}]
+//	tp_data_protection_level=[
+//	{
+//		meta_locked = false
+//		meta_semantic_type =  "device-dataProtectionLevel"
+//		enum = ["NetworkRaid0None",
+//                        "NetworkRaid5SingleParity",
+//                       "NetworkRaid10Mirror2Way",
+//                       "NetworkRaid10Mirror3Way",
+//                       "NetworkRaid10Mirror4Way",
+//                       "NetworkRaid6DualParity"]
+//       	type =      "string"
+//               title =       "Data Protection Level"
+//	        default =     "NetworkRaid10Mirror2Way"
+//               description = "Indicates the number and configuration of data copies in the Storage Pool"
+//               required = true
+//       }]
+//       tp_is_adaptive_optimization_enabled = [
+//       {
+//       	meta_locked = true
+//       	description = ""
+//       	default = true
+//       	required = false
+//       	title = "Adaptive Optimization"
+//       	type = "boolean"
+//	}]
 }
 */
 
-/*
 # Fetching Existing Template for update
 data "oneview_storage_volume_template" "d_svt" {
   name = "DemoStorageTemplate"
 }
-
 
 # Update the storage volume template
 resource "oneview_storage_volume_template" "svt" {
@@ -172,15 +171,16 @@ resource "oneview_storage_volume_template" "svt" {
         }]
 	tp_size = [
 	{
-                meta_locked = false
-                meta_semantic_type = "capacity"
+	        meta_locked = false
+	        meta_semantic_type = "capacity"
                 type = "integer"
                 title = "Capacity"
-                default = 1073741824
+                default = 268435456
                 required = true
-                minimum = 4194304 
-                description = "Capacity of the volume in bytes"
-        }]
+                minimum = 268435456 
+                maximum = 17592186044416
+                description = "The capacity of the volume in bytes"
+	}]
         tp_description = [
 	{
                 meta_locked = false
@@ -211,12 +211,12 @@ resource "oneview_storage_volume_template" "svt" {
                 format = "x-uri-reference"
                 default = "${data.oneview_storage_volume_template.d_svt.storage_pool_uri}"
                 required = true
-                description = "StoragePoolURI the volume should be added to"
+                description = "A common provisioning group URI reference"
         }]
 	tp_snapshot_pool = [
 	{
                 meta_locked = true
-                meta_semantic_type = "device-snapshot-storage-pool*"
+                meta_semantic_type = "device-snapshot-storage-pool"
                 type = "string"
                 title = "Snapshot Pool"
                 format = "x-uri-reference"
@@ -231,7 +231,7 @@ resource "oneview_storage_volume_template" "svt" {
                 title = "Is Deduplicated"
                 default = false
                 required = false
-                description = "Enables or disables deduplication of the volume*"
+                description = "Enables or disables deduplication of the volume"
         }] 
         tp_template_version = [
 	{
@@ -252,42 +252,35 @@ resource "oneview_storage_volume_template" "svt" {
                 default = "Thin"
                 required = false
                 description = "The provisioning type for the volume"
-		meta_semantic_type = "device-provisioningType"
+//		meta_semantic_type = "device-provisioningType"
 
         }]
-	tp_data_protection_level=[
-	{
-		meta_locked = false
-		meta_semantic_type =  "device-dataProtectionLevel"
-		enum = ["NetworkRaid0None",
-                        "NetworkRaid5SingleParity",
-                        "NetworkRaid10Mirror2Way",
-                        "NetworkRaid10Mirror3Way",
-                        "NetworkRaid10Mirror4Way",
-                        "NetworkRaid6DualParity"]
-        	type =      "string"
-	        title =       "Data Protection Level"
-	        default =     "NetworkRaid10Mirror2Way"
-	        description = "Indicates the number and configuration of data copies in the Storage Pool"
-	        required = true
-	}]
-	tp_is_adaptive_optimization_enabled = [
-	{
-		meta_locked = true
-		description = ""
-		default = true
-		required = false
-		title = "Adaptive Optimization"
-		type = "boolean"
-	}]
+//	tp_data_protection_level=[
+//       {
+//       	meta_locked = false
+//       	meta_semantic_type =  "device-dataProtectionLevel"
+//       	enum = ["NetworkRaid0None",
+//                       "NetworkRaid5SingleParity",
+//                       "NetworkRaid10Mirror2Way",
+//                       "NetworkRaid10Mirror3Way",
+//                       "NetworkRaid10Mirror4Way",
+//                       "NetworkRaid6DualParity"]
+//       	type =      "string"
+//               title =       "Data Protection Level"
+//               default =     "NetworkRaid10Mirror2Way"
+//               description = "Indicates the number and configuration of data copies in the Storage Pool"
+//               required = true
+//       }]
+//       tp_is_adaptive_optimization_enabled = [
+//       {
+//       	meta_locked = true
+//       	description = ""
+//       	default = true
+//       	required = false
+//       	title = "Adaptive Optimization"
+//       	type = "boolean"
+//       }]
 }
-*/
-
-# Importing an existing resource from the appliance.
-/*
-resource "oneview_storage_volume_template" "svt" {
-}
-*/
 
 # Testing data source
 /*
@@ -297,5 +290,10 @@ data "oneview_storage_volume_template" "d_svt" {
 
 output "oneview_svt_value" {
   value = "${data.oneview_storage_volume_template.d_svt.root_template_uri}"
+}
+*/
+# Importing an existing resource from the appliance.
+/*
+resource "oneview_storage_volume_template" "svt" {
 }
 */

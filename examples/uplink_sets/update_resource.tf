@@ -3,23 +3,23 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2600
   ov_ifmatch = "*"
 }
 
 # Fetching Logical Interconnect
 data "oneview_logical_interconnect" "logical_interconnect" {
-        name = "6c9d7d01-c176-43c8-b043-6fc0a65f4f9b"
+        name = "Auto-LE-Auto-LIG"
 }
 
 # Fetching Network
 data "oneview_ethernet_network" "ethernetnetwork" {
-  name = "TestNetwork_1"
+  name = "Auto-Ethernet-1"
 }
 
-# Creating Upllink Set
+# Updates Uplink Set
 resource "oneview_uplink_set" "UplinkSet" {
-  name                     = "TestUplinkSet0100"
+  name                     = "Auto-UplinkSetup-Updated"
   type                     = "uplink-setV7"
   logical_interconnect_uri = "${data.oneview_logical_interconnect.logical_interconnect.uri}"
   network_uris             = ["${data.oneview_ethernet_network.ethernetnetwork.uri}",]
@@ -31,19 +31,3 @@ resource "oneview_uplink_set" "UplinkSet" {
   network_type                      = "Ethernet"
   ethernet_network_type             = "Tagged"
 }
-
-/*
-# Example for data source
-data "oneview_uplink_set" "uplink_set" {
-        name = "up1"
-}
-
-output "oneview_uplink_set_value" {
-        value = "${data.oneview_uplink_set.uplink_set.uri}"
-}
-
-
-#Importing Existing resource
-resource "oneview_uplink_set" "import_us"{
-}
-*/
