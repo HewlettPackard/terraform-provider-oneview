@@ -350,8 +350,8 @@ func resourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) e
 	id := d.Id()
 
 	logInt := ov.LogicalInterconnect{}
-	all_li, err := config.ovClient.GetLogicalInterconnects("", "", "")
-	for _, li := range all_li.Members {
+	allLi, err := config.ovClient.GetLogicalInterconnects("", "", "")
+	for _, li := range allLi.Members {
 		if id == li.Name {
 			logInt = li
 		}
