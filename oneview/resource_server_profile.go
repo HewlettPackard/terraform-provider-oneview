@@ -1418,11 +1418,11 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				"requested_mbps": rawNet.RequestedMbps,
 			})
 		}
-		connection_settings := make([]map[string]interface{}, 0, 1)
-		connection_settings = append(connection_settings, map[string]interface{}{
+		connectionSettings := make([]map[string]interface{}, 0, 1)
+		connectionSettings = append(connectionSettings, map[string]interface{}{
 			"connections": networks,
 		})
-		d.Set("connection_settings", connection_settings)
+		d.Set("connection_settings", connectionSettings)
 	}
 
 	if serverProfile.Boot.ManageBoot {
