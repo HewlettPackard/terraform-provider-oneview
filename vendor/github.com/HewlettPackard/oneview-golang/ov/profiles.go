@@ -41,7 +41,7 @@ type FirmwareOption struct {
 
 // BootModeOption mode option
 type BootModeOption struct {
-	ManageMode    bool          `json:"manageMode"`              // "manageMode": true,
+	ManageMode    *bool         `json:"manageMode"`              // "manageMode": true,
 	Mode          string        `json:"mode,omitempty"`          // "mode": "BIOS",
 	PXEBootPolicy utils.Nstring `json:"pxeBootPolicy,omitempty"` // "pxeBootPolicy": null
 	SecureBoot    string        `json:"secureBoot,omitempty"`    // Enable or disable UEFI Secure Boot
@@ -62,7 +62,7 @@ type BiosSettings struct {
 // BiosOption - bios options
 type BiosOption struct {
 	ConsistencyState   string         `json:"consistencyState,omitempty"`   //Consistency state of the BIOS component
-	ManageBios         bool           `json:"manageBios"`                   // "manageBios": false,
+	ManageBios         *bool          `json:"manageBios"`                   // "manageBios": false,
 	OverriddenSettings []BiosSettings `json:"overriddenSettings,omitempty"` // "overriddenSettings": []
 	ReapplyState       string         `json:"reapplyState,omitempty"`       //Current reapply state of the BIOS component.
 }

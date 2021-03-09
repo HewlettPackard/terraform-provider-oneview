@@ -1,5 +1,6 @@
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file . 
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
+
 
 # [v1.7.0]
 ### Notes
@@ -7,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 #### Major changes
 1. Added support for new endpoints in logical interconnect resource, logical interconnect data source and logical interconnect group data source.
-   - PUT /rest/logical-interconnects/{id}/portFlapSettings
+   - PUT /rest/logical-interconnects/{id}/portFlapSettings 
 
 ### Oneview Features supported
 - Ethernet Network
@@ -37,9 +38,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Uplink Set
 
 ### Bug fixes & Enhancements:
-- [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
 - [#233] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/233) terraform import oneview_server_profile_template missing settings.
+- [#238] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/238) server profile connection settings
 - [#234] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/234) local storage configuration.
+- [#242] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/242) serverprofile bootmode_secureboot.
+- [#267] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/267) local_storage not working as expected.
+- [#268] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/268) local storage issue ( defined in server profile template). 
 
 # [v1.6.0]
 ### Notes
