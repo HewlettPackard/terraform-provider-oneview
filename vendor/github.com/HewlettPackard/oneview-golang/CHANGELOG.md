@@ -1,10 +1,42 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v1.8.0] (Unreleased)
+# [v6.0.0] (Unreleased)
+### Notes
+- This release extends supports of the SDK to Oneview API Version 2600. Image Streamer API Version 2010.
+
+### Oneview Features supported
+- Deploymenet Plan
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Hypervisor Manager
+- Hypervisor Cluster Profile
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnect Group
+- Logical Interconnects
+- Network Set
+- Scope
+- Server Certificates
+- Server Hardware
+- Server Hardware Types
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage System
+- Storage Template
+- Storage Volume
+- Storage Volume Attachments
+- Tasks
+- Uplink Set
+
+# [v1.8.0]
 ### Notes
 - This release extends supports of the SDK to Oneview API Version 2400.
-- Minor Bug Fixes
 
 ### Oneview Features supported
 - Ethernet Network
@@ -37,6 +69,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 #### Bug fixes & Enhancements:
 - [#285] (https://github.com/HewlettPackard/oneview-golang/issues/285) Fix Docker Setup section in README.md
 - [#286] (https://github.com/HewlettPackard/oneview-golang/issues/286) GetIloIPAddress() does not work with GetServerHardwareList()
+- [#295] (https://github.com/HewlettPackard/oneview-golang/issues/295) LIG NTP Configuration struct variable types were not correctly defined.
 
 # [v1.7.0] (2020-11-05)
 ### Notes

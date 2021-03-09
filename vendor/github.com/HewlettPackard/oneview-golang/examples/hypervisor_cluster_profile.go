@@ -14,7 +14,7 @@ func main() {
 		hcp_name                     = "test"
 		new_hcp                      = "test_new"
 		scope                        = "testing"
-		server_profile_template_name = "VolAtSPT"
+		server_profile_template_name = "SPT"
 		hypervisor_manager_ip        = "<hypervisor_manager_ip>"
 	)
 	apiversion, _ := strconv.Atoi(os.Getenv("ONEVIEW_APIVERSION"))
@@ -57,7 +57,7 @@ func main() {
 		Hostprefix:               "test"}
 
 	hypervisorclustprof := ov.HypervisorClusterProfile{
-		Type:                          "HypervisorClusterProfileV4",
+		Type:                          "HypervisorClusterProfileV5",
 		Name:                          hcp_name,
 		Description:                   "",
 		HypervisorType:                "Vmware",

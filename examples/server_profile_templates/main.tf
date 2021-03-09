@@ -7,17 +7,18 @@ provider "oneview" {
   ov_ifmatch = "*"
 }
 
-data "oneview_scope" "scope" {
-        name = "Auto-Scope"
-}
+
+
+
 
 # Creates server profile template
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
         name = "TestServerProfileTemplate"
         type = "ServerProfileTemplateV8"
-        enclosure_group = "Auto-EG"
-        server_hardware_type = "SY 480 Gen9 1"
-        initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
+//        enclosure_group = "Auto-EG"
+	enclosure_group = "EG"
+        server_hardware_type = "SY 480 Gen9 2"
+//        initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
         bios_option = {
       		manage_bios = "true"	
 		overridden_settings = [
@@ -48,5 +49,19 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 				raid_level = "RAID1"
 			}]
 		}]
+	}
+	connection_settings {
+		manage_connections = true
+		connections {
+			id            = 1
+			name          = "Management"
+			function_type = "Ethernet"
+			network_uri   = "/rest/ethernet-networks/42d5c77c-970f-46dc-b5b6-9835fc4cadc2"
+			port_id       = "Mezz 3:1-a"
+			boot {
+				priority           = "Primary"
+				ethernet_boot_type = "PXE"
+			}
+		}
 	}
 }

@@ -131,4 +131,5 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Deleted EnclosureGroup successfully...")
+
 }

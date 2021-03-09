@@ -78,7 +78,15 @@ func main() {
 	}
 
 	hypervisor_mgr.DisplayName = hypervisor_manager_display_name
-	err = ovc.UpdateHypervisorManager(hypervisor_mgr)
+	force := ""
+	if apiversion > 2400 {
+		force = "true"
+		err = ovc.UpdateHypervisorManager(hypervisor_mgr, force)
+		fmt.Println("works")
+	} else {
+		err = ovc.UpdateHypervisorManager(hypervisor_mgr, force)
+	}
+
 	if err != nil {
 		fmt.Println(err)
 	} else {

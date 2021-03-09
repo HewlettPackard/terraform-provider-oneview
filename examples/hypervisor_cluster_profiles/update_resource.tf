@@ -3,20 +3,20 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2400
+  ov_apiversion = 2600
   ov_ifmatch = "*"
 }
 
 variable "hm_endpoint" {
  type = "string"
  description = "Hypervisor Manager IP"
- default = "178.18.13.11"//"<Hypervisor-Manager-IP>"
+ default = "<Hypervisor-Manager-IP>"
 }
 
-varaible "deployment_plan_password"{
+variable "deployment_plan_password"{
  type = "string"
  description = "Deployement Plan Server Password"
- default = "dcs" //"<password>"
+ default = "<password>"
 }
 
 data "oneview_hypervisor_manager" "hm" {
@@ -24,42 +24,16 @@ data "oneview_hypervisor_manager" "hm" {
 }
 
 data "oneview_server_profile_template" "spt" {
-        name = "VolAtSPT"
+        name = "TestServerProfileTemplate"
 }
 
 data "oneview_ethernet_network" "eth_nw" {
-        name = "ESX vMotion"
+        name = "mgmt_nw"
 }
 
-/*
-# Crate Hypervisor Cluster Profile
-resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile"{  
-    type = "HypervisorClusterProfileV4",
-    name = "Cluster",
-    description = "cluster profile description",
-    hypervisor_type = "Vmware",
-    hypervisor_manager_uri = "${data.oneview_hypervisor_manager.hm.uri}",
-    hypervisor_cluster_settings = {  
-                                    type ="Vmware",
-                                    drs_enabled = true,
-                                    ha_enabled = false,
-                                    multi_nic_v_motion = false,
-                                    virtual_switch_type = "Standard"
-    },
-    hypervisor_host_profile_template = {  
-                                         server_profile_template_uri = "${data.oneview_server_profile_template.spt.uri}"
-                                         host_prefix = "Cluster",
-				         deployment_plan = {
-				                             server_password = "${var.deployment_plan_password}"
-				         },
-     }
-}
-*/
-
-/*
 # Update Oneview Hypervisor Cluster Profile
-resource "oneview_hypervisor_clust1er_profile" "HypervisorClusterProfile"{  
-     type = "HypervisorClusterProfileV4",
+resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile"{  
+     type = "HypervisorClusterProfileV5",
      name = "Cluster-renamed",
      description = "cluster profile description",
      hypervisor_type = "Vmware",
@@ -77,6 +51,7 @@ resource "oneview_hypervisor_clust1er_profile" "HypervisorClusterProfile"{
          host_prefix = "Cluster-renamed",
          deployment_plan = {
              		     server_password = "${var.deployment_plan_password}"
+                             deployment_plan_uri = "/rest/os-deployment-plans/7d680ff7-0302-470d-8c6e-68c70092efeb"
          },
      },
      host_config_policy = {
@@ -110,15 +85,3 @@ resource "oneview_hypervisor_clust1er_profile" "HypervisorClusterProfile"{
             network_uris = ["${data.oneview_ethernet_network.eth_nw.uri}"]
         }],
 }
-*/
-
-/*
-
-# Testing data source
-data "oneview_hypervisor_cluster_profile" "hcp" {
-         name = "cluster7"
-}
-output "oneview_hypervisor_cluster_profile_value" {
-        value = "${data.oneview_hypervisor_cluster_profile.hcp.type}"
-}
-*/

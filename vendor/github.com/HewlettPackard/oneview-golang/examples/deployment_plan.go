@@ -1,12 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/i3s"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
-	"io/ioutil"
 	"os"
 	"strconv"
 )
@@ -138,13 +136,10 @@ func main() {
 	var deploymentPlan i3s.DeploymentPlan
 	deploymentPlan.Name = deployment_plan_name
 	deploymentPlan.Type = "OEDeploymentPlanV5"
-	deploymentPlan.OEBuildPlanURI = "/rest/build-plans/cbaeb42a-9cc7-4673-ae0e-4167c90f006a"
+	deploymentPlan.OEBuildPlanURI = "/rest/build-plans/5eb04d8f-99ff-4b6e-ae3b-8bfe28fc9a63"
 	deploymentPlan.CustomAttributes = *customAttributes
 	deploymentPlan.HPProvided = false
 
-	fmt.Println("HPProvided:", deploymentPlan.HPProvided)
-	file, _ := json.MarshalIndent(deploymentPlan, "", " ")
-	ioutil.WriteFile("inut.json", file, 0644)
 	fmt.Println("***********Creating Deployment Plan****************")
 	err := i3sc.CreateDeploymentPlan(deploymentPlan)
 	if err != nil {
@@ -178,7 +173,6 @@ func main() {
 	deployment_plan.Description = utils.NewNstring("Testing Deployment plan")
 	err = i3sc.UpdateDeploymentPlan(deployment_plan)
 	if err != nil {
-		//panic(err)
 		fmt.Println("Error whilw updating Deployment Plan:", err)
 	} else {
 		fmt.Println("Deployment Plan has been updated with name: " + deployment_plan.Name)

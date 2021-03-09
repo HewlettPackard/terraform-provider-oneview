@@ -20,7 +20,9 @@ variable "hm_username" {
 }
 
 # Update the resource Post applying main.tf  
+# For API >= 2600 we can set force as a query parameter to true or false, for API <2600 user can send an empty string.
 resource "oneview_hypervisor_manager" "HypervisorManager" {
+	force = "true"
 	display_name = "TestHypervisorManager_Renamed"
         name = "${var.hm_endpoint}"
 	type = "HypervisorManagerV2"

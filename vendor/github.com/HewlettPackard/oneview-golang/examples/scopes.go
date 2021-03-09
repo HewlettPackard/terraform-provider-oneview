@@ -12,6 +12,7 @@ func main() {
 	var (
 		ClientOV    *ov.OVClient
 		scp_name    = "ScopeTest"
+		scp_name2   = "Auto-Scope"
 		new_scope   = "new-scope"
 		upd_scope   = "update-scope"
 		eth_network = "Auto-ethernet_network"
@@ -27,9 +28,9 @@ func main() {
 		apiversion,
 		"*")
 	scope_test := ov.Scope{Name: scp_name, Description: "Test from script", Type: "ScopeV3"}
-
+	scope_test_2 := ov.Scope{Name: scp_name2, Description: "Test from script", Type: "ScopeV3"}
 	er_test := ovc.CreateScope(scope_test)
-
+	er_test = ovc.CreateScope(scope_test_2)
 	if er_test != nil {
 		fmt.Println("Error Creating Scope: ", er_test)
 	}

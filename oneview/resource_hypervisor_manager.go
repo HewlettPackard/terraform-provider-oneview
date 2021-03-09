@@ -38,6 +38,10 @@ func resourceHypervisorManager() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"force": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -294,7 +298,7 @@ func resourceHypervisorManagerRead(d *schema.ResourceData, meta interface{}) err
 
 func resourceHypervisorManagerUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
+	force := d.Get("force").(string)
 	hypMan := ov.HypervisorManager{
 		ETAG:        d.Get("etag").(string),
 		URI:         utils.NewNstring(d.Get("uri").(string)),
@@ -344,7 +348,7 @@ func resourceHypervisorManagerUpdate(d *schema.ResourceData, meta interface{}) e
 		resourcePathCollect = append(resourcePathCollect, hypervisorManagerResourcePaths)
 		hypMan.ResourcePaths = resourcePathCollect
 	}
-	err := config.ovClient.UpdateHypervisorManager(hypMan)
+	err := config.ovClient.UpdateHypervisorManager(hypMan, force)
 	if err != nil {
 		return err
 	}
