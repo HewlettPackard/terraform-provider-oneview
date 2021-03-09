@@ -1,6 +1,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v6.0.0-12] (Unreleased)
+### Notes
+- This release supports API2600 minimally where we can use OneView v6.00 with this SDK. 
+
+### Bug fixes & Enhancements:
+- [#238] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/238) server profile connection settings
+- [#267] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/267) local_storage not working as expected.
+- [#268] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/268) local storage issue ( defined in server profile template). 
+
 # [v1.7.0-12]
 ### Notes
 - This release supports API2400 minimally where we can use OneView v5.60 with this SDK. 
