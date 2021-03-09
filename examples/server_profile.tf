@@ -29,6 +29,13 @@ resource "oneview_server_profile" "SP2" {
   hardware_name   = "0000A66101, bay 5"
   type            = "ServerProfileV12"
   enclosure_group = "EG"
+  bios_option {
+    manage_bios = true
+    overridden_settings {
+      id    = "TimeFormat"
+      value = "Utc"
+    }
+  }
   boot_order      = ["HardDisk"]
   boot_mode {
     manage_mode     = true
@@ -45,6 +52,23 @@ resource "oneview_server_profile" "SP2" {
       boot {
         priority           = "Primary"
         ethernet_boot_type = "PXE"
+      }
+    }
+  }
+  local_storage {
+    controller {
+      device_slot              = "Embedded"
+      drive_write_cache        = "Unmanaged"
+      initialize               = true
+      mode                     = "RAID"
+      predictive_spare_rebuild = "Unmanaged"
+      logical_drives {
+        accelerator         = "Unmanaged"
+        bootable            = true
+        drive_technology    = "SasHdd"
+        name                = "TestLd"
+        num_physical_drives = 2
+        raid_level          = "RAID1"
       }
     }
   }
