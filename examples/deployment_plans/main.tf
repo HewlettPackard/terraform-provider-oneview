@@ -15,9 +15,7 @@ resource "oneview_deployment_plan" "dp" {
 	oe_build_plan_uri = "/rest/build-plans/97c12c1a-a048-4b52-bcdb-de7f20b5295f"
 	hp_provided = false
 	type = "OEDeploymentPlanV5"
-	custom_attributes = [ ]  
-
-
+	custom_attributes = [ 
 	{
 		constraints = "{\"options\":[\"English (United States)\",\"French (France)\",\"German (Germany)\",\"Japanese (Japan)\",\"Arabic (Saudi Arabia)\",\"Chinese (PRC)\",\"Korean (Korea)\",\"Portuguese (Brazil)\",\"Russian (Russia)\"]}"
 		editable = true
@@ -120,5 +118,5 @@ resource "oneview_deployment_plan" "dp" {
 		type = "string"
 		visible = true
 	},
-
+    ]
 }
