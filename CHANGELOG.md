@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 # [v6.0.0-12] (Unreleased)
 ### Notes
 - This release supports API2600 minimally where we can use OneView v6.00 with this SDK. 
+
 ### Oneview Features supported
 - Ethernet Network
 - Enclosure
@@ -30,6 +31,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage Volume Template
 - Storage System
 - Uplink Set
+
+### Image Streamer resources supported:
+- Deployment Plans
 
 ### Bug fixes & Enhancements:
 - [#238] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/238) server profile connection settings

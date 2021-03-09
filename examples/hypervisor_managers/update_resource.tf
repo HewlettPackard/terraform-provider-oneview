@@ -10,17 +10,18 @@ provider "oneview" {
 variable "hm_endpoint" {
   type        = string
   description = "Hypervisor Manager IP"
-  default     = "172.18.13.11" #"<HM-IP>"
+  default     = "<HM-IP>"
 }
 
 variable "hm_username" {
   type        = string
   description = "Hypervisor Manager Username"
-  default     = "dcs" #"<HM-Username>"
+  default     = "<HM-Username>"
 }
-
+# For API >= 2600 we can set force as a query parameter to true or false, for API <2600 user can send an empty string.
 # Update the resource Post applying main.tf  
 resource "oneview_hypervisor_manager" "HypervisorManager" {
+  force           = "true"
   display_name    = "TestHypervisorManager_Renamed"
   name            = var.hm_endpoint
   type            = "HypervisorManagerV2"
