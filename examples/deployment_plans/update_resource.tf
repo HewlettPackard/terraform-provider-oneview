@@ -4,19 +4,20 @@ provider "oneview" {
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
   i3s_endpoint =  "${var.i3s_endpoint}"
-  ov_apiversion = 2000
+  ov_apiversion = 2010
   ov_ifmatch = "*"
 }
 
-# Creates a deployment plan or updates if already existing
-/*
+# Updates resource created from main.tf 
+
 resource "oneview_deployment_plan" "dp" {
-	name = "DemoDeploymentPlan"
+	name = "Testdp"
 	description = "Testing creation of Deployment Plan"
-	oe_build_plan_uri = "/rest/build-plans/2736fa84-f606-4514-96d7-8a94b24231e2"
+	oe_build_plan_uri = "/rest/build-plans/97c12c1a-a048-4b52-bcdb-de7f20b5295f"
 	hp_provided = false
 	type = "OEDeploymentPlanV5"
-	custom_attributes = [
+	custom_attributes = [ ]  
+
 
 	{
 		constraints = "{\"options\":[\"English (United States)\",\"French (France)\",\"German (Germany)\",\"Japanese (Japan)\",\"Arabic (Saudi Arabia)\",\"Chinese (PRC)\",\"Korean (Korea)\",\"Portuguese (Brazil)\",\"Russian (Russia)\"]}"
@@ -120,22 +121,5 @@ resource "oneview_deployment_plan" "dp" {
 		type = "string"
 		visible = true
 	},
-	]
-}
-*/
 
-# Test for data source
-/*
-data "oneview_deployment_plan" "deployment_plan" {
-        name = "TestDP"
 }
-output "oneview_deployment_plan_value" {
-        value = "${data.oneview_deployment_plan.deployment_plan.oe_build_plan_uri}"
-}
-*/
-
-# Importing an existing resource from teh appliance
-/*
-resource "oneview_deployment_plan" "dp_inst"{
-}
-*/
