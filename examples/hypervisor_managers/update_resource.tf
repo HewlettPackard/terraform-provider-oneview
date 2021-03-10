@@ -10,13 +10,13 @@ provider "oneview" {
 variable "hm_endpoint" {
  type = "string"
  description = "Hypervisor Manager IP"
- default = "172.18.13.11" #"<HM-IP>"
+ default = "<HM-IP>"
 }
 
 variable "hm_username" {
  type = "string"
  description = "Hypervisor Manager Username"
- default = "dcs" #"<HM-Username>"
+ default = "<HM-Username>"
 }
 
 # Update the resource Post applying main.tf  
