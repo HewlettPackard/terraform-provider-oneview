@@ -11,7 +11,7 @@ provider "oneview" {
 # Any one of the these fields can used to get data source
 data "oneview_server_certificate" "sc" {
   #         alias_name = "hm_cert"
-  remote_ip = "172.18.11.11" #"<Server_IP>"
+  remote_ip = "<Server_IP>"
 }
 
 output "oneview_server_certificate_value" {
