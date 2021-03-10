@@ -1,7 +1,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v6.0.0-12] (Unreleased)
+# [v6.0.0-12]
 ### Notes
 - This release supports API2600 minimally where we can use OneView v6.00 with this SDK. 
 
