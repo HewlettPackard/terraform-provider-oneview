@@ -39,7 +39,7 @@ The light weight containerized version of the HPE OneView SDK for Terraform is a
 $ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-12-OV6.0
 # Run docker commands below given, which  will in turn create a sh session 
 # where you can create files, issue commands and execute the examples.
-$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-12-OV5.6 /bin/sh
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-12-OV6.0 /bin/sh
 ```
 
 ### Local Setup
