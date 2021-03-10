@@ -53,6 +53,10 @@ func resourceHypervisorManager() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"force": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"hypervisor_type": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -110,10 +114,6 @@ func resourceHypervisorManager() *schema.Resource {
 						},
 					},
 				},
-			},
-			"query_params": {
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 			"refresh_state": {
 				Type:     schema.TypeString,
@@ -346,8 +346,8 @@ func resourceHypervisorManagerUpdate(d *schema.ResourceData, meta interface{}) e
 		resourcePathCollect = append(resourcePathCollect, hypervisorManagerResourcePaths)
 		hypMan.ResourcePaths = resourcePathCollect
 	}
-	var queryParams = d.Get("query_params").(string)
-	err := config.ovClient.UpdateHypervisorManager(hypMan, queryParams)
+	var force = d.Get("force").(string)
+	err := config.ovClient.UpdateHypervisorManager(hypMan, force)
 	if err != nil {
 		return err
 	}

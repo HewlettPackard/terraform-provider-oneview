@@ -124,7 +124,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"function_type": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Required: true,
 									},
 									"network_uri": {
 										Type:     schema.TypeString,
@@ -1364,6 +1364,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		"controller":           controllers,
 		"sas_logical_jbod":     sasLogDrives,
 	})
+
 	d.Set("local_storage", localStorage)
 
 	return nil

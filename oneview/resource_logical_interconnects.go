@@ -347,9 +347,15 @@ func resourceLogicalInterconnect() *schema.Resource {
 
 func resourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Id()
-	logInt, err := config.ovClient.GetLogicalInterconnectById(id)
+	id := d.Get("name").(string)
 
+	logInt := ov.LogicalInterconnect{}
+	allLi, err := config.ovClient.GetLogicalInterconnects("", "", "")
+	for _, li := range allLi.Members {
+		if id == li.Name {
+			logInt = li
+		}
+	}
 	if err != nil || logInt.URI.IsNil() {
 		d.SetId("")
 		return nil
