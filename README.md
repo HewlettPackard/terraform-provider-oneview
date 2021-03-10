@@ -19,7 +19,7 @@ You can find the latest supported HPE OneView Terraform Provider SDK [here](http
 
 ## What's New
 
-HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 2400 (OneView v5.60)
+HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 2600 (OneView v6.0)
 
 Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/Terraform-0.12/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
 
@@ -164,7 +164,7 @@ $ terraform apply
 ```
 Note: Only a single terraform file (example file) should exist in the home folder to execute the above mentioned three commands. Once the resource is tested move that file to examples folder. 
 
-Note: Currently this SDK supports OneView API 2400 minimally, where we can test OneView API 2400 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
+Note: Currently this SDK supports OneView API 2600 minimally, where we can test OneView API 2600 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
 
 ## API Implementation
 
@@ -208,7 +208,7 @@ This feedback is important for us to deliver a useful product.
 
 [HPE OneView Firmware Management White Paper](http://hpe.com/info/OneView/docs)
 
-Note: Currently this SDK supports OneView API 2400 minimally where we can test OneView API 2400 version with this SDK. No new fields have been added/deleted to support API2400 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
+Note: Currently this SDK supports OneView API 2600 minimally where we can test OneView API 2600 version with this SDK. No new fields have been added/deleted to support API2600 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ### HPE OneView Community
 
