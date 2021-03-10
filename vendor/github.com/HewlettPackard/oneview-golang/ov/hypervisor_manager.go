@@ -198,15 +198,23 @@ func (c *OVClient) DeleteHypervisorManager(name string) error {
 	return nil
 }
 
-func (c *OVClient) UpdateHypervisorManager(hypM HypervisorManager) error {
+func (c *OVClient) UpdateHypervisorManager(hypM HypervisorManager, force string) error {
 	log.Infof("Initializing update of hypervisor manager for %s.", hypM.Name)
 	var (
 		uri = hypM.URI.String()
 		t   *Task
 	)
+	q := make(map[string]interface{})
+	if force != "" {
+		q["force"] = force
+	}
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	// Setup query
+	if len(q) > 0 {
+		c.SetQueryString(q)
+	}
 
 	t = t.NewProfileTask(c)
 	t.ResetTask()

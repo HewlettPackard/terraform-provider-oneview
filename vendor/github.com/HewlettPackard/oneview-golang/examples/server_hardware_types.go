@@ -28,7 +28,7 @@ func main() {
 		fmt.Println("Error in getting the server hardware types ", err)
 	}
 	for i := 0; i < len(server_hardware_type_list.Members); i++ {
-		fmt.Println(server_hardware_type_list.Members[i].Name)
+		fmt.Println(server_hardware_type_list.Members[i])
 	}
 
 	fmt.Println("#-----------------------Server Hardware Type by name-------------------------#")

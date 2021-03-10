@@ -27,25 +27,25 @@ type LogicalInterconnectGroup struct {
 	InternalNetworkUris                    []utils.Nstring          `json:"internalNetworkUris,omitempty"`                     // "internalNetworkUris": []
 	Modified                               string                   `json:"modified,omitempty"`                                // "modified": "20150831T154835.250Z",
 	Name                                   string                   `json:"name"`                                              // "name": "Logical Interconnect Group1",
-	NtpConfiguration                       *NtpConfiguration        `json:"ntpConfiguration,omitempty"`
-	QosConfiguration                       *QosConfiguration        `json:"qosConfiguration,omitempty"`       // "qosConfiguration": {},
-	RedundancyType                         string                   `json:"redundancyType,omitempty"`         // "redundancyType": "HighlyAvailable"
-	ScopesUri                              utils.Nstring            `json:"scopesUri,omitempty"`              // "scopesUri":""
-	NextPageUri                            string                   `json:"NextPageUri,omitempty"`            // "NextPageUri":""
-	PortFlapProtection                     *PortFlapProtection      `json:"portFlapProtection,omitempty"`     // "portFlapProtection": {...}
-	PrevPageUri                            string                   `json:"prevPageUri,omitempty"`            // "PrevPageUri":""
-	Start                                  int                      `json:"start,omitempty"`                  // "start":""
-	Total                                  int                      `json:"total,omitempty"`                  // "total":""
-	SnmpConfiguration                      *SnmpConfiguration       `json:"snmpConfiguration,omitempty"`      // "snmpConfiguration": {...}
-	StackingHealth                         string                   `json:"stackingHealth,omitempty"`         //"stackingHealth": "Connected",
-	StackingMode                           string                   `json:"stackingMode,omitempty"`           //"stackingMode": "Enclosure",
-	State                                  string                   `json:"state,omitempty"`                  // "state": "Normal",
-	Status                                 string                   `json:"status,omitempty"`                 // "status": "Critical",
-	TelemetryConfiguration                 *TelemetryConfiguration  `json:"telemetryConfiguration,omitempty"` // "telemetryConfiguration": {...},
-	SflowConfiguration                     *SflowConfiguration      `json:"sflowConfiguration,omitempty"`     // "sflowConfiguration": {...},
-	Type                                   string                   `json:"type"`                             // "type": "logical-interconnect-groupsV3",
-	UplinkSets                             []UplinkSets             `json:"uplinkSets"`                       // "uplinkSets": {...},
-	URI                                    utils.Nstring            `json:"uri,omitempty"`                    // "uri": "/rest/logical-interconnect-groups/e2f0031b-52bd-4223-9ac1-d91cb519d548",
+	NtpConfiguration                       *NtpConfiguration        `json:"ntpConfiguration,omitempty"`                        // "ntpConfiguration": {},
+	QosConfiguration                       *QosConfiguration        `json:"qosConfiguration,omitempty"`                        // "qosConfiguration": {},
+	RedundancyType                         string                   `json:"redundancyType,omitempty"`                          // "redundancyType": "HighlyAvailable"
+	ScopesUri                              utils.Nstring            `json:"scopesUri,omitempty"`                               // "scopesUri":""
+	NextPageUri                            string                   `json:"NextPageUri,omitempty"`                             // "NextPageUri":""
+	PortFlapProtection                     *PortFlapProtection      `json:"portFlapProtection,omitempty"`                      // "portFlapProtection": {...}
+	PrevPageUri                            string                   `json:"prevPageUri,omitempty"`                             // "PrevPageUri":""
+	Start                                  int                      `json:"start,omitempty"`                                   // "start":""
+	Total                                  int                      `json:"total,omitempty"`                                   // "total":""
+	SnmpConfiguration                      *SnmpConfiguration       `json:"snmpConfiguration,omitempty"`                       // "snmpConfiguration": {...}
+	StackingHealth                         string                   `json:"stackingHealth,omitempty"`                          //"stackingHealth": "Connected",
+	StackingMode                           string                   `json:"stackingMode,omitempty"`                            //"stackingMode": "Enclosure",
+	State                                  string                   `json:"state,omitempty"`                                   // "state": "Normal",
+	Status                                 string                   `json:"status,omitempty"`                                  // "status": "Critical",
+	TelemetryConfiguration                 *TelemetryConfiguration  `json:"telemetryConfiguration,omitempty"`                  // "telemetryConfiguration": {...},
+	SflowConfiguration                     *SflowConfiguration      `json:"sflowConfiguration,omitempty"`                      // "sflowConfiguration": {...},
+	Type                                   string                   `json:"type"`                                              // "type": "logical-interconnect-groupsV3",
+	UplinkSets                             []UplinkSets             `json:"uplinkSets"`                                        // "uplinkSets": {...},
+	URI                                    utils.Nstring            `json:"uri,omitempty"`                                     // "uri": "/rest/logical-interconnect-groups/e2f0031b-52bd-4223-9ac1-d91cb519d548",
 }
 
 type EthernetSettings struct {

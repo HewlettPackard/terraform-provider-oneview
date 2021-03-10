@@ -15,6 +15,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"strings"
 )
 
 func resourceLogicalInterconnect() *schema.Resource {
@@ -347,7 +348,14 @@ func resourceLogicalInterconnect() *schema.Resource {
 func resourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	id := d.Id()
-	logInt, err := config.ovClient.GetLogicalInterconnectById(id)
+
+	logInt := ov.LogicalInterconnect{}
+	allLi, err := config.ovClient.GetLogicalInterconnects("", "", "")
+	for _, li := range allLi.Members {
+		if id == li.Name {
+			logInt = li
+		}
+	}
 
 	if err != nil || logInt.URI.IsNil() {
 		d.SetId("")
@@ -476,9 +484,10 @@ func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{})
 	config := meta.(*Config)
 
 	updateType := d.Get("update_type").(string)
+	uri := d.Get("uri").(string)
+	id := strings.Replace(uri, "/rest/logical-interconnects/", "", 1)
 
 	if updateType == "updateComplianceById" {
-		id := d.Id()
 		err := config.ovClient.UpdateLogicalInterconnectConsistentStateById(id)
 		if err != nil {
 			return err
@@ -487,7 +496,6 @@ func resourceLogicalInterconnectUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	if updateType == "updatePortFlapSettings" {
-		id := d.Id()
 		rawPortFlapSetting := d.Get("port_flap_settings").(*schema.Set).List()
 		portFlapSettings := ov.PortFlapProtection{}
 		for _, val := range rawPortFlapSetting {

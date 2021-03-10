@@ -445,7 +445,7 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 	for i, rawshsvol := range rawSharedStorageVolumes {
 		sharedStorageVolumes[i] = utils.Nstring(rawshsvol.(string))
 	}
-	hypCP.SharedStorageVolumes = sharedStorageVolumes
+	//hypCP.SharedStorageVolumes = sharedStorageVolumes
 	/*********************Shared Storage Volumes end***********************/
 	/*********************Hypervisor cluster settings start***********************/
 
@@ -1070,7 +1070,7 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 func resourceHypervisorClusterProfileDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	var softdelete = true
-	if config.OVAPIVersion == 1600 {
+	if config.OVAPIVersion >= 1600 {
 
 		err := config.ovClient.DeleteHypervisorClusterProfileSoftDelete(d.Id(), softdelete)
 		if err != nil {
