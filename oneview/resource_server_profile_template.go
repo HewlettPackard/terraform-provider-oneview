@@ -423,7 +423,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"local_storage": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -437,7 +437,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"controller": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -463,7 +463,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"logical_drives": {
 										Optional: true,
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"bootable": {
@@ -506,7 +506,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"sas_logical_jbod": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -1260,6 +1260,59 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("mac_type", spt.MACType)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
 
+	if len(spt.LocalStorage.Controllers) != 0 {
+		// Gets Storage Controller Body
+		controllers := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers))
+		for i := 0; i < len(spt.LocalStorage.Controllers); i++ {
+			logicalDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers[i].LogicalDrives))
+			for j := 0; j < len(spt.LocalStorage.Controllers[i].LogicalDrives); j++ {
+				logicalDrives = append(logicalDrives, map[string]interface{}{
+					"bootable":            *spt.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
+					"accelerator":         spt.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+					"drive_technology":    spt.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
+					"name":                spt.LocalStorage.Controllers[i].LogicalDrives[j].Name,
+					"num_physical_drives": spt.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
+					"num_spare_drives":    spt.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
+					"sas_logical_jbod_id": spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
+					"raid_level":          spt.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
+				})
+			}
+			controllers = append(controllers, map[string]interface{}{
+				"device_slot":       spt.LocalStorage.Controllers[i].DeviceSlot,
+				"initialize":        *spt.LocalStorage.Controllers[i].Initialize,
+				"drive_write_cache": spt.LocalStorage.Controllers[i].DriveWriteCache,
+				"mode":              spt.LocalStorage.Controllers[i].Mode,
+				"predictive_spare_rebuild": spt.LocalStorage.Controllers[i].PredictiveSpareRebuild,
+				"logical_drives":           logicalDrives,
+			})
+		}
+		// Gets Sas Logical Jbod Controller Body
+		sasLogDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.SasLogicalJBODs))
+		for i := 0; i < len(spt.LocalStorage.SasLogicalJBODs); i++ {
+			sasLogDrives = append(sasLogDrives, map[string]interface{}{
+				"description":        spt.LocalStorage.SasLogicalJBODs[i].Description,
+				"device_slot":        spt.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
+				"drive_max_size_gb":  spt.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
+				"drive_min_size_sb":  spt.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
+				"drive_technology":   spt.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
+				"erase_data":         spt.LocalStorage.SasLogicalJBODs[i].EraseData,
+				"id":                 spt.LocalStorage.SasLogicalJBODs[i].ID,
+				"name":               spt.LocalStorage.SasLogicalJBODs[i].Name,
+				"num_physical_drive": spt.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
+				"persistent":         spt.LocalStorage.SasLogicalJBODs[i].Persistent,
+			})
+		}
+		// Gets Local Storage Body
+		localStorage := make([]map[string]interface{}, 0, 1)
+		localStorage = append(localStorage, map[string]interface{}{
+			"manage_local_storage": spt.LocalStorage.ManageLocalStorage,
+			"initialize":           spt.LocalStorage.Initialize,
+			"controller":           controllers,
+			"sas_logical_jbod":     sasLogDrives,
+		})
+		d.Set("local_storage", localStorage)
+	}
+
 	var connections []ov.Connection
 	if len(spt.ConnectionSettings.Connections) != 0 {
 		connections = spt.ConnectionSettings.Connections
@@ -1313,58 +1366,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 
 		d.Set("bios_option", biosOptions)
 	}
-
-	// Gets Local Storage Body
-	localStorage := make([]map[string]interface{}, 0, 1)
-	// Gets Storage Controller Body
-	controllers := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers))
-	for i := 0; i < len(spt.LocalStorage.Controllers); i++ {
-		logicalDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers[i].LogicalDrives))
-		for j := 0; j < len(spt.LocalStorage.Controllers[i].LogicalDrives); j++ {
-			logicalDrives = append(logicalDrives, map[string]interface{}{
-				"bootable":            *spt.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
-				"accelerator":         spt.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
-				"drive_technology":    spt.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
-				"name":                spt.LocalStorage.Controllers[i].LogicalDrives[j].Name,
-				"num_physical_drives": spt.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
-				"num_spare_drives":    spt.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
-				"sas_logical_jbod_id": spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
-				"raid_level":          spt.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
-			})
-		}
-		controllers = append(controllers, map[string]interface{}{
-			"device_slot":       spt.LocalStorage.Controllers[i].DeviceSlot,
-			"initialize":        *spt.LocalStorage.Controllers[i].Initialize,
-			"drive_write_cache": spt.LocalStorage.Controllers[i].DriveWriteCache,
-			"mode":              spt.LocalStorage.Controllers[i].Mode,
-			"predictive_spare_rebuild": spt.LocalStorage.Controllers[i].PredictiveSpareRebuild,
-			"logical_drive":            logicalDrives,
-		})
-	}
-	// Gets Sas Logical Jbod Controller Body
-	sasLogDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.SasLogicalJBODs))
-	for i := 0; i < len(spt.LocalStorage.SasLogicalJBODs); i++ {
-		sasLogDrives = append(sasLogDrives, map[string]interface{}{
-			"description":        spt.LocalStorage.SasLogicalJBODs[i].Description,
-			"device_slot":        spt.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
-			"drive_max_size_gb":  spt.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
-			"drive_min_size_sb":  spt.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
-			"drive_technology":   spt.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
-			"erase_data":         spt.LocalStorage.SasLogicalJBODs[i].EraseData,
-			"id":                 spt.LocalStorage.SasLogicalJBODs[i].ID,
-			"name":               spt.LocalStorage.SasLogicalJBODs[i].Name,
-			"num_physical_drive": spt.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
-			"persistent":         spt.LocalStorage.SasLogicalJBODs[i].Persistent,
-		})
-	}
-	localStorage = append(localStorage, map[string]interface{}{
-		"manage_local_storage": spt.LocalStorage.ManageLocalStorage,
-		"initialize":           spt.LocalStorage.Initialize,
-		"controller":           controllers,
-		"sas_logical_jbod":     sasLogDrives,
-	})
-	d.Set("local_storage", localStorage)
-
 	return nil
 }
 

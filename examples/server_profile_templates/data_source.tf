@@ -16,3 +16,5 @@ output "oneiew_server_hardware_type_value" {
 	value = "${data.oneview_server_profile_template.server_profile_template.uri}"
 }
 
+#resource "oneview_server_profile_template" "import_spt"{
+#}
