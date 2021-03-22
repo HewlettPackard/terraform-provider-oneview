@@ -89,7 +89,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"connection_settings": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_connections": {
@@ -106,7 +106,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"connections": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -213,7 +213,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"boot": {
 										Optional: true,
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"priority": {
@@ -234,9 +234,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Optional: true,
 												},
 												"iscsi": {
-													Type:     schema.TypeSet,
+													Type:     schema.TypeList,
 													Optional: true,
-													MaxItems: 1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"chap_level": {
@@ -294,7 +293,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 										},
 									},
 									"ipv4": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -1033,10 +1032,10 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			}
 			init, _ := controllerData["initialize"].(bool)
 			localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-				DeviceSlot:      controllerData["device_slot"].(string),
-				DriveWriteCache: controllerData["drive_write_cache"].(string),
-				Initialize:      &init,
-				Mode:            controllerData["mode"].(string),
+				DeviceSlot:             controllerData["device_slot"].(string),
+				DriveWriteCache:        controllerData["drive_write_cache"].(string),
+				Initialize:             &init,
+				Mode:                   controllerData["mode"].(string),
 				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 				LogicalDrives:          logicalDrives,
 			})
@@ -1120,14 +1119,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 								IsCompressed:                  propertyItem["is_compressed"].(bool),
 								IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 								IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-								Name:              propertyItem["name"].(string),
-								PerformancePolicy: propertyItem["performance_policy"].(string),
-								ProvisioningType:  propertyItem["provisioning_type"].(string),
-								Size:              propertyItem["size"].(int),
-								SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:   propertyItem["template_version"].(string),
-								VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
+								Name:                          propertyItem["name"].(string),
+								PerformancePolicy:             propertyItem["performance_policy"].(string),
+								ProvisioningType:              propertyItem["provisioning_type"].(string),
+								Size:                          propertyItem["size"].(int),
+								SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:               propertyItem["template_version"].(string),
+								VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -1179,11 +1178,11 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 				AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-				State:              volumeAttachmentItem["state"].(string),
-				Status:             volumeAttachmentItem["status"].(string),
-				StoragePaths:       storagePaths,
-				BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
-				Volume:             &volumes,
+				State:                          volumeAttachmentItem["state"].(string),
+				Status:                         volumeAttachmentItem["status"].(string),
+				StoragePaths:                   storagePaths,
+				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+				Volume:                         &volumes,
 			})
 		}
 		serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
@@ -1278,10 +1277,10 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				})
 			}
 			controllers = append(controllers, map[string]interface{}{
-				"device_slot":       spt.LocalStorage.Controllers[i].DeviceSlot,
-				"initialize":        *spt.LocalStorage.Controllers[i].Initialize,
-				"drive_write_cache": spt.LocalStorage.Controllers[i].DriveWriteCache,
-				"mode":              spt.LocalStorage.Controllers[i].Mode,
+				"device_slot":              spt.LocalStorage.Controllers[i].DeviceSlot,
+				"initialize":               *spt.LocalStorage.Controllers[i].Initialize,
+				"drive_write_cache":        spt.LocalStorage.Controllers[i].DriveWriteCache,
+				"mode":                     spt.LocalStorage.Controllers[i].Mode,
 				"predictive_spare_rebuild": spt.LocalStorage.Controllers[i].PredictiveSpareRebuild,
 				"logical_drives":           logicalDrives,
 			})
@@ -1312,29 +1311,67 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		})
 		d.Set("local_storage", localStorage)
 	}
-
-	var connections []ov.Connection
 	if len(spt.ConnectionSettings.Connections) != 0 {
-		connections = spt.ConnectionSettings.Connections
-	}
-
-	if len(connections) != 0 {
-		networks := make([]map[string]interface{}, 0, len(connections))
-		for _, rawNet := range connections {
-			networks = append(networks, map[string]interface{}{
-				"name":           rawNet.Name,
-				"function_type":  rawNet.FunctionType,
-				"network_uri":    rawNet.NetworkURI.String(),
-				"port_id":        rawNet.PortID,
-				"requested_mbps": rawNet.RequestedMbps,
+		// Get connections
+		connections := make([]map[string]interface{}, 0, len(spt.ConnectionSettings.Connections))
+		for _, connection := range spt.ConnectionSettings.Connections {
+			// Gets Boot for Connection
+			iscsi := make([]map[string]interface{}, 0, 1)
+			if connection.Boot.Iscsi != nil {
+				iscsi = append(iscsi, map[string]interface{}{
+					"chap_level":              connection.Boot.Iscsi.Chaplevel,
+					"initiator_name_source":   connection.Boot.Iscsi.InitiatorNameSource,
+					"first_boot_target_ip":    connection.Boot.Iscsi.FirstBootTargetIp,
+					"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
+					"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
+					"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
+				})
+			}
+			// Gets Boot Settings
+			connectionBoot := make([]map[string]interface{}, 0, 1)
+			if connection.Boot != nil {
+				connectionBoot = append(connectionBoot, map[string]interface{}{
+					"priority":           connection.Boot.Priority,
+					"boot_vlan_id":       connection.Boot.BootOptionV3.BootVlanId,
+					"ethernet_boot_type": connection.Boot.EthernetBootType,
+					"boot_volume_source": connection.Boot.BootVolumeSource,
+					"iscsi":              iscsi,
+				})
+			}
+			// Get IPV4 Settings for Connection
+			connectionIpv4 := make([]map[string]interface{}, 0, 1)
+			if connection.Ipv4 != nil {
+				connectionIpv4 = append(connectionIpv4, map[string]interface{}{
+					"gateway":           connection.Ipv4.Gateway,
+					"ip_address":        connection.Ipv4.IpAddress,
+					"subnet_mask":       connection.Ipv4.SubnetMask,
+					"ip_address_source": connection.Ipv4.IpAddressSource,
+				})
+			}
+			// Gets Connection Body
+			connections = append(connections, map[string]interface{}{
+				"function_type":  connection.FunctionType,
+				"network_uri":    connection.NetworkURI,
+				"port_id":        connection.PortID,
+				"requested_mbps": connection.RequestedMbps,
+				"id":             connection.ID,
+				"isolated_trunk": connection.IsolatedTrunk,
+				"lag_name":       connection.LagName,
+				"mac_type":       connection.MacType,
+				"managed":        connection.Managed,
+				"network_name":   connection.NetworkName,
+				"boot":           connectionBoot,
+				"ipv4":           connectionIpv4,
 			})
 		}
-		connection_settings := make([]map[string]interface{}, 0, 1)
-		connection_settings = append(connection_settings, map[string]interface{}{
-			"connections":        networks,
+		// Connection Settings
+		connectionSettings := make([]map[string]interface{}, 0, 1)
+		connectionSettings = append(connectionSettings, map[string]interface{}{
 			"manage_connections": spt.ConnectionSettings.ManageConnections,
+			"compliance_control": spt.ConnectionSettings.ComplianceControl,
+			"connections":        connections,
 		})
-		d.Set("connection_settings", connection_settings)
+		d.Set("connection_settings", connectionSettings)
 	}
 
 	if spt.Boot.ManageBoot {
@@ -1557,10 +1594,10 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			init, _ := controllerData["initialize"].(bool)
 			localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-				DeviceSlot:      controllerData["device_slot"].(string),
-				DriveWriteCache: controllerData["drive_write_cache"].(string),
-				Initialize:      &init,
-				Mode:            controllerData["mode"].(string),
+				DeviceSlot:             controllerData["device_slot"].(string),
+				DriveWriteCache:        controllerData["drive_write_cache"].(string),
+				Initialize:             &init,
+				Mode:                   controllerData["mode"].(string),
 				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 				LogicalDrives:          logicalDrives,
 			})
@@ -1640,14 +1677,14 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 								IsCompressed:                  propertyItem["is_compressed"].(bool),
 								IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 								IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-								Name:              propertyItem["name"].(string),
-								PerformancePolicy: propertyItem["performance_policy"].(string),
-								ProvisioningType:  propertyItem["provisioning_type"].(string),
-								Size:              propertyItem["size"].(int),
-								SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:   propertyItem["template_version"].(string),
-								VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
+								Name:                          propertyItem["name"].(string),
+								PerformancePolicy:             propertyItem["performance_policy"].(string),
+								ProvisioningType:              propertyItem["provisioning_type"].(string),
+								Size:                          propertyItem["size"].(int),
+								SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:               propertyItem["template_version"].(string),
+								VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -1697,11 +1734,11 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 				AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-				State:              volumeAttachmentItem["state"].(string),
-				Status:             volumeAttachmentItem["status"].(string),
-				StoragePaths:       storagePaths,
-				BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
-				Volume:             &volumes,
+				State:                          volumeAttachmentItem["state"].(string),
+				Status:                         volumeAttachmentItem["status"].(string),
+				StoragePaths:                   storagePaths,
+				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
+				Volume:                         &volumes,
 			})
 		}
 		serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
