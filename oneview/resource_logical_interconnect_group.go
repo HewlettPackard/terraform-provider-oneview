@@ -19,9 +19,6 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-
-	"encoding/json"
-	"io/ioutil"
 )
 
 func resourceLogicalInterconnectGroup() *schema.Resource {
@@ -714,7 +711,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 													},
 												},
 												"dscp_class_map": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Elem:     &schema.Schema{Type: schema.TypeString},
 													Set:      schema.HashString,
@@ -1621,7 +1618,8 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 				"icm_name":        logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].IcmName,
 				"port_name":       logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].PortName,
 			})
-Set
+		}
+
 		sflowConfigurations := make([]map[string]interface{}, 0, 1)
 
 		sflowConfigurations = append(sflowConfigurations, map[string]interface{}{
@@ -1716,7 +1714,7 @@ Set
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSetting := map[string]interface{}{
-		"type":                    logicalInterconnectGroup.EthernetSettings.Type,
+		"type": logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
 		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
@@ -1731,16 +1729,16 @@ Set
 	if logicalInterconnectGroup.IgmpSettings != nil {
 		igmpSettings := make([]map[string]interface{}, 0, 1)
 		igmpSetting := map[string]interface{}{
-			"category":                   logicalInterconnectGroup.IgmpSettings.Category,
-			"consistency_checking":       logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
-			"created":                    logicalInterconnectGroup.IgmpSettings.Created,
-			"dependent_resource_uri":     logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
-			"description":                logicalInterconnectGroup.IgmpSettings.Description,
-			"etag":                       logicalInterconnectGroup.IgmpSettings.ETAG,
-			"igmp_snooping":              *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
-			"prevent_flooding":           *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
-			"proxy_reporting":            *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
-			"id":                         logicalInterconnectGroup.IgmpSettings.ID,
+			"category":               logicalInterconnectGroup.IgmpSettings.Category,
+			"consistency_checking":   logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
+			"created":                logicalInterconnectGroup.IgmpSettings.Created,
+			"dependent_resource_uri": logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
+			"description":            logicalInterconnectGroup.IgmpSettings.Description,
+			"etag":                   logicalInterconnectGroup.IgmpSettings.ETAG,
+			"igmp_snooping":          *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
+			"prevent_flooding":       *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
+			"proxy_reporting":        *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
+			"id":                     logicalInterconnectGroup.IgmpSettings.ID,
 			"igmp_idle_timeout_interval": logicalInterconnectGroup.IgmpSettings.IgmpIdleTimeoutInterval,
 			"igmp_snooping_vlan_ids":     logicalInterconnectGroup.IgmpSettings.IgmpSnoopingVlanIds,
 			"modified":                   logicalInterconnectGroup.IgmpSettings.Modified,
@@ -1778,35 +1776,27 @@ Set
 		d.Set("port_flap_settings", portFlapSettings)
 	}
 
-	file, _ := json.MarshalIndent(logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers, "", " ")
-	_ = ioutil.WriteFile("test.json", file, 0644)
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
+		qosClassificationMap := make([]map[string]interface{}, 0, 1)
+		if qosTrafficClass.QosClassificationMapping != nil {
 
-		dscpClassMap := make([]interface{}, 0)
-		if qosTrafficClass.QosClassificationMapping != nil{
+			dot1pClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
+				dot1pClassMap = append(dot1pClassMap, raw)
+			}
+
+			dscpClassMap := make([]interface{}, 0)
 			for _, raw := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
 				dscpClassMap = append(dscpClassMap, raw)
 			}
-		}
-		dot1pClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.Dot1pClassMapping))
-		if qosTrafficClass.QosClassificationMapping.Dot1pClassMapping != nil{
-			for i, dot1pValue := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
-				dot1pClassMap[i] = dot1pValue
-			}
-		}
 
-		//dot1pClassMap := make([]interface{}, 0)
-		//if qosTrafficClass.QosClassificationMapping.Dot1pClassMapping != nil{
-		//	for _, raw := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping{
-		//		dot1pClassMap = append(dot1pClassMap, raw)
-		//	}
-		//}
-		qosClassificationMap := make([]map[string]interface{}, 0, 1)
-		qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
-			"dot1p_class_map": schema.NewSet(func(a interface{}) int { return a.(int) }, dot1pClassMap),
-			"dscp_class_map":  dscpClassMap,
-		})
+			qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
+				"dot1p_class_map": dot1pClassMap,
+				"dscp_class_map":  dscpClassMap,
+			})
+
+		}
 
 		qosTrafficClasses = append(qosTrafficClasses, map[string]interface{}{
 			"name":                   qosTrafficClass.QosTrafficClass.ClassName,
@@ -1818,8 +1808,6 @@ Set
 			"qos_classification_map": qosClassificationMap,
 		})
 	}
-
-
 	qosTrafficClassCount := d.Get("quality_of_service.0.qos_traffic_class.#").(int)
 	oneviewTrafficClassCount := len(qosTrafficClasses)
 	for i := 0; i < qosTrafficClassCount; i++ {
@@ -1833,7 +1821,7 @@ Set
 
 	qualityOfService := make([]map[string]interface{}, 0, 1)
 	qualityOfService = append(qualityOfService, map[string]interface{}{
-		"type":                         logicalInterconnectGroup.QosConfiguration.Type,
+		"type": logicalInterconnectGroup.QosConfiguration.Type,
 		"active_qos_config_type":       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
 		"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
 		"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
