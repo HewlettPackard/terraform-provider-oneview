@@ -4,10 +4,10 @@
 
 OV Version |6.00| 5.60   | 5.50   
 | ------------- |:-------------:| -------------:| -------------:|
-SDK Version/Tag  |[v6.0.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-12)| [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |
-Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)|
+SDK Version/Tag  |[v6.0.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-13)|[v6.0.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-12)| [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |
+Build Status | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true) | ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)| ![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)|
 ```
-Note: v1.7.0-12 onwards supports Terraform 0.12.xx
+Note: v6.0.0-13 onwards supports Terraform 0.13.xx
 ```
 ## Introduction
 
@@ -68,12 +68,11 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 	Install Terraform 0.13.x from [here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
 
-```bash 
-```
+
 
 - Install Oneview Terraform Provider SDK from Terraform Registry
 
-Terraform 0.13 added support for automatically downloading providers from
+     Terraform 0.13 added support for automatically downloading providers from
 the terraform registry. Add the following to your terraform project
 
 ```hcl
