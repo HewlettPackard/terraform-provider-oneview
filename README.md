@@ -71,20 +71,19 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 ```bash 
 ```
 
-- Install Oneview Terraform Provider SDK
-```go
-# Download the source code for terraform-provider-oneview
-# Build the needed binary
-# Get the branch 'Terraform-0.12' terraform-provider-oneview which is supports Terraform v0.12.x.
+- Install Oneview Terraform Provider SDK from Terraform Registry
 
-$ git clone -b Terraform-0.12  https://github.com/HewlettPackard/terraform-provider-oneview.git
-$ cd terraform-provider-oneview
-# Build the provider
-$ go build -o terraform-provider-oneview
-# Create the plugin location if it does not exist and copy the  provider binary there.
-$ mkdir -p ~/.terraform.d/plugins/
-$ mv terraform-provider-oneview ~/.terraform.d./plugins/
+Terraform 0.13 added support for automatically downloading providers from
+the terraform registry. Add the following to your terraform project
 
+```hcl
+terraform {
+  required_providers {
+    oneview = {
+      source = "HewlettPackard/oneview"
+    }
+  }
+```
 ## Configuration
 
 ### Environment Variables
