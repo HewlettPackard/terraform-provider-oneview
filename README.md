@@ -36,10 +36,10 @@ The light weight containerized version of the HPE OneView SDK for Terraform is a
 
 ```bash
 # Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-12-OV6.0
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-13-OV6.0
 # Run docker commands below given, which  will in turn create a sh session 
 # where you can create files, issue commands and execute the examples.
-$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-12-OV6.0 /bin/sh
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.0.0-13-OV6.0 /bin/sh
 ```
 
 ### Local Setup
@@ -66,7 +66,7 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 - Installing Terraform
 
-	Install Terraform 0.12.x from [here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
+	Install Terraform 0.13.x from [here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
 
 ```bash 
 ```
