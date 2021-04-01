@@ -1,7 +1,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v6.1.0-12] (Unreleased)
+# [v6.0.0-13]
+#### Major changes
+1.This release is validated to support Terraform 0.13.  Terraform 0.13 support HCL2 and enables automated installation of the HPE OneView Terraform Provider.
 
 ### Bug fixes & Enhancements:
 - [#277] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/277) SPT Import configuration issue
