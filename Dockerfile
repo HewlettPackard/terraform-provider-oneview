@@ -1,7 +1,7 @@
 FROM golang:alpine
 MAINTAINER "Priyanka Sood <priyanka.sood@hpe.com>" 
 
-ENV TERRAFORM_VERSION=0.12.29
+ENV TERRAFORM_VERSION=0.13.6
 
 ENV USER root
 RUN mkdir -p /usr/local/terraform
@@ -21,8 +21,6 @@ WORKDIR /go/src/github.com/HewlettPackard/terraform-provider-oneview
 COPY . /go/src/github.com/HewlettPackard/terraform-provider-oneview
 
 RUN cd $GOPATH/src/github.com/HewlettPackard/terraform-provider-oneview
-RUN go build -o $GOPATH/bin/terraform-provider-oneview
-RUN mv $GOPATH/bin/terraform-provider-oneview /usr/local/terraform/
 
 RUN go get github.com/kardianos/govendor
 ENV PATH $PATH:/usr/local/terraform/

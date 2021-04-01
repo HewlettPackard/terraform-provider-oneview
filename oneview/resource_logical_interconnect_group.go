@@ -1714,7 +1714,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSetting := map[string]interface{}{
-		"type": logicalInterconnectGroup.EthernetSettings.Type,
+		"type":                    logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
 		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
@@ -1729,16 +1729,16 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	if logicalInterconnectGroup.IgmpSettings != nil {
 		igmpSettings := make([]map[string]interface{}, 0, 1)
 		igmpSetting := map[string]interface{}{
-			"category":               logicalInterconnectGroup.IgmpSettings.Category,
-			"consistency_checking":   logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
-			"created":                logicalInterconnectGroup.IgmpSettings.Created,
-			"dependent_resource_uri": logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
-			"description":            logicalInterconnectGroup.IgmpSettings.Description,
-			"etag":                   logicalInterconnectGroup.IgmpSettings.ETAG,
-			"igmp_snooping":          *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
-			"prevent_flooding":       *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
-			"proxy_reporting":        *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
-			"id":                     logicalInterconnectGroup.IgmpSettings.ID,
+			"category":                   logicalInterconnectGroup.IgmpSettings.Category,
+			"consistency_checking":       logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
+			"created":                    logicalInterconnectGroup.IgmpSettings.Created,
+			"dependent_resource_uri":     logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
+			"description":                logicalInterconnectGroup.IgmpSettings.Description,
+			"etag":                       logicalInterconnectGroup.IgmpSettings.ETAG,
+			"igmp_snooping":              *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
+			"prevent_flooding":           *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
+			"proxy_reporting":            *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
+			"id":                         logicalInterconnectGroup.IgmpSettings.ID,
 			"igmp_idle_timeout_interval": logicalInterconnectGroup.IgmpSettings.IgmpIdleTimeoutInterval,
 			"igmp_snooping_vlan_ids":     logicalInterconnectGroup.IgmpSettings.IgmpSnoopingVlanIds,
 			"modified":                   logicalInterconnectGroup.IgmpSettings.Modified,
@@ -1821,7 +1821,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	qualityOfService := make([]map[string]interface{}, 0, 1)
 	qualityOfService = append(qualityOfService, map[string]interface{}{
-		"type": logicalInterconnectGroup.QosConfiguration.Type,
+		"type":                         logicalInterconnectGroup.QosConfiguration.Type,
 		"active_qos_config_type":       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
 		"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
 		"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,

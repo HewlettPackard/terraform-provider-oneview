@@ -388,10 +388,10 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 				})
 			}
 			controllers = append(controllers, map[string]interface{}{
-				"device_slot":       spt.LocalStorage.Controllers[i].DeviceSlot,
-				"initialize":        *spt.LocalStorage.Controllers[i].Initialize,
-				"drive_write_cache": spt.LocalStorage.Controllers[i].DriveWriteCache,
-				"mode":              spt.LocalStorage.Controllers[i].Mode,
+				"device_slot":              spt.LocalStorage.Controllers[i].DeviceSlot,
+				"initialize":               *spt.LocalStorage.Controllers[i].Initialize,
+				"drive_write_cache":        spt.LocalStorage.Controllers[i].DriveWriteCache,
+				"mode":                     spt.LocalStorage.Controllers[i].Mode,
 				"predictive_spare_rebuild": spt.LocalStorage.Controllers[i].PredictiveSpareRebuild,
 				"logical_drives":           logicalDrives,
 			})
