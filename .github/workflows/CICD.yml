@@ -39,8 +39,11 @@ jobs:
             for fn in $UNFORMATTED; do
               echo -e "  gofmt -w $PWD/$fn";
             done;
-           exit 1;
+            exit 1;
            fi
+      env: 
+        UNFORMATTED: $(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)
+
     - name: Standard Go testing avoiding the testing of the vendor folder.
       run: |
         go vet $(go list ./... | grep -v '/vendor/')
