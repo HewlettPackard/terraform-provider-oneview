@@ -13,11 +13,11 @@ package oneview
 
 import (
 	"fmt"
-	"reflect"
-	"strconv"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform/helper/schema"
+	"reflect"
+	"strconv"
 )
 
 func resourceLogicalInterconnectGroup() *schema.Resource {
