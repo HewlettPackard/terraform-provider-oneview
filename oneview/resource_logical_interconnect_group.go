@@ -1777,32 +1777,26 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
-
-		dscpClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.DscpClassMapping))
-		for i, dscpValue := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
-			dscpClassMap[i] = dscpValue
-		}
-
-		dot1pClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.Dot1pClassMapping))
-		for i, dot1pValue := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
-			dot1pClassMap[i] = dot1pValue
-		}
 		qosClassificationMap := make([]map[string]interface{}, 0, 1)
-		qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
-			"dot1p_class_map": schema.NewSet(func(a interface{}) int { return a.(int) }, dot1pClassMap),
-			"dscp_class_map":  schema.NewSet(schema.HashString, dscpClassMap),
-		})
+		if qosTrafficClass.QosClassificationMapping != nil {
 
-		qosTrafficClasses = append(qosTrafficClasses, map[string]interface{}{
-			"name":                   qosTrafficClass.QosTrafficClass.ClassName,
-			"enabled":                *qosTrafficClass.QosTrafficClass.Enabled,
-			"egress_dot1p_value":     qosTrafficClass.QosTrafficClass.EgressDot1pValue,
-			"real_time":              *qosTrafficClass.QosTrafficClass.RealTime,
-			"bandwidth_share":        qosTrafficClass.QosTrafficClass.BandwidthShare,
-			"max_bandwidth":          qosTrafficClass.QosTrafficClass.MaxBandwidth,
-			"qos_classification_map": qosClassificationMap,
-		})
+			dot1pClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
+				dot1pClassMap = append(dot1pClassMap, raw)
+			}
+
+			dscpClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
+				dscpClassMap = append(dscpClassMap, raw)
+			}
+
+			qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
+				"dot1p_class_map": dot1pClassMap,
+				"dscp_class_map":  dscpClassMap,
+			})
+		}
 	}
+
 	qosTrafficClassCount := d.Get("quality_of_service.0.qos_traffic_class.#").(int)
 	oneviewTrafficClassCount := len(qosTrafficClasses)
 	for i := 0; i < qosTrafficClassCount; i++ {
