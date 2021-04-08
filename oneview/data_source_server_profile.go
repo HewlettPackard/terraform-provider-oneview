@@ -725,11 +725,11 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	for _, controller := range serverProfile.LocalStorage.Controllers {
 
 		controllers = append(controllers, map[string]interface{}{
-			"device_slot":          controller.DeviceSlot,
-			"drive_write_cache":    controller.DriveWriteCache,
-			"import_configuration": controller.ImportConfiguration,
-			"initialize":           controller.Initialize,
-			"mode":                 controller.Mode,
+			"device_slot":              controller.DeviceSlot,
+			"drive_write_cache":        controller.DriveWriteCache,
+			"import_configuration":     controller.ImportConfiguration,
+			"initialize":               controller.Initialize,
+			"mode":                     controller.Mode,
 			"predictive_spare_rebuild": controller.PredictiveSpareRebuild,
 		})
 		logicaldrives := make([]map[string]interface{}, 0, len(controller.LogicalDrives))
