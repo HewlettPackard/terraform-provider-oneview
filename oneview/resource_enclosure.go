@@ -133,6 +133,7 @@ func resourceEnclosure() *schema.Resource {
 			"enclosure_group_uri": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Default:  "",
 			},
 			"enclosure_type": {
 				Type:     schema.TypeString,
@@ -161,6 +162,7 @@ func resourceEnclosure() *schema.Resource {
 			"host_name": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Default:  "",
 			},
 			"user_name": {
 				Type:     schema.TypeString,
@@ -350,7 +352,9 @@ func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("description", enclosure.Description)
 	d.Set("device_bay_count", enclosure.DeviceBayCount)
 	d.Set("etag", enclosure.ETAG)
-	d.Set("enclosure_group_uri", enclosure.EnclosureGroupUri.String())
+	if enclosure.EnclosureGroupUri.String() != "" {
+		d.Set("enclosure_group_uri", enclosure.EnclosureGroupUri)
+	}
 	d.Set("enclosure_type", enclosure.EnclosureType)
 	d.Set("fw_baseline_name", enclosure.FwBaselineName)
 	d.Set("fw_baseline_uri", enclosure.FwBaselineUri.String())
@@ -379,11 +383,39 @@ func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
+func getEnclosureByHostName(host_name string, meta interface{}) (bool, error) {
+	config := meta.(*Config)
+	enclosures, enc_err := config.ovClient.GetEnclosures("", "", "", "", "")
+	if enc_err != nil {
+		return false, enc_err
+	} else {
+		for _, enclosure := range enclosures.Members {
+			for _, bay := range enclosure.ManagerBays {
+				if host_name == bay.IpAddress {
+					return true, nil
+				}
+			}
+		}
+		return false, nil
+	}
+}
+
 func resourceEnclosureUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	enclosure := ov.Enclosure{
 		URI: utils.NewNstring(d.Get("uri").(string)),
+	}
+
+	if d.Get("host_name") != "" {
+		result, err := getEnclosureByHostName(d.Get("host_name").(string), meta)
+		if result {
+			d.SetId(enclosure.Name)
+			return resourceEnclosureRead(d, meta)
+		} else if err != nil {
+			return err
+		}
+
 	}
 
 	err := config.ovClient.UpdateEnclosure(d.Get("op").(string), d.Get("path").(string), d.Get("value").(string), enclosure)
