@@ -439,6 +439,10 @@ func resourceServerProfile() *schema.Resource {
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"import_configuration": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
 									"device_slot": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -1159,10 +1163,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				}
 				init := controllerData["initialize"].(bool)
 				localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-					DeviceSlot:             controllerData["device_slot"].(string),
-					DriveWriteCache:        controllerData["drive_write_cache"].(string),
-					Initialize:             &init,
-					Mode:                   controllerData["mode"].(string),
+					DeviceSlot:          controllerData["device_slot"].(string),
+					DriveWriteCache:     controllerData["drive_write_cache"].(string),
+					Initialize:          &init,
+					ImportConfiguration: controllerData["import_configuration"].(bool),
+					Mode:                controllerData["mode"].(string),
 					PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 					LogicalDrives:          logicalDrives,
 				})
@@ -1243,14 +1248,14 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 								IsCompressed:                  propertyItem["is_compressed"].(bool),
 								IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 								IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-								Name:                          propertyItem["name"].(string),
-								PerformancePolicy:             propertyItem["performance_policy"].(string),
-								ProvisioningType:              propertyItem["provisioning_type"].(string),
-								Size:                          propertyItem["size"].(int),
-								SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:               propertyItem["template_version"].(string),
-								VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
+								Name:              propertyItem["name"].(string),
+								PerformancePolicy: propertyItem["performance_policy"].(string),
+								ProvisioningType:  propertyItem["provisioning_type"].(string),
+								Size:              propertyItem["size"].(int),
+								SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:   propertyItem["template_version"].(string),
+								VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -1301,11 +1306,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 				AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-				State:                          volumeAttachmentItem["state"].(string),
-				Status:                         volumeAttachmentItem["status"].(string),
-				StoragePaths:                   storagePaths,
-				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-				Volume:                         &volumes,
+				State:              volumeAttachmentItem["state"].(string),
+				Status:             volumeAttachmentItem["status"].(string),
+				StoragePaths:       storagePaths,
+				BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
+				Volume:             &volumes,
 			})
 		}
 		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
@@ -1476,10 +1481,11 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			})
 		}
 		controllers = append(controllers, map[string]interface{}{
-			"device_slot":              serverProfile.LocalStorage.Controllers[i].DeviceSlot,
-			"initialize":               serverProfile.LocalStorage.Controllers[i].Initialize,
-			"drive_write_cache":        serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
-			"mode":                     serverProfile.LocalStorage.Controllers[i].Mode,
+			"device_slot":          serverProfile.LocalStorage.Controllers[i].DeviceSlot,
+			"initialize":           serverProfile.LocalStorage.Controllers[i].Initialize,
+			"import_configuration": serverProfile.LocalStorage.Controllers[i].ImportConfiguration,
+			"drive_write_cache":    serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
+			"mode":                 serverProfile.LocalStorage.Controllers[i].Mode,
 			"predictive_spare_rebuild": serverProfile.LocalStorage.Controllers[i].PredictiveSpareRebuild,
 			"logical_drive":            logicalDrives,
 		})
@@ -1789,10 +1795,11 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					}
 					init := controllerData["initialize"].(bool)
 					localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-						DeviceSlot:             controllerData["device_slot"].(string),
-						DriveWriteCache:        controllerData["drive_write_cache"].(string),
-						Initialize:             &init,
-						Mode:                   controllerData["mode"].(string),
+						DeviceSlot:          controllerData["device_slot"].(string),
+						DriveWriteCache:     controllerData["drive_write_cache"].(string),
+						Initialize:          &init,
+						ImportConfiguration: controllerData["import_configuration"].(bool),
+						Mode:                controllerData["mode"].(string),
 						PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 						LogicalDrives:          logicalDrives,
 					})
@@ -1872,14 +1879,14 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 									IsCompressed:                  propertyItem["is_compressed"].(bool),
 									IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 									IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-									Name:                          propertyItem["name"].(string),
-									PerformancePolicy:             propertyItem["performance_policy"].(string),
-									ProvisioningType:              propertyItem["provisioning_type"].(string),
-									Size:                          propertyItem["size"].(int),
-									SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-									StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
-									TemplateVersion:               propertyItem["template_version"].(string),
-									VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
+									Name:              propertyItem["name"].(string),
+									PerformancePolicy: propertyItem["performance_policy"].(string),
+									ProvisioningType:  propertyItem["provisioning_type"].(string),
+									Size:              propertyItem["size"].(int),
+									SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+									StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
+									TemplateVersion:   propertyItem["template_version"].(string),
+									VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
 								}
 							}
 						}
@@ -1930,11 +1937,11 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 					VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 					AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-					State:                          volumeAttachmentItem["state"].(string),
-					Status:                         volumeAttachmentItem["status"].(string),
-					StoragePaths:                   storagePaths,
-					BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-					Volume:                         &volumes,
+					State:              volumeAttachmentItem["state"].(string),
+					Status:             volumeAttachmentItem["status"].(string),
+					StoragePaths:       storagePaths,
+					BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
+					Volume:             &volumes,
 				})
 			}
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments

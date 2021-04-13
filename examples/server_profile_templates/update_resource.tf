@@ -1,21 +1,22 @@
 provider "oneview" {
-  ov_username =   "${var.username}"
-  ov_password =   "${var.password}"
-  ov_endpoint =   "${var.endpoint}"
-  ov_sslverify =  "${var.ssl_enabled}"
+  ov_username   = var.username
+  ov_password   = var.password
+  ov_endpoint   = var.endpoint
+  ov_sslverify  = var.ssl_enabled
   ov_apiversion = 2600
-  ov_ifmatch = "*"
+  ov_ifmatch    = "*"
 }
 
 data "oneview_scope" "scope" {
-        name = "Auto-Scope"
+  name = "Auto-Scope"
 }
 
 # Updates server profile template from main.tf
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
-        name = "TestServerProfileTemplateRenamed"
-        type = "ServerProfileTemplateV8"
-        enclosure_group = "Auto-EG"
-        server_hardware_type = "SY 480 Gen9 1"
-        initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
+  name                 = "TestServerProfileTemplateRenamed"
+  type                 = "ServerProfileTemplateV8"
+  enclosure_group      = "Auto-EG"
+  server_hardware_type = "SY 480 Gen9 1"
+  initial_scope_uris   = [data.oneview_scope.scope.uri]
 }
+

@@ -89,7 +89,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"connection_settings": {
 				Optional: true,
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_connections": {
@@ -106,7 +106,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"connections": {
 							Optional: true,
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -213,7 +213,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"boot": {
 										Optional: true,
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"priority": {
@@ -234,7 +234,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Optional: true,
 												},
 												"iscsi": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -293,7 +293,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 										},
 									},
 									"ipv4": {
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -422,7 +422,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"local_storage": {
 				Optional: true,
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -436,10 +436,14 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"controller": {
 							Optional: true,
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"import_configuration": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
 									"device_slot": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -462,7 +466,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"logical_drives": {
 										Optional: true,
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"bootable": {
@@ -505,7 +509,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"sas_logical_jbod": {
 							Optional: true,
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -1003,69 +1007,71 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Get local storage data if provided
-	val, _ := d.GetOk("local_storage")
-	rawLocalStorage := val.(*schema.Set).List()
-	localStorage := ov.LocalStorageOptions{}
-	for _, raw := range rawLocalStorage {
-		localStorageItem := raw.(map[string]interface{})
-		// Gets Local Storage Controller body
-		rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
-		localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
-		for _, raw2 := range rawLocalStorageController {
-			controllerData := raw2.(map[string]interface{})
-			// Gets Local Storage Controller's Logical Drives
-			rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
-			logicalDrives := make([]ov.LogicalDriveV3, 0)
-			for _, rawLogicalDrive := range rawLogicalDrives {
-				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-				boot := logicalDrivesItem["bootable"].(bool)
-				logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
-					Bootable:          &boot,
-					RaidLevel:         logicalDrivesItem["raid_level"].(string),
-					Accelerator:       logicalDrivesItem["accelerator"].(string),
-					DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
-					Name:              logicalDrivesItem["name"].(string),
-					NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-					NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-					SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+	if _, ok := d.GetOk("local_storage"); ok {
+		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+		localStorage := ov.LocalStorageOptions{}
+		for _, raw := range rawLocalStorage {
+			localStorageItem := raw.(map[string]interface{})
+			// Gets Local Storage Controller body
+			rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+			localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
+			for _, raw2 := range rawLocalStorageController {
+				controllerData := raw2.(map[string]interface{})
+				// Gets Local Storage Controller's Logical Drives
+				rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+				logicalDrives := make([]ov.LogicalDriveV3, 0)
+				for _, rawLogicalDrive := range rawLogicalDrives {
+					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+					boot := logicalDrivesItem["bootable"].(bool)
+					logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
+						Bootable:          &boot,
+						RaidLevel:         logicalDrivesItem["raid_level"].(string),
+						Accelerator:       logicalDrivesItem["accelerator"].(string),
+						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
+						Name:              logicalDrivesItem["name"].(string),
+						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
+						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
+						SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+					})
+				}
+				init, _ := controllerData["initialize"].(bool)
+				localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
+					DeviceSlot:          controllerData["device_slot"].(string),
+					DriveWriteCache:     controllerData["drive_write_cache"].(string),
+					Initialize:          &init,
+					ImportConfiguration: controllerData["import_configuration"].(bool),
+					Mode:                controllerData["mode"].(string),
+					PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
+					LogicalDrives:          logicalDrives,
 				})
 			}
-			init, _ := controllerData["initialize"].(bool)
-			localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-				DeviceSlot:             controllerData["device_slot"].(string),
-				DriveWriteCache:        controllerData["drive_write_cache"].(string),
-				Initialize:             &init,
-				Mode:                   controllerData["mode"].(string),
-				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
-				LogicalDrives:          logicalDrives,
-			})
+			// Gets Local Storage Sas Jbods Body
+			rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
+			logicalJbod := make([]ov.LogicalJbod, 0)
+			for _, raw3 := range rawLocalStorageSasJbod {
+				sasLogicalJbodData := raw3.(map[string]interface{})
+				logicalJbod = append(logicalJbod, ov.LogicalJbod{
+					Description:       sasLogicalJbodData["description"].(string),
+					DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
+					DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
+					DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
+					DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
+					EraseData:         sasLogicalJbodData["erase_data"].(bool),
+					ID:                sasLogicalJbodData["id"].(int),
+					Name:              sasLogicalJbodData["name"].(string),
+					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
+					Persistent:        sasLogicalJbodData["persistent"].(bool),
+				})
+			}
+			localStorage = ov.LocalStorageOptions{
+				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				Initialize:         localStorageItem["initialize"].(bool),
+				Controllers:        localStorageEmbeddedController,
+				SasLogicalJBODs:    logicalJbod,
+			}
 		}
-		// Gets Local Storage Sas Jbods Body
-		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
-		logicalJbod := make([]ov.LogicalJbod, 0)
-		for _, raw3 := range rawLocalStorageSasJbod {
-			sasLogicalJbodData := raw3.(map[string]interface{})
-			logicalJbod = append(logicalJbod, ov.LogicalJbod{
-				Description:       sasLogicalJbodData["description"].(string),
-				DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
-				DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
-				DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
-				DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
-				EraseData:         sasLogicalJbodData["erase_data"].(bool),
-				ID:                sasLogicalJbodData["id"].(int),
-				Name:              sasLogicalJbodData["name"].(string),
-				NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
-				Persistent:        sasLogicalJbodData["persistent"].(bool),
-			})
-		}
-		localStorage = ov.LocalStorageOptions{
-			ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-			Initialize:         localStorageItem["initialize"].(bool),
-			Controllers:        localStorageEmbeddedController,
-			SasLogicalJBODs:    logicalJbod,
-		}
+		serverProfileTemplate.LocalStorage = localStorage
 	}
-	serverProfileTemplate.LocalStorage = localStorage
 
 	// get SAN storage data if provided
 	rawSanStorage := d.Get("san_storage").(*schema.Set).List()
@@ -1119,14 +1125,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 								IsCompressed:                  propertyItem["is_compressed"].(bool),
 								IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 								IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-								Name:                          propertyItem["name"].(string),
-								PerformancePolicy:             propertyItem["performance_policy"].(string),
-								ProvisioningType:              propertyItem["provisioning_type"].(string),
-								Size:                          propertyItem["size"].(int),
-								SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:               propertyItem["template_version"].(string),
-								VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
+								Name:              propertyItem["name"].(string),
+								PerformancePolicy: propertyItem["performance_policy"].(string),
+								ProvisioningType:  propertyItem["provisioning_type"].(string),
+								Size:              propertyItem["size"].(int),
+								SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:   propertyItem["template_version"].(string),
+								VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -1178,11 +1184,11 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 				AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-				State:                          volumeAttachmentItem["state"].(string),
-				Status:                         volumeAttachmentItem["status"].(string),
-				StoragePaths:                   storagePaths,
-				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-				Volume:                         &volumes,
+				State:              volumeAttachmentItem["state"].(string),
+				Status:             volumeAttachmentItem["status"].(string),
+				StoragePaths:       storagePaths,
+				BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
+				Volume:             &volumes,
 			})
 		}
 		serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
@@ -1277,10 +1283,11 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				})
 			}
 			controllers = append(controllers, map[string]interface{}{
-				"device_slot":              spt.LocalStorage.Controllers[i].DeviceSlot,
-				"initialize":               *spt.LocalStorage.Controllers[i].Initialize,
-				"drive_write_cache":        spt.LocalStorage.Controllers[i].DriveWriteCache,
-				"mode":                     spt.LocalStorage.Controllers[i].Mode,
+				"device_slot":          spt.LocalStorage.Controllers[i].DeviceSlot,
+				"initialize":           *spt.LocalStorage.Controllers[i].Initialize,
+				"import_configuration": spt.LocalStorage.Controllers[i].ImportConfiguration,
+				"drive_write_cache":    spt.LocalStorage.Controllers[i].DriveWriteCache,
+				"mode":                 spt.LocalStorage.Controllers[i].Mode,
 				"predictive_spare_rebuild": spt.LocalStorage.Controllers[i].PredictiveSpareRebuild,
 				"logical_drives":           logicalDrives,
 			})
@@ -1594,10 +1601,11 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 			init, _ := controllerData["initialize"].(bool)
 			localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-				DeviceSlot:             controllerData["device_slot"].(string),
-				DriveWriteCache:        controllerData["drive_write_cache"].(string),
-				Initialize:             &init,
-				Mode:                   controllerData["mode"].(string),
+				DeviceSlot:          controllerData["device_slot"].(string),
+				DriveWriteCache:     controllerData["drive_write_cache"].(string),
+				Initialize:          &init,
+				ImportConfiguration: controllerData["import_configuration"].(bool),
+				Mode:                controllerData["mode"].(string),
 				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 				LogicalDrives:          logicalDrives,
 			})
@@ -1677,14 +1685,14 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 								IsCompressed:                  propertyItem["is_compressed"].(bool),
 								IsAdaptiveOptimizationEnabled: propertyItem["is_adaptive_optimization_enabled"].(bool),
 								IsDataReductionEnabled:        propertyItem["is_data_reduction_enabled"].(bool),
-								Name:                          propertyItem["name"].(string),
-								PerformancePolicy:             propertyItem["performance_policy"].(string),
-								ProvisioningType:              propertyItem["provisioning_type"].(string),
-								Size:                          propertyItem["size"].(int),
-								SnapshotPool:                  utils.NewNstring(propertyItem["snapshot_pool"].(string)),
-								StoragePool:                   utils.NewNstring(propertyItem["storage_pool"].(string)),
-								TemplateVersion:               propertyItem["template_version"].(string),
-								VolumeSet:                     utils.NewNstring(propertyItem["volume_set"].(string)),
+								Name:              propertyItem["name"].(string),
+								PerformancePolicy: propertyItem["performance_policy"].(string),
+								ProvisioningType:  propertyItem["provisioning_type"].(string),
+								Size:              propertyItem["size"].(int),
+								SnapshotPool:      utils.NewNstring(propertyItem["snapshot_pool"].(string)),
+								StoragePool:       utils.NewNstring(propertyItem["storage_pool"].(string)),
+								TemplateVersion:   propertyItem["template_version"].(string),
+								VolumeSet:         utils.NewNstring(propertyItem["volume_set"].(string)),
 							}
 						}
 					}
@@ -1734,11 +1742,11 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 				VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 				AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-				State:                          volumeAttachmentItem["state"].(string),
-				Status:                         volumeAttachmentItem["status"].(string),
-				StoragePaths:                   storagePaths,
-				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-				Volume:                         &volumes,
+				State:              volumeAttachmentItem["state"].(string),
+				Status:             volumeAttachmentItem["status"].(string),
+				StoragePaths:       storagePaths,
+				BootVolumePriority: volumeAttachmentItem["boot_volume_priority"].(string),
+				Volume:             &volumes,
 			})
 		}
 		serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
