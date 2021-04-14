@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Bug fixes & Enhancements:
 - [#277] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/277) SPT Import configuration issue
+- [#280] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/280) local storage configuration for profiles - importConfiguration
 - [#285] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/285) Terraform crashes for Logical Interconnect Group Read. 
 
 ### Oneview Features supported
