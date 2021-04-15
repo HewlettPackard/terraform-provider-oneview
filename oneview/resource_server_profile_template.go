@@ -422,7 +422,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"local_storage": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -436,7 +436,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"controller": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -466,7 +466,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"logical_drives": {
 										Optional: true,
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"bootable": {
@@ -509,7 +509,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"sas_logical_jbod": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
