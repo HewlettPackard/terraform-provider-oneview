@@ -245,10 +245,10 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	enclosureGroup := ov.EnclosureGroup{
-		URI: utils.NewNstring(d.Get("uri").(string)),
+		URI:                         utils.NewNstring(d.Get("uri").(string)),
 		InterconnectBayMappingCount: d.Get("interconnect_bay_mapping_count").(int),
-		Type:         d.Get("type").(string),
-		StackingMode: d.Get("stacking_mode").(string),
+		Type:                        d.Get("type").(string),
+		StackingMode:                d.Get("stacking_mode").(string),
 	}
 
 	rawInterconnectBayMappings := d.Get("interconnect_bay_mappings").(*schema.Set).List()

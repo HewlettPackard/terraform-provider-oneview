@@ -34,7 +34,10 @@ jobs:
         GOPATH: /home/runner/work/HewlettPackard/terraform-provider-oneview/go
 
     - name: Go formatting checks
-      run: if [ ! -z "$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)" ]; then exit 1; fi
+      run: if ! [ -z "$(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)" ]; then 
+                    echo  -e " $(find . -type f -name "*.go" -not -path "./vendor/*" | sed "s|^\./||" | xargs gofmt -l)";
+            exit 1; 
+            fi
     
     - name: Standard Go testing avoiding the testing of the vendor folder.
       run: |

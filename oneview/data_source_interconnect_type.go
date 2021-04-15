@@ -175,7 +175,7 @@ func dataSourceInterconnectTypeRead(d *schema.ResourceData, meta interface{}) er
 	DownlinkPortCapability = append(DownlinkPortCapability, map[string]interface{}{
 		"created":               interconnectType.DownlinkPortCapability.Created,
 		"max_bandwidth_in_gbps": interconnectType.DownlinkPortCapability.MaxBandwidthInGbps,
-		"uri": interconnectType.DownlinkPortCapability.URI,
+		"uri":                   interconnectType.DownlinkPortCapability.URI,
 	})
 	d.Set("downlink_port_capability", DownlinkPortCapability)
 

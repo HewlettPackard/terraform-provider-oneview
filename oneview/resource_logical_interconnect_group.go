@@ -563,6 +563,79 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 					},
 				},
 			},
+			"port_flap_settings": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"etag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"created": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"modified": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"detection_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"port_flap_threshold_per_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"no_of_samples_declare_failures": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"port_flap_protection_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"quality_of_service": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -651,79 +724,6 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 					},
 				},
 			},
-			"port_flap_settings": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"category": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"eTag": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"created": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"modified": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"detection_interval": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"port_flap_threshold_per_interval": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"no_of_samples_declare_failures": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"consistency_checking": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"port_flap_protection_mode": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
 			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -756,7 +756,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"eTag": {
+			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -1290,7 +1290,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		portFlapSettingStructure.Type = portFlapSettingRawData["type"].(string)
 		portFlapSettingStructure.URI = utils.Nstring(portFlapSettingRawData["uri"].(string))
 		portFlapSettingStructure.Category = utils.Nstring(portFlapSettingRawData["category"].(string))
-		portFlapSettingStructure.ETAG = portFlapSettingRawData["eTag"].(string)
+		portFlapSettingStructure.ETAG = portFlapSettingRawData["etag"].(string)
 		portFlapSettingStructure.Created = portFlapSettingRawData["created"].(string)
 		portFlapSettingStructure.Modified = portFlapSettingRawData["modified"].(string)
 		portFlapSettingStructure.ID = portFlapSettingRawData["id"].(string)
@@ -1393,7 +1393,6 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		d.SetId("")
 		return ligError
 	}
-
 	return resourceLogicalInterconnectGroupRead(d, meta)
 }
 
@@ -1401,9 +1400,10 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	config := meta.(*Config)
 
 	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
+
 	if err != nil || logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
-		return err
+		return nil
 	}
 
 	d.Set("name", logicalInterconnectGroup.Name)
@@ -1415,7 +1415,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("category", logicalInterconnectGroup.Category)
 	d.Set("state", logicalInterconnectGroup.State)
 	d.Set("fabric_uri", logicalInterconnectGroup.FabricUri.String())
-	d.Set("eTag", logicalInterconnectGroup.ETAG)
+	d.Set("etag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
 	d.Set("interconnect_settings.0.interconnect_utilization_alert", logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert)
 	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
@@ -1713,7 +1713,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSetting := map[string]interface{}{
-		"type": logicalInterconnectGroup.EthernetSettings.Type,
+		"type":                    logicalInterconnectGroup.EthernetSettings.Type,
 		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
 		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
 		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
@@ -1728,16 +1728,16 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	if logicalInterconnectGroup.IgmpSettings != nil {
 		igmpSettings := make([]map[string]interface{}, 0, 1)
 		igmpSetting := map[string]interface{}{
-			"category":               logicalInterconnectGroup.IgmpSettings.Category,
-			"consistency_checking":   logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
-			"created":                logicalInterconnectGroup.IgmpSettings.Created,
-			"dependent_resource_uri": logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
-			"description":            logicalInterconnectGroup.IgmpSettings.Description,
-			"etag":                   logicalInterconnectGroup.IgmpSettings.ETAG,
-			"igmp_snooping":          *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
-			"prevent_flooding":       *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
-			"proxy_reporting":        *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
-			"id":                     logicalInterconnectGroup.IgmpSettings.ID,
+			"category":                   logicalInterconnectGroup.IgmpSettings.Category,
+			"consistency_checking":       logicalInterconnectGroup.IgmpSettings.ConsistencyChecking,
+			"created":                    logicalInterconnectGroup.IgmpSettings.Created,
+			"dependent_resource_uri":     logicalInterconnectGroup.IgmpSettings.DependentResourceUri,
+			"description":                logicalInterconnectGroup.IgmpSettings.Description,
+			"etag":                       logicalInterconnectGroup.IgmpSettings.ETAG,
+			"igmp_snooping":              *logicalInterconnectGroup.IgmpSettings.EnableIgmpSnooping,
+			"prevent_flooding":           *logicalInterconnectGroup.IgmpSettings.EnablePreventFlooding,
+			"proxy_reporting":            *logicalInterconnectGroup.IgmpSettings.EnableProxyReporting,
+			"id":                         logicalInterconnectGroup.IgmpSettings.ID,
 			"igmp_idle_timeout_interval": logicalInterconnectGroup.IgmpSettings.IgmpIdleTimeoutInterval,
 			"igmp_snooping_vlan_ids":     logicalInterconnectGroup.IgmpSettings.IgmpSnoopingVlanIds,
 			"modified":                   logicalInterconnectGroup.IgmpSettings.Modified,
@@ -1757,7 +1757,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 			"type":                             logicalInterconnectGroup.PortFlapProtection.Type,
 			"uri":                              logicalInterconnectGroup.PortFlapProtection.URI,
 			"category":                         logicalInterconnectGroup.PortFlapProtection.Category,
-			"eTag":                             logicalInterconnectGroup.PortFlapProtection.ETAG,
+			"etag":                             logicalInterconnectGroup.PortFlapProtection.ETAG,
 			"created":                          logicalInterconnectGroup.PortFlapProtection.Created,
 			"modified":                         logicalInterconnectGroup.PortFlapProtection.Modified,
 			"id":                               logicalInterconnectGroup.PortFlapProtection.ID,
@@ -1777,21 +1777,25 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
-
-		dscpClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.DscpClassMapping))
-		for i, dscpValue := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
-			dscpClassMap[i] = dscpValue
-		}
-
-		dot1pClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.Dot1pClassMapping))
-		for i, dot1pValue := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
-			dot1pClassMap[i] = dot1pValue
-		}
 		qosClassificationMap := make([]map[string]interface{}, 0, 1)
-		qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
-			"dot1p_class_map": schema.NewSet(func(a interface{}) int { return a.(int) }, dot1pClassMap),
-			"dscp_class_map":  schema.NewSet(schema.HashString, dscpClassMap),
-		})
+		if qosTrafficClass.QosClassificationMapping != nil {
+
+			dot1pClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
+				dot1pClassMap = append(dot1pClassMap, raw)
+			}
+
+			dscpClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
+				dscpClassMap = append(dscpClassMap, raw)
+			}
+
+			qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
+				"dot1p_class_map": dot1pClassMap,
+				"dscp_class_map":  dscpClassMap,
+			})
+
+		}
 
 		qosTrafficClasses = append(qosTrafficClasses, map[string]interface{}{
 			"name":                   qosTrafficClass.QosTrafficClass.ClassName,
@@ -1816,7 +1820,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	qualityOfService := make([]map[string]interface{}, 0, 1)
 	qualityOfService = append(qualityOfService, map[string]interface{}{
-		"type": logicalInterconnectGroup.QosConfiguration.Type,
+		"type":                         logicalInterconnectGroup.QosConfiguration.Type,
 		"active_qos_config_type":       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
 		"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
 		"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
@@ -2317,7 +2321,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		PortFlapSetting.Type = rawlval["type"].(string)
 		PortFlapSetting.URI = utils.Nstring(rawlval["uri"].(string))
 		PortFlapSetting.Category = utils.Nstring(rawlval["category"].(string))
-		PortFlapSetting.ETAG = rawlval["eTag"].(string)
+		PortFlapSetting.ETAG = rawlval["etag"].(string)
 		PortFlapSetting.Created = rawlval["created"].(string)
 		PortFlapSetting.Modified = rawlval["modified"].(string)
 		PortFlapSetting.ID = rawlval["id"].(string)

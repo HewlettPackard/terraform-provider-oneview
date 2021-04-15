@@ -1,10 +1,11 @@
-All notable changes to this project will be documented in this file . 
+All notable changes to this project will be documented in this file. 
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v6.1.0-11](Unreleased) 
+# [v6.1.0-11] (Unreleased)
 
 ### Bug fixes & Enhancements:
 - [#277] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/277) SPT Import configuration issue
+- [#285] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/285) Terraform crashes for Logical Interconnect Group Read. 
 
 # [v6.0.0-11] 
 ### Notes
