@@ -89,7 +89,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"connection_settings": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_connections": {
@@ -106,7 +106,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"connections": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -213,7 +213,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"boot": {
 										Optional: true,
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"priority": {
@@ -234,7 +234,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Optional: true,
 												},
 												"iscsi": {
-													Type:     schema.TypeSet,
+													Type:     schema.TypeList,
 													Optional: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -293,7 +293,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 										},
 									},
 									"ipv4": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{

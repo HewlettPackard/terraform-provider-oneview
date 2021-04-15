@@ -13,7 +13,7 @@ data "oneview_scope" "scope" {
 
 # Creation of Server Profile without template
 resource "oneview_server_profile" "SP" {
-  name                 = "TestSP_Renamed"
+  name                 = "TestSP"
   hardware_name        = "0000A66102, bay 5"
   type                 = "ServerProfileV12"
   enclosure_group      = "Auto-EG"

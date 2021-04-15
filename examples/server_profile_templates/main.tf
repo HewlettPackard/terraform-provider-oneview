@@ -13,7 +13,7 @@ data "oneview_scope" "scope" {
 
 # Creates server profile template
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
-  name                 = "TestServerProfileTemplater"
+  name                 = "TestServerProfileTemplate"
   type                 = "ServerProfileTemplateV8"
   enclosure_group      = "Auto-EG"
   server_hardware_type = "SY 480 Gen9 1"
