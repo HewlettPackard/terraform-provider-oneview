@@ -33,11 +33,23 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"boot_order": {
-				Type:     schema.TypeSet,
+			"boot": {
+				Type:     schema.TypeList,
 				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_boot": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"boot_order": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+					},
+				},
 			},
 			"boot_mode": {
 				Optional: true,
@@ -90,6 +102,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"connection_settings": {
 				Optional: true,
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_connections": {
@@ -207,10 +220,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"request_": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
 									"boot": {
 										Optional: true,
 										Type:     schema.TypeList,
@@ -224,7 +233,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Type:     schema.TypeInt,
 													Optional: true,
 												},
-
 												"ethernet_boot_type": {
 													Type:     schema.TypeString,
 													Optional: true,
@@ -437,9 +445,12 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"controller": {
 							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"import_configuration": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
 									"device_slot": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -506,7 +517,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"sas_logical_jbod": {
 							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"description": {
@@ -855,22 +865,22 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
 	if val, ok := d.GetOk("connection_settings"); ok {
-		connections := val.(*schema.Set).List()
+		connections := val.([]interface{})
 		for _, rawConSettings := range connections {
 			rawConSetting := rawConSettings.(map[string]interface{})
-			rawNetwork := rawConSetting["connections"].(*schema.Set).List()
+			rawNetwork := rawConSetting["connections"].([]interface{})
 			networks := make([]ov.Connection, 0)
 			for _, rawNet := range rawNetwork {
 				rawNetworkItem := rawNet.(map[string]interface{})
 				bootOptions := ov.BootOption{}
 				if rawNetworkItem["boot"] != nil {
-					rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+					rawBoots := rawNetworkItem["boot"].([]interface{})
 					for _, rawBoot := range rawBoots {
 						bootItem := rawBoot.(map[string]interface{})
 
 						iscsi := ov.BootIscsi{}
 						if bootItem["iscsi"] != nil {
-							rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+							rawIscsis := bootItem["iscsi"].([]interface{})
 							for _, rawIscsi := range rawIscsis {
 								rawIscsiItem := rawIscsi.(map[string]interface{})
 								iscsi = ov.BootIscsi{
@@ -897,7 +907,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 				ipv4 := ov.Ipv4Option{}
 				if rawNetworkItem["ipv4"] != nil {
-					rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+					rawIpv4s := rawNetworkItem["ipv4"].([]interface{})
 					for _, rawIpv4 := range rawIpv4s {
 						rawIpv4Item := rawIpv4.(map[string]interface{})
 						ipv4 = ov.Ipv4Option{
@@ -931,22 +941,27 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		}
 	}
 
-	if val, ok := d.GetOk("boot_order"); ok {
-		rawBootOrder := val.(*schema.Set).List()
-		bootOrder := make([]string, len(rawBootOrder))
-		for i, raw := range rawBootOrder {
-			bootOrder[i] = raw.(string)
+	if val, ok := d.GetOk("boot"); ok {
+		boot := val.([]interface{})
+		for _, rawBoots := range boot {
+			rawBoot := rawBoots.(map[string]interface{})
+			rawBootOrder := rawBoot["boot_order"].(*schema.Set).List()
+			bootOrder := make([]string, len(rawBootOrder))
+			for i, raw := range rawBootOrder {
+				bootOrder[i] = raw.(string)
+			}
+			serverProfileTemplate.Boot = ov.BootManagement{
+				ManageBoot: rawBoot["manage_boot"].(bool),
+				Order:      bootOrder,
+			}
+			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+			manageMode := rawBootMode["manage_mode"].(bool)
+			serverProfileTemplate.BootMode = ov.BootModeOption{
+				ManageMode:    &manageMode,
+				Mode:          rawBootMode["mode"].(string),
+				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+			}
 		}
-		serverProfileTemplate.Boot.ManageBoot = true
-		serverProfileTemplate.Boot.Order = bootOrder
-		rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-		manageMode := rawBootMode["manage_mode"].(bool)
-		serverProfileTemplate.BootMode = ov.BootModeOption{
-			ManageMode:    &manageMode,
-			Mode:          rawBootMode["mode"].(string),
-			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
-		}
-
 	}
 
 	if val, ok := d.GetOk("bios_option"); ok {
@@ -1003,69 +1018,71 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Get local storage data if provided
-	val, _ := d.GetOk("local_storage")
-	rawLocalStorage := val.(*schema.Set).List()
-	localStorage := ov.LocalStorageOptions{}
-	for _, raw := range rawLocalStorage {
-		localStorageItem := raw.(map[string]interface{})
-		// Gets Local Storage Controller body
-		rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
-		localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
-		for _, raw2 := range rawLocalStorageController {
-			controllerData := raw2.(map[string]interface{})
-			// Gets Local Storage Controller's Logical Drives
-			rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
-			logicalDrives := make([]ov.LogicalDriveV3, 0)
-			for _, rawLogicalDrive := range rawLogicalDrives {
-				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-				boot := logicalDrivesItem["bootable"].(bool)
-				logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
-					Bootable:          &boot,
-					RaidLevel:         logicalDrivesItem["raid_level"].(string),
-					Accelerator:       logicalDrivesItem["accelerator"].(string),
-					DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
-					Name:              logicalDrivesItem["name"].(string),
-					NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-					NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-					SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+	if _, ok := d.GetOk("local_storage"); ok {
+		rawLocalStorage := d.Get("local_storage").([]interface{}) //(*schema.Set).List()
+		localStorage := ov.LocalStorageOptions{}
+		for _, raw := range rawLocalStorage {
+			localStorageItem := raw.(map[string]interface{})
+			// Gets Local Storage Controller body
+			rawLocalStorageController := localStorageItem["controller"].([]interface{})
+			localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
+			for _, raw2 := range rawLocalStorageController {
+				controllerData := raw2.(map[string]interface{})
+				// Gets Local Storage Controller's Logical Drives
+				rawLogicalDrives := controllerData["logical_drives"].([]interface{})
+				logicalDrives := make([]ov.LogicalDriveV3, 0)
+				for _, rawLogicalDrive := range rawLogicalDrives {
+					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+					boot := logicalDrivesItem["bootable"].(bool)
+					logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
+						Bootable:          &boot,
+						RaidLevel:         logicalDrivesItem["raid_level"].(string),
+						Accelerator:       logicalDrivesItem["accelerator"].(string),
+						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
+						Name:              logicalDrivesItem["name"].(string),
+						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
+						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
+						SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+					})
+				}
+				init, _ := controllerData["initialize"].(bool)
+				localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
+					DeviceSlot:             controllerData["device_slot"].(string),
+					DriveWriteCache:        controllerData["drive_write_cache"].(string),
+					Initialize:             &init,
+					ImportConfiguration:    controllerData["import_configuration"].(bool),
+					Mode:                   controllerData["mode"].(string),
+					PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
+					LogicalDrives:          logicalDrives,
 				})
 			}
-			init, _ := controllerData["initialize"].(bool)
-			localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-				DeviceSlot:             controllerData["device_slot"].(string),
-				DriveWriteCache:        controllerData["drive_write_cache"].(string),
-				Initialize:             &init,
-				Mode:                   controllerData["mode"].(string),
-				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
-				LogicalDrives:          logicalDrives,
-			})
+			// Gets Local Storage Sas Jbods Body
+			rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].([]interface{})
+			logicalJbod := make([]ov.LogicalJbod, 0)
+			for _, raw3 := range rawLocalStorageSasJbod {
+				sasLogicalJbodData := raw3.(map[string]interface{})
+				logicalJbod = append(logicalJbod, ov.LogicalJbod{
+					Description:       sasLogicalJbodData["description"].(string),
+					DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
+					DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
+					DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
+					DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
+					EraseData:         sasLogicalJbodData["erase_data"].(bool),
+					ID:                sasLogicalJbodData["id"].(int),
+					Name:              sasLogicalJbodData["name"].(string),
+					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
+					Persistent:        sasLogicalJbodData["persistent"].(bool),
+				})
+			}
+			localStorage = ov.LocalStorageOptions{
+				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				Initialize:         localStorageItem["initialize"].(bool),
+				Controllers:        localStorageEmbeddedController,
+				SasLogicalJBODs:    logicalJbod,
+			}
 		}
-		// Gets Local Storage Sas Jbods Body
-		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
-		logicalJbod := make([]ov.LogicalJbod, 0)
-		for _, raw3 := range rawLocalStorageSasJbod {
-			sasLogicalJbodData := raw3.(map[string]interface{})
-			logicalJbod = append(logicalJbod, ov.LogicalJbod{
-				Description:       sasLogicalJbodData["description"].(string),
-				DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
-				DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
-				DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
-				DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
-				EraseData:         sasLogicalJbodData["erase_data"].(bool),
-				ID:                sasLogicalJbodData["id"].(int),
-				Name:              sasLogicalJbodData["name"].(string),
-				NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
-				Persistent:        sasLogicalJbodData["persistent"].(bool),
-			})
-		}
-		localStorage = ov.LocalStorageOptions{
-			ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-			Initialize:         localStorageItem["initialize"].(bool),
-			Controllers:        localStorageEmbeddedController,
-			SasLogicalJBODs:    logicalJbod,
-		}
+		serverProfileTemplate.LocalStorage = localStorage
 	}
-	serverProfileTemplate.LocalStorage = localStorage
 
 	// get SAN storage data if provided
 	rawSanStorage := d.Get("san_storage").(*schema.Set).List()
@@ -1279,6 +1296,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			controllers = append(controllers, map[string]interface{}{
 				"device_slot":              spt.LocalStorage.Controllers[i].DeviceSlot,
 				"initialize":               *spt.LocalStorage.Controllers[i].Initialize,
+				"import_configuration":     spt.LocalStorage.Controllers[i].ImportConfiguration,
 				"drive_write_cache":        spt.LocalStorage.Controllers[i].DriveWriteCache,
 				"mode":                     spt.LocalStorage.Controllers[i].Mode,
 				"predictive_spare_rebuild": spt.LocalStorage.Controllers[i].PredictiveSpareRebuild,
@@ -1311,6 +1329,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		})
 		d.Set("local_storage", localStorage)
 	}
+
 	if len(spt.ConnectionSettings.Connections) != 0 {
 		// Get connections
 		connections := make([]map[string]interface{}, 0, len(spt.ConnectionSettings.Connections))
@@ -1355,6 +1374,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"port_id":        connection.PortID,
 				"requested_mbps": connection.RequestedMbps,
 				"id":             connection.ID,
+				"name":           connection.Name,
 				"isolated_trunk": connection.IsolatedTrunk,
 				"lag_name":       connection.LagName,
 				"mac_type":       connection.MacType,
@@ -1374,18 +1394,18 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		d.Set("connection_settings", connectionSettings)
 	}
 
-	if spt.Boot.ManageBoot {
-		bootOrder := make([]interface{}, 0)
+	bootOrder := make([]interface{}, 0)
+	if len(spt.Boot.Order) != 0 {
 		for _, currBoot := range spt.Boot.Order {
-			rawBootOrder := d.Get("boot_order").(*schema.Set).List()
-			for _, raw := range rawBootOrder {
-				if raw == currBoot {
-					bootOrder = append(bootOrder, currBoot)
-				}
-			}
+			bootOrder = append(bootOrder, currBoot)
 		}
-		d.Set("boot_order", bootOrder)
 	}
+	boot := make([]map[string]interface{}, 0, 1)
+	boot = append(boot, map[string]interface{}{
+		"manage_boot": spt.Boot.ManageBoot,
+		"boot_order":  bootOrder,
+	})
+	d.Set("boot", boot)
 
 	overriddenSettings := make([]interface{}, 0, len(spt.Bios.OverriddenSettings))
 	for _, overriddenSetting := range spt.Bios.OverriddenSettings {
@@ -1434,22 +1454,22 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
 	if val, ok := d.GetOk("connection_settings"); ok {
-		connections := val.(*schema.Set).List()
+		connections := val.([]interface{})
 		for _, rawConSettings := range connections {
 			rawConSetting := rawConSettings.(map[string]interface{})
-			rawNetwork := rawConSetting["connections"].(*schema.Set).List()
+			rawNetwork := rawConSetting["connections"].([]interface{})
 			networks := make([]ov.Connection, 0)
 			for _, rawNet := range rawNetwork {
 				rawNetworkItem := rawNet.(map[string]interface{})
 				bootOptions := ov.BootOption{}
 				if rawNetworkItem["boot"] != nil {
-					rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
+					rawBoots := rawNetworkItem["boot"].([]interface{})
 					for _, rawBoot := range rawBoots {
 						bootItem := rawBoot.(map[string]interface{})
 
 						iscsi := ov.BootIscsi{}
 						if bootItem["iscsi"] != nil {
-							rawIscsis := bootItem["iscsi"].(*schema.Set).List()
+							rawIscsis := bootItem["iscsi"].([]interface{})
 							for _, rawIscsi := range rawIscsis {
 								rawIscsiItem := rawIscsi.(map[string]interface{})
 								iscsi = ov.BootIscsi{
@@ -1477,7 +1497,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 				ipv4 := ov.Ipv4Option{}
 				if rawNetworkItem["ipv4"] != nil {
-					rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
+					rawIpv4s := rawNetworkItem["ipv4"].([]interface{})
 					for _, rawIpv4 := range rawIpv4s {
 						rawIpv4Item := rawIpv4.(map[string]interface{})
 						ipv4 = ov.Ipv4Option{
@@ -1510,14 +1530,28 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 		}
 	}
-	if val, ok := d.GetOk("boot_order"); ok {
-		rawBootOrder := val.(*schema.Set).List()
-		bootOrder := make([]string, len(rawBootOrder))
-		for i, raw := range rawBootOrder {
-			bootOrder[i] = raw.(string)
+
+	if val, ok := d.GetOk("boot"); ok {
+		boot := val.([]interface{})
+		for _, rawBoots := range boot {
+			rawBoot := rawBoots.(map[string]interface{})
+			rawBootOrder := rawBoot["boot_order"].(*schema.Set).List()
+			bootOrder := make([]string, len(rawBootOrder))
+			for i, raw := range rawBootOrder {
+				bootOrder[i] = raw.(string)
+			}
+			serverProfileTemplate.Boot = ov.BootManagement{
+				ManageBoot: rawBoot["manage_boot"].(bool),
+				Order:      bootOrder,
+			}
+			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+			manageMode := rawBootMode["manage_mode"].(bool)
+			serverProfileTemplate.BootMode = ov.BootModeOption{
+				ManageMode:    &manageMode,
+				Mode:          rawBootMode["mode"].(string),
+				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+			}
 		}
-		serverProfileTemplate.Boot.ManageBoot = true
-		serverProfileTemplate.Boot.Order = bootOrder
 	}
 
 	if val, ok := d.GetOk("bios_option"); ok {
@@ -1568,15 +1602,15 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 
 	// Get local storage data if provided
-	rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+	rawLocalStorage := d.Get("local_storage").([]interface{})
 	localStorage := ov.LocalStorageOptions{}
 	for _, raw := range rawLocalStorage {
 		localStorageItem := raw.(map[string]interface{})
-		rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+		rawLocalStorageController := localStorageItem["controller"].([]interface{})
 		localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
 		for _, raw2 := range rawLocalStorageController {
 			controllerData := raw2.(map[string]interface{})
-			rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+			rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 			logicalDrives := make([]ov.LogicalDriveV3, 0)
 			for _, rawLogicalDrive := range rawLogicalDrives {
 				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
@@ -1597,12 +1631,13 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				DeviceSlot:             controllerData["device_slot"].(string),
 				DriveWriteCache:        controllerData["drive_write_cache"].(string),
 				Initialize:             &init,
+				ImportConfiguration:    controllerData["import_configuration"].(bool),
 				Mode:                   controllerData["mode"].(string),
 				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 				LogicalDrives:          logicalDrives,
 			})
 		}
-		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
+		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].([]interface{})
 		logicalJbod := make([]ov.LogicalJbod, 0)
 		for _, raw3 := range rawLocalStorageSasJbod {
 			sasLogicalJbodData := raw3.(map[string]interface{})

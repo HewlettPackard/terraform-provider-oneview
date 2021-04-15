@@ -12,7 +12,6 @@
 package oneview
 
 import (
-	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -25,11 +24,23 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"boot_order": {
-				Type:     schema.TypeSet,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
+			"boot": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_boot": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"boot_order": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+					},
+				},
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -87,34 +98,232 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 					},
 				},
 			},
-			"network": {
+			"connection_settings": {
 				Optional: true,
 				Type:     schema.TypeList,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
+						"manage_connections": {
+							Type:     schema.TypeBool,
+							Optional: true,
 						},
-						"function_type": {
+						"reapply_state": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
-						"network_uri": {
+						"compliance_control": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
-						"port_id": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"requested_mbps": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"id": {
-							Type:     schema.TypeInt,
-							Computed: true,
+						"connections": {
+							Optional: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"allocated_mbps": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"allocated_vfs": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"function_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"network_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"port_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"requested_mbps": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"requested_vfs": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"state": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwnn": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwpn": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwpn_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"interconnect_port": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"interconnect_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"isolated_trunk": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"lag_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mac": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mac_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"managed": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"maximum_mbps": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"network_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"private_vlan_port_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"boot": {
+										Optional: true,
+										Type:     schema.TypeList,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"priority": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"boot_vlan_id": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+
+												"ethernet_boot_type": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"boot_volume_source": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"iscsi": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"chap_level": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"chap_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"chap_secret": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"initiator_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"initiator_name_source": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"mutual_chap_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"boot_target_lun": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"boot_target_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"first_boot_target_ip": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"first_boot_target_port": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"second_boot_target_ip": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"second_boot_target_port": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"ipv4": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"gateway": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"ip_address": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"subnet_mask": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"ip_address_source": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+								},
+							},
 						},
 					},
 				},
@@ -136,7 +345,7 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 						"controller": {
 							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
+							//							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"device_slot": {
@@ -205,7 +414,7 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 						"sas_logical_jbod": {
 							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
+							//							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"description": {
@@ -326,32 +535,86 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	d.Set("mac_type", spt.MACType)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
 
-	var connections []ov.Connection
 	if len(spt.ConnectionSettings.Connections) != 0 {
-		connections = spt.ConnectionSettings.Connections
-	}
-	if len(connections) != 0 {
-		networks := make([]map[string]interface{}, 0, len(connections))
-		for _, rawNet := range connections {
-			networks = append(networks, map[string]interface{}{
-				"name":           rawNet.Name,
-				"function_type":  rawNet.FunctionType,
-				"network_uri":    rawNet.NetworkURI.String(),
-				"port_id":        rawNet.PortID,
-				"requested_mbps": rawNet.RequestedMbps,
-				"id":             rawNet.ID,
+		// Get connections
+		connections := make([]map[string]interface{}, 0, len(spt.ConnectionSettings.Connections))
+		for i := 0; i < len(spt.ConnectionSettings.Connections); i++ {
+			// Gets Boot for Connection
+			iscsi := make([]map[string]interface{}, 0, 1)
+			if spt.ConnectionSettings.Connections[i].Boot.Iscsi != nil {
+				iscsi = append(iscsi, map[string]interface{}{
+					"chap_level":              spt.ConnectionSettings.Connections[i].Boot.Iscsi.Chaplevel,
+					"initiator_name_source":   spt.ConnectionSettings.Connections[i].Boot.Iscsi.InitiatorNameSource,
+					"first_boot_target_ip":    spt.ConnectionSettings.Connections[i].Boot.Iscsi.FirstBootTargetIp,
+					"first_boot_target_port":  spt.ConnectionSettings.Connections[i].Boot.Iscsi.FirstBootTargetPort,
+					"second_boot_target_ip":   spt.ConnectionSettings.Connections[i].Boot.Iscsi.SecondBootTargetIp,
+					"second_boot_target_port": spt.ConnectionSettings.Connections[i].Boot.Iscsi.SecondBootTargetPort,
+				})
+			}
+
+			// Gets Boot Settings
+			connectionBoot := make([]map[string]interface{}, 0, 1)
+			if spt.ConnectionSettings.Connections[i].Boot != nil {
+				connectionBoot = append(connectionBoot, map[string]interface{}{
+					"priority":           spt.ConnectionSettings.Connections[i].Boot.Priority,
+					"boot_vlan_id":       spt.ConnectionSettings.Connections[i].Boot.BootOptionV3.BootVlanId,
+					"ethernet_boot_type": spt.ConnectionSettings.Connections[i].Boot.EthernetBootType,
+					"boot_volume_source": spt.ConnectionSettings.Connections[i].Boot.BootVolumeSource,
+					"iscsi":              iscsi,
+				})
+			}
+			// Get IPV4 Settings for Connection
+			connectionIpv4 := make([]map[string]interface{}, 0, 1)
+			if spt.ConnectionSettings.Connections[i].Ipv4 != nil {
+				connectionIpv4 = append(connectionIpv4, map[string]interface{}{
+					"gateway":           spt.ConnectionSettings.Connections[i].Ipv4.Gateway,
+					"ip_address":        spt.ConnectionSettings.Connections[i].Ipv4.IpAddress,
+					"subnet_mask":       spt.ConnectionSettings.Connections[i].Ipv4.SubnetMask,
+					"ip_address_source": spt.ConnectionSettings.Connections[i].Ipv4.IpAddressSource,
+				})
+			}
+
+			// Gets Connection Body
+			connections = append(connections, map[string]interface{}{
+				"function_type":  spt.ConnectionSettings.Connections[i].FunctionType,
+				"network_uri":    spt.ConnectionSettings.Connections[i].NetworkURI,
+				"port_id":        spt.ConnectionSettings.Connections[i].PortID,
+				"requested_mbps": spt.ConnectionSettings.Connections[i].RequestedMbps,
+				"id":             spt.ConnectionSettings.Connections[i].ID,
+				"isolated_trunk": spt.ConnectionSettings.Connections[i].IsolatedTrunk,
+				"lag_name":       spt.ConnectionSettings.Connections[i].LagName,
+				"mac_type":       spt.ConnectionSettings.Connections[i].MacType,
+				"managed":        spt.ConnectionSettings.Connections[i].Managed,
+				"network_name":   spt.ConnectionSettings.Connections[i].NetworkName,
+				"boot":           connectionBoot,
+				"ipv4":           connectionIpv4,
 			})
 		}
-		d.Set("network", networks)
+
+		// Connection Settings
+		connectionSettings := make([]map[string]interface{}, 0, 1)
+		connectionSettings = append(connectionSettings, map[string]interface{}{
+			"manage_connections": spt.ConnectionSettings.ManageConnections,
+			"compliance_control": spt.ConnectionSettings.ComplianceControl,
+			"connections":        connections,
+		})
+
+		d.Set("connection_settings", connectionSettings)
+
 	}
 
-	if spt.Boot.ManageBoot {
-		bootOrder := make([]interface{}, len(spt.Boot.Order))
-		for i, currBoot := range spt.Boot.Order {
-			bootOrder[i] = currBoot
+	bootOrder := make([]interface{}, 0)
+	if len(spt.Boot.Order) != 0 {
+		for _, currBoot := range spt.Boot.Order {
+			bootOrder = append(bootOrder, currBoot)
 		}
-		d.Set("boot_order", bootOrder)
 	}
+	boot := make([]map[string]interface{}, 0, 1)
+	boot = append(boot, map[string]interface{}{
+		"manage_boot": spt.Boot.ManageBoot,
+		"boot_order":  bootOrder,
+	})
+	d.Set("boot", boot)
 
 	overriddenSettings := make([]interface{}, 0, len(spt.Bios.OverriddenSettings))
 	for _, overriddenSetting := range spt.Bios.OverriddenSettings {
