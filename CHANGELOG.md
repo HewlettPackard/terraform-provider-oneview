@@ -3,6 +3,37 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v6.1.0-11] (Unreleased)
 
+### Notes
+- This release supports API2800 minimally where we can use OneView v6.10 with this SDK and Image Streamer API Version 2020.
+
+### Oneview Features supported
+- Deployment Plan
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Hypervisor Manager
+- Hypervisor Cluster Profile
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups
+- Network Set
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
+
 ### Bug fixes & Enhancements:
 - [#277] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/277) SPT Import configuration issue
 - [#285] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/285) Terraform crashes for Logical Interconnect Group Read. 

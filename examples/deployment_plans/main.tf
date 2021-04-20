@@ -4,7 +4,7 @@ provider "oneview" {
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
   i3s_endpoint =  "${var.i3s_endpoint}"
-  ov_apiversion = 2010
+  ov_apiversion = 2020
   ov_ifmatch = "*"
 }
 
@@ -12,10 +12,10 @@ provider "oneview" {
 
 resource "oneview_deployment_plan" "dp" {
 	name = "DemoDeploymentPlan"
-	oe_build_plan_uri = "/rest/build-plans/97c12c1a-a048-4b52-bcdb-de7f20b5295f"
+	oe_build_plan_uri = "/rest/build-plans/ca433fe5-6c9b-4597-81c4-8708bf154d7a"
 	hp_provided = false
 	type = "OEDeploymentPlanV5"
-	custom_attributes = [ 
+	custom_attributes = [
 	{
 		constraints = "{\"options\":[\"English (United States)\",\"French (France)\",\"German (Germany)\",\"Japanese (Japan)\",\"Arabic (Saudi Arabia)\",\"Chinese (PRC)\",\"Korean (Korea)\",\"Portuguese (Brazil)\",\"Russian (Russia)\"]}"
 		editable = true

@@ -3,26 +3,26 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
 
 variable "hm_endpoint" {
  type = "string"
  description = "Hypervisor Manager IP"
- default = "<HM-IP>"
+ default = "172.18.13.11" //"<HM-IP>"
 }
 
 variable "hm_username" {
  type = "string"
  description = "Hypervisor Manager Username"
- default = "<HM-Username>"
+ default = "dcs" //"<HM-Username>"
 }
 
 variable "hm_password" {
  type = "string"
  description = "Hypervisor Manager Password"
- default = "<HM-Password>"
+ default = "dcs" //"<HM-Password>"
 }
 
 data "oneview_scope" "scope_obj" {
@@ -54,4 +54,5 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
         port = 443
 	type = "HypervisorManagerV2"
 	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
+	depends_on = ["oneview_server_certificate.ServerCertificate"]
 }

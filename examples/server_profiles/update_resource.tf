@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
 
@@ -16,7 +16,7 @@ resource "oneview_server_profile" "SP" {
   name = "TestSP_Renamed"
   hardware_name = "0000A66102, bay 5"
   type = "ServerProfileV12"
-  enclosure_group = "Auto-EG"
+  enclosure_group = "Auto-EG Renamed"
   server_hardware_type = "SY 480 Gen9 1"
   initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
   update_type = "put"

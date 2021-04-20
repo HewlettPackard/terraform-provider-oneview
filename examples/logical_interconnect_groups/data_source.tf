@@ -3,13 +3,13 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
 
 # Test for data source  
 data "oneview_logical_interconnect_group" "logical_interconnect_group" {
-        name = "TestLIG5"
+        name = "Auto-LIG"
 }
 
 output "lig_value" {
@@ -17,5 +17,5 @@ output "lig_value" {
 }
 
 # Importing an existing resource from appliance
-resource "oneview_logical_interconnect_group" "import_lig"{
-}
+#resource "oneview_logical_interconnect_group" "import_lig"{
+#}

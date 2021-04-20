@@ -1004,17 +1004,17 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 	// Get local storage data if provided
 	val, _ := d.GetOk("local_storage")
-	rawLocalStorage := val.(*schema.Set).List()
+	rawLocalStorage := val.([]interface{})
 	localStorage := ov.LocalStorageOptions{}
 	for _, raw := range rawLocalStorage {
 		localStorageItem := raw.(map[string]interface{})
 		// Gets Local Storage Controller body
-		rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+		rawLocalStorageController := localStorageItem["controller"].([]interface{})
 		localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
 		for _, raw2 := range rawLocalStorageController {
 			controllerData := raw2.(map[string]interface{})
 			// Gets Local Storage Controller's Logical Drives
-			rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+			rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 			logicalDrives := make([]ov.LogicalDriveV3, 0)
 			for _, rawLogicalDrive := range rawLogicalDrives {
 				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
@@ -1041,7 +1041,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			})
 		}
 		// Gets Local Storage Sas Jbods Body
-		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
+		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].([]interface{})
 		logicalJbod := make([]ov.LogicalJbod, 0)
 		for _, raw3 := range rawLocalStorageSasJbod {
 			sasLogicalJbodData := raw3.(map[string]interface{})
@@ -1568,15 +1568,15 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 
 	// Get local storage data if provided
-	rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+	rawLocalStorage := d.Get("local_storage").([]interface{})
 	localStorage := ov.LocalStorageOptions{}
 	for _, raw := range rawLocalStorage {
 		localStorageItem := raw.(map[string]interface{})
-		rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+		rawLocalStorageController := localStorageItem["controller"].([]interface{})
 		localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
 		for _, raw2 := range rawLocalStorageController {
 			controllerData := raw2.(map[string]interface{})
-			rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+			rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 			logicalDrives := make([]ov.LogicalDriveV3, 0)
 			for _, rawLogicalDrive := range rawLogicalDrives {
 				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
@@ -1602,7 +1602,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				LogicalDrives:          logicalDrives,
 			})
 		}
-		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].(*schema.Set).List()
+		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].([]interface{})
 		logicalJbod := make([]ov.LogicalJbod, 0)
 		for _, raw3 := range rawLocalStorageSasJbod {
 			sasLogicalJbodData := raw3.(map[string]interface{})

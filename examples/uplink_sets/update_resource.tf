@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
 
@@ -17,10 +17,15 @@ data "oneview_ethernet_network" "ethernetnetwork" {
   name = "Auto-Ethernet-1"
 }
 
+data "oneview_uplink_set" "ups" {
+  name= "Auto-UplinkSet"
+}
+
 # Updates Uplink Set
 resource "oneview_uplink_set" "UplinkSet" {
-  name                     = "Auto-UplinkSetup-Updated"
+  name                     = "Auto-UplinkSet-Updated"
   type                     = "uplink-setV7"
+  uri			   = "${data.oneview_uplink_set.ups.uri}"
   logical_interconnect_uri = "${data.oneview_logical_interconnect.logical_interconnect.uri}"
   network_uris             = ["${data.oneview_ethernet_network.ethernetnetwork.uri}",]
   fc_network_uris          = []

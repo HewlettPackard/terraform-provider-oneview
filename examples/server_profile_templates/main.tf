@@ -3,22 +3,16 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
-
-
-
-
 
 # Creates server profile template
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
         name = "TestServerProfileTemplate"
         type = "ServerProfileTemplateV8"
-//        enclosure_group = "Auto-EG"
-	enclosure_group = "EG"
+        enclosure_group = "Auto-EG Renamed"
         server_hardware_type = "SY 480 Gen9 2"
-//        initial_scope_uris = ["${data.oneview_scope.scope.uri}"]
         bios_option = {
       		manage_bios = "true"	
 		overridden_settings = [
@@ -50,7 +44,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 			}]
 		}]
 	}
-	connection_settings {
+/*	connection_settings {
 		manage_connections = true
 		connections {
 			id            = 1
@@ -63,5 +57,5 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
 				ethernet_boot_type = "PXE"
 			}
 		}
-	}
+	}*/
 }

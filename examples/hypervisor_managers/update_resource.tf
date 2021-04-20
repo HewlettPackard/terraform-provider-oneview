@@ -3,20 +3,20 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
 
 variable "hm_endpoint" {
  type = "string"
  description = "Hypervisor Manager IP"
- default = "<HM-IP>"
+ default = "172.18.13.11" //"<HM-IP>"
 }
 
 variable "hm_username" {
  type = "string"
  description = "Hypervisor Manager Username"
- default = "<HM-Username>"
+ default = "dcs"  //"<HM-Username>"
 }
 
 # Update the resource Post applying main.tf  
