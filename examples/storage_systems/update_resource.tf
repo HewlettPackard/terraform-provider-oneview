@@ -9,19 +9,19 @@ provider "oneview" {
 
 variable "hostname" {
   type    = "string"
-  default = "172.18.11.11" //"<storage_system_ip>"
+  default = "<storage_system_ip>"
 }
 variable "ss_username" {
   type    = "string"
-  default = "dcs" //"<storage_system_username>"
+  default = "<storage_system_username>"
 }
 variable "ss_password" {
   type    = "string"
-  default = "dcs" //"<storage_system_password>"
+  default = "<storage_system_password>"
 }
 variable "ss_family" {
   type    = "string"
-  default = "StoreServ" //"<storage_system_family>"
+  default = "<storage_system_family>"
 }
 
 # Extracting Storage System
