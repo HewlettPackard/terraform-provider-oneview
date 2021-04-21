@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
 
@@ -54,4 +54,5 @@ resource "oneview_hypervisor_manager" "HypervisorManager" {
         port = 443
 	type = "HypervisorManagerV2"
 	initial_scope_uris = ["${data.oneview_scope.scope_obj.uri}"]
+	depends_on = ["oneview_server_certificate.ServerCertificate"]
 }

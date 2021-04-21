@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
 
@@ -31,17 +31,3 @@ resource "oneview_uplink_set" "UplinkSet" {
   network_type                      = "Ethernet"
   ethernet_network_type             = "Tagged"
 }
-
-
-# Example for data source
-data "oneview_uplink_set" "uplink_set" {
-        name = "test" //"Auto-UplinkSet"
-}
-
-output "oneview_uplink_set_value" {
-        value = "${data.oneview_uplink_set.uplink_set.uri}"
-}
-
-#Importing Existing resource
-#resource "oneview_uplink_set" "import_us"{
-#}

@@ -230,12 +230,14 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("created", logicalEnclosure.Created)
 	d.Set("delete_failed", logicalEnclosure.DeleteFailed)
 	deploymentManagerSettings := make([]map[string]interface{}, 0, 1)
-	deploymentManagerSettings = append(deploymentManagerSettings, map[string]interface{}{
-		"deployment_mode":         logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentMode,
-		"deployment_network_uri":  logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentNetworkUri,
-		"manage_os_deployment":    logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.ManageOSDeployment,
-		"deployement_cluster_uri": logicalEnclosure.DeploymentManagerSettings.DeploymentClusterUri,
-	})
+	if logicalEnclosure.DeploymentManagerSettings != nil {
+		deploymentManagerSettings = append(deploymentManagerSettings, map[string]interface{}{
+			"deployment_mode":         logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentMode,
+			"deployment_network_uri":  logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentNetworkUri,
+			"manage_os_deployment":    logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.ManageOSDeployment,
+			"deployement_cluster_uri": logicalEnclosure.DeploymentManagerSettings.DeploymentClusterUri,
+		})
+	}
 	d.Set("deployment_manager_settings", deploymentManagerSettings)
 	d.Set("description", logicalEnclosure.Description)
 	d.Set("enclosure_group_uri", logicalEnclosure.EnclosureGroupUri.String())

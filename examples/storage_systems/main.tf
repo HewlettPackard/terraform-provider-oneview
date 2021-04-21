@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = "${var.password}"
   ov_endpoint   = "${var.endpoint}"
   ov_sslverify  = "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch    = "*"
 }
 
@@ -34,7 +34,7 @@ resource "oneview_server_certificate" "ServerCertificate" {
     certificate_details = [{
                         base64_data="${data.oneview_server_certificate.sc.certificate_details.0.base64_data}"
                         type="CertificateDetailV2"
-                        alias_name = "TestServerCertificate"
+                        alias_name = "StorageSystemCertificate"
                         }]
 }
 

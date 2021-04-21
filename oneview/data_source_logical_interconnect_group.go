@@ -1086,21 +1086,24 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
-
-		dscpClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.DscpClassMapping))
-		for i, dscpValue := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
-			dscpClassMap[i] = dscpValue
-		}
-
-		dot1pClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.Dot1pClassMapping))
-		for i, dot1pValue := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
-			dot1pClassMap[i] = dot1pValue
-		}
 		qosClassificationMap := make([]map[string]interface{}, 0, 1)
-		qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
-			"dot1p_class_map": schema.NewSet(func(a interface{}) int { return a.(int) }, dot1pClassMap),
-			"dscp_class_map":  schema.NewSet(schema.HashString, dscpClassMap),
-		})
+		if qosTrafficClass.QosClassificationMapping != nil {
+
+			dot1pClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
+				dot1pClassMap = append(dot1pClassMap, raw)
+			}
+
+			dscpClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
+				dscpClassMap = append(dscpClassMap, raw)
+			}
+
+			qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
+				"dot1p_class_map": dot1pClassMap,
+				"dscp_class_map":  dscpClassMap,
+			})
+		}
 
 		qosTrafficClasses = append(qosTrafficClasses, map[string]interface{}{
 			"name":                   qosTrafficClass.QosTrafficClass.ClassName,

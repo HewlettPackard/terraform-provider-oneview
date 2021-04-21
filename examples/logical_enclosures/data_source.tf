@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch = "*"
 }
 
@@ -16,7 +16,7 @@ variable "LE_name" {
 variable "EG_name" {
  type = "string"
  description = "Enclosure Group Name"
- default = "Auto-EG"
+ default = "Auto-EG Renamed"
 }
 
 # Fetching Enclosure Group
