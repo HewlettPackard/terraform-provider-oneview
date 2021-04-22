@@ -33,25 +33,41 @@ func dataSourceLogicalEnclosure() *schema.Resource {
 				Computed: true,
 			},
 			"deployment_manager_settings": {
-				Computed: true,
+				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"deployement_cluster_uri": {
 							Type:     schema.TypeString,
-							Computed: true,
+							Optional: true,
 						},
-						"deployment_mode": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"deployment_network_uri": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"manage_os_deployment": {
-							Type:     schema.TypeBool,
-							Computed: true,
+						"os_deployment_settings": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"manage_os_deployment": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"deployment_mode_settings": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"deployment_mode": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"deployment_network_uri": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+								},
+							},
 						},
 					},
 				},
@@ -181,15 +197,29 @@ func dataSourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("category", logicalEnclosure.Category)
 	d.Set("created", logicalEnclosure.Created)
 	d.Set("delete_failed", logicalEnclosure.DeleteFailed)
-	deploymentManagerSettings := make([]map[string]interface{}, 0, 1)
-	deploymentManagerSettings = append(deploymentManagerSettings, map[string]interface{}{
-		"deployment_mode":         logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentMode,
-		"deployment_network_uri":  logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentNetworkUri,
-		"manage_os_deployment":    logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.ManageOSDeployment,
-		"deployement_cluster_uri": logicalEnclosure.DeploymentManagerSettings.DeploymentClusterUri,
-	})
+	dpmsList := make([]map[string]interface{}, 0, 1)
+	if logicalEnclosure.DeploymentManagerSettings != nil {
+		osdslist := make([]map[string]interface{}, 0, 1)
+		if logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings != nil {
+			dmodesettingslist := make([]map[string]interface{}, 0, 1)
 
-	d.Set("deployment_manager_settings", deploymentManagerSettings)
+			if logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings != nil {
+				dmodesettingslist = append(dmodesettingslist, map[string]interface{}{
+					"deployment_mode":        logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentMode,
+					"deployment_network_uri": logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentNetworkUri,
+				})
+			}
+			osdslist = append(osdslist, map[string]interface{}{
+				"manage_os_deployment":   logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.ManageOSDeployment,
+				"os_deployment_settings": dmodesettingslist,
+			})
+		}
+		dpmsList = append(dpmsList, map[string]interface{}{
+			"deployement_cluster_uri": logicalEnclosure.DeploymentManagerSettings.DeploymentClusterUri,
+			"os_deployment_settings":  osdslist,
+		})
+	}
+	d.Set("deployment_manager_settings", dpmsList)
 	d.Set("description", logicalEnclosure.Description)
 	d.Set("enclosure_group_uri", logicalEnclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_uris", logicalEnclosure.EnclosureUris)
