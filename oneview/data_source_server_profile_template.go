@@ -345,7 +345,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 						"controller": {
 							Optional: true,
 							Type:     schema.TypeList,
-							//							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"device_slot": {
@@ -414,7 +413,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 						"sas_logical_jbod": {
 							Optional: true,
 							Type:     schema.TypeList,
-							//							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"description": {
