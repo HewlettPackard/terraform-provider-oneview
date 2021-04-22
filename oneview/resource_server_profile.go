@@ -439,6 +439,10 @@ func resourceServerProfile() *schema.Resource {
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"import_configuration": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
 									"device_slot": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -1162,6 +1166,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					DeviceSlot:             controllerData["device_slot"].(string),
 					DriveWriteCache:        controllerData["drive_write_cache"].(string),
 					Initialize:             &init,
+					ImportConfiguration:    controllerData["import_configuration"].(bool),
 					Mode:                   controllerData["mode"].(string),
 					PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 					LogicalDrives:          logicalDrives,
@@ -1478,6 +1483,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		controllers = append(controllers, map[string]interface{}{
 			"device_slot":              serverProfile.LocalStorage.Controllers[i].DeviceSlot,
 			"initialize":               serverProfile.LocalStorage.Controllers[i].Initialize,
+			"import_configuration":     serverProfile.LocalStorage.Controllers[i].ImportConfiguration,
 			"drive_write_cache":        serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
 			"mode":                     serverProfile.LocalStorage.Controllers[i].Mode,
 			"predictive_spare_rebuild": serverProfile.LocalStorage.Controllers[i].PredictiveSpareRebuild,
@@ -1792,6 +1798,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						DeviceSlot:             controllerData["device_slot"].(string),
 						DriveWriteCache:        controllerData["drive_write_cache"].(string),
 						Initialize:             &init,
+						ImportConfiguration:    controllerData["import_configuration"].(bool),
 						Mode:                   controllerData["mode"].(string),
 						PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 						LogicalDrives:          logicalDrives,
