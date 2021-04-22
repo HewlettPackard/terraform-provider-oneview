@@ -385,9 +385,9 @@ func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 
 func getEnclosureByHostName(host_name string, meta interface{}) (bool, error) {
 	config := meta.(*Config)
-	enclosures, enc_err := config.ovClient.GetEnclosures("", "", "", "", "")
-	if enc_err != nil {
-		return false, enc_err
+	enclosures, encErr := config.ovClient.GetEnclosures("", "", "", "", "")
+	if encErr != nil {
+		return false, enc_Err
 	} else {
 		for _, enclosure := range enclosures.Members {
 			for _, bay := range enclosure.ManagerBays {
