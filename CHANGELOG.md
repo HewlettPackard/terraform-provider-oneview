@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Bug fixes & Enhancements:
 - [#272] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/272) more server profile/template issues not working as expected.
+- [#280] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/280) local storage configuration for profiles - importConfiguration
 - [#295] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/295) server profile update in-place. 
 
 # [v6.0.0-13]
