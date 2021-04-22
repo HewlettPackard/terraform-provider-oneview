@@ -19,6 +19,37 @@ resource "oneview_server_profile" "SP" {
   enclosure_group      = "Auto-EG"
   server_hardware_type = "SY 480 Gen9 1"
   initial_scope_uris   = [data.oneview_scope.scope.uri]
+  bios_option {
+    manage_bios = true
+    overridden_settings {
+      id    = "TimeFormat"
+      value = "Utc"
+    }
+  }
+  boot_order = ["HardDisk"]
+  boot_mode {
+    manage_mode     = true
+    mode            = "UEFIOptimized"
+    pxe_boot_policy = "Auto"
+  }
+  local_storage {
+    controller {
+      device_slot       = "Embedded"
+      drive_write_cache = "Unmanaged"
+      initialize        = true
+      import_configuration = false
+      mode                     = "RAID"
+      predictive_spare_rebuild = "Unmanaged"
+      logical_drives {
+        accelerator         = "Unmanaged"
+        bootable            = true
+        drive_technology    = "SasHdd"
+        name                = "TestLd"
+        num_physical_drives = 2
+        raid_level          = "RAID1"
+      }
+    }
+  }
   update_type          = "put"
 }
 
