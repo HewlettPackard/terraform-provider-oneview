@@ -383,15 +383,15 @@ func resourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func getEnclosureByHostName(host_name string, meta interface{}) (bool, error) {
+func getEnclosureByHostName(hostName string, meta interface{}) (bool, error) {
 	config := meta.(*Config)
 	enclosures, encErr := config.ovClient.GetEnclosures("", "", "", "", "")
 	if encErr != nil {
-		return false, enc_Err
+		return false, encErr
 	} else {
 		for _, enclosure := range enclosures.Members {
 			for _, bay := range enclosure.ManagerBays {
-				if host_name == bay.IpAddress {
+				if hostName == bay.IpAddress {
 					return true, nil
 				}
 			}
