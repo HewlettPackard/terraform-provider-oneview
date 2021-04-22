@@ -1746,7 +1746,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						PortID:           rawNetworkItem["port_id"].(string),
 						RequestedMbps:    rawNetworkItem["requested_mbps"].(string),
 						Ipv4:             &ipv4,
-						//		Boot:             &bootOptions,
 					})
 					if len(rawNetworkItem["boot"].([]interface{})) != 0 {
 						networks[i].Boot = &bootOptions
