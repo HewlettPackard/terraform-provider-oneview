@@ -165,7 +165,6 @@ func resourceServerProfile() *schema.Resource {
 									"requested_mbps": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Default:  "2500",
 									},
 									"requested_vfs": {
 										Type:     schema.TypeString,
@@ -448,7 +447,6 @@ func resourceServerProfile() *schema.Resource {
 						"controller": {
 							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"import_configuration": {
@@ -521,7 +519,6 @@ func resourceServerProfile() *schema.Resource {
 						"sas_logical_jbod": {
 							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"description": {
@@ -989,9 +986,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			rawConSetting := rawConSettings.(map[string]interface{})
 			rawNetwork := rawConSetting["connections"].([]interface{})
 			networks := make([]ov.Connection, 0)
-			for _, rawNet := range rawNetwork {
-				rawNetworkItem := rawNet.(map[string]interface{})
-
+			for i := 0; i < len(rawNetwork); i++ {
+				rawNetworkItem := rawNetwork[i].(map[string]interface{})
 				bootOptions := ov.BootOption{}
 				if rawNetworkItem["boot"] != nil {
 					rawBoots := rawNetworkItem["boot"].([]interface{})
@@ -1064,9 +1060,13 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Connectionv200:   connectionV200,
 					RequestedMbps:    rawNetworkItem["requested_mbps"].(string),
 					Ipv4:             &ipv4,
-					Boot:             &bootOptions,
 				})
+				if len(rawNetworkItem["boot"].([]interface{})) != 0 {
+					networks[i].Boot = &bootOptions
+				}
+
 			}
+
 			serverProfile.ConnectionSettings = ov.ConnectionSettings{
 				Connections: networks,
 			}
@@ -1189,6 +1189,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					LogicalDrives:          logicalDrives,
 				})
 			}
+
 			// Gets Local Storage Sas Jbods Body
 			rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].([]interface{})
 			logicalJbod := make([]ov.LogicalJbod, 0)
@@ -1428,21 +1429,20 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		// Get connections
 		connections := make([]map[string]interface{}, 0, len(serverProfile.ConnectionSettings.Connections))
 		for _, connection := range serverProfile.ConnectionSettings.Connections {
-			// Gets Boot for Connection
 			iscsi := make([]map[string]interface{}, 0, 1)
-			if connection.Boot.Iscsi != nil {
-				iscsi = append(iscsi, map[string]interface{}{
-					"chap_level":              connection.Boot.Iscsi.Chaplevel,
-					"initiator_name_source":   connection.Boot.Iscsi.InitiatorNameSource,
-					"first_boot_target_ip":    connection.Boot.Iscsi.FirstBootTargetIp,
-					"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
-					"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
-					"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
-				})
-			}
-			// Gets Boot Settings
 			connectionBoot := make([]map[string]interface{}, 0, 1)
+			// Gets Boot Settings
 			if connection.Boot != nil {
+				if connection.Boot.Iscsi != nil {
+					iscsi = append(iscsi, map[string]interface{}{
+						"chap_level":              connection.Boot.Iscsi.Chaplevel,
+						"initiator_name_source":   connection.Boot.Iscsi.InitiatorNameSource,
+						"first_boot_target_ip":    connection.Boot.Iscsi.FirstBootTargetIp,
+						"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
+						"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
+						"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
+					})
+				}
 				connectionBoot = append(connectionBoot, map[string]interface{}{
 					"priority":           connection.Boot.Priority,
 					"boot_vlan_id":       connection.Boot.BootOptionV3.BootVlanId,
@@ -1520,58 +1520,59 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("bios_option", biosOptions)
 	}
 
-	// Gets Local Storage Body
-	localStorage := make([]map[string]interface{}, 0, 1)
-	// Gets Storage Controller Body
-	controllers := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers))
-	for i := 0; i < len(serverProfile.LocalStorage.Controllers); i++ {
-		logicalDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers[i].LogicalDrives))
-		for j := 0; j < len(serverProfile.LocalStorage.Controllers[i].LogicalDrives); j++ {
-			logicalDrives = append(logicalDrives, map[string]interface{}{
-				"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
-				"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
-				"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
-				"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
-				"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
-				"num_spare_drives":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
-				"sas_logical_jbod_id": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
-				"raid_level":          serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
+	if len(serverProfile.LocalStorage.Controllers) != 0 {
+		// Gets Local Storage Body
+		localStorage := make([]map[string]interface{}, 0, 1)
+		// Gets Storage Controller Body
+		controllers := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers))
+		for i := 0; i < len(serverProfile.LocalStorage.Controllers); i++ {
+			logicalDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers[i].LogicalDrives))
+			for j := 0; j < len(serverProfile.LocalStorage.Controllers[i].LogicalDrives); j++ {
+				logicalDrives = append(logicalDrives, map[string]interface{}{
+					"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
+					"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+					"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
+					"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
+					"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
+					"num_spare_drives":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
+					"sas_logical_jbod_id": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
+					"raid_level":          serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
+				})
+			}
+			controllers = append(controllers, map[string]interface{}{
+				"device_slot":              serverProfile.LocalStorage.Controllers[i].DeviceSlot,
+				"initialize":               serverProfile.LocalStorage.Controllers[i].Initialize,
+				"import_configuration":     serverProfile.LocalStorage.Controllers[i].ImportConfiguration,
+				"drive_write_cache":        serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
+				"mode":                     serverProfile.LocalStorage.Controllers[i].Mode,
+				"predictive_spare_rebuild": serverProfile.LocalStorage.Controllers[i].PredictiveSpareRebuild,
+				"logical_drives":           logicalDrives,
 			})
 		}
-		controllers = append(controllers, map[string]interface{}{
-			"device_slot":              serverProfile.LocalStorage.Controllers[i].DeviceSlot,
-			"initialize":               serverProfile.LocalStorage.Controllers[i].Initialize,
-			"import_configuration":     serverProfile.LocalStorage.Controllers[i].ImportConfiguration,
-			"drive_write_cache":        serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
-			"mode":                     serverProfile.LocalStorage.Controllers[i].Mode,
-			"predictive_spare_rebuild": serverProfile.LocalStorage.Controllers[i].PredictiveSpareRebuild,
-			"logical_drive":            logicalDrives,
+		// Gets Sas Logical Jbod Controller Body
+		sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
+		for i := 0; i < len(serverProfile.LocalStorage.SasLogicalJBODs); i++ {
+			sasLogDrives = append(sasLogDrives, map[string]interface{}{
+				"description":        serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
+				"device_slot":        serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
+				"drive_max_size_gb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
+				"drive_min_size_sb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
+				"drive_technology":   serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
+				"erase_data":         serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
+				"id":                 serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
+				"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
+				"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
+				"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+			})
+		}
+		localStorage = append(localStorage, map[string]interface{}{
+			"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
+			"initialize":           serverProfile.LocalStorage.Initialize,
+			"controller":           controllers,
+			"sas_logical_jbod":     sasLogDrives,
 		})
+		d.Set("local_storage", localStorage)
 	}
-	// Gets Sas Logical Jbod Controller Body
-	sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
-	for i := 0; i < len(serverProfile.LocalStorage.SasLogicalJBODs); i++ {
-		sasLogDrives = append(sasLogDrives, map[string]interface{}{
-			"description":        serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
-			"device_slot":        serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
-			"drive_max_size_gb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
-			"drive_min_size_sb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
-			"drive_technology":   serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
-			"erase_data":         serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
-			"id":                 serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
-			"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
-			"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
-			"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
-		})
-	}
-	localStorage = append(localStorage, map[string]interface{}{
-		"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
-		"initialize":           serverProfile.LocalStorage.Initialize,
-		"controller":           controllers,
-		"sas_logical_jbod":     sasLogDrives,
-	})
-	d.Set("local_storage", localStorage)
-
 	return nil
 }
 
@@ -1675,8 +1676,8 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				rawConSetting := rawConSettings.(map[string]interface{})
 				rawNetwork := rawConSetting["connections"].([]interface{})
 				networks := make([]ov.Connection, 0)
-				for _, rawNet := range rawNetwork {
-					rawNetworkItem := rawNet.(map[string]interface{})
+				for i := 0; i < len(rawNetwork); i++ {
+					rawNetworkItem := rawNetwork[i].(map[string]interface{})
 					bootOptions := ov.BootOption{}
 					if rawNetworkItem["boot"] != nil {
 						rawBoots := rawNetworkItem["boot"].([]interface{})
@@ -1745,8 +1746,11 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						PortID:           rawNetworkItem["port_id"].(string),
 						RequestedMbps:    rawNetworkItem["requested_mbps"].(string),
 						Ipv4:             &ipv4,
-						Boot:             &bootOptions,
+						//		Boot:             &bootOptions,
 					})
+					if len(rawNetworkItem["boot"].([]interface{})) != 0 {
+						networks[i].Boot = &bootOptions
+					}
 				}
 				serverProfile.ConnectionSettings = ov.ConnectionSettings{
 					Connections: networks,
