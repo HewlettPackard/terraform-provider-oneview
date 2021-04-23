@@ -12,7 +12,6 @@
 package oneview
 
 import (
-	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -25,11 +24,23 @@ func dataSourceServerProfile() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"boot_order": {
-				Type:     schema.TypeSet,
+			"boot": {
+				Type:     schema.TypeList,
 				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_boot": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"boot_order": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+					},
+				},
 			},
 			"boot_mode": {
 				Optional: true,
@@ -87,103 +98,234 @@ func dataSourceServerProfile() *schema.Resource {
 					},
 				},
 			},
-			"network": {
+			"connection_settings": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"function_type": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-						},
-						"network_uri": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"port_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "Lom 1:1-a",
-						},
-						"requested_mbps": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "2500",
-						},
-						"id": {
-							Type:     schema.TypeInt,
+						"manage_connections": {
+							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"boot": {
+						"reapply_state": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Type:     schema.TypeSet,
+						},
+						"compliance_control": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"connections": {
+							Optional: true,
+							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"priority": {
+									"name": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"allocated_mbps": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"allocated_vfs": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"function_type": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"ethernet_boot_type": {
+									"network_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"boot_volume_source": {
+									"port_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "Lom 1:1-a",
+									},
+									"requested_mbps": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "2500",
+									},
+									"requested_vfs": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"iscsi": {
-										Type:     schema.TypeSet,
+									"state": {
+										Type:     schema.TypeString,
 										Optional: true,
-										MaxItems: 1,
+									},
+									"status": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwnn": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwpn": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwpn_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"interconnect_port": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"interconnect_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"isolated_trunk": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"lag_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mac": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mac_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"managed": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"maximum_mbps": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"network_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"private_vlan_port_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"request_": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"boot": {
+										Optional: true,
+										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"chap_level": {
+												"priority": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"first_boot_target_ip": {
+												"boot_vlan_id": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"ethernet_boot_type": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"first_boot_target_port": {
+												"boot_volume_source": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"initiator_name_source": {
+												"iscsi": {
+													Type:     schema.TypeList,
+													Optional: true,
+													MaxItems: 1,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"chap_level": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"chap_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"chap_secret": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"initiator_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"initiator_name_source": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"mutual_chap_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"boot_target_lun": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"boot_target_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"first_boot_target_ip": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"first_boot_target_port": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"second_boot_target_ip": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"second_boot_target_port": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"ipv4": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"gateway": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"second_boot_target_ip": {
+												"ip_address": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"second_boot_target_port": {
+												"subnet_mask": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"ip_address_source": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
 											},
 										},
-									},
-								},
-							},
-						},
-						"ipv4": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"gateway": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"ip_address_source": {
-										Type:     schema.TypeString,
-										Optional: true,
 									},
 								},
 							},
@@ -276,7 +418,7 @@ func dataSourceServerProfile() *schema.Resource {
 			},
 			"local_storage": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -285,144 +427,130 @@ func dataSourceServerProfile() *schema.Resource {
 							Optional: true,
 						},
 						"initialize": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"reapply_state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
-			"controllers": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"device_slot": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"drive_write_cache": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"import_configuration": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"initialize": {
-							Type:     schema.TypeBool,
+						"controller": {
 							Optional: true,
+							Type:     schema.TypeList,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"import_configuration": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"device_slot": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"initialize": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"drive_write_cache": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mode": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"predictive_spare_rebuild": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"logical_drives": {
+										Optional: true,
+										Type:     schema.TypeList,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"bootable": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"accelerator": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"drive_technology": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"num_physical_drives": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"num_spare_drives": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"sas_logical_jbod_id": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"raid_level": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+								},
+							},
 						},
-						"mode": {
-							Type:     schema.TypeString,
+						"sas_logical_jbod": {
 							Optional: true,
-						},
-						"predictive_spare_rebuild": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
-			"logical_drives": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"accelerator": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"bootable": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"drive_number": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"drive_technology": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"num_physical_drives": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"num_spare_drives": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"raid_level": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"sas_logical_jbod_id": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-					},
-				},
-			},
-			"logical_jbod": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"description": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"device_slot": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"drive_max_size_gb": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"drive_min_size_gb": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"drive_technology": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"erase_data": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"id": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"num_physical_drives": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"persistent": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"sas_logical_jbod_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"status": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:     schema.TypeList,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"description": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"device_slot": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"drive_max_size_gb": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"drive_min_size_gb": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"drive_technology": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"erase_data": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"num_physical_drive": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"persistent": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -663,23 +791,70 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("mac_type", serverProfile.MACType)
 	d.Set("hide_unused_flex_nics", serverProfile.HideUnusedFlexNics)
 
-	var connections []ov.Connection
 	if len(serverProfile.ConnectionSettings.Connections) != 0 {
-		connections = serverProfile.ConnectionSettings.Connections
-	}
-	if len(connections) != 0 {
-		networks := make([]map[string]interface{}, 0, len(connections))
-		for _, rawNet := range connections {
-			networks = append(networks, map[string]interface{}{
-				"name":           rawNet.Name,
-				"function_type":  rawNet.FunctionType,
-				"network_uri":    rawNet.NetworkURI.String(),
-				"port_id":        rawNet.PortID,
-				"requested_mbps": rawNet.RequestedMbps,
+		// Get connections
+		connections := make([]map[string]interface{}, 0, len(serverProfile.ConnectionSettings.Connections))
+		for _, connection := range serverProfile.ConnectionSettings.Connections {
+			// Gets Boot for Connection
+			iscsi := make([]map[string]interface{}, 0, 1)
+			if connection.Boot.Iscsi != nil {
+				iscsi = append(iscsi, map[string]interface{}{
+					"chap_level":              connection.Boot.Iscsi.Chaplevel,
+					"initiator_name_source":   connection.Boot.Iscsi.InitiatorNameSource,
+					"first_boot_target_ip":    connection.Boot.Iscsi.FirstBootTargetIp,
+					"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
+					"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
+					"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
+				})
+			}
+			// Gets Boot Settings
+			connectionBoot := make([]map[string]interface{}, 0, 1)
+			if connection.Boot != nil {
+				connectionBoot = append(connectionBoot, map[string]interface{}{
+					"priority":           connection.Boot.Priority,
+					"boot_vlan_id":       connection.Boot.BootOptionV3.BootVlanId,
+					"ethernet_boot_type": connection.Boot.EthernetBootType,
+					"boot_volume_source": connection.Boot.BootVolumeSource,
+					"iscsi":              iscsi,
+				})
+			}
+			// Get IPV4 Settings for Connection
+			connectionIpv4 := make([]map[string]interface{}, 0, 1)
+			if connection.Ipv4 != nil {
+				connectionIpv4 = append(connectionIpv4, map[string]interface{}{
+					"gateway":           connection.Ipv4.Gateway,
+					"ip_address":        connection.Ipv4.IpAddress,
+					"subnet_mask":       connection.Ipv4.SubnetMask,
+					"ip_address_source": connection.Ipv4.IpAddressSource,
+				})
+			}
+			// Gets Connection Body
+			connections = append(connections, map[string]interface{}{
+				"function_type":  connection.FunctionType,
+				"network_uri":    connection.NetworkURI,
+				"port_id":        connection.PortID,
+				"requested_mbps": connection.RequestedMbps,
+				"id":             connection.ID,
+				"name":           connection.Name,
+				"isolated_trunk": connection.IsolatedTrunk,
+				"lag_name":       connection.LagName,
+				"mac_type":       connection.MacType,
+				"managed":        connection.Managed,
+				"network_name":   connection.NetworkName,
+				"boot":           connectionBoot,
+				"ipv4":           connectionIpv4,
 			})
 		}
-		d.Set("network", networks)
+		// Connection Settings
+		connectionSettings := make([]map[string]interface{}, 0, 1)
+		connectionSettings = append(connectionSettings, map[string]interface{}{
+			"manage_connections": serverProfile.ConnectionSettings.ManageConnections,
+			"compliance_control": serverProfile.ConnectionSettings.ComplianceControl,
+			"connections":        connections,
+		})
+		d.Set("connection_settings", connectionSettings)
 	}
+
 	overriddenSettings := make([]interface{}, 0, len(serverProfile.Bios.OverriddenSettings))
 	for _, overriddenSetting := range serverProfile.Bios.OverriddenSettings {
 		overriddenSettings = append(overriddenSettings, map[string]interface{}{
@@ -699,80 +874,74 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 		d.Set("bios_option", biosOptions)
 	}
 
-	if serverProfile.Boot.ManageBoot {
-		bootOrder := make([]interface{}, 0)
+	bootOrder := make([]interface{}, 0)
+	if len(serverProfile.Boot.Order) != 0 {
 		for _, currBoot := range serverProfile.Boot.Order {
-			rawBootOrder := d.Get("boot_order").(*schema.Set).List()
-			for _, raw := range rawBootOrder {
-				if raw == currBoot {
-					bootOrder = append(bootOrder, currBoot)
-				}
-			}
+			bootOrder = append(bootOrder, currBoot)
 		}
-		d.Set("boot_order", bootOrder)
 	}
+	boot := make([]map[string]interface{}, 0, 1)
+	boot = append(boot, map[string]interface{}{
+		"manage_boot": serverProfile.Boot.ManageBoot,
+		"boot_order":  bootOrder,
+	})
+	d.Set("boot", boot)
+
 	d.Set("name", serverProfile.Name)
 	d.Set("type", serverProfile.Type)
 	d.Set("uri", serverProfile.URI.String())
 	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
-	localStorages := make([]map[string]interface{}, 0, 1)
-	localStorages = append(localStorages, map[string]interface{}{
-		"reapply_state": serverProfile.LocalStorage.ReapplyState,
-	})
 
-	d.Set("local_storage", localStorages)
+	// Gets Local Storage Body
+	localStorage := make([]map[string]interface{}, 0, 1)
+	// Gets Storage Controller Body
 	controllers := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers))
-	for _, controller := range serverProfile.LocalStorage.Controllers {
-
-		controllers = append(controllers, map[string]interface{}{
-			"device_slot":              controller.DeviceSlot,
-			"drive_write_cache":        controller.DriveWriteCache,
-			"import_configuration":     controller.ImportConfiguration,
-			"initialize":               controller.Initialize,
-			"mode":                     controller.Mode,
-			"predictive_spare_rebuild": controller.PredictiveSpareRebuild,
-		})
-		logicaldrives := make([]map[string]interface{}, 0, len(controller.LogicalDrives))
-		for _, logicaldrive := range controller.LogicalDrives {
-
-			logicaldrives = append(logicaldrives, map[string]interface{}{
-				"accelerator":         logicaldrive.Accelerator,
-				"bootable":            logicaldrive.Bootable,
-				"drive_number":        logicaldrive.DriveNumber,
-				"drive_technology":    logicaldrive.DriveTechnology,
-				"name":                logicaldrive.Name,
-				"num_physical_drives": logicaldrive.NumPhysicalDrives,
-				"num_spare_drives":    logicaldrive.NumSpareDrives,
-				"raid_level":          logicaldrive.RaidLevel,
-				"sas_logical_jbod_id": logicaldrive.SasLogicalJBODId,
+	for i := 0; i < len(serverProfile.LocalStorage.Controllers); i++ {
+		logicalDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers[i].LogicalDrives))
+		for j := 0; j < len(serverProfile.LocalStorage.Controllers[i].LogicalDrives); j++ {
+			logicalDrives = append(logicalDrives, map[string]interface{}{
+				"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
+				"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+				"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
+				"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
+				"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
+				"num_spare_drives":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
+				"sas_logical_jbod_id": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
+				"raid_level":          serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
 			})
 		}
-
-		d.Set("logical_drives", logicaldrives)
-
-	}
-
-	d.Set("controllers", controllers)
-
-	saslogicaljbods := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
-	for _, saslogicaljbod := range serverProfile.LocalStorage.SasLogicalJBODs {
-
-		saslogicaljbods = append(saslogicaljbods, map[string]interface{}{
-			"description":          saslogicaljbod.Description,
-			"device_slot":          saslogicaljbod.DeviceSlot,
-			"drive_max_size_gb":    saslogicaljbod.DriveMaxSizeGB,
-			"drive_min_size_gb":    saslogicaljbod.DriveMinSizeGB,
-			"drive_technology":     saslogicaljbod.DriveTechnology,
-			"erase_data":           saslogicaljbod.EraseData,
-			"id":                   saslogicaljbod.ID,
-			"name":                 saslogicaljbod.Name,
-			"num_physical_drives":  saslogicaljbod.NumPhysicalDrives,
-			"persistent":           saslogicaljbod.Persistent,
-			"sas_logical_jbod_uri": saslogicaljbod.SasLogicalJBODUri,
-			"status":               saslogicaljbod.Status,
+		controllers = append(controllers, map[string]interface{}{
+			"device_slot":              serverProfile.LocalStorage.Controllers[i].DeviceSlot,
+			"initialize":               serverProfile.LocalStorage.Controllers[i].Initialize,
+			"import_configuration":     serverProfile.LocalStorage.Controllers[i].ImportConfiguration,
+			"drive_write_cache":        serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
+			"mode":                     serverProfile.LocalStorage.Controllers[i].Mode,
+			"predictive_spare_rebuild": serverProfile.LocalStorage.Controllers[i].PredictiveSpareRebuild,
+			"logical_drive":            logicalDrives,
 		})
 	}
-	d.Set("logical_jbod", saslogicaljbods)
-
+	// Gets Sas Logical Jbod Controller Body
+	sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
+	for i := 0; i < len(serverProfile.LocalStorage.SasLogicalJBODs); i++ {
+		sasLogDrives = append(sasLogDrives, map[string]interface{}{
+			"description":        serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
+			"device_slot":        serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
+			"drive_max_size_gb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
+			"drive_min_size_sb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
+			"drive_technology":   serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
+			"erase_data":         serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
+			"id":                 serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
+			"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
+			"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
+			"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+		})
+	}
+	localStorage = append(localStorage, map[string]interface{}{
+		"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
+		"initialize":           serverProfile.LocalStorage.Initialize,
+		"controller":           controllers,
+		"sas_logical_jbod":     sasLogDrives,
+	})
+	d.Set("local_storage", localStorage)
 	return nil
 }
