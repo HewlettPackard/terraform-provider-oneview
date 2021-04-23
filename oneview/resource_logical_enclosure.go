@@ -13,10 +13,11 @@ package oneview
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"strconv"
 )
 
 func resourceLogicalEnclosure() *schema.Resource {
@@ -47,21 +48,38 @@ func resourceLogicalEnclosure() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"deployment_mode": {
-							Type:     schema.TypeString,
+						"os_deployment_settings": {
+							Type:     schema.TypeList,
 							Optional: true,
-						},
-						"deployment_network_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"manage_os_deployment": {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"manage_os_deployment": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"deployment_mode_settings": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"deployment_mode": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"deployment_network_uri": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+								},
+							},
 						},
 					},
 				},
 			},
+
 			"enclosure_group_uri": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -208,6 +226,7 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		logicalEnclosure.Firmware = &logicalEnclosureFirmware
 	}
 	logicalEnclosureError := config.ovClient.CreateLogicalEnclosure(logicalEnclosure)
+
 	d.SetId(d.Get("name").(string))
 	if logicalEnclosureError != nil {
 		d.SetId("")
@@ -229,14 +248,30 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("category", logicalEnclosure.Category)
 	d.Set("created", logicalEnclosure.Created)
 	d.Set("delete_failed", logicalEnclosure.DeleteFailed)
-	deploymentManagerSettings := make([]map[string]interface{}, 0, 1)
-	deploymentManagerSettings = append(deploymentManagerSettings, map[string]interface{}{
-		"deployment_mode":         logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentMode,
-		"deployment_network_uri":  logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentNetworkUri,
-		"manage_os_deployment":    logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.ManageOSDeployment,
-		"deployement_cluster_uri": logicalEnclosure.DeploymentManagerSettings.DeploymentClusterUri,
-	})
-	d.Set("deployment_manager_settings", deploymentManagerSettings)
+
+	dpmsList := make([]map[string]interface{}, 0, 1)
+	if logicalEnclosure.DeploymentManagerSettings != nil {
+		osdslist := make([]map[string]interface{}, 0, 1)
+		if logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings != nil {
+			dmodesettingslist := make([]map[string]interface{}, 0, 1)
+
+			if logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings != nil {
+				dmodesettingslist = append(dmodesettingslist, map[string]interface{}{
+					"deployment_mode":        logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentMode,
+					"deployment_network_uri": logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.DeploymentModeSettings.DeploymentNetworkUri,
+				})
+			}
+			osdslist = append(osdslist, map[string]interface{}{
+				"manage_os_deployment":   logicalEnclosure.DeploymentManagerSettings.OsDeploymentSettings.ManageOSDeployment,
+				"os_deployment_settings": dmodesettingslist,
+			})
+		}
+		dpmsList = append(dpmsList, map[string]interface{}{
+			"deployement_cluster_uri": logicalEnclosure.DeploymentManagerSettings.DeploymentClusterUri,
+			"os_deployment_settings":  osdslist,
+		})
+	}
+	d.Set("deployment_manager_settings", dpmsList)
 	d.Set("description", logicalEnclosure.Description)
 	d.Set("enclosure_group_uri", logicalEnclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_uris", logicalEnclosure.EnclosureUris)

@@ -13,8 +13,9 @@ package oneview
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"strconv"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceLogicalInterconnectGroup() *schema.Resource {
@@ -714,15 +715,14 @@ func dataSourceLogicalInterconnectGroup() *schema.Resource {
 
 func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Get("name").(string)
 
-	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(id)
+	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
+
 	if err != nil || logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
 
-	d.SetId(id)
 	d.Set("name", logicalInterconnectGroup.Name)
 	d.Set("type", logicalInterconnectGroup.Type)
 	d.Set("created", logicalInterconnectGroup.Created)
@@ -734,6 +734,7 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	d.Set("fabric_uri", logicalInterconnectGroup.FabricUri.String())
 	d.Set("etag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
+	d.Set("interconnect_settings.0.interconnect_utilization_alert", logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert)
 	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
 	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
 
@@ -742,6 +743,12 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 		enclosureIndexes[i] = enclosureIndexVal
 	}
 	d.Set("enclosure_indexes", schema.NewSet(func(a interface{}) int { return a.(int) }, enclosureIndexes))
+
+	initialScopeUris := make([]interface{}, len(logicalInterconnectGroup.InitialScopeUris))
+	for i, initialScopeUriVal := range logicalInterconnectGroup.InitialScopeUris {
+		initialScopeUris[i] = initialScopeUriVal
+	}
+	d.Set("initial_scope_uris", schema.NewSet(func(a interface{}) int { return a.(int) }, initialScopeUris))
 
 	interconnectMapEntryTemplates := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates))
 	for _, interconnectMapEntryTemplate := range logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates {
@@ -770,74 +777,6 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	}
 
 	d.Set("interconnect_map_entry_template", interconnectMapEntryTemplates)
-
-	if logicalInterconnectGroup.SflowConfiguration != nil {
-		sflowAgents := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowAgents))
-		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowAgents); i++ {
-
-			sflowAgents = append(sflowAgents, map[string]interface{}{
-				"bay_number":      logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].BayNumber,
-				"enclosure_index": logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].EnclosureIndex,
-				"ip_addr":         logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].IpAddr,
-				"ip_mode":         logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].IpMode,
-				"subnet_mask":     logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].SubnetMask,
-				"status":          logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].Status,
-			})
-		}
-
-		sflowCollectors := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowCollectors))
-		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowCollectors); i++ {
-
-			sflowCollectors = append(sflowCollectors, map[string]interface{}{
-				"collector_enabled": logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].CollectorEnabled,
-				"collector_id":      logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].CollectorId,
-				"ip_address":        logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].IPAddress,
-				"max_datagram_size": logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].MaxDatagramSize,
-				"max_header_size":   logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].MaxHeaderSize,
-				"name":              logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].Name,
-				"port":              logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].Port,
-			})
-		}
-		sflowNetwork := make([]map[string]interface{}, 0, 1)
-		if logicalInterconnectGroup.SflowConfiguration.SflowNetwork != nil {
-			sflowNetwork = append(sflowNetwork, map[string]interface{}{
-				"name":    logicalInterconnectGroup.SflowConfiguration.SflowNetwork.Name,
-				"vlan_id": logicalInterconnectGroup.SflowConfiguration.SflowNetwork.VlanId,
-				"uri":     logicalInterconnectGroup.SflowConfiguration.SflowNetwork.URI.String(),
-			})
-		}
-
-		sflowPorts := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowPorts))
-		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowPorts); i++ {
-			sflowPorts = append(sflowPorts, map[string]interface{}{
-				"bay_number":      logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].BayNumber,
-				"collector_id":    logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].CollectorId,
-				"enclosure_index": logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].EnclosureIndex,
-				"icm_name":        logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].IcmName,
-				"port_name":       logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].PortName,
-			})
-		}
-
-		sflowConfigurations := make([]map[string]interface{}, 0, 1)
-
-		sflowConfigurations = append(sflowConfigurations, map[string]interface{}{
-			"category":         logicalInterconnectGroup.SflowConfiguration.Category,
-			"description":      logicalInterconnectGroup.SflowConfiguration.Description.String(),
-			"enabled":          *logicalInterconnectGroup.SflowConfiguration.Enabled,
-			"name":             logicalInterconnectGroup.SflowConfiguration.Name,
-			"state":            logicalInterconnectGroup.SflowConfiguration.State,
-			"status":           logicalInterconnectGroup.SflowConfiguration.Status,
-			"type":             logicalInterconnectGroup.SflowConfiguration.Type,
-			"uri":              logicalInterconnectGroup.SflowConfiguration.URI.String(),
-			"sflow_agents":     sflowAgents,
-			"sflow_collectors": sflowCollectors,
-			"sflow_network":    sflowNetwork,
-			"sflow_ports":      sflowPorts,
-		})
-
-		d.Set("sflow_configuration", sflowConfigurations)
-
-	}
 
 	uplinkSets := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.UplinkSets))
 	for i, uplinkSet := range logicalInterconnectGroup.UplinkSets {
@@ -950,6 +889,73 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	}
 	d.Set("internal_network_uris", internalNetworkUris)
 
+	if logicalInterconnectGroup.SflowConfiguration != nil {
+		sflowAgents := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowAgents))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowAgents); i++ {
+
+			sflowAgents = append(sflowAgents, map[string]interface{}{
+				"bay_number":      logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].BayNumber,
+				"enclosure_index": logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].EnclosureIndex,
+				"ip_addr":         logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].IpAddr,
+				"ip_mode":         logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].IpMode,
+				"subnet_mask":     logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].SubnetMask,
+				"status":          logicalInterconnectGroup.SflowConfiguration.SflowAgents[i].Status,
+			})
+		}
+
+		sflowCollectors := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowCollectors))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowCollectors); i++ {
+
+			sflowCollectors = append(sflowCollectors, map[string]interface{}{
+				"collector_enabled": logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].CollectorEnabled,
+				"collector_id":      logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].CollectorId,
+				"ip_address":        logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].IPAddress,
+				"max_datagram_size": logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].MaxDatagramSize,
+				"max_header_size":   logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].MaxHeaderSize,
+				"name":              logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].Name,
+				"port":              logicalInterconnectGroup.SflowConfiguration.SflowCollectors[i].Port,
+			})
+		}
+		sflowNetwork := make([]map[string]interface{}, 0, 1)
+		if logicalInterconnectGroup.SflowConfiguration.SflowNetwork != nil {
+			sflowNetwork = append(sflowNetwork, map[string]interface{}{
+				"name":    logicalInterconnectGroup.SflowConfiguration.SflowNetwork.Name,
+				"vlan_id": logicalInterconnectGroup.SflowConfiguration.SflowNetwork.VlanId,
+				"uri":     logicalInterconnectGroup.SflowConfiguration.SflowNetwork.URI.String(),
+			})
+		}
+
+		sflowPorts := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.SflowConfiguration.SflowPorts))
+		for i := 0; i < len(logicalInterconnectGroup.SflowConfiguration.SflowPorts); i++ {
+			sflowPorts = append(sflowPorts, map[string]interface{}{
+				"bay_number":      logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].BayNumber,
+				"collector_id":    logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].CollectorId,
+				"enclosure_index": logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].EnclosureIndex,
+				"icm_name":        logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].IcmName,
+				"port_name":       logicalInterconnectGroup.SflowConfiguration.SflowPorts[i].PortName,
+			})
+		}
+
+		sflowConfigurations := make([]map[string]interface{}, 0, 1)
+
+		sflowConfigurations = append(sflowConfigurations, map[string]interface{}{
+			"category":         logicalInterconnectGroup.SflowConfiguration.Category,
+			"description":      logicalInterconnectGroup.SflowConfiguration.Description.String(),
+			"enabled":          *logicalInterconnectGroup.SflowConfiguration.Enabled,
+			"name":             logicalInterconnectGroup.SflowConfiguration.Name,
+			"state":            logicalInterconnectGroup.SflowConfiguration.State,
+			"status":           logicalInterconnectGroup.SflowConfiguration.Status,
+			"type":             logicalInterconnectGroup.SflowConfiguration.Type,
+			"uri":              logicalInterconnectGroup.SflowConfiguration.URI.String(),
+			"sflow_agents":     sflowAgents,
+			"sflow_collectors": sflowCollectors,
+			"sflow_network":    sflowNetwork,
+			"sflow_ports":      sflowPorts,
+		})
+
+		d.Set("sflow_configuration", sflowConfigurations)
+
+	}
 	telemetryConfigurations := make([]map[string]interface{}, 0, 1)
 	telemetryConfigurations = append(telemetryConfigurations, map[string]interface{}{
 		"enabled":         *logicalInterconnectGroup.TelemetryConfiguration.EnableTelemetry,
@@ -1035,6 +1041,7 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
 	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
+
 	if logicalInterconnectGroup.IgmpSettings != nil {
 		igmpSettings := make([]map[string]interface{}, 0, 1)
 		igmpSetting := map[string]interface{}{
@@ -1060,6 +1067,7 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 		igmpSettings = append(igmpSettings, igmpSetting)
 		d.Set("igmp_settings", igmpSettings)
 	}
+
 	if logicalInterconnectGroup.PortFlapProtection != nil {
 		portFlapSettings := make([]map[string]interface{}, 0, 1)
 		portFlapSetting := map[string]interface{}{
@@ -1083,23 +1091,28 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 		portFlapSettings = append(portFlapSettings, portFlapSetting)
 		d.Set("port_flap_settings", portFlapSettings)
 	}
+
 	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
 	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
-
-		dscpClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.DscpClassMapping))
-		for i, dscpValue := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
-			dscpClassMap[i] = dscpValue
-		}
-
-		dot1pClassMap := make([]interface{}, len(qosTrafficClass.QosClassificationMapping.Dot1pClassMapping))
-		for i, dot1pValue := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
-			dot1pClassMap[i] = dot1pValue
-		}
 		qosClassificationMap := make([]map[string]interface{}, 0, 1)
-		qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
-			"dot1p_class_map": schema.NewSet(func(a interface{}) int { return a.(int) }, dot1pClassMap),
-			"dscp_class_map":  schema.NewSet(schema.HashString, dscpClassMap),
-		})
+		if qosTrafficClass.QosClassificationMapping != nil {
+
+			dot1pClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
+				dot1pClassMap = append(dot1pClassMap, raw)
+			}
+
+			dscpClassMap := make([]interface{}, 0)
+			for _, raw := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
+				dscpClassMap = append(dscpClassMap, raw)
+			}
+
+			qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
+				"dot1p_class_map": dot1pClassMap,
+				"dscp_class_map":  dscpClassMap,
+			})
+
+		}
 
 		qosTrafficClasses = append(qosTrafficClasses, map[string]interface{}{
 			"name":                   qosTrafficClass.QosTrafficClass.ClassName,
