@@ -10,7 +10,32 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#288] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/288) Terraform crashes on Logical Enclosure create
 - [#295] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/295) server profile update in-place.
 
-
+### Oneview Features supported
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Hypervisor Manager
+- Hypervisor Cluster Profile
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups 
+- Network Set
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
 
 # [v6.0.0-13]
 #### Major changes
