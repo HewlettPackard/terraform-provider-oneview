@@ -3,28 +3,28 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch    = "*"
 }
 
 variable "hostname" {
   type    = string
-  default = "<storage_system_ip>"
+  default = "172.18.11.12"
 }
 
 variable "ss_username" {
   type    = string
-  default = "<storage_system_username>"
+  default = "dcs"
 }
 
 variable "ss_password" {
   type    = string
-  default = "<storage_system_password>"
+  default = "dcs"
 }
 
 variable "ss_family" {
   type    = string
-  default = "<storage_system_family>"
+  default = "StoreServ"
 }
 
 # Extracting Server Certificate

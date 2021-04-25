@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch    = "*"
 }
 
@@ -40,6 +40,12 @@ resource "oneview_enclosure_group" "eg_inst" {
   ip_addressing_mode = "External"
   enclosure_count    = 3
   initial_scope_uris = [var.scope_name_1]
+  os_deployment_settings {
+    manage_os_deployment=true
+    deployment_mode_settings {
+      deployment_mode="Internal"      
+    }
+  }
   interconnect_bay_mappings {
     interconnect_bay               = 3
     logical_interconnect_group_uri = "/rest/logical-interconnect-groups/08cc9fdd-c831-4437-9414-ca3cfa12d292" #"${data.oneview_logical_interconnect_group.logical_interconnect_group.uri}"
