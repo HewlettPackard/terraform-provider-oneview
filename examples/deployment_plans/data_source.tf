@@ -4,7 +4,7 @@ provider "oneview" {
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
   i3s_endpoint  = var.i3s_endpoint
-  ov_apiversion = 2010
+  ov_apiversion = 2020
   ov_ifmatch    = "*"
 }
 

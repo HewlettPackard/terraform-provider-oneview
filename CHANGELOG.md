@@ -37,6 +37,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage System
 - Uplink Set
 
+### Image Streamer resources supported:
+- Deployment Plans
+
 # [v6.0.0-13]
 #### Major changes
 1.This release is validated to support Terraform 0.13.  Terraform 0.13 support HCL2 and enables automated installation of the HPE OneView Terraform Provider.

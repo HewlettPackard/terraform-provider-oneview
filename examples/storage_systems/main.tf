@@ -9,17 +9,17 @@ provider "oneview" {
 
 variable "hostname" {
   type    = string
-  default = "172.18.11.12"
+  default = "<storage_system_ip>"
 }
 
 variable "ss_username" {
   type    = string
-  default = "dcs"
+  default = "<storage_system_username>"
 }
 
 variable "ss_password" {
   type    = string
-  default = "dcs"
+  default = "<storage_system_password>"
 }
 
 variable "ss_family" {
