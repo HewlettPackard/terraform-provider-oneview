@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch    = "*"
 }
 
@@ -24,8 +24,10 @@ variable "ss_password" {
 
 variable "ss_family" {
   type    = string
-  default = "StoreServ" //"<storage_system_family>"
+  default = "StoreServ"
 }
+
+
 
 # Extracting Storage System
 data "oneview_storage_system" "ss_inst" {
@@ -38,7 +40,7 @@ resource "oneview_storage_system" "ss_inst" {
     username = var.ss_username
     password = var.ss_password
   }
-
+  family= "StoreServ"
   hostname = var.hostname
   name     = "ThreePAR-2"
 

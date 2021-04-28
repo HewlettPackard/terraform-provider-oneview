@@ -107,6 +107,38 @@ func resourceEnclosureGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"os_deployment_settings": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_os_deployment": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Computed: true,
+						},
+						"deployment_mode_settings": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"deployment_mode": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"deployment_network_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			"port_mapping_count": {
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -180,6 +212,32 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 		}
 		enclosureGroup.InitialScopeUris = initialScopeUris
 	}
+
+	if val, ok := d.GetOk("os_deployment_settings"); ok {
+		rawOsDeploymentSettings := val.(*schema.Set).List()
+		OsDeploymentSetting := ov.OsDeploymentSetting{}
+		for _, raw := range rawOsDeploymentSettings {
+			rawOsDeploymentSettingsitem := raw.(map[string]interface{})
+
+			deploymentModeSetting := ov.DeploymentModeSetting{}
+			rawdeploymentModeSetting := rawOsDeploymentSettingsitem["deployment_mode_settings"].(*schema.Set).List()
+
+			for _, raw2 := range rawdeploymentModeSetting {
+				rawdeploymentModeSettingItem := raw2.(map[string]interface{})
+				deploymentModeSetting = ov.DeploymentModeSetting{
+					DeploymentMode:       rawdeploymentModeSettingItem["deployment_mode"].(string),
+					DeploymentNetworkUri: rawdeploymentModeSettingItem["deployment_network_uri"].(string),
+				}
+			}
+			manageOsDeployment := rawOsDeploymentSettingsitem["manage_os_deployment"].(bool)
+			OsDeploymentSetting = ov.OsDeploymentSetting{
+				ManageOSDeployment:     manageOsDeployment,
+				DeploymentModeSettings: deploymentModeSetting,
+			}
+		}
+		enclosureGroup.OsDeploymentSettings = &OsDeploymentSetting
+	}
+
 	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
 		enclosureGroup.AmbientTemperatureMode = val.(string)
 	}
@@ -231,7 +289,24 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("ip_addressing_mode", enclosureGroup.IpAddressingMode)
 	d.Set("ip_range_uris", enclosureGroup.IpRangeUris)
 	d.Set("name", enclosureGroup.Name)
-	d.Set("os_deployment_settings", enclosureGroup.OsDeploymentSettings)
+
+	osdslist := make([]map[string]interface{}, 0, 1)
+	if enclosureGroup.OsDeploymentSettings != nil {
+		dmodesettingslist := make([]map[string]interface{}, 0, 1)
+
+		if &enclosureGroup.OsDeploymentSettings.DeploymentModeSettings != nil {
+			dmodesettingslist = append(dmodesettingslist, map[string]interface{}{
+				"deployment_mode":        enclosureGroup.OsDeploymentSettings.DeploymentModeSettings.DeploymentMode,
+				"deployment_network_uri": enclosureGroup.OsDeploymentSettings.DeploymentModeSettings.DeploymentNetworkUri,
+			})
+		}
+		osdslist = append(osdslist, map[string]interface{}{
+			"manage_os_deployment":   enclosureGroup.OsDeploymentSettings.ManageOSDeployment,
+			"os_deployment_settings": dmodesettingslist,
+		})
+	}
+
+	d.Set("os_deployment_settings", osdslist)
 	d.Set("port_mapping_count", enclosureGroup.PortMappingCount)
 	d.Set("port_mappings", enclosureGroup.PortMappings)
 	d.Set("power_mode", enclosureGroup.PowerMode)
@@ -317,6 +392,30 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	if val, ok := d.GetOk("port_mapping_count"); ok {
 		enclosureGroup.PortMappingCount = val.(int)
+	}
+	if val, ok := d.GetOk("os_deployment_settings"); ok {
+		rawOsDeploymentSettings := val.(*schema.Set).List()
+		OsDeploymentSetting := ov.OsDeploymentSetting{}
+		for _, raw := range rawOsDeploymentSettings {
+			rawOsDeploymentSettingsitem := raw.(map[string]interface{})
+
+			deploymentModeSetting := ov.DeploymentModeSetting{}
+			rawdeploymentModeSetting := rawOsDeploymentSettingsitem["deployment_mode_settings"].(*schema.Set).List()
+
+			for _, raw2 := range rawdeploymentModeSetting {
+				rawdeploymentModeSettingItem := raw2.(map[string]interface{})
+				deploymentModeSetting = ov.DeploymentModeSetting{
+					DeploymentMode:       rawdeploymentModeSettingItem["deployment_mode"].(string),
+					DeploymentNetworkUri: rawdeploymentModeSettingItem["deployment_network_uri"].(string),
+				}
+			}
+			manageOsDeployment := rawOsDeploymentSettingsitem["manage_os_deployment"].(bool)
+			OsDeploymentSetting = ov.OsDeploymentSetting{
+				ManageOSDeployment:     manageOsDeployment,
+				DeploymentModeSettings: deploymentModeSetting,
+			}
+		}
+		enclosureGroup.OsDeploymentSettings = &OsDeploymentSetting
 	}
 
 	if val, ok := d.GetOk("port_mappings"); ok {

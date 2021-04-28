@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 2600
+  ov_apiversion = 2800
   ov_ifmatch    = "*"
 }
 
@@ -24,7 +24,7 @@ variable "ss_password" {
 
 variable "ss_family" {
   type    = string
-  default = "<storage_system_family>"
+  default = "StoreServ"
 }
 
 # Extracting Server Certificate
