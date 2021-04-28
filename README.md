@@ -162,7 +162,7 @@ $ terraform apply
 ```
 Note: Only a single terraform file (example file) should exist in the home folder to execute the above mentioned three commands. Once the resource is tested move that file to examples folder. 
 
-Note: Currently this SDK supports OneView API 2600 minimally, where we can test OneView API 2600 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
+Note: Currently this SDK supports OneView API 2800 minimally, where we can test OneView API 2800 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
 
 ## API Implementation
 
