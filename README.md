@@ -101,7 +101,7 @@ $ export TF_VAR_ov_domain=<ov_domain>
 ### OneView Client Configuration
 
 The OneView Client configuration options that can be passed during OneView Client object creation:
-The variables are defined in [variable.tf](hhttps://github.com/HewlettPackard/terraform-provider-oneview/blob/master/variables.tf) file.
+The variables are defined in [variable.tf](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/variables.tf) file.
 
 For OneView authentication, you need to provide the provider information in examples:
 
