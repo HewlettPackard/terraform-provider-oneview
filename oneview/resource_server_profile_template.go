@@ -337,13 +337,11 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"server_hardware_type": {
 				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Optional: true,
 			},
 			"enclosure_group": {
 				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Optional: true,
 			},
 			"affinity": {
 				Type:     schema.TypeString,

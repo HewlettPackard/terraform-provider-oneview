@@ -360,7 +360,6 @@ func resourceServerProfile() *schema.Resource {
 			"affinity": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Bay",
 			},
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
@@ -812,7 +811,7 @@ func resourceServerProfile() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ServerProfileV9",
+				Computed: true,
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
