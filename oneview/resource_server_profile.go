@@ -40,11 +40,13 @@ func resourceServerProfile() *schema.Resource {
 			"boot": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_boot": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 						"boot_order": {
 							Type:     schema.TypeSet,
@@ -57,6 +59,7 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"boot_mode": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -82,6 +85,7 @@ func resourceServerProfile() *schema.Resource {
 			"bios_option": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_bios": {
@@ -91,13 +95,16 @@ func resourceServerProfile() *schema.Resource {
 						"consistency_state": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"overridden_settings": {
 							Optional: true,
+							Computed: true,
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -118,6 +125,7 @@ func resourceServerProfile() *schema.Resource {
 			"connection_settings": {
 				Optional: true,
 				Type:     schema.TypeList,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_connections": {
@@ -351,10 +359,12 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"server_hardware_type": {
 				Type:     schema.TypeString,
+				Computed: true,
 				Optional: true,
 			},
 			"enclosure_group": {
 				Type:     schema.TypeString,
+				Computed: true,
 				Optional: true,
 			},
 			"affinity": {
@@ -391,6 +401,7 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"firmware": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -432,8 +443,8 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"local_storage": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeList,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_local_storage": {
@@ -568,6 +579,7 @@ func resourceServerProfile() *schema.Resource {
 				},
 			},
 			"san_storage": {
+				Computed: true,
 				Optional: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
@@ -607,6 +619,7 @@ func resourceServerProfile() *schema.Resource {
 			// schema for ov.SanStorage.VolumeAttachments
 			"volume_attachments": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -812,7 +825,6 @@ func resourceServerProfile() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ServerProfileV9",
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
@@ -884,6 +896,7 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"os_deployment_settings": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -1720,7 +1733,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							rawIpv4Item := rawIpv4.(map[string]interface{})
 							ipv4 = ov.Ipv4Option{
 								Gateway:         rawIpv4Item["gateway"].(string),
-								SubnetMask:      rawIpv4Item["subne_mask"].(string),
+								SubnetMask:      rawIpv4Item["subnet_mask"].(string),
 								IpAddress:       rawIpv4Item["ip_address"].(string),
 								IpAddressSource: rawIpv4Item["ip_address_source"].(string),
 							}
