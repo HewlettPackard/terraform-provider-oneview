@@ -896,7 +896,6 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"os_deployment_settings": {
 				Optional: true,
-				Computed: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
