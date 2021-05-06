@@ -13,8 +13,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Enclosure Group
 - FC Network
 - FCOE Network
-- Hypervisor Manager
 - Hypervisor Cluster Profile
+- Hypervisor Manager
 - Interconnects
 - Interconnect Types
 - Logical Enclosure
