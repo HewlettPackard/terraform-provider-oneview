@@ -2,7 +2,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 
-# [v6.1.0-13] (Unreleased)
+# [v6.1.0-13] 
+
+### Notes
+- This release supports API2800 minimally where we can use OneView v6.10 with this SDK. 
+- Migration Support document is added to help the user migrate from older  sdk supporting Terraform 0.11.
 
 ### Bug fixes & Enhancements:
 - [#272] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/272) more server profile/template issues not working as expected.
