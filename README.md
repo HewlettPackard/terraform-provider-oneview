@@ -2,7 +2,7 @@
 
 ## Build Status 
 
-OV Version | 6.10 | 6.00 | 5.60 | 5.50 | 5.40 | 5.30 |
+OV Version | 6.10 | 6.00 | 5.60 | 5.50 | 5.40 |
 | ------------- |:-------------:| :-------------:| :-------------:| :-------------:| :-------------:| 
 SDK Version/Tag | [v6.1.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.1.0-11) | [v6.0.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-11) | [v1.7.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-11) | [v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) |
 Build Status | [![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)](https://github.com/HewlettPackard/terraform-provider-oneview/runs/2399849127) | [![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/638624391) | [![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds/759023377) | [![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds) | [![Build status](https://ci.appveyor.com/api/projects/status/u84505l6syp70013?svg=true)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds)|
