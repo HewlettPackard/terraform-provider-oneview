@@ -1,7 +1,7 @@
 All notable changes to this project will be documented in this file. 
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v6.1.0-11] (Unreleased)
+# [v6.1.0-11]
 
 ### Notes
 - This release supports API2800 minimally where we can use OneView v6.10 with this SDK and Image Streamer API Version 2020.
