@@ -13,12 +13,11 @@ package oneview
 
 import (
 	"fmt"
-	"reflect"
-	"strconv"
-
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"reflect"
+	"strconv"
 )
 
 func resourceLogicalInterconnectGroup() *schema.Resource {
@@ -482,7 +481,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				},
 			},
 			"igmp_settings": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -490,11 +489,12 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "IgmpSettings",
+							Computed: true,
 						},
 						"category": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"consistency_checking": {
 							Type:     schema.TypeString,
@@ -504,6 +504,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"created": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"dependent_resource_uri": {
 							Type:     schema.TypeString,
@@ -516,6 +517,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"etag": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"igmp_snooping": {
 							Type:     schema.TypeBool,
@@ -532,6 +534,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"id": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"igmp_idle_timeout_interval": {
 							Type:     schema.TypeInt,
@@ -544,10 +547,12 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"modified": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
@@ -560,12 +565,13 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"uri": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"port_flap_settings": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -573,34 +579,42 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"uri": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"category": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"etag": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"created": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"modified": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"id": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"detection_interval": {
 							Type:     schema.TypeInt,
@@ -648,73 +662,221 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Optional: true,
 							Default:  "qos-aggregated-configuration",
 						},
-						"active_qos_config_type": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "QosConfiguration",
-						},
-						"config_type": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "Passthrough",
-						},
-						"uplink_classification_type": {
+						"category": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"downlink_classification_type": {
+						"consistency_checking": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"qos_traffic_class": {
+						"created": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"etag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"modified": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"active_qos_config": {
 							Type:     schema.TypeList,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"category": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"config_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"created": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"description": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"downlink_classification_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"etag": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"modified": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 									"name": {
 										Type:     schema.TypeString,
-										Required: true,
-									},
-									"enabled": {
-										Type:     schema.TypeBool,
 										Optional: true,
-										Default:  true,
 									},
-									"egress_dot1p_value": {
-										Type:     schema.TypeInt,
-										Required: true,
-									},
-									"real_time": {
-										Type:     schema.TypeBool,
-										Optional: true,
-										Default:  false,
-									},
-									"bandwidth_share": {
+									"state": {
 										Type:     schema.TypeString,
-										Required: true,
+										Optional: true,
 									},
-									"max_bandwidth": {
-										Type:     schema.TypeInt,
-										Required: true,
+									"status": {
+										Type:     schema.TypeString,
+										Optional: true,
 									},
-									"qos_classification_map": {
+									"type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"uplink_classification_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"qos_traffic_classifiers": {
 										Type:     schema.TypeList,
-										Required: true,
+										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"dot1p_class_map": {
-													Type:     schema.TypeSet,
+												"qos_classification_mapping": {
+													Type:     schema.TypeList,
 													Optional: true,
-													Elem:     &schema.Schema{Type: schema.TypeInt},
-													Set: func(a interface{}) int {
-														return a.(int)
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"dot1p_class_mapping": {
+																Type:     schema.TypeList,
+																Optional: true,
+																Elem:     &schema.Schema{Type: schema.TypeInt},
+															},
+															"dscp_class_mapping": {
+																Type:     schema.TypeList,
+																Optional: true,
+																Elem:     &schema.Schema{Type: schema.TypeString},
+															},
+														},
 													},
 												},
-												"dscp_class_map": {
-													Type:     schema.TypeSet,
+												"qos_traffic_class": {
+													Type:     schema.TypeList,
 													Optional: true,
-													Elem:     &schema.Schema{Type: schema.TypeString},
-													Set:      schema.HashString,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"bandwidth_share": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"class_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"egress_dot1p_value": {
+																Type:     schema.TypeInt,
+																Optional: true,
+															},
+															"enabled": {
+																Type:     schema.TypeBool,
+																Optional: true,
+															},
+															"max_bandwidth": {
+																Type:     schema.TypeInt,
+																Optional: true,
+															},
+															"real_time": {
+																Type:     schema.TypeBool,
+																Optional: true,
+															},
+															"roce": {
+																Type:     schema.TypeBool,
+																Optional: true,
+															},
+															"dcbx_configuration": {
+																Type:     schema.TypeList,
+																Optional: true,
+																Elem: &schema.Resource{
+																	Schema: map[string]*schema.Schema{
+																		"application_protocol": {
+																			Type:     schema.TypeString,
+																			Optional: true,
+																		},
+																		"default_max_bandwidth": {
+																			Type:     schema.TypeString,
+																			Optional: true,
+																		},
+																		"default_min_bandwidth": {
+																			Type:     schema.TypeString,
+																			Optional: true,
+																		},
+																		"priority_code_point": {
+																			Type:     schema.TypeString,
+																			Optional: true,
+																		},
+																		"priority_flow_control": {
+																			Type:     schema.TypeString,
+																			Optional: true,
+																		},
+																		"dcbx_ets_port": {
+																			Type:     schema.TypeList,
+																			Optional: true,
+																			Elem: &schema.Resource{
+																				Schema: map[string]*schema.Schema{
+																					"bay_number": {
+																						Type:     schema.TypeString,
+																						Optional: true,
+																					},
+																					"enclosure_index": {
+																						Type:     schema.TypeInt,
+																						Optional: true,
+																					},
+																					"icm_name": {
+																						Type:     schema.TypeString,
+																						Optional: true,
+																					},
+																					"max_bandwidth": {
+																						Type:     schema.TypeString,
+																						Optional: true,
+																					},
+																					"min_bandwidth": {
+																						Type:     schema.TypeString,
+																						Optional: true,
+																					},
+																					"port_name": {
+																						Type:     schema.TypeString,
+																						Optional: true,
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
 												},
 											},
 										},
@@ -967,8 +1129,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		sflowCollector := ov.SflowCollector{}
 
 		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_enabled"); ok {
-			enabled := val.(bool)
-			sflowCollector.CollectorEnabled = &enabled
+			sflowCollector.CollectorEnabled = GetBoolPointer(val.(bool))
 		}
 
 		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_id"); ok {
@@ -1053,8 +1214,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		sflowConfiguration.Description = utils.NewNstring(val.(string))
 	}
 	if val, ok := d.GetOk(sflowConfigurationPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		sflowConfiguration.Enabled = &enabled
+		sflowConfiguration.Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(sflowConfigurationPrefix + ".name"); ok {
 		sflowConfiguration.Name = val.(string)
@@ -1090,8 +1250,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		telemetryConfiguration.SampleInterval = val.(int)
 	}
 	if val, ok := d.GetOk(telemetryConfigPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		telemetryConfiguration.EnableTelemetry = &enabled
+		telemetryConfiguration.EnableTelemetry = GetBoolPointer(val.(bool))
 	}
 	if telemetryConfiguration != (ov.TelemetryConfiguration{}) {
 		telemetryConfiguration.Type = d.Get(telemetryConfigPrefix + ".type").(string)
@@ -1101,12 +1260,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
 	snmpConfiguration := ov.SnmpConfiguration{}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		snmpConfiguration.Enabled = &enabled
+		snmpConfiguration.Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
-		v3Enabled := val.(bool)
-		snmpConfiguration.V3Enabled = &v3Enabled
+		snmpConfiguration.V3Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
@@ -1184,13 +1341,11 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableRichTLV = &enabled
+			interconnectSettings.EnableRichTLV = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableInterconnectUtilizationAlert = &enabled
+			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
@@ -1201,88 +1356,32 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		lig.EthernetSettings = &interconnectSettings
 	}
 
-	igmpSettingsPrefix := fmt.Sprintf("igmp_settings.0")
-	if val, ok := d.GetOk(igmpSettingsPrefix + ".type"); ok {
-		igmpSettings := ov.IgmpSettings{}
+	rawigmpsetting := d.Get("igmp_settings").([]interface{})
+	igmpSetting := ov.IgmpSettings{}
+	for _, val := range rawigmpsetting {
 
-		consistencyChecking := d.Get(igmpSettingsPrefix + ".consistency_checking")
-		igmpSettings.ConsistencyChecking = consistencyChecking.(string)
-
-		igmpSnooping := d.Get(igmpSettingsPrefix + ".igmp_snooping").(bool)
-		igmpSettings.EnableIgmpSnooping = &igmpSnooping
-
-		preventFlooding := d.Get(igmpSettingsPrefix + ".prevent_flooding").(bool)
-		igmpSettings.EnablePreventFlooding = &preventFlooding
-
-		proxyReporting := d.Get(igmpSettingsPrefix + ".proxy_reporting").(bool)
-		igmpSettings.EnableProxyReporting = &proxyReporting
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".created"); ok {
-			enabled := val1.(string)
-			igmpSettings.Created = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".description"); ok {
-			enabled := val1.(string)
-			igmpSettings.Description = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".id"); ok {
-			enabled := val1.(string)
-			igmpSettings.ID = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".etag"); ok {
-			enabled := utils.NewNstring(val1.(string))
-			igmpSettings.ETAG = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".igmp_idle_timeout_interval"); ok {
-			enabled := val1.(int)
-			igmpSettings.IgmpIdleTimeoutInterval = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".igmp_snooping_vlan_ids"); ok {
-			enabled := val1.(string)
-			igmpSettings.IgmpSnoopingVlanIds = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".modified"); ok {
-			enabled := val1.(string)
-			igmpSettings.Modified = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".name"); ok {
-			enabled := val1.(string)
-			igmpSettings.Name = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".state"); ok {
-			enabled := val1.(string)
-			igmpSettings.State = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".status"); ok {
-			enabled := val1.(string)
-			igmpSettings.Status = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".category"); ok {
-			enabled := utils.NewNstring(val1.(string))
-			igmpSettings.Category = enabled
-		}
-
-		if val1, ok := d.GetOk(igmpSettingsPrefix + ".uri"); ok {
-			enabled := utils.NewNstring(val1.(string))
-			igmpSettings.URI = enabled
-		}
-
-		igmpSettings.Type = val.(string)
-		lig.IgmpSettings = &igmpSettings
+		rawlval := val.(map[string]interface{})
+		igmpSetting.Created = rawlval["created"].(string)
+		igmpSetting.Category = utils.Nstring(rawlval["category"].(string))
+		igmpSetting.Type = rawlval["type"].(string)
+		igmpSetting.ConsistencyChecking = rawlval["consistency_checking"].(string)
+		igmpSetting.Description = rawlval["description"].(string)
+		igmpSetting.ETAG = utils.Nstring(rawlval["etag"].(string))
+		igmpSetting.EnableIgmpSnooping = GetBoolPointer(rawlval["igmp_snooping"].(bool))
+		igmpSetting.EnablePreventFlooding = GetBoolPointer(rawlval["prevent_flooding"].(bool))
+		igmpSetting.EnableProxyReporting = GetBoolPointer(rawlval["proxy_reporting"].(bool))
+		igmpSetting.ID = rawlval["id"].(string)
+		igmpSetting.IgmpIdleTimeoutInterval = rawlval["igmp_idle_timeout_interval"].(int)
+		igmpSetting.IgmpSnoopingVlanIds = rawlval["igmp_snooping_vlan_ids"].(string)
+		igmpSetting.Modified = rawlval["modified"].(string)
+		igmpSetting.Name = rawlval["name"].(string)
+		igmpSetting.State = rawlval["state"].(string)
+		igmpSetting.Status = rawlval["status"].(string)
+		igmpSetting.URI = utils.Nstring(rawlval["uri"].(string))
 	}
+	lig.IgmpSettings = &igmpSetting
 
-	portFlapSettingsData := d.Get("port_flap_settings").(*schema.Set).List()
-
+	portFlapSettingsData := d.Get("port_flap_settings").([]interface{})
 	for _, raw := range portFlapSettingsData {
 
 		portFlapSettingRawData := raw.(map[string]interface{})
@@ -1307,87 +1406,151 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		lig.PortFlapProtection = &portFlapSettingStructure
 	}
 
-	qualityOfServicePrefix := fmt.Sprintf("quality_of_service.0")
-	activeQosConfig := ov.ActiveQosConfig{}
-
-	if val, ok := d.GetOk(qualityOfServicePrefix + ".config_type"); ok {
-		activeQosConfig.ConfigType = val.(string)
-	}
-
-	if val, ok := d.GetOk(qualityOfServicePrefix + ".uplink_classification_type"); ok {
-		activeQosConfig.UplinkClassificationType = val.(string)
-	}
-
-	if val, ok := d.GetOk(qualityOfServicePrefix + ".downlink_classification_type"); ok {
-		activeQosConfig.DownlinkClassificationType = val.(string)
-	}
-
-	qosTrafficClassCount := d.Get(qualityOfServicePrefix + ".qos_traffic_class.#").(int)
-	qosTrafficClassifiers := make([]ov.QosTrafficClassifier, 0, 1)
-	for i := 0; i < qosTrafficClassCount; i++ {
-		qosTrafficClassPrefix := fmt.Sprintf(qualityOfServicePrefix+".qos_traffic_class.%d", i)
-		qosTrafficClassifier := ov.QosTrafficClassifier{}
-		qosClassMap := ov.QosClassificationMap{}
-		qosTrafficClass := ov.QosTrafficClass{}
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".name"); ok {
-			qosTrafficClass.ClassName = val.(string)
-		}
-		classEnabled := d.Get(qosTrafficClassPrefix + ".enabled").(bool)
-		qosTrafficClass.Enabled = &classEnabled
-
-		realTimeEnabled := d.Get(qosTrafficClassPrefix + ".real_time").(bool)
-		qosTrafficClass.RealTime = &realTimeEnabled
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".egress_dot1p_value"); ok {
-			qosTrafficClass.EgressDot1pValue = val.(int)
-		}
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".bandwidth_share"); ok {
-			qosTrafficClass.BandwidthShare = val.(string)
-		}
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".max_bandwidth"); ok {
-			qosTrafficClass.MaxBandwidth = val.(int)
-		}
-
-		qosTrafficClassifier.QosTrafficClass = qosTrafficClass
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".qos_classification_map.0.dscp_class_map"); ok {
-			rawDscpClassMapping := val.(*schema.Set).List()
-			dscpClassMapping := make([]string, len(rawDscpClassMapping))
-			for i, raw := range rawDscpClassMapping {
-				dscpClassMapping[i] = raw.(string)
+	if val, ok := d.GetOk("quality_of_service"); ok {
+		rawQoss := val.([]interface{})
+		ovQos := ov.QosConfiguration{}
+		if len(rawQoss) != 0 {
+			for _, rawQosConfig := range rawQoss {
+				rawQos := rawQosConfig.(map[string]interface{})
+				rawActiveQosConfigs := rawQos["active_qos_config"].([]interface{})
+				ovActiveQosConfig := ov.ActiveQosConfig{}
+				if len(rawActiveQosConfigs) != 0 {
+					for _, rawActiveQosConfig := range rawActiveQosConfigs {
+						activeQosConfig := rawActiveQosConfig.(map[string]interface{})
+						rawQosClassifiers := activeQosConfig["qos_traffic_classifiers"].([]interface{})
+						ovQosTrafficClassifier := make([]ov.QosTrafficClassifier, 0)
+						if len(rawQosClassifiers) != 0 {
+							for _, rawQosClassifier := range rawQosClassifiers {
+								qosClassifier := rawQosClassifier.(map[string]interface{})
+								ovQosClassificationMapping := ov.QosClassificationMapping{}
+								rawQosClassificationMappings := qosClassifier["qos_classification_mapping"].([]interface{})
+								if rawQosClassificationMappings != nil {
+									for _, rawQosClassificationMapping := range rawQosClassificationMappings {
+										qosClassificationMapping := rawQosClassificationMapping.(map[string]interface{})
+										rawDot1pClassMappings := qosClassificationMapping["dot1p_class_mapping"].([]interface{})
+										if qosClassificationMapping["dot1p_class_mapping"] != nil {
+											dot1pClassMapping := make([]int, 0)
+											for _, raw := range rawDot1pClassMappings {
+												dot1pClassMapping = append(dot1pClassMapping, raw.(int))
+											}
+											ovQosClassificationMapping.Dot1pClassMapping = dot1pClassMapping
+										}
+										rawDscpClassMappings := qosClassificationMapping["dscp_class_mapping"].([]interface{})
+										if qosClassificationMapping["dscp_class_mapping"] != nil {
+											dscpClassMapping := make([]string, 0)
+											for _, raw := range rawDscpClassMappings {
+												dscpClassMapping = append(dscpClassMapping, raw.(string))
+											}
+											ovQosClassificationMapping.DscpClassMapping = dscpClassMapping
+										}
+									}
+								}
+								ovQosTrafficClass := ov.QosTrafficClass{}
+								rawQosTrafficClasses := qosClassifier["qos_traffic_class"].([]interface{})
+								if len(rawQosTrafficClasses) != 0 {
+									for _, rawQosTrafficClass := range rawQosTrafficClasses {
+										qosTrafficClass := rawQosTrafficClass.(map[string]interface{})
+										rawDcbxConfigurations := qosTrafficClass["dcbx_configuration"].([]interface{})
+										ovDcbxConfiguration := ov.DcbxConfigurations{}
+										if len(rawDcbxConfigurations) != 0 {
+											for _, rawDcbxConfiguration := range rawDcbxConfigurations {
+												dcbxConfiguration := rawDcbxConfiguration.(map[string]interface{})
+												rawDcbxEtsPorts := dcbxConfiguration["dcbx_ets_port"].([]interface{})
+												ovDcbxEtsPorts := make([]ov.DcbxEtsPort, 0)
+												if len(rawDcbxEtsPorts) != 0 {
+													for _, rawDcbxPort := range rawDcbxEtsPorts {
+														dcbxPort := rawDcbxPort.(map[string]interface{})
+														ovDcbxEtsPorts = append(ovDcbxEtsPorts, ov.DcbxEtsPort{
+															BayNumber:      dcbxPort["bay_number"].(string),
+															EnclosureIndex: dcbxPort["enclosure_index"].(int),
+															IcmName:        dcbxPort["icm_name"].(string),
+															MaxBandwidth:   dcbxPort["max_bandwidth"].(string),
+															MinBandwidth:   dcbxPort["min_bandwidth"].(string),
+															PortName:       dcbxPort["port_name"].(string),
+														})
+													}
+												}
+												ovDcbxConfiguration = ov.DcbxConfigurations{
+													ApplicationProtocol:     dcbxConfiguration["application_protocol"].(string),
+													DefaultMaximumBandwidth: dcbxConfiguration["default_max_bandwidth"].(string),
+													DefaultMinimumBandwidth: dcbxConfiguration["default_min_bandwidth"].(string),
+													PriorityCodePoint:       dcbxConfiguration["priority_code_point"].(string),
+													PriorityFlowControl:     dcbxConfiguration["priority_flow_control"].(string),
+												}
+												if len(ovDcbxEtsPorts) != 0 {
+													ovDcbxConfiguration.DcbxEtsPorts = ovDcbxEtsPorts
+												}
+											}
+										}
+										ovQosTrafficClass = ov.QosTrafficClass{
+											BandwidthShare:   qosTrafficClass["bandwidth_share"].(string),
+											ClassName:        qosTrafficClass["class_name"].(string),
+											EgressDot1pValue: GetIntPointer(qosTrafficClass["egress_dot1p_value"].(int)),
+											Enabled:          GetBoolPointer(qosTrafficClass["enabled"].(bool)),
+											MaxBandwidth:     qosTrafficClass["max_bandwidth"].(int),
+											RealTime:         GetBoolPointer(qosTrafficClass["real_time"].(bool)),
+											Roce:             GetBoolPointer(qosTrafficClass["roce"].(bool)),
+										}
+										if !(reflect.DeepEqual(ovDcbxConfiguration, ov.DcbxConfigurations{})) {
+											ovQosTrafficClass.DcbxConfiguration = &ovDcbxConfiguration
+										}
+									}
+								}
+								if reflect.DeepEqual(ovQosClassificationMapping, ov.QosClassificationMapping{}) && ovQosTrafficClass == (ov.QosTrafficClass{}) {
+									continue
+								} else if reflect.DeepEqual(ovQosClassificationMapping, ov.QosClassificationMapping{}) {
+									ovQosTrafficClassifier = append(ovQosTrafficClassifier, ov.QosTrafficClassifier{
+										QosTrafficClass: &ovQosTrafficClass,
+									})
+								} else if ovQosTrafficClass == (ov.QosTrafficClass{}) {
+									ovQosTrafficClassifier = append(ovQosTrafficClassifier, ov.QosTrafficClassifier{
+										QosClassificationMapping: &ovQosClassificationMapping,
+									})
+								} else {
+									ovQosTrafficClassifier = append(ovQosTrafficClassifier, ov.QosTrafficClassifier{
+										QosClassificationMapping: &ovQosClassificationMapping,
+										QosTrafficClass:          &ovQosTrafficClass,
+									})
+								}
+							}
+						}
+						ovActiveQosConfig = ov.ActiveQosConfig{
+							Category:                   utils.NewNstring(activeQosConfig["category"].(string)),
+							ConfigType:                 activeQosConfig["config_type"].(string),
+							Created:                    activeQosConfig["created"].(string),
+							Description:                utils.NewNstring(activeQosConfig["description"].(string)),
+							DownlinkClassificationType: activeQosConfig["downlink_classification_type"].(string),
+							ETAG:                       activeQosConfig["etag"].(string),
+							Modified:                   activeQosConfig["modified"].(string),
+							Name:                       activeQosConfig["name"].(string),
+							State:                      activeQosConfig["state"].(string),
+							Status:                     activeQosConfig["status"].(string),
+							Type:                       activeQosConfig["type"].(string),
+							UplinkClassificationType:   activeQosConfig["uplink_classification_type"].(string),
+							URI:                        utils.NewNstring(activeQosConfig["uri"].(string)),
+							QosTrafficClassifiers:      ovQosTrafficClassifier,
+						}
+					}
+				}
+				ovQos = ov.QosConfiguration{
+					Category:            rawQos["category"].(string),
+					ConsistencyChecking: rawQos["consistency_checking"].(string),
+					Created:             rawQos["created"].(string),
+					Description:         utils.NewNstring(rawQos["description"].(string)),
+					ETAG:                rawQos["etag"].(string),
+					Modified:            rawQos["modified"].(string),
+					Name:                rawQos["name"].(string),
+					State:               rawQos["state"].(string),
+					Status:              rawQos["status"].(string),
+					Type:                rawQos["type"].(string),
+					URI:                 utils.NewNstring(rawQos["uri"].(string)),
+					ActiveQosConfig:     &ovActiveQosConfig,
+				}
 			}
-			qosClassMap.DscpClassMapping = dscpClassMapping
+
 		}
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".qos_classification_map.0.dot1p_class_map"); ok {
-			rawDot1pClassMap := val.(*schema.Set).List()
-			dot1pClassMap := make([]int, len(rawDot1pClassMap))
-			for i, raw := range rawDot1pClassMap {
-				dot1pClassMap[i] = raw.(int)
-			}
-			qosClassMap.Dot1pClassMapping = dot1pClassMap
-		}
-
-		qosTrafficClassifier.QosClassificationMapping = &qosClassMap
-
-		qosTrafficClassifiers = append(qosTrafficClassifiers, qosTrafficClassifier)
+		lig.QosConfiguration = &ovQos
 	}
-	activeQosConfig.QosTrafficClassifiers = qosTrafficClassifiers
-
-	if val, ok := d.GetOk(qualityOfServicePrefix + ".active_qos_config_type"); ok {
-		activeQosConfig.Type = val.(string)
-
-		qualityOfService := ov.QosConfiguration{
-			Type:            d.Get(qualityOfServicePrefix + ".type").(string),
-			ActiveQosConfig: activeQosConfig,
-		}
-
-		lig.QosConfiguration = &qualityOfService
-	}
-
 	ligError := config.ovClient.CreateLogicalInterconnectGroup(lig)
 	d.SetId(d.Get("name").(string))
 	if ligError != nil {
@@ -1421,6 +1584,101 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("interconnect_settings.0.interconnect_utilization_alert", logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert)
 	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
 	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
+
+	if logicalInterconnectGroup.QosConfiguration != nil {
+		qosTrafficClassifiers := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers))
+		for _, qosTrafficClassifier := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
+			qosClassificationMapping := make([]map[string]interface{}, 0, 1)
+			if qosTrafficClassifier.QosClassificationMapping != nil {
+				dot1pClassMappings := make([]interface{}, 0)
+				if qosTrafficClassifier.QosClassificationMapping.Dot1pClassMapping != nil {
+					for _, dot1pClassMapping := range qosTrafficClassifier.QosClassificationMapping.Dot1pClassMapping {
+						dot1pClassMappings = append(dot1pClassMappings, dot1pClassMapping)
+					}
+				}
+				dscpClassMappings := make([]interface{}, 0)
+				if qosTrafficClassifier.QosClassificationMapping.DscpClassMapping != nil {
+					for _, dscpClassMapping := range qosTrafficClassifier.QosClassificationMapping.DscpClassMapping {
+						dscpClassMappings = append(dscpClassMappings, dscpClassMapping)
+					}
+				}
+				qosClassificationMapping = append(qosClassificationMapping, map[string]interface{}{
+					"dot1p_class_mapping": dot1pClassMappings,
+					"dscp_class_mapping":  dscpClassMappings,
+				})
+			}
+			dcbxConfigurations := make([]map[string]interface{}, 0, 1)
+			if qosTrafficClassifier.QosTrafficClass.DcbxConfiguration != nil {
+				dcbxEtsPorts := make([]map[string]interface{}, 0, len(qosTrafficClassifier.QosTrafficClass.DcbxConfiguration.DcbxEtsPorts))
+				for _, dcbxEtsPort := range qosTrafficClassifier.QosTrafficClass.DcbxConfiguration.DcbxEtsPorts {
+					dcbxEtsPorts = append(dcbxEtsPorts, map[string]interface{}{
+						"bay_number":      dcbxEtsPort.BayNumber,
+						"enclosure_index": dcbxEtsPort.EnclosureIndex,
+						"icm_name":        dcbxEtsPort.IcmName,
+						"max_bandwidth":   dcbxEtsPort.MaxBandwidth,
+						"min_bandwidth":   dcbxEtsPort.MinBandwidth,
+						"port_name":       dcbxEtsPort.PortName,
+					})
+				}
+				dcbxConfigurations = append(dcbxConfigurations, map[string]interface{}{
+					"application_protocol":  qosTrafficClassifier.QosTrafficClass.DcbxConfiguration.ApplicationProtocol,
+					"default_max_bandwidth": qosTrafficClassifier.QosTrafficClass.DcbxConfiguration.DefaultMaximumBandwidth,
+					"default_min_bandwidth": qosTrafficClassifier.QosTrafficClass.DcbxConfiguration.DefaultMinimumBandwidth,
+					"priority_code_point":   qosTrafficClassifier.QosTrafficClass.DcbxConfiguration.PriorityCodePoint,
+					"priority_flow_control": qosTrafficClassifier.QosTrafficClass.DcbxConfiguration.PriorityFlowControl,
+					"dcbx_ets_port":         dcbxEtsPorts,
+				})
+			}
+			qosTrafficClass := make([]map[string]interface{}, 0, 1)
+			qosTrafficClass = append(qosTrafficClass, map[string]interface{}{
+				"bandwidth_share":    qosTrafficClassifier.QosTrafficClass.BandwidthShare,
+				"class_name":         qosTrafficClassifier.QosTrafficClass.ClassName,
+				"egress_dot1p_value": *qosTrafficClassifier.QosTrafficClass.EgressDot1pValue,
+				"enabled":            *qosTrafficClassifier.QosTrafficClass.Enabled,
+				"max_bandwidth":      qosTrafficClassifier.QosTrafficClass.MaxBandwidth,
+				"real_time":          *qosTrafficClassifier.QosTrafficClass.RealTime,
+				"roce":               *qosTrafficClassifier.QosTrafficClass.Roce,
+				"dcbx_configuration": dcbxConfigurations,
+			})
+			qosTrafficClassifiers = append(qosTrafficClassifiers, map[string]interface{}{
+				"qos_traffic_class":          qosTrafficClass,
+				"qos_classification_mapping": qosClassificationMapping,
+			})
+		}
+		activeQosConfig := make([]map[string]interface{}, 0, 1)
+		activeQosConfig = append(activeQosConfig, map[string]interface{}{
+			"category":                     logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Category,
+			"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
+			"created":                      logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Created,
+			"description":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Description,
+			"downlink_classification_type": logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.DownlinkClassificationType,
+			"etag":                         logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ETAG,
+			"modified":                     logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Modified,
+			"name":                         logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Name,
+			"state":                        logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.State,
+			"status":                       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Status,
+			"type":                         logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
+			"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
+			"uri":                          logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.URI,
+			"qos_traffic_classifiers":      qosTrafficClassifiers,
+		})
+		qosConfiguration := make([]map[string]interface{}, 0, 1)
+		qosConfiguration = append(qosConfiguration, map[string]interface{}{
+			"type":                 logicalInterconnectGroup.QosConfiguration.Type,
+			"category":             logicalInterconnectGroup.QosConfiguration.Category,
+			"consistency_checking": logicalInterconnectGroup.QosConfiguration.ConsistencyChecking,
+			"created":              logicalInterconnectGroup.QosConfiguration.Created,
+			"description":          logicalInterconnectGroup.QosConfiguration.Description,
+			"etag":                 logicalInterconnectGroup.QosConfiguration.ETAG,
+			"modified":             logicalInterconnectGroup.QosConfiguration.Modified,
+			"name":                 logicalInterconnectGroup.QosConfiguration.Name,
+			"state":                logicalInterconnectGroup.QosConfiguration.State,
+			"status":               logicalInterconnectGroup.QosConfiguration.Status,
+			"uri":                  logicalInterconnectGroup.QosConfiguration.URI,
+			"active_qos_config":    activeQosConfig,
+		})
+		d.Set("quality_of_service", qosConfiguration)
+	}
 
 	enclosureIndexes := make([]interface{}, len(logicalInterconnectGroup.EnclosureIndexes))
 	for i, enclosureIndexVal := range logicalInterconnectGroup.EnclosureIndexes {
@@ -1775,62 +2033,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 		portFlapSettings = append(portFlapSettings, portFlapSetting)
 		d.Set("port_flap_settings", portFlapSettings)
 	}
-
-	qosTrafficClasses := make([]map[string]interface{}, 0, 1)
-	for _, qosTrafficClass := range logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers {
-		qosClassificationMap := make([]map[string]interface{}, 0, 1)
-		if qosTrafficClass.QosClassificationMapping != nil {
-
-			dot1pClassMap := make([]interface{}, 0)
-			for _, raw := range qosTrafficClass.QosClassificationMapping.Dot1pClassMapping {
-				dot1pClassMap = append(dot1pClassMap, raw)
-			}
-
-			dscpClassMap := make([]interface{}, 0)
-			for _, raw := range qosTrafficClass.QosClassificationMapping.DscpClassMapping {
-				dscpClassMap = append(dscpClassMap, raw)
-			}
-
-			qosClassificationMap = append(qosClassificationMap, map[string]interface{}{
-				"dot1p_class_map": dot1pClassMap,
-				"dscp_class_map":  dscpClassMap,
-			})
-
-		}
-
-		qosTrafficClasses = append(qosTrafficClasses, map[string]interface{}{
-			"name":                   qosTrafficClass.QosTrafficClass.ClassName,
-			"enabled":                *qosTrafficClass.QosTrafficClass.Enabled,
-			"egress_dot1p_value":     qosTrafficClass.QosTrafficClass.EgressDot1pValue,
-			"real_time":              *qosTrafficClass.QosTrafficClass.RealTime,
-			"bandwidth_share":        qosTrafficClass.QosTrafficClass.BandwidthShare,
-			"max_bandwidth":          qosTrafficClass.QosTrafficClass.MaxBandwidth,
-			"qos_classification_map": qosClassificationMap,
-		})
-	}
-	qosTrafficClassCount := d.Get("quality_of_service.0.qos_traffic_class.#").(int)
-	oneviewTrafficClassCount := len(qosTrafficClasses)
-	for i := 0; i < qosTrafficClassCount; i++ {
-		currName := d.Get("quality_of_service.0.qos_traffic_class." + strconv.Itoa(i) + ".name").(string)
-		for j := 0; j < oneviewTrafficClassCount; j++ {
-			if currName == qosTrafficClasses[j]["name"] && i <= j {
-				qosTrafficClasses[i], qosTrafficClasses[j] = qosTrafficClasses[j], qosTrafficClasses[i]
-			}
-		}
-	}
-
-	qualityOfService := make([]map[string]interface{}, 0, 1)
-	qualityOfService = append(qualityOfService, map[string]interface{}{
-		"type":                         logicalInterconnectGroup.QosConfiguration.Type,
-		"active_qos_config_type":       logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.Type,
-		"config_type":                  logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.ConfigType,
-		"uplink_classification_type":   logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.UplinkClassificationType,
-		"downlink_classification_type": logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.DownlinkClassificationType,
-		"qos_traffic_class":            qosTrafficClasses,
-	})
-
-	d.Set("quality_of_service", qualityOfService)
-
 	return nil
 }
 
@@ -1842,6 +2044,16 @@ func resourceLogicalInterconnectGroupDelete(d *schema.ResourceData, meta interfa
 		return err
 	}
 	return nil
+}
+
+// GetIntPointer returns pointer of integer value
+func GetIntPointer(value int) *int {
+	return &value
+}
+
+// GetBoolPointer returns pointer of boolean value
+func GetBoolPointer(value bool) *bool {
+	return &value
 }
 
 func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -2019,8 +2231,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		telemetryConfiguration.SampleInterval = val.(int)
 	}
 	if val, ok := d.GetOk(telemetryConfigPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		telemetryConfiguration.EnableTelemetry = &enabled
+		telemetryConfiguration.EnableTelemetry = GetBoolPointer(val.(bool))
 	}
 	if telemetryConfiguration != (ov.TelemetryConfiguration{}) {
 		telemetryConfiguration.Type = d.Get(telemetryConfigPrefix + ".type").(string)
@@ -2071,8 +2282,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		sflowCollector := ov.SflowCollector{}
 
 		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_enabled"); ok {
-			enabled := val.(bool)
-			sflowCollector.CollectorEnabled = &enabled
+			sflowCollector.CollectorEnabled = GetBoolPointer(val.(bool))
 		}
 
 		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_id"); ok {
@@ -2157,8 +2367,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		sflowConfiguration.Description = utils.NewNstring(val.(string))
 	}
 	if val, ok := d.GetOk(sflowConfigurationPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		sflowConfiguration.Enabled = &enabled
+		sflowConfiguration.Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(sflowConfigurationPrefix + ".name"); ok {
 		sflowConfiguration.Name = val.(string)
@@ -2181,12 +2390,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
 	snmpConfiguration := ov.SnmpConfiguration{}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		snmpConfiguration.Enabled = &enabled
+		snmpConfiguration.Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
-		v3Enabled := val.(bool)
-		snmpConfiguration.V3Enabled = &v3Enabled
+		snmpConfiguration.V3Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
@@ -2266,13 +2473,11 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableRichTLV = &enabled
+			interconnectSettings.EnableRichTLV = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableInterconnectUtilizationAlert = &enabled
+			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
@@ -2283,15 +2488,11 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		lig.EthernetSettings = &interconnectSettings
 	}
 
-	rawigmpsetting := d.Get("igmp_settings").(*schema.Set).List()
+	rawigmpsetting := d.Get("igmp_settings").([]interface{})
 	igmpSetting := ov.IgmpSettings{}
 	for _, val := range rawigmpsetting {
 
 		rawlval := val.(map[string]interface{})
-
-		enableigmpsnooping := rawlval["igmp_snooping"].(bool)
-		enablepreventflooding := rawlval["prevent_flooding"].(bool)
-		enableproxyreporting := rawlval["proxy_reporting"].(bool)
 
 		igmpSetting.Created = rawlval["created"].(string)
 		igmpSetting.Category = utils.Nstring(rawlval["category"].(string))
@@ -2300,9 +2501,9 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		igmpSetting.DependentResourceUri = ligCall.IgmpSettings.DependentResourceUri
 		igmpSetting.Description = rawlval["description"].(string)
 		igmpSetting.ETAG = utils.Nstring(rawlval["etag"].(string))
-		igmpSetting.EnableIgmpSnooping = &enableigmpsnooping
-		igmpSetting.EnablePreventFlooding = &enablepreventflooding
-		igmpSetting.EnableProxyReporting = &enableproxyreporting
+		igmpSetting.EnableIgmpSnooping = GetBoolPointer(rawlval["igmp_snooping"].(bool))
+		igmpSetting.EnablePreventFlooding = GetBoolPointer(rawlval["prevent_flooding"].(bool))
+		igmpSetting.EnableProxyReporting = GetBoolPointer(rawlval["proxy_reporting"].(bool))
 		igmpSetting.ID = rawlval["id"].(string)
 		igmpSetting.IgmpIdleTimeoutInterval = rawlval["igmp_idle_timeout_interval"].(int)
 		igmpSetting.IgmpSnoopingVlanIds = rawlval["igmp_snooping_vlan_ids"].(string)
@@ -2314,7 +2515,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	}
 	lig.IgmpSettings = &igmpSetting
 
-	rawPortFlapSetting := d.Get("port_flap_settings").(*schema.Set).List()
+	rawPortFlapSetting := d.Get("port_flap_settings").([]interface{})
 	PortFlapSetting := ov.PortFlapProtection{}
 	for _, val := range rawPortFlapSetting {
 
@@ -2337,93 +2538,155 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		PortFlapSetting.Status = rawlval["status"].(string)
 	}
 	lig.PortFlapProtection = &PortFlapSetting
-
-	qualityOfServicePrefix := fmt.Sprintf("quality_of_service.0")
-	activeQosConfig := ov.ActiveQosConfig{}
-
-	if val, ok := d.GetOk(qualityOfServicePrefix + ".config_type"); ok {
-		activeQosConfig.ConfigType = val.(string)
-	}
-
-	if val, ok := d.GetOk(qualityOfServicePrefix + ".uplink_classification_type"); ok {
-		activeQosConfig.UplinkClassificationType = val.(string)
-	}
-
-	if val, ok := d.GetOk(qualityOfServicePrefix + ".downlink_classification_type"); ok {
-		activeQosConfig.DownlinkClassificationType = val.(string)
-	}
-
-	qosTrafficClassCount := d.Get(qualityOfServicePrefix + ".qos_traffic_class.#").(int)
-	qosTrafficClassifiers := make([]ov.QosTrafficClassifier, 0, 1)
-	for i := 0; i < qosTrafficClassCount; i++ {
-		qosTrafficClassPrefix := fmt.Sprintf(qualityOfServicePrefix+".qos_traffic_class.%d", i)
-		qosTrafficClassifier := ov.QosTrafficClassifier{}
-		qosClassMap := ov.QosClassificationMap{}
-		qosTrafficClass := ov.QosTrafficClass{}
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".name"); ok {
-			qosTrafficClass.ClassName = val.(string)
-		}
-		classEnabled := d.Get(qosTrafficClassPrefix + ".enabled").(bool)
-		qosTrafficClass.Enabled = &classEnabled
-
-		realTimeEnabled := d.Get(qosTrafficClassPrefix + ".real_time").(bool)
-		qosTrafficClass.RealTime = &realTimeEnabled
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".egress_dot1p_value"); ok {
-			qosTrafficClass.EgressDot1pValue = val.(int)
-		}
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".bandwidth_share"); ok {
-			qosTrafficClass.BandwidthShare = val.(string)
-		}
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".max_bandwidth"); ok {
-			qosTrafficClass.MaxBandwidth = val.(int)
-		}
-
-		qosTrafficClassifier.QosTrafficClass = qosTrafficClass
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".qos_classification_map.0.dscp_class_map"); ok {
-			rawDscpClassMapping := val.(*schema.Set).List()
-			dscpClassMapping := make([]string, len(rawDscpClassMapping))
-			for i, raw := range rawDscpClassMapping {
-				dscpClassMapping[i] = raw.(string)
+	if val, ok := d.GetOk("quality_of_service"); ok {
+		rawQoss := val.([]interface{})
+		ovQos := ov.QosConfiguration{}
+		if len(rawQoss) != 0 {
+			for _, rawQosConfig := range rawQoss {
+				rawQos := rawQosConfig.(map[string]interface{})
+				rawActiveQosConfigs := rawQos["active_qos_config"].([]interface{})
+				ovActiveQosConfig := ov.ActiveQosConfig{}
+				if len(rawActiveQosConfigs) != 0 {
+					for _, rawActiveQosConfig := range rawActiveQosConfigs {
+						activeQosConfig := rawActiveQosConfig.(map[string]interface{})
+						rawQosClassifiers := activeQosConfig["qos_traffic_classifiers"].([]interface{})
+						ovQosTrafficClassifier := make([]ov.QosTrafficClassifier, 0)
+						if len(rawQosClassifiers) != 0 {
+							for _, rawQosClassifier := range rawQosClassifiers {
+								qosClassifier := rawQosClassifier.(map[string]interface{})
+								ovQosClassificationMapping := ov.QosClassificationMapping{}
+								rawQosClassificationMappings := qosClassifier["qos_classification_mapping"].([]interface{})
+								if rawQosClassificationMappings != nil {
+									for _, rawQosClassificationMapping := range rawQosClassificationMappings {
+										qosClassificationMapping := rawQosClassificationMapping.(map[string]interface{})
+										rawDot1pClassMappings := qosClassificationMapping["dot1p_class_mapping"].([]interface{})
+										if qosClassificationMapping["dot1p_class_mapping"] != nil {
+											dot1pClassMapping := make([]int, 0)
+											for _, raw := range rawDot1pClassMappings {
+												dot1pClassMapping = append(dot1pClassMapping, raw.(int))
+											}
+											ovQosClassificationMapping.Dot1pClassMapping = dot1pClassMapping
+										}
+										rawDscpClassMappings := qosClassificationMapping["dscp_class_mapping"].([]interface{})
+										if qosClassificationMapping["dscp_class_mapping"] != nil {
+											dscpClassMapping := make([]string, 0)
+											for _, raw := range rawDscpClassMappings {
+												dscpClassMapping = append(dscpClassMapping, raw.(string))
+											}
+											ovQosClassificationMapping.DscpClassMapping = dscpClassMapping
+										}
+									}
+								}
+								ovQosTrafficClass := ov.QosTrafficClass{}
+								rawQosTrafficClasses := qosClassifier["qos_traffic_class"].([]interface{})
+								if len(rawQosTrafficClasses) != 0 {
+									for _, rawQosTrafficClass := range rawQosTrafficClasses {
+										qosTrafficClass := rawQosTrafficClass.(map[string]interface{})
+										rawDcbxConfigurations := qosTrafficClass["dcbx_configuration"].([]interface{})
+										ovDcbxConfiguration := ov.DcbxConfigurations{}
+										if len(rawDcbxConfigurations) != 0 {
+											for _, rawDcbxConfiguration := range rawDcbxConfigurations {
+												dcbxConfiguration := rawDcbxConfiguration.(map[string]interface{})
+												rawDcbxEtsPorts := dcbxConfiguration["dcbx_ets_port"].([]interface{})
+												ovDcbxEtsPorts := make([]ov.DcbxEtsPort, 0)
+												if len(rawDcbxEtsPorts) != 0 {
+													for _, rawDcbxPort := range rawDcbxEtsPorts {
+														dcbxPort := rawDcbxPort.(map[string]interface{})
+														ovDcbxEtsPorts = append(ovDcbxEtsPorts, ov.DcbxEtsPort{
+															BayNumber:      dcbxPort["bay_number"].(string),
+															EnclosureIndex: dcbxPort["enclosure_index"].(int),
+															IcmName:        dcbxPort["icm_name"].(string),
+															MaxBandwidth:   dcbxPort["max_bandwidth"].(string),
+															MinBandwidth:   dcbxPort["min_bandwidth"].(string),
+															PortName:       dcbxPort["port_name"].(string),
+														})
+													}
+												}
+												ovDcbxConfiguration = ov.DcbxConfigurations{
+													ApplicationProtocol:     dcbxConfiguration["application_protocol"].(string),
+													DefaultMaximumBandwidth: dcbxConfiguration["default_max_bandwidth"].(string),
+													DefaultMinimumBandwidth: dcbxConfiguration["default_min_bandwidth"].(string),
+													PriorityCodePoint:       dcbxConfiguration["priority_code_point"].(string),
+													PriorityFlowControl:     dcbxConfiguration["priority_flow_control"].(string),
+												}
+												if len(ovDcbxEtsPorts) != 0 {
+													ovDcbxConfiguration.DcbxEtsPorts = ovDcbxEtsPorts
+												}
+											}
+										}
+										ovQosTrafficClass = ov.QosTrafficClass{
+											BandwidthShare:   qosTrafficClass["bandwidth_share"].(string),
+											ClassName:        qosTrafficClass["class_name"].(string),
+											EgressDot1pValue: GetIntPointer(qosTrafficClass["egress_dot1p_value"].(int)),
+											Enabled:          GetBoolPointer(qosTrafficClass["enabled"].(bool)),
+											MaxBandwidth:     qosTrafficClass["max_bandwidth"].(int),
+											RealTime:         GetBoolPointer(qosTrafficClass["real_time"].(bool)),
+											Roce:             GetBoolPointer(qosTrafficClass["roce"].(bool)),
+										}
+										if !(reflect.DeepEqual(ovDcbxConfiguration, ov.DcbxConfigurations{})) {
+											ovQosTrafficClass.DcbxConfiguration = &ovDcbxConfiguration
+										}
+									}
+								}
+								if reflect.DeepEqual(ovQosClassificationMapping, ov.QosClassificationMapping{}) && ovQosTrafficClass == (ov.QosTrafficClass{}) {
+									continue
+								} else if reflect.DeepEqual(ovQosClassificationMapping, ov.QosClassificationMapping{}) {
+									ovQosTrafficClassifier = append(ovQosTrafficClassifier, ov.QosTrafficClassifier{
+										QosTrafficClass: &ovQosTrafficClass,
+									})
+								} else if ovQosTrafficClass == (ov.QosTrafficClass{}) {
+									ovQosTrafficClassifier = append(ovQosTrafficClassifier, ov.QosTrafficClassifier{
+										QosClassificationMapping: &ovQosClassificationMapping,
+									})
+								} else {
+									ovQosTrafficClassifier = append(ovQosTrafficClassifier, ov.QosTrafficClassifier{
+										QosClassificationMapping: &ovQosClassificationMapping,
+										QosTrafficClass:          &ovQosTrafficClass,
+									})
+								}
+							}
+						}
+						ovActiveQosConfig = ov.ActiveQosConfig{
+							Category:                   utils.NewNstring(activeQosConfig["category"].(string)),
+							ConfigType:                 activeQosConfig["config_type"].(string),
+							Created:                    activeQosConfig["created"].(string),
+							Description:                utils.NewNstring(activeQosConfig["description"].(string)),
+							DownlinkClassificationType: activeQosConfig["downlink_classification_type"].(string),
+							ETAG:                       activeQosConfig["etag"].(string),
+							Modified:                   activeQosConfig["modified"].(string),
+							Name:                       activeQosConfig["name"].(string),
+							State:                      activeQosConfig["state"].(string),
+							Status:                     activeQosConfig["status"].(string),
+							Type:                       activeQosConfig["type"].(string),
+							UplinkClassificationType:   activeQosConfig["uplink_classification_type"].(string),
+							URI:                        utils.NewNstring(activeQosConfig["uri"].(string)),
+							QosTrafficClassifiers:      ovQosTrafficClassifier,
+						}
+					}
+				}
+				ovQos = ov.QosConfiguration{
+					Category:            rawQos["category"].(string),
+					ConsistencyChecking: rawQos["consistency_checking"].(string),
+					Created:             rawQos["created"].(string),
+					Description:         utils.NewNstring(rawQos["description"].(string)),
+					ETAG:                rawQos["etag"].(string),
+					Modified:            rawQos["modified"].(string),
+					Name:                rawQos["name"].(string),
+					State:               rawQos["state"].(string),
+					Status:              rawQos["status"].(string),
+					Type:                rawQos["type"].(string),
+					URI:                 utils.NewNstring(rawQos["uri"].(string)),
+					ActiveQosConfig:     &ovActiveQosConfig,
+				}
 			}
-			qosClassMap.DscpClassMapping = dscpClassMapping
+
 		}
-
-		if val, ok := d.GetOk(qosTrafficClassPrefix + ".qos_classification_map.0.dot1p_class_map"); ok {
-			rawDot1pClassMap := val.(*schema.Set).List()
-			dot1pClassMap := make([]int, len(rawDot1pClassMap))
-			for i, raw := range rawDot1pClassMap {
-				dot1pClassMap[i] = raw.(int)
-			}
-			qosClassMap.Dot1pClassMapping = dot1pClassMap
-		}
-
-		qosTrafficClassifier.QosClassificationMapping = &qosClassMap
-
-		qosTrafficClassifiers = append(qosTrafficClassifiers, qosTrafficClassifier)
+		lig.QosConfiguration = &ovQos
 	}
-	activeQosConfig.QosTrafficClassifiers = qosTrafficClassifiers
-
-	if !reflect.DeepEqual(activeQosConfig, (ov.ActiveQosConfig{})) {
-		activeQosConfig.Type = d.Get(qualityOfServicePrefix + ".active_qos_config_type").(string)
-
-		qualityOfService := ov.QosConfiguration{
-			Type:            d.Get(qualityOfServicePrefix + ".type").(string),
-			ActiveQosConfig: activeQosConfig,
-		}
-
-		lig.QosConfiguration = &qualityOfService
-	}
-
 	err := config.ovClient.UpdateLogicalInterconnectGroup(lig)
 	if err != nil {
 		return err
 	}
 	d.SetId(d.Get("name").(string))
-
 	return resourceLogicalInterconnectGroupRead(d, meta)
 }
