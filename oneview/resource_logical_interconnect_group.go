@@ -1129,8 +1129,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		sflowCollector := ov.SflowCollector{}
 
 		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_enabled"); ok {
-			enabled := val.(bool)
-			sflowCollector.CollectorEnabled = &enabled
+			sflowCollector.CollectorEnabled = GetBoolPointer(val.(bool))
 		}
 
 		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_id"); ok {
@@ -1215,8 +1214,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		sflowConfiguration.Description = utils.NewNstring(val.(string))
 	}
 	if val, ok := d.GetOk(sflowConfigurationPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		sflowConfiguration.Enabled = &enabled
+		sflowConfiguration.Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(sflowConfigurationPrefix + ".name"); ok {
 		sflowConfiguration.Name = val.(string)
@@ -1252,8 +1250,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		telemetryConfiguration.SampleInterval = val.(int)
 	}
 	if val, ok := d.GetOk(telemetryConfigPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		telemetryConfiguration.EnableTelemetry = &enabled
+		telemetryConfiguration.EnableTelemetry = GetBoolPointer(val.(bool))
 	}
 	if telemetryConfiguration != (ov.TelemetryConfiguration{}) {
 		telemetryConfiguration.Type = d.Get(telemetryConfigPrefix + ".type").(string)
@@ -1263,12 +1260,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
 	snmpConfiguration := ov.SnmpConfiguration{}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		snmpConfiguration.Enabled = &enabled
+		snmpConfiguration.Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
-		v3Enabled := val.(bool)
-		snmpConfiguration.V3Enabled = &v3Enabled
+		snmpConfiguration.V3Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
@@ -1346,13 +1341,11 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableRichTLV = &enabled
+			interconnectSettings.EnableRichTLV = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableInterconnectUtilizationAlert = &enabled
+			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
@@ -1368,20 +1361,15 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	for _, val := range rawigmpsetting {
 
 		rawlval := val.(map[string]interface{})
-
-		enableigmpsnooping := rawlval["igmp_snooping"].(bool)
-		enablepreventflooding := rawlval["prevent_flooding"].(bool)
-		enableproxyreporting := rawlval["proxy_reporting"].(bool)
-
 		igmpSetting.Created = rawlval["created"].(string)
 		igmpSetting.Category = utils.Nstring(rawlval["category"].(string))
 		igmpSetting.Type = rawlval["type"].(string)
 		igmpSetting.ConsistencyChecking = rawlval["consistency_checking"].(string)
 		igmpSetting.Description = rawlval["description"].(string)
 		igmpSetting.ETAG = utils.Nstring(rawlval["etag"].(string))
-		igmpSetting.EnableIgmpSnooping = &enableigmpsnooping
-		igmpSetting.EnablePreventFlooding = &enablepreventflooding
-		igmpSetting.EnableProxyReporting = &enableproxyreporting
+		igmpSetting.EnableIgmpSnooping = GetBoolPointer(rawlval["igmp_snooping"].(bool))
+		igmpSetting.EnablePreventFlooding = GetBoolPointer(rawlval["prevent_flooding"].(bool))
+		igmpSetting.EnableProxyReporting = GetBoolPointer(rawlval["proxy_reporting"].(bool))
 		igmpSetting.ID = rawlval["id"].(string)
 		igmpSetting.IgmpIdleTimeoutInterval = rawlval["igmp_idle_timeout_interval"].(int)
 		igmpSetting.IgmpSnoopingVlanIds = rawlval["igmp_snooping_vlan_ids"].(string)
@@ -2058,10 +2046,12 @@ func resourceLogicalInterconnectGroupDelete(d *schema.ResourceData, meta interfa
 	return nil
 }
 
+// Returns pointer of integer value
 func GetIntPointer(value int) *int {
 	return &value
 }
 
+// Returns pointer of boolean value
 func GetBoolPointer(value bool) *bool {
 	return &value
 }
@@ -2241,8 +2231,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		telemetryConfiguration.SampleInterval = val.(int)
 	}
 	if val, ok := d.GetOk(telemetryConfigPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		telemetryConfiguration.EnableTelemetry = &enabled
+		telemetryConfiguration.EnableTelemetry = GetBoolPointer(val.(bool))
 	}
 	if telemetryConfiguration != (ov.TelemetryConfiguration{}) {
 		telemetryConfiguration.Type = d.Get(telemetryConfigPrefix + ".type").(string)
@@ -2293,8 +2282,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		sflowCollector := ov.SflowCollector{}
 
 		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_enabled"); ok {
-			enabled := val.(bool)
-			sflowCollector.CollectorEnabled = &enabled
+			sflowCollector.CollectorEnabled = GetBoolPointer(val.(bool))
 		}
 
 		if val, ok := d.GetOk(sflowCollectorPrefix + ".collector_id"); ok {
@@ -2379,8 +2367,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		sflowConfiguration.Description = utils.NewNstring(val.(string))
 	}
 	if val, ok := d.GetOk(sflowConfigurationPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		sflowConfiguration.Enabled = &enabled
+		sflowConfiguration.Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(sflowConfigurationPrefix + ".name"); ok {
 		sflowConfiguration.Name = val.(string)
@@ -2403,12 +2390,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
 	snmpConfiguration := ov.SnmpConfiguration{}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
-		enabled := val.(bool)
-		snmpConfiguration.Enabled = &enabled
+		snmpConfiguration.Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
-		v3Enabled := val.(bool)
-		snmpConfiguration.V3Enabled = &v3Enabled
+		snmpConfiguration.V3Enabled = GetBoolPointer(val.(bool))
 	}
 	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
 		snmpConfiguration.ReadCommunity = val.(string)
@@ -2488,13 +2473,11 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableRichTLV = &enabled
+			interconnectSettings.EnableRichTLV = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
-			enabled := val1.(bool)
-			interconnectSettings.EnableInterconnectUtilizationAlert = &enabled
+			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
@@ -2511,10 +2494,6 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 
 		rawlval := val.(map[string]interface{})
 
-		enableigmpsnooping := rawlval["igmp_snooping"].(bool)
-		enablepreventflooding := rawlval["prevent_flooding"].(bool)
-		enableproxyreporting := rawlval["proxy_reporting"].(bool)
-
 		igmpSetting.Created = rawlval["created"].(string)
 		igmpSetting.Category = utils.Nstring(rawlval["category"].(string))
 		igmpSetting.Type = rawlval["type"].(string)
@@ -2522,9 +2501,9 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		igmpSetting.DependentResourceUri = ligCall.IgmpSettings.DependentResourceUri
 		igmpSetting.Description = rawlval["description"].(string)
 		igmpSetting.ETAG = utils.Nstring(rawlval["etag"].(string))
-		igmpSetting.EnableIgmpSnooping = &enableigmpsnooping
-		igmpSetting.EnablePreventFlooding = &enablepreventflooding
-		igmpSetting.EnableProxyReporting = &enableproxyreporting
+		igmpSetting.EnableIgmpSnooping = GetBoolPointer(rawlval["igmp_snooping"].(bool))
+		igmpSetting.EnablePreventFlooding = GetBoolPointer(rawlval["prevent_flooding"].(bool))
+		igmpSetting.EnableProxyReporting = GetBoolPointer(rawlval["proxy_reporting"].(bool))
 		igmpSetting.ID = rawlval["id"].(string)
 		igmpSetting.IgmpIdleTimeoutInterval = rawlval["igmp_idle_timeout_interval"].(int)
 		igmpSetting.IgmpSnoopingVlanIds = rawlval["igmp_snooping_vlan_ids"].(string)
