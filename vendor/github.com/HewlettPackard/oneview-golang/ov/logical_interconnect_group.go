@@ -157,13 +157,15 @@ type AddressingMode struct {
 	ServerAutoDiscovery bool   `json:"serverAutoDiscovery,omitempty"` //"pollInterval"
 }
 type QosConfiguration struct {
-	ActiveQosConfig          ActiveQosConfig           `json:"activeQosConfig,omitempty"`          //"activeQosConfig": {...},
+	ActiveQosConfig          *ActiveQosConfig          `json:"activeQosConfig,omitempty"`          //"activeQosConfig": {...},
 	Category                 string                    `json:"category,omitempty"`                 // "category": "qos-aggregated-configuration",
+	ConsistencyChecking      string                    `json:"consistencyChecking,omitempty"`      // "consistencyChecking": "ExactMatch",
 	Created                  string                    `json:"created,omitempty"`                  // "created": "20150831T154835.250Z",
 	Description              utils.Nstring             `json:"description,omitempty,omitempty"`    // "description": null,
 	ETAG                     string                    `json:"eTag,omitempty"`                     // "eTag": "1441036118675/8",
 	InactiveFCoEQosConfig    *InactiveFCoEQosConfig    `json:"inactiveFCoEQosConfig,omitempty"`    // "inactiveFCoEQosConfig": {...},
 	InactiveNonFCoEQosConfig *InactiveNonFCoEQosConfig `json:"inactiveNonFCoEQosConfig,omitempty"` // "inactiveNonFCoEQosConfig": {...},
+	InactiveRoceQosConfig    *InactiveRoceQosConfig    `json:"inactiveRoceQosConfig,omitempty"`    // "inactiveRoceQosConfig": {...},
 	Modified                 string                    `json:"modified,omitempty"`                 // "modified": "20150831T154835.250Z",
 	Name                     string                    `json:"name,omitempty"`                     // "name": "Qos Config 1",
 	State                    string                    `json:"state,omitempty"`                    // "state": "Normal",
@@ -181,7 +183,7 @@ type ActiveQosConfig struct {
 	ETAG                       string                 `json:"eTag,omitempty"`                       // "eTag": "1441036118675/8",
 	Modified                   string                 `json:"modified,omitempty"`                   // "modified": "20150831T154835.250Z",
 	Name                       string                 `json:"name,omitempty"`                       // "name": "active QOS Config 1",
-	QosTrafficClassifiers      []QosTrafficClassifier `json:"qosTrafficClassifiers"`                // "qosTrafficClassifiers": {...},
+	QosTrafficClassifiers      []QosTrafficClassifier `json:"qosTrafficClassifiers,omitempty"`      // "qosTrafficClassifiers": {...},
 	State                      string                 `json:"state,omitempty"`                      // "state": "Normal",
 	Status                     string                 `json:"status,omitempty"`                     // "status": "Critical",
 	Type                       string                 `json:"type,omitempty"`                       // "type": "QosConfiguration",
@@ -223,23 +225,60 @@ type InactiveNonFCoEQosConfig struct {
 	URI                        utils.Nstring          `json:"uri,omitempty"`                        // "uri": null
 }
 
-type QosTrafficClassifier struct {
-	QosClassificationMapping *QosClassificationMap `json:"qosClassificationMapping"`  // "qosClassificationMapping": {...},
-	QosTrafficClass          QosTrafficClass       `json:"qosTrafficClass,omitempty"` // "qosTrafficClass": {...},
+type InactiveRoceQosConfig struct {
+	Category                   utils.Nstring          `json:"category,omitempty"`                   // "category": "null",
+	ConfigType                 string                 `json:"configType,omitempty"`                 // "configType": "CustomWithFCoE",
+	Created                    string                 `json:"created,omitempty"`                    // "created": "20150831T154835.250Z",
+	Description                utils.Nstring          `json:"description,omitempty,omitempty"`      // "description": "Ethernet Settings",
+	DownlinkClassificationType string                 `json:"downlinkClassificationType,omitempty"` //"downlinkClassifcationType": "DOT1P_AND_DSCP",
+	ETAG                       string                 `json:"eTag,omitempty"`                       // "eTag": "1441036118675/8",
+	Modified                   string                 `json:"modified,omitempty"`                   // "modified": "20150831T154835.250Z",
+	Name                       string                 `json:"name,omitempty"`                       // "name": "active QOS Config 1",
+	QosTrafficClassifiers      []QosTrafficClassifier `json:"qosTrafficClassifiers,omitempty"`      // "qosTrafficClassifiers": {...},
+	State                      string                 `json:"state,omitempty"`                      // "state": "Normal",
+	Status                     string                 `json:"status,omitempty"`                     // "status": "Critical",
+	Type                       string                 `json:"type,omitempty"`                       // "type": "QosConfiguration",
+	UplinkClassificationType   string                 `json:"uplinkClassificationType,omitempty"`   // "uplinkClassificationType": "DOT1P"
+	URI                        utils.Nstring          `json:"uri,omitempty"`                        // "uri": null
 }
 
-type QosClassificationMap struct {
-	Dot1pClassMapping []int    `json:"dot1pClassMapping"` // "dot1pClassMapping": [3],
-	DscpClassMapping  []string `json:"dscpClassMapping"`  // "dscpClassMapping": [],
+type QosTrafficClassifier struct {
+	QosClassificationMapping *QosClassificationMapping `json:"qosClassificationMapping,omitempty"` // "qosClassificationMapping": {...},
+	QosTrafficClass          *QosTrafficClass          `json:"qosTrafficClass,omitempty"`          // "qosTrafficClass": {...},
+}
+
+type QosClassificationMapping struct {
+	Dot1pClassMapping []int    `json:"dot1pClassMapping,omitempty"` // "dot1pClassMapping": [3],
+	DscpClassMapping  []string `json:"dscpClassMapping,omitempty"`  // "dscpClassMapping": [],
 }
 
 type QosTrafficClass struct {
-	BandwidthShare   string `json:"bandwidthShare,omitempty"` // "bandwidthShare": "fcoe",
-	ClassName        string `json:"className"`                // "className": "FCoE lossless",
-	EgressDot1pValue int    `json:"egressDot1pValue"`         // "egressDot1pValue": 3,
-	Enabled          *bool  `json:"enabled,omitempty"`        // "enabled": true,
-	MaxBandwidth     int    `json:"maxBandwidth"`             // "maxBandwidth": 100,
-	RealTime         *bool  `json:"realTime,omitempty"`       // "realTime": true,
+	BandwidthShare    string              `json:"bandwidthShare,omitempty"`    // "bandwidthShare": "fcoe",
+	ClassName         string              `json:"className,omitempty"`         // "className": "FCoE lossless",
+	DcbxConfiguration *DcbxConfigurations `json:"dcbxConfiguration,omitempty"` // "dcbxConfiguration": {...},
+	EgressDot1pValue  *int                `json:"egressDot1pValue,omitempty"`  // "egressDot1pValue": 3,
+	Enabled           *bool               `json:"enabled,omitempty,omitempty"` // "enabled": true,
+	MaxBandwidth      int                 `json:"maxBandwidth,omitempty"`      // "maxBandwidth": 100,
+	RealTime          *bool               `json:"realTime,omitempty"`          // "realTime": true,
+	Roce              *bool               `json:"roce,omitempty"`              // "roce": true
+}
+
+type DcbxConfigurations struct {
+	ApplicationProtocol     string        `json:"applicationProtocol,omitempty"`     // "applicationProtocol":,
+	DcbxEtsPorts            []DcbxEtsPort `json:"dcbxEtsPorts,omitempty"`            // "dcbxEtsPorts": {...},
+	DefaultMaximumBandwidth string        `json:"defaultMaximumBandwidth,omitempty"` // "defaultMaximumBandwidth": "",
+	DefaultMinimumBandwidth string        `json:"defaultMinimumBandwidth,omitempty"` // "defaultMinimumBandwidth": "",
+	PriorityCodePoint       string        `json:"priorityCodePoint,omitempty"`       // "PriorityCodePoint": "",
+	PriorityFlowControl     string        `json:"priorityFlowControl,omitempty"`     // "PriorityFlowControl": "",
+}
+
+type DcbxEtsPort struct {
+	BayNumber      string `json:"bayNumber,omitempty"`      // "bayNumber": "1",
+	EnclosureIndex int    `json:"enclosureIndex,omitempty"` // "enclosureIndex": 1,
+	IcmName        string `json:"icmName,omitempty"`        // "icmName": "",
+	MaxBandwidth   string `json:"maxBandwidth,omitempty"`   // "maxBandwidth": "",
+	MinBandwidth   string `json:"minBandwidth,omitempty"`   // "minBandwidth": "",
+	PortName       string `json:"portName,omitempty"`       // "portName": "",
 }
 
 //portFlapProtection added in OV 2400
