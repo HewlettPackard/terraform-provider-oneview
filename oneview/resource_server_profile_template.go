@@ -333,22 +333,19 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ServerProfileTemplateV1",
+				Computed: true,
 			},
 			"server_hardware_type": {
 				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Optional: true,
 			},
 			"enclosure_group": {
 				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Optional: true,
 			},
 			"affinity": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Bay",
 			},
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
@@ -372,20 +369,17 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"serial_number_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Virtual",
-				ForceNew: true,
+				Computed: true,
 			},
 			"wwn_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Virtual",
-				ForceNew: true,
+				Computed: true,
 			},
 			"mac_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Virtual",
-				ForceNew: true,
+				Computed: true,
 			},
 			"firmware": {
 				Optional: true,

@@ -360,7 +360,7 @@ func resourceServerProfile() *schema.Resource {
 			"affinity": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Bay",
+				Computed: true,
 			},
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
@@ -376,18 +376,18 @@ func resourceServerProfile() *schema.Resource {
 			"serial_number_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Virtual",
+				Computed: true,
 				ForceNew: true,
 			},
 			"wwn_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Virtual",
+				Computed: true,
 			},
 			"mac_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Virtual",
+				Computed: true,
 			},
 			"firmware": {
 				Optional: true,
@@ -812,7 +812,7 @@ func resourceServerProfile() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "ServerProfileV9",
+				Computed: true,
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
