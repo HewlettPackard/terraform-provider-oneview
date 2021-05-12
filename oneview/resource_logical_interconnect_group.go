@@ -2046,12 +2046,12 @@ func resourceLogicalInterconnectGroupDelete(d *schema.ResourceData, meta interfa
 	return nil
 }
 
-// Returns pointer of integer value
+// GetIntPointer returns pointer of integer value
 func GetIntPointer(value int) *int {
 	return &value
 }
 
-// Returns pointer of boolean value
+// GetBoolPointer returns pointer of boolean value
 func GetBoolPointer(value bool) *bool {
 	return &value
 }
