@@ -3,7 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [v6.2.0-13] (Unreleased)
 ### Bug fixes & Enhancements:
-- [#285] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/285) Terraform crashes for Logical Interconnect Group Read
+- [#289] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/289) Terraform crashes for Logical Interconnect Group Read
 - [#300] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/300) Can't create resource oneview_server_profile_template
 - [#301] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/301) Can't create resource oneview_server_profile
 
