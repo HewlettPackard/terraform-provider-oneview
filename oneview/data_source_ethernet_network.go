@@ -12,12 +12,7 @@
 package oneview
 
 import (
-	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/HewlettPackard/oneview-golang/utils"
-	"encoding/json"
-	"io/ioutil"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -41,7 +36,7 @@ func dataSourceEthernetNetwork() *schema.Resource {
                         },
 			"members": {
 				Type: schema.TypeList,
-				Computed: true,
+				Optional: true,
 
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -85,10 +80,6 @@ func dataSourceEthernetNetwork() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"description": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"uri": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -115,15 +106,7 @@ func dataSourceEthernetNetwork() *schema.Resource {
 						},
 						"scopesuri": {
 							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"initial_scope_uris": {
-							Computed: true,
-							Type:     schema.TypeSet,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-							Set: schema.HashString,
+							Optional: true,
 						},
 					},
 				},
@@ -146,44 +129,31 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 		d.Set("total", eNetList.Total)
 		d.Set("list_uri", eNetList.URI)
 
-		elist := [] ov.EthernetNetwork{}
-		for i := range eNetList.Members {
-			ethernet := ov.EthernetNetwork{}
-			ethernet.Name = eNetList.Members[i].Name
-			ethernet.VlanId =  eNetList.Members[i].VlanId
-			ethernet.Purpose = eNetList.Members[i].Purpose
-			ethernet.SmartLink = eNetList.Members[i].SmartLink
-			ethernet.PrivateNetwork = eNetList.Members[i].PrivateNetwork
-			ethernet.EthernetNetworkType = eNetList.Members[i].EthernetNetworkType
-			ethernet.Type = eNetList.Members[i].Type
-			ethernet.Created = eNetList.Members[i].Created
-			ethernet.Modified = eNetList.Members[i].Modified
-			ethernet.URI = utils.Nstring(eNetList.Members[i].URI.String())
-			ethernet.ConnectionTemplateUri = utils.Nstring(eNetList.Members[i].ConnectionTemplateUri.String())
-			ethernet.State =  eNetList.Members[i].State
-			ethernet.Status = eNetList.Members[i].Status
-			ethernet.Category = eNetList.Members[i].Category
-			ethernet.FabricUri = utils.Nstring(eNetList.Members[i].FabricUri.String())
-			ethernet.ETAG = eNetList.Members[i].ETAG
-			ethernet.ScopesUri = utils.Nstring(eNetList.Members[i].ScopesUri.String())
-
-			initialScopeUris := make([]utils.Nstring, len(eNetList.Members[i].InitialScopeUris))
-			for _, scope := range eNetList.Members[i].InitialScopeUris {
-				initialScopeUri := utils.Nstring(scope.String())
-				initialScopeUris = append(initialScopeUris, initialScopeUri)
-			}
-
-			ethernet.InitialScopeUris = initialScopeUris
-			elist = append(elist, ethernet)
-
+		members := make([]map[string]interface{}, 0, len(eNetList.Members))
+		for _, eNet := range eNetList.Members {
+			members = append(members, map[string]interface{}{
+				"name":   eNet.Name,
+				"purpose": eNet.Purpose,
+				"vlan_id": eNet.VlanId,
+				"smart_link": eNet.SmartLink,
+				"private_network": eNet.PrivateNetwork,
+				"ethernet_network_type": eNet.EthernetNetworkType,
+				"type": eNet.Type,
+				"created": eNet.Created,
+				"modified": eNet.Modified,
+				"uri": eNet.URI,
+				"connection_template_uri": eNet.ConnectionTemplateUri,
+				"state":  eNet.State,
+				"status": eNet.Status,
+				"category": eNet.Category,
+				"fabric_uri": eNet.FabricUri,
+				"etag": eNet.ETAG,
+				"scopesuri": eNet.ScopesUri,
+			})
 		}
-		file, _ := json.MarshalIndent(elist, "", " ")
-                file_name  := fmt.Sprintf("test_check_%d.json", 5)
-                _ = ioutil.WriteFile(file_name, file, 0644)
 
-		d.Set("members", elist)
+		d.Set("members", members)
 		d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
-		
 	}
 	return nil
 
