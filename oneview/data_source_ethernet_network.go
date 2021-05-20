@@ -38,10 +38,6 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				Type: schema.TypeString,
                                 Optional: true,
                         },
-			"get_type": {
-				Type: schema.TypeString,
-				Required: true,
-			},
 			"members": {
 				Type: schema.TypeList,
 				Computed: true,
@@ -127,10 +123,9 @@ func dataSourceEthernetNetwork() *schema.Resource {
 
 func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	getType := d.Get("get_type").(string)
 	name := d.Get("name").(string)
 
-	if getType == "GetById" {
+	if len(name) > 0 {
 		eNet , err := config.ovClient.GetEthernetNetworkByName(name)
 		if err != nil {
                         d.SetId("")
@@ -159,10 +154,7 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 		d.Set("members", members)
 		d.SetId(name)
 		return nil
-	}
-
-
-	if getType == "GetAll" {
+	} else {
 		eNetList, err := config.ovClient.GetEthernetNetworks("", "", "", "")
 
 		if err != nil {
