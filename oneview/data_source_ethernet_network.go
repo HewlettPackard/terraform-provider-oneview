@@ -34,9 +34,17 @@ func dataSourceEthernetNetwork() *schema.Resource {
                                 Type: schema.TypeString,
                                 Computed: true,
                         },
+			"name": {
+				Type: schema.TypeString,
+                                Optional: true,
+                        },
+			"get_type": {
+				Type: schema.TypeString,
+				Required: true,
+			},
 			"members": {
 				Type: schema.TypeList,
-				Optional: true,
+				Computed: true,
 
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -119,41 +127,78 @@ func dataSourceEthernetNetwork() *schema.Resource {
 
 func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	eNetList, err := config.ovClient.GetEthernetNetworks("", "", "", "")
+	getType := d.Get("get_type").(string)
+	name := d.Get("name").(string)
 
-	if err != nil {
-		d.SetId("")
-		return nil
-	} else {
-		d.Set("count_", eNetList.Count)
-		d.Set("total", eNetList.Total)
-		d.Set("list_uri", eNetList.URI)
-
-		members := make([]map[string]interface{}, 0, len(eNetList.Members))
-		for _, eNet := range eNetList.Members {
-			members = append(members, map[string]interface{}{
-				"name":   eNet.Name,
-				"purpose": eNet.Purpose,
-				"vlan_id": eNet.VlanId,
-				"smart_link": eNet.SmartLink,
-				"private_network": eNet.PrivateNetwork,
-				"ethernet_network_type": eNet.EthernetNetworkType,
-				"type": eNet.Type,
-				"created": eNet.Created,
-				"modified": eNet.Modified,
-				"uri": eNet.URI,
-				"connection_template_uri": eNet.ConnectionTemplateUri,
-				"state":  eNet.State,
-				"status": eNet.Status,
-				"category": eNet.Category,
-				"fabric_uri": eNet.FabricUri,
-				"etag": eNet.ETAG,
-				"scopesuri": eNet.ScopesUri,
-			})
+	if getType == "GetById" {
+		eNet , err := config.ovClient.GetEthernetNetworkByName(name)
+		if err != nil {
+                        d.SetId("")
+                        return nil
 		}
-
+		members := make([]map[string]interface{}, 0, 1)
+		members = append(members, map[string]interface{}{
+                                        "name":   eNet.Name,
+                                        "purpose": eNet.Purpose,
+                                        "vlan_id": eNet.VlanId,
+                                        "smart_link": eNet.SmartLink,
+                                        "private_network": eNet.PrivateNetwork,
+                                        "ethernet_network_type": eNet.EthernetNetworkType,
+                                        "type": eNet.Type,
+                                        "created": eNet.Created,
+                                        "modified": eNet.Modified,
+                                        "uri": eNet.URI,
+                                        "connection_template_uri": eNet.ConnectionTemplateUri,
+                                        "state":  eNet.State,
+                                        "status": eNet.Status,
+                                        "category": eNet.Category,
+                                        "fabric_uri": eNet.FabricUri,
+                                        "etag": eNet.ETAG,
+                                        "scopesuri": eNet.ScopesUri,
+                                })
 		d.Set("members", members)
-		d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+		d.SetId(name)
+		return nil
+	}
+
+
+	if getType == "GetAll" {
+		eNetList, err := config.ovClient.GetEthernetNetworks("", "", "", "")
+
+		if err != nil {
+			d.SetId("")
+			return nil
+		} else {
+			d.Set("count_", eNetList.Count)
+			d.Set("total", eNetList.Total)
+			d.Set("list_uri", eNetList.URI)
+
+			members := make([]map[string]interface{}, 0, len(eNetList.Members))
+			for _, eNet := range eNetList.Members {
+				members = append(members, map[string]interface{}{
+					"name":   eNet.Name,
+					"purpose": eNet.Purpose,
+					"vlan_id": eNet.VlanId,
+					"smart_link": eNet.SmartLink,
+					"private_network": eNet.PrivateNetwork,
+					"ethernet_network_type": eNet.EthernetNetworkType,
+					"type": eNet.Type,
+					"created": eNet.Created,
+					"modified": eNet.Modified,
+					"uri": eNet.URI,
+					"connection_template_uri": eNet.ConnectionTemplateUri,
+					"state":  eNet.State,
+					"status": eNet.Status,
+					"category": eNet.Category,
+					"fabric_uri": eNet.FabricUri,
+					"etag": eNet.ETAG,
+					"scopesuri": eNet.ScopesUri,
+				})
+			}
+
+			d.Set("members", members)
+			d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+		}
 	}
 	return nil
 
