@@ -742,6 +742,119 @@ func dataSourceServerProfile() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
+			"category": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"created": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"etag": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"enclosure_bay": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Computed: true,
+			},
+			"enclosure_group_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"server_hardware_type_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"in_progress": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"status": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"task_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"refresh_state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"scopes_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"uuid": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"profile_uuid": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"iscsi_initiator_name": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"iscsi_initiator_name_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"service_manager": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"template_compliance": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"server_hardware_reapply_state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"management_processor": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_mp": {
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+						"mp_settings": {
+							Optional: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"args": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"setting_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -887,10 +1000,50 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	})
 	d.Set("boot", boot)
 
+    // Management Processor
+	mpSettings := make([]interface{}, 0, len(serverProfile.ManagementProcessor.MpSettings))
+	for _, mpSetting := range serverProfile.ManagementProcessor.MpSettings {
+		mpSettings = append(mpSettings, map[string]interface{}{
+			"args":         mpSetting.Args,
+			"setting_type": mpSetting.SettingType,
+		})
+	}
+	if serverProfile.ManagementProcessor != nil {
+		managementProcessor := make([]map[string]interface{}, 0, 1)
+		managementProcessor = append(managementProcessor, map[string]interface{}{
+			"manage_mp":     serverProfile.ManagementProcessor.ManageMp,
+			"reapply_state": serverProfile.ManagementProcessor.ReapplyState,
+			"mp_settings":   mpSettings,
+		})
+
+		d.Set("management_processor", managementProcessor)
+	}
+
 	d.Set("name", serverProfile.Name)
 	d.Set("type", serverProfile.Type)
 	d.Set("uri", serverProfile.URI.String())
 	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
+
+	d.Set("category", serverProfile.Category)
+	d.Set("created", serverProfile.Created.String())
+	d.Set("description", serverProfile.Description
+	d.Set("etag", serverProfile.ETAG.String())
+	d.Set("enclosure_bay", serverProfile.EnclosureBay)
+	d.Set("enclosure_group_uri", serverProfile.EnclosureGroupURI.String())
+	d.Set("server_hardware_type_uri", serverProfile.ServerHardwareTypeURI.String())
+	d.Set("in_progress", serverProfile.InProgress)
+	d.Set("state", serverProfile.State)
+	d.Set("status", serverProfile.Status)
+	d.Set("task_uri", serverProfile.TaskURI.String())
+	d.Set("refresh_state", serverProfile.RefreshState)
+	d.Set("scopes_uri", serverProfile.ScopesUri
+	d.Set("uuid", serverProfile.UUID.String())
+	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
+	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName.String())
+	d.Set("iscsi_initiator_name_type", serverProfile.IscsiInitiatorNameType)
+	d.Set("service_manager", serverProfile.ServiceManager)
+	d.Set("template_compliance", serverProfile.TemplateCompliance)
+	d.Set("server_hardware_reapply_state", serverProfile.ServerHardwareReapplyState)
 
 	// Gets Local Storage Body
 	localStorage := make([]map[string]interface{}, 0, 1)

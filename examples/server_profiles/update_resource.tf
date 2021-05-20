@@ -26,7 +26,10 @@ resource "oneview_server_profile" "SP" {
       value = "Utc"
     }
   }
-  boot_order = ["HardDisk"]
+  boot {
+    manage_boot = true
+    boot_order  = ["HardDisk"]
+  }
   boot_mode {
     manage_mode     = true
     mode            = "UEFIOptimized"
