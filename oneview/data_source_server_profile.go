@@ -1025,9 +1025,9 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
 
 	d.Set("category", serverProfile.Category)
-	d.Set("created", serverProfile.Created.String())
-	d.Set("description", serverProfile.Description
-	d.Set("etag", serverProfile.ETAG.String())
+	d.Set("created", serverProfile.Created)
+	d.Set("description", serverProfile.Description)
+	d.Set("etag", serverProfile.ETAG)
 	d.Set("enclosure_bay", serverProfile.EnclosureBay)
 	d.Set("enclosure_group_uri", serverProfile.EnclosureGroupURI.String())
 	d.Set("server_hardware_type_uri", serverProfile.ServerHardwareTypeURI.String())
@@ -1036,10 +1036,10 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("status", serverProfile.Status)
 	d.Set("task_uri", serverProfile.TaskURI.String())
 	d.Set("refresh_state", serverProfile.RefreshState)
-	d.Set("scopes_uri", serverProfile.ScopesUri
+	d.Set("scopes_uri", serverProfile.ScopesUri)
 	d.Set("uuid", serverProfile.UUID.String())
 	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
-	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName.String())
+	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName)
 	d.Set("iscsi_initiator_name_type", serverProfile.IscsiInitiatorNameType)
 	d.Set("service_manager", serverProfile.ServiceManager)
 	d.Set("template_compliance", serverProfile.TemplateCompliance)
