@@ -1000,7 +1000,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	})
 	d.Set("boot", boot)
 
-    // Management Processor
+	// Management Processor
 	mpSettings := make([]interface{}, 0, len(serverProfile.ManagementProcessor.MpSettings))
 	for _, mpSetting := range serverProfile.ManagementProcessor.MpSettings {
 		mpSettings = append(mpSettings, map[string]interface{}{
