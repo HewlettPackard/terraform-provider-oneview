@@ -59,6 +59,10 @@ func dataSourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 						},
+						"secure_boot": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -352,10 +356,6 @@ func dataSourceServerProfile() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
-			},
-			"manage_connections": {
-				Type:     schema.TypeBool,
-				Optional: true,
 			},
 			"serial_number_type": {
 				Type:     schema.TypeString,
@@ -1000,6 +1000,16 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	})
 	d.Set("boot", boot)
 
+	// Boot Mode
+	bootMode := make([]map[string]interface{}, 0, 1)
+	bootMode = append(bootMode, map[string]interface{}{
+		"manage_mode":     serverProfile.BootMode.ManageMode,
+		"mode":            serverProfile.BootMode.Mode,
+		"pxe_boot_policy": serverProfile.BootMode.PXEBootPolicy,
+		"secure_boot":     serverProfile.BootMode.SecureBoot,
+	})
+	d.Set("boot_mode", bootMode)
+
 	// Management Processor
 	mpSettings := make([]interface{}, 0, len(serverProfile.ManagementProcessor.MpSettings))
 	for _, mpSetting := range serverProfile.ManagementProcessor.MpSettings {
@@ -1018,6 +1028,20 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 
 		d.Set("management_processor", managementProcessor)
 	}
+
+	// Firmware
+	firmware := make([]map[string]interface{}, 0, 1)
+	firmware = append(firmware, map[string]interface{}{
+		"consistency_state":           serverProfile.Firmware.ConsistencyState,
+		"firmware_activation_type":    serverProfile.Firmware.FirmwareActivationType,
+		"firmware_baseline_uri":       serverProfile.Firmware.FirmwareBaselineUri,
+		"firmware_install_type":       serverProfile.Firmware.FirmwareInstallType,
+		"firmware_schedule_date_time": serverProfile.Firmware.FirmwareScheduleDateTime,
+		"force_install_firmware":      serverProfile.Firmware.ForceInstallFirmware,
+		"manage_firmware":             serverProfile.Firmware.ManageFirmware,
+		"reapply_state":               serverProfile.Firmware.ReapplyState,
+	})
+	d.Set("firmware", firmware)
 
 	d.Set("name", serverProfile.Name)
 	d.Set("type", serverProfile.Type)
