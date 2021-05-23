@@ -2,6 +2,16 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 
+# [v6.2.0-13] (unreleased)
+
+#### Major Changes
+1. Added support to Connection Templates Resource.
+   - GET /rest/connection-templates/{id}
+   - PUT /rest/connection-templates/{id}
+ 
+### Notes
+- This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
+
 # [v6.1.0-13] 
 
 ### Notes

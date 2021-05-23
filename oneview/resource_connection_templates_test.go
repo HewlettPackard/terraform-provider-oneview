@@ -33,7 +33,7 @@ func TestAccConnectionTemplate_1(t *testing.T) {
 					testAccCheckconnectionTemplateExists(
 						"oneview_connection_templates.test", &connectionTemplate),
 					resource.TestCheckResourceAttr(
-						"oneview_connection_templates.test", "uri", "Terraform ct 1",
+						"oneview_connection_templates.test", "name", "Terraform ct 1",
 					),
 				),
 			},
@@ -43,7 +43,7 @@ func TestAccConnectionTemplate_1(t *testing.T) {
 					testAccCheckconnectionTemplateExists(
 						"oneview_connection_templates.test", &connectionTemplate),
 					resource.TestCheckResourceAttr(
-						"oneview_connection_templates.test", "uri", "Terraform ct 2",
+						"oneview_connection_templates.test", "name", "Terraform ct 2",
 					),
 				),
 			},

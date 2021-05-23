@@ -8,8 +8,6 @@ provider "oneview" {
 }
 
 resource "oneview_connection_templates" "connectionTemplates" {
-  name    = "defaultConnectionTemplate"
-  type    = "connection-template"
   bandwidth {
       maximum_bandwidth = 8000
       typical_bandwidth = 2500
