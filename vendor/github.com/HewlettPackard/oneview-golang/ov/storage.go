@@ -29,6 +29,7 @@ type LogicalDrive struct {
 
 // LocalStorageOptions -
 type LocalStorageOptions struct { // "localStorage": {
+	ComplianceControl  string                           `json:"complianceControl,omitempty"`
 	Controllers        []LocalStorageEmbeddedController `json:"controllers,omitempty"`        //  The list of embedded local storage controllers.
 	Initialize         bool                             `json:"initialize,omitempty"`         // 				"initialize": true
 	LogicalDrives      []LogicalDrive                   `json:"logicalDrives,omitempty"`      // "logicalDrives": [],
@@ -121,6 +122,7 @@ type SanSystemCredential struct {
 // 				"manageSanStorage": false
 // 		},
 type SanStorageOptions struct { // sanStorage
+	ComplianceControl          string                `json:"complianceControl,omitempty"`          // complianceControl
 	HostOSType                 string                `json:"hostOSType,omitempty"`                 // hostOSType(required),  The operating system type of the host. To retrieve the list of supported host OS types, issue a REST Get request using the /rest/storage-systems/host-types API.
 	ManageSanStorage           bool                  `json:"manageSanStorage"`                     // manageSanStorage(required),  Identifies whether SAN storage is managed in this profile.
 	ReapplyState               string                `json:"reapplyState,omitempty"`               //Current reapply state of SAN storage component.
