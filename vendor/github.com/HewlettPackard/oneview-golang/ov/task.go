@@ -146,6 +146,7 @@ type Task struct {
 	Modified                string             `json:"modified,omitempty"`      // "modified": "2015-09-07T03:25:54.844Z",
 	URI                     utils.Nstring      `json:"uri,omitempty"`           // "uri": "/rest/tasks/145F808A-A8DD-4E1B-8C86-C2379C97B3B2"
 	TaskIsDone              bool               // when true, task are done
+	IsCancellable 		bool		   // When true, tasks are not completed
 	Timeout                 int                // time before timeout on Executor
 	WaitTime                time.Duration      // time between task checks
 	Client                  *OVClient
@@ -367,4 +368,22 @@ func (c *OVClient) GetTasksById(filter string, sort string, count string, view s
 		return tasks, err
 	}
 	return tasks, nil
+}
+
+func (c *OVClient) PatchTask(uri string) (Task, error) {
+	var (
+		tasks Task
+	)
+
+	data, err := c.RestAPICall(rest.PATCH, uri, nil)
+	if err != nil {
+		return tasks, err
+	}
+
+	log.Debugf("Patch Tasks %s", data)
+	if err := json.Unmarshal([]byte(data), &tasks); err != nil {
+		return tasks, err
+	}
+	return tasks, nil
+
 }
