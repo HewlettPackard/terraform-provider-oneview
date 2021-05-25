@@ -869,13 +869,20 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	}
 	d.SetId(d.Get("name").(string))
 
-	serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
-	if err != nil {
-		return err
-	}
+	if serverProfile.ServerHardwareURI != "" {
+		serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
+		if err != nil {
+			return err
+		}
 
-	d.Set("hardware_uri", serverHardware.URI.String())
-	d.Set("ilo_ip", serverHardware.GetIloIPAddress())
+		d.Set("hardware_uri", serverHardware.URI.String())
+		d.Set("hardware_name", serverHardware.Name)
+		d.Set("ilo_ip", serverHardware.GetIloIPAddress())
+	} else {
+		d.Set("hardware_uri", "")
+		d.Set("hardware_name", "")
+		d.Set("ilo_ip", "")
+	}
 	d.Set("serial_number", serverProfile.SerialNumber.String())
 
 	if val, ok := d.GetOk("public_connection"); ok {
