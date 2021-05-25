@@ -220,8 +220,8 @@ func resourceTask() *schema.Resource {
 
 func resourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Get("uri").(string)
-	task, err := config.ovClient.GetTasksById("", "", "", "", id)
+
+	task, err := config.ovClient.GetTasksById("", "", "", "", d.Id())
 
 	if err != nil || task.URI.IsNil() {
 		d.SetId("")
@@ -267,23 +267,25 @@ func resourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("task_is_done", task.TaskIsDone)
 	d.Set("timeout", task.Timeout)
 	d.Set("wait_time", task.WaitTime)
-	d.SetId(id)
+	d.SetId(d.Id())
 	return nil
 }
 
 func resourceTaskUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	uri := d.Get("uri").(string)
-	file, _ := json.MarshalIndent(uri, "", " ")
+	task, err := config.ovClient.PatchTask(d.Get("uri").(string))
+	file, _ := json.MarshalIndent(task, "", " ")
 	_ = ioutil.WriteFile("patch_test_uri.json", file, 0644)
 
-	task, err := config.ovClient.PatchTask(uri)
-
 	if err != nil || task.URI.IsNil() {
+		d.SetId("")
 		return err
 	}
-	d.SetId(d.Get("task_id").(string))
+	uris := strings.Split(d.Get("uri").(string), "/")
+	id := uris[len(uris)-1]
+
+	d.SetId(id)
 
 	return resourceTaskRead(d, meta)
 }
