@@ -21,15 +21,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
-	"os"
 )
 
 // FirmwareOption structure for firware settings
 type FirmwareOption struct {
-	ConsistencyState         string        `json:"consistencyState,omitempty"` //Consistency state of the firmware component.
+	ComplianceControl        string        `json:"complianceControl,omitempty"` // complianceControl
+	ConsistencyState         string        `json:"consistencyState,omitempty"`  //Consistency state of the firmware component.
 	FirmwareActivationType   string        `json:"firmwareActivationType,omitempty"`
 	FirmwareBaselineUri      utils.Nstring `json:"firmwareBaselineUri,omitempty"`      // "firmwareBaselineUri": null,
 	FirmwareInstallType      string        `json:"firmwareInstallType,omitempty"`      // Specifies the way a Service Pack for ProLiant (SPP) is installed. This field is used if the 'manageFirmware' field is true. Possible values are
@@ -41,16 +43,18 @@ type FirmwareOption struct {
 
 // BootModeOption mode option
 type BootModeOption struct {
-	ManageMode    *bool         `json:"manageMode"`              // "manageMode": true,
-	Mode          string        `json:"mode,omitempty"`          // "mode": "BIOS",
-	PXEBootPolicy utils.Nstring `json:"pxeBootPolicy,omitempty"` // "pxeBootPolicy": null
-	SecureBoot    string        `json:"secureBoot,omitempty"`    // Enable or disable UEFI Secure Boot
+	ComplianceControl string        `json:"complianceControl,omitempty"` // complianceControl
+	ManageMode        *bool         `json:"manageMode"`                  // "manageMode": true,
+	Mode              string        `json:"mode,omitempty"`              // "mode": "BIOS",
+	PXEBootPolicy     utils.Nstring `json:"pxeBootPolicy,omitempty"`     // "pxeBootPolicy": null
+	SecureBoot        string        `json:"secureBoot,omitempty"`        // Enable or disable UEFI Secure Boot
 }
 
 // BootManagement management
 type BootManagement struct {
-	ManageBoot bool     `json:"manageBoot,omitempty"` // "manageBoot": true,
-	Order      []string `json:"order,omitempty"`      // "order": ["CD","USB","HardDisk","PXE"]
+	ComplianceControl string   `json:"complianceControl,omitempty"` // complianceControl
+	ManageBoot        bool     `json:"manageBoot,omitempty"`        // "manageBoot": true,
+	Order             []string `json:"order,omitempty"`             // "order": ["CD","USB","HardDisk","PXE"]
 }
 
 // BiosSettings structure
@@ -61,6 +65,7 @@ type BiosSettings struct {
 
 // BiosOption - bios options
 type BiosOption struct {
+	ComplianceControl  string         `json:"complianceControl,omitempty"`  // complianceControl
 	ConsistencyState   string         `json:"consistencyState,omitempty"`   //Consistency state of the BIOS component
 	ManageBios         *bool          `json:"manageBios"`                   // "manageBios": false,
 	OverriddenSettings []BiosSettings `json:"overriddenSettings,omitempty"` // "overriddenSettings": []
@@ -101,9 +106,10 @@ type AvailableTarget struct {
 }
 
 type ManagementProcessor struct {
-	ManageMp     bool         `json:"manageMp,omitempty"`
-	MpSettings   []mpSettings `json:"mpSettings,omitempty"`
-	ReapplyState string       `json:"reapplyState,omitempty"`
+	ComplianceControl string       `json:"complianceControl,omitempty"` // complianceControl
+	ManageMp          bool         `json:"manageMp,omitempty"`
+	MpSettings        []mpSettings `json:"mpSettings,omitempty"`
+	ReapplyState      bool         `json:"reapplyState,omitempty"`
 }
 type mpSettings struct {
 	Args        string `json:"args, omitempty"`
@@ -146,6 +152,7 @@ type ServerProfile struct {
 	ServerHardwareReapplyState string               `json:"serverHardwareReapplyState,omitempty"` //Current reapply state of the server that is associated with this server profile
 	ServerHardwareTypeURI      utils.Nstring        `json:"serverHardwareTypeUri,omitempty"`      // "serverHardwareTypeUri": "/rest/server-hardware-types/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
 	ServerHardwareURI          utils.Nstring        `json:"serverHardwareUri,omitempty"`          // "serverHardwareUri": "/rest/server-hardware/30373237-3132-4D32-3235-303930524D57",
+	ServerProfileDescription   string               `json:"serverProfileDescription,omitempty"`   // "serverProfileDescription":
 	ServerProfileTemplateURI   utils.Nstring        `json:"serverProfileTemplateUri,omitempty"`   // undocmented option
 	ServiceManager             string               `json:"serviceManager,omitempty"`             //Name of a service manager that is designated owner of the profile
 	State                      string               `json:"state,omitempty"`                      // "state": "Normal",
