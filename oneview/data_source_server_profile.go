@@ -222,10 +222,6 @@ func dataSourceServerProfile() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"request_": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
 									"boot": {
 										Optional: true,
 										Type:     schema.TypeList,
@@ -304,6 +300,22 @@ func dataSourceServerProfile() *schema.Resource {
 														},
 													},
 												},
+												"targets": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"array_wwpn": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"lun": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
 											},
 										},
 									},
@@ -356,6 +368,14 @@ func dataSourceServerProfile() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
+			},
+			"initial_scope_uris": {
+				Computed: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
 			},
 			"serial_number_type": {
 				Type:     schema.TypeString,
@@ -763,6 +783,10 @@ func dataSourceServerProfile() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"enclosure_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"enclosure_group_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -788,6 +812,10 @@ func dataSourceServerProfile() *schema.Resource {
 				Computed: true,
 			},
 			"refresh_state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"associated_server": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -927,6 +955,17 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 					"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
 				})
 			}
+			// Get Boot targets list
+			targets := make([]map[string]interface{}, 0)
+			if len(connection.Boot.Targets) != 0 {
+				targets := make([]map[string]interface{}, 0, len(connection.Boot.Targets))
+				for j := 0; j < len(connection.Boot.Targets); j++ {
+					targets = append(targets, map[string]interface{}{
+						"array_wwpn": connection.Boot.Targets[j].ArrayWWPN,
+						"lun":        connection.Boot.Targets[j].LUN,
+					})
+				}
+			}
 			// Gets Boot Settings
 			connectionBoot := make([]map[string]interface{}, 0, 1)
 			if connection.Boot != nil {
@@ -936,6 +975,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 					"ethernet_boot_type": connection.Boot.EthernetBootType,
 					"boot_volume_source": connection.Boot.BootVolumeSource,
 					"iscsi":              iscsi,
+					"targets":            targets,
 				})
 			}
 			// Get IPV4 Settings for Connection
@@ -954,6 +994,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 				"network_uri":    connection.NetworkURI,
 				"port_id":        connection.PortID,
 				"requested_mbps": connection.RequestedMbps,
+				"requested_vfs": connection.RequestedVFs,
 				"id":             connection.ID,
 				"name":           connection.Name,
 				"isolated_trunk": connection.IsolatedTrunk,
@@ -1060,6 +1101,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("description", serverProfile.Description)
 	d.Set("etag", serverProfile.ETAG)
 	d.Set("enclosure_bay", serverProfile.EnclosureBay)
+	d.Set("enclosure_uri", serverProfile.EnclosureURI.String())
 	d.Set("enclosure_group_uri", serverProfile.EnclosureGroupURI.String())
 	d.Set("server_hardware_type_uri", serverProfile.ServerHardwareTypeURI.String())
 	d.Set("in_progress", serverProfile.InProgress)
@@ -1067,6 +1109,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("status", serverProfile.Status)
 	d.Set("task_uri", serverProfile.TaskURI.String())
 	d.Set("refresh_state", serverProfile.RefreshState)
+	d.Set("associated_server", serverProfile.AssociatedServer.String())
 	d.Set("scopes_uri", serverProfile.ScopesUri)
 	d.Set("uuid", serverProfile.UUID.String())
 	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
@@ -1075,6 +1118,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("service_manager", serverProfile.ServiceManager)
 	d.Set("template_compliance", serverProfile.TemplateCompliance)
 	d.Set("server_hardware_reapply_state", serverProfile.ServerHardwareReapplyState)
+	d.Set("initial_scope_uris", serverProfile.InitialScopeUris)
 
 	// Gets Local Storage Body
 	localStorage := make([]map[string]interface{}, 0, 1)
