@@ -906,6 +906,8 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 		d.Set("hardware_uri", serverHardware.URI.String())
 		d.Set("hardware_name", serverHardware.Name)
 		d.Set("ilo_ip", serverHardware.GetIloIPAddress())
+		d.Set("enclosure_bay", serverProfile.EnclosureBay)
+		d.Set("enclosure_uri", serverProfile.EnclosureURI.String())
 	}
 	d.Set("serial_number", serverProfile.SerialNumber.String())
 
@@ -990,7 +992,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 				"network_uri":    connection.NetworkURI,
 				"port_id":        connection.PortID,
 				"requested_mbps": connection.RequestedMbps,
-				"requested_vfs": connection.RequestedVFs,
+				"requested_vfs":  connection.RequestedVFs,
 				"id":             connection.ID,
 				"name":           connection.Name,
 				"isolated_trunk": connection.IsolatedTrunk,
@@ -1096,8 +1098,6 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("created", serverProfile.Created)
 	d.Set("description", serverProfile.Description)
 	d.Set("etag", serverProfile.ETAG)
-	d.Set("enclosure_bay", serverProfile.EnclosureBay)
-	d.Set("enclosure_uri", serverProfile.EnclosureURI.String())
 	d.Set("enclosure_group_uri", serverProfile.EnclosureGroupURI.String())
 	d.Set("server_hardware_type_uri", serverProfile.ServerHardwareTypeURI.String())
 	d.Set("in_progress", serverProfile.InProgress)
