@@ -878,10 +878,6 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 		d.Set("hardware_uri", serverHardware.URI.String())
 		d.Set("hardware_name", serverHardware.Name)
 		d.Set("ilo_ip", serverHardware.GetIloIPAddress())
-	} else {
-		d.Set("hardware_uri", "")
-		d.Set("hardware_name", "")
-		d.Set("ilo_ip", "")
 	}
 	d.Set("serial_number", serverProfile.SerialNumber.String())
 
