@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"strings"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -34,51 +36,58 @@ func resourceConnectionTemplates() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"maximum_bandwidth": {
 							Type:     schema.TypeInt,
-							Optional: true,
-							Computed: true,
+							Required: true,
 						},
 						"typical_bandwidth": {
 							Type:     schema.TypeInt,
-							Optional: true,
-							Computed: true,
+							Required: true,
 						},
 					},
 				},
 			},
 			"category": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"created": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"modified": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"etag": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"type": {
@@ -121,7 +130,6 @@ func resourceConnectionTemplatesRead(d *schema.ResourceData, meta interface{}) e
 
 func resourceConnectionTemplatesUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Id()
 	updateOptions := ov.ConnectionTemplate{
 		Name:        d.Get("name").(string),
 		Type:        d.Get("type").(string),
@@ -144,11 +152,12 @@ func resourceConnectionTemplatesUpdate(d *schema.ResourceData, meta interface{})
 		}
 		updateOptions.Bandwidth = BandwidthOptions
 	}
-	_, err := config.ovClient.UpdateConnectionTemplate(id, updateOptions)
+	uri := strings.Split(updateOptions.URI.String(), "/")[3]
+	template, err := config.ovClient.UpdateConnectionTemplate(uri, updateOptions)
 	if err != nil {
 		return err
 	}
-	d.SetId(id)
+	d.SetId(template.Name)
 
 	return resourceConnectionTemplatesRead(d, meta)
 }
