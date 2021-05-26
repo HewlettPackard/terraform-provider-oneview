@@ -1041,15 +1041,15 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	})
 
 	d.Set("boot_mode", bootModeOptions)
-
-	overriddenSettings := make([]interface{}, 0, len(spt.Bios.OverriddenSettings))
-	for _, overriddenSetting := range spt.Bios.OverriddenSettings {
-		overriddenSettings = append(overriddenSettings, map[string]interface{}{
-			"id":    overriddenSetting.ID,
-			"value": overriddenSetting.Value,
-		})
-	}
 	if spt.Bios != nil {
+		overriddenSettings := make([]interface{}, 0, len(spt.Bios.OverriddenSettings))
+		for _, overriddenSetting := range spt.Bios.OverriddenSettings {
+			overriddenSettings = append(overriddenSettings, map[string]interface{}{
+				"id":    overriddenSetting.ID,
+				"value": overriddenSetting.Value,
+			})
+		}
+
 		biosOptions := make([]map[string]interface{}, 0, 1)
 		biosOptions = append(biosOptions, map[string]interface{}{
 			"compliance_control":  spt.Bios.ComplianceControl,
@@ -1070,27 +1070,29 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 		"manage_firmware":          spt.Firmware.ManageFirmware,
 	})
 	d.Set("firmware", firmwareOption)
+	if len(spt.OSDeploymentSettings.OSCustomAttributes) != 0 {
+		osCustomAttributes := make([]map[string]interface{}, 0, len(spt.OSDeploymentSettings.OSCustomAttributes))
+		for i := 0; i < len(spt.OSDeploymentSettings.OSCustomAttributes); i++ {
+			osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
+				"name":        spt.OSDeploymentSettings.OSCustomAttributes[i].Name,
+				"type":        spt.OSDeploymentSettings.OSCustomAttributes[i].Type,
+				"value":       spt.OSDeploymentSettings.OSCustomAttributes[i].Value,
+				"constraints": spt.OSDeploymentSettings.OSCustomAttributes[i].Constraints,
+			})
+		}
 
-	osCustomAttributes := make([]map[string]interface{}, 0, len(spt.OSDeploymentSettings.OSCustomAttributes))
-	for i := 0; i < len(spt.OSDeploymentSettings.OSCustomAttributes); i++ {
-		osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
-			"name":        spt.OSDeploymentSettings.OSCustomAttributes[i].Name,
-			"type":        spt.OSDeploymentSettings.OSCustomAttributes[i].Type,
-			"value":       spt.OSDeploymentSettings.OSCustomAttributes[i].Value,
-			"constraints": spt.OSDeploymentSettings.OSCustomAttributes[i].Constraints,
+		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
+		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
+			"compliance_control":     spt.OSDeploymentSettings.ComplianceControl,
+			"deploy_method":          spt.OSDeploymentSettings.DeployMethod,
+			"deployment_port_id":     spt.OSDeploymentSettings.DeploymentPortId,
+			"os_custom_attributes":   osCustomAttributes,
+			"os_deployment_plan_uri": spt.OSDeploymentSettings.OSDeploymentPlanUri.String(),
 		})
+
+		d.Set("os_deployment_settings", osDeploymentSettingslist)
 	}
 
-	osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
-	osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
-		"compliance_control":     spt.OSDeploymentSettings.ComplianceControl,
-		"deploy_method":          spt.OSDeploymentSettings.DeployMethod,
-		"deployment_port_id":     spt.OSDeploymentSettings.DeploymentPortId,
-		"os_custom_attributes":   osCustomAttributes,
-		"os_deployment_plan_uri": spt.OSDeploymentSettings.OSDeploymentPlanUri.String(),
-	})
-
-	d.Set("os_deployment_settings", osDeploymentSettingslist)
 	mpSettings := make([]interface{}, 0)
 	if len(spt.ManagementProcessor.MpSettings) != 0 {
 		mpSettings := make([]map[string]interface{}, 0, len(spt.ManagementProcessor.MpSettings))
