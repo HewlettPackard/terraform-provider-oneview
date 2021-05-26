@@ -52,6 +52,7 @@ type ServerProfilev300 struct {
 }
 
 type OSDeploymentSettings struct {
+	ComplianceControl   string              `json:"complianceControl,omitempty"`   // complianceControl
 	DeployMethod        string              `json:"deployMethod,omitempty"`        //The deploy method option to be specified by the user
 	DeploymentMac       string              `json:"deploymentMac,omitempty"`       //The MAC address that is currently programmed on the NIC to be used for deployment
 	DeploymentPortId    string              `json:"deploymentPortId,omitempty"`    //The port/FlexNIC of an adapter to be specified for the OS deployment
