@@ -22,7 +22,6 @@ import (
 	"errors"
 	"strings"
 	"time"
-
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -370,20 +369,30 @@ func (c *OVClient) GetTasksById(filter string, sort string, count string, view s
 	return tasks, nil
 }
 
-func (c *OVClient) PatchTask(uri string) (Task, error) {
+func (c *OVClient) PatchTask(uri string) error {
 	var (
-		tasks Task
+		tasks *Task
 	)
+	c.RefreshLogin()
+        c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+        tasks = tasks.NewProfileTask(c)
+        tasks.ResetTask()
 
 	data, err := c.RestAPICall(rest.PATCH, uri, nil)
+
 	if err != nil {
-		return tasks, err
-	}
+                log.Errorf("Error submitting Patch request: %s", err)
+                return err
+        }
+        log.Debugf("Patch Task %s", data)
+        if err := json.Unmarshal([]byte(data), &tasks); err != nil {
+                log.Errorf("Error with task un-marshal: %s", err)
+                return err
+        }
 
-	log.Debugf("Patch Tasks %s", data)
-	if err := json.Unmarshal([]byte(data), &tasks); err != nil {
-		return tasks, err
-	}
-	return tasks, nil
+        if err != nil {
+                return err
+        }
 
+        return nil
 }

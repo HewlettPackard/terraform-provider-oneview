@@ -12,9 +12,7 @@
 package oneview
 
 import (
-	"encoding/json"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"io/ioutil"
 )
 
 func resourceTask() *schema.Resource {
@@ -227,8 +225,6 @@ func resourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 		d.SetId("")
 		return nil
 	}
-	file, _ := json.MarshalIndent(task, "", " ")
-	_ = ioutil.WriteFile("test_uri.json", file, 0644)
 
 	associated_res := make([]map[string]interface{}, 0, 1)
 	associated_res = append(associated_res, map[string]interface{}{
@@ -247,8 +243,25 @@ func resourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 		})
 	}
 
+	data := make([]map[string]interface{}, 0, 1)
+	data = append(data, map[string]interface{}{
+		"task_category": task.Data.TaskCategory,
+	})
+
+	taskErrors := make([]map[string]interface{}, 0, len(task.TaskErrors))
+	for _, taskError := range task.TaskErrors {
+		taskErrors = append(taskErrors, map[string]interface{}{
+			"error_code":   taskError.ErrorCode,
+			"details":      taskError.Details,
+			"message":      taskError.Message,
+			"error_source": taskError.ErrorSource,
+		})
+	}
+
 	d.Set("associated_resources", associated_res)
 	d.Set("progress_updates", progress_updates)
+	d.Set("data", data)
+	d.Set("task_errors", taskErrors)
 	d.Set("type", task.Type)
 	d.Set("category", task.Category)
 	d.Set("computed_percent_complete", task.ComputedPercentComplete)
@@ -274,18 +287,14 @@ func resourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 func resourceTaskUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	task, err := config.ovClient.PatchTask(d.Get("uri").(string))
-	file, _ := json.MarshalIndent(task, "", " ")
-	_ = ioutil.WriteFile("patch_test_uri.json", file, 0644)
+	err := config.ovClient.PatchTask(d.Get("uri").(string))
 
-	if err != nil || task.URI.IsNil() {
+	if err != nil {
 		d.SetId("")
 		return err
 	}
-	uris := strings.Split(d.Get("uri").(string), "/")
-	id := uris[len(uris)-1]
 
-	d.SetId(id)
+	d.SetId(d.Id())
 
 	return resourceTaskRead(d, meta)
 }
