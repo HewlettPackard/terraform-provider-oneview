@@ -22,7 +22,6 @@ import (
 	"errors"
 	"strings"
 	"time"
-
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -146,6 +145,7 @@ type Task struct {
 	Modified                string             `json:"modified,omitempty"`      // "modified": "2015-09-07T03:25:54.844Z",
 	URI                     utils.Nstring      `json:"uri,omitempty"`           // "uri": "/rest/tasks/145F808A-A8DD-4E1B-8C86-C2379C97B3B2"
 	TaskIsDone              bool               // when true, task are done
+	IsCancellable 		bool		   // When true, tasks are not completed
 	Timeout                 int                // time before timeout on Executor
 	WaitTime                time.Duration      // time between task checks
 	Client                  *OVClient
@@ -367,4 +367,32 @@ func (c *OVClient) GetTasksById(filter string, sort string, count string, view s
 		return tasks, err
 	}
 	return tasks, nil
+}
+
+func (c *OVClient) PatchTask(uri string) error {
+	var (
+		tasks *Task
+	)
+	c.RefreshLogin()
+        c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+        tasks = tasks.NewProfileTask(c)
+        tasks.ResetTask()
+
+	data, err := c.RestAPICall(rest.PATCH, uri, nil)
+
+	if err != nil {
+                log.Errorf("Error submitting Patch request: %s", err)
+                return err
+        }
+        log.Debugf("Patch Task %s", data)
+        if err := json.Unmarshal([]byte(data), &tasks); err != nil {
+                log.Errorf("Error with task un-marshal: %s", err)
+                return err
+        }
+
+        if err != nil {
+                return err
+        }
+
+        return nil
 }
