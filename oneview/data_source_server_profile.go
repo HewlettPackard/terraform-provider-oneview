@@ -536,14 +536,14 @@ func dataSourceServerProfile() *schema.Resource {
 													Type:     schema.TypeInt,
 													Optional: true,
 												},
-									"mode": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"predictive_spare_rebuild": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
+												"mode": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"predictive_spare_rebuild": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
 											},
 										},
 									},
