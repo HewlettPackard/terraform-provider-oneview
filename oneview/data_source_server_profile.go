@@ -20,10 +20,6 @@ func dataSourceServerProfile() *schema.Resource {
 		Read: dataSourceServerProfileRead,
 
 		Schema: map[string]*schema.Schema{
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
 			"affinity": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -129,10 +125,6 @@ func dataSourceServerProfile() *schema.Resource {
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"name": {
-										Type:     schema.TypeString,
-										Required: true,
-									},
 									"allocated_mbps": {
 										Type:     schema.TypeInt,
 										Optional: true,
@@ -302,6 +294,10 @@ func dataSourceServerProfile() *schema.Resource {
 									"maximum_mbps": {
 										Type:     schema.TypeInt,
 										Optional: true,
+									},
+									"name": {
+										Type:     schema.TypeString,
+										Required: true,
 									},
 									"network_name": {
 										Type:     schema.TypeString,
@@ -499,23 +495,11 @@ func dataSourceServerProfile() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 									},
-									"mode": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"predictive_spare_rebuild": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
 									"logical_drives": {
 										Optional: true,
 										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"name": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
 												"accelerator": {
 													Type:     schema.TypeString,
 													Optional: true,
@@ -524,7 +508,15 @@ func dataSourceServerProfile() *schema.Resource {
 													Type:     schema.TypeBool,
 													Optional: true,
 												},
+												"drive_number": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
 												"drive_technology": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"name": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
@@ -544,6 +536,14 @@ func dataSourceServerProfile() *schema.Resource {
 													Type:     schema.TypeInt,
 													Optional: true,
 												},
+									"mode": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"predictive_spare_rebuild": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 											},
 										},
 									},
@@ -558,16 +558,16 @@ func dataSourceServerProfile() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"sas_logical_jbod": {
 							Optional: true,
 							Type:     schema.TypeList,
 							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
 									"description": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -596,12 +596,24 @@ func dataSourceServerProfile() *schema.Resource {
 										Type:     schema.TypeInt,
 										Optional: true,
 									},
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 									"num_physical_drive": {
 										Type:     schema.TypeInt,
 										Optional: true,
 									},
 									"persistent": {
 										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"sas_logical_jbod_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
 										Optional: true,
 									},
 								},
@@ -647,6 +659,14 @@ func dataSourceServerProfile() *schema.Resource {
 						},
 					},
 				},
+			},
+			"modified": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"profile_uuid": {
 				Type:     schema.TypeString,
@@ -1062,6 +1082,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 			logicalDrives = append(logicalDrives, map[string]interface{}{
 				"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 				"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+				"drive_number":        serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveNumber,
 				"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
 				"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 				"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
@@ -1084,22 +1105,25 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
 	for i := 0; i < len(serverProfile.LocalStorage.SasLogicalJBODs); i++ {
 		sasLogDrives = append(sasLogDrives, map[string]interface{}{
-			"description":        serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
-			"device_slot":        serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
-			"drive_max_size_gb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
-			"drive_min_size_sb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
-			"drive_technology":   serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
-			"erase_data":         serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
-			"id":                 serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
-			"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
-			"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
-			"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+			"description":          serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
+			"device_slot":          serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
+			"drive_max_size_gb":    serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
+			"drive_min_size_sb":    serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
+			"drive_technology":     serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
+			"erase_data":           serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
+			"id":                   serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
+			"name":                 serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
+			"num_physical_drive":   serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
+			"persistent":           serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+			"sas_logical_jbod_uri": serverProfile.LocalStorage.SasLogicalJBODs[i].SasLogicalJBODUri.String(),
+			"status":               serverProfile.LocalStorage.SasLogicalJBODs[i].Status,
 		})
 	}
 	localStorage = append(localStorage, map[string]interface{}{
 		"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
 		"initialize":           serverProfile.LocalStorage.Initialize,
 		"controller":           controllers,
+		"reapply_state":        serverProfile.LocalStorage.ReapplyState,
 		"sas_logical_jbod":     sasLogDrives,
 	})
 	d.Set("local_storage", localStorage)
@@ -1123,6 +1147,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 
 		d.Set("management_processor", managementProcessor)
 	}
+	d.Set("modified", serverProfile.Modified)
 	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
 
 	if val, ok := d.GetOk("public_connection"); ok {
