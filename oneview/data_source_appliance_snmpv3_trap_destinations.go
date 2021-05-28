@@ -36,7 +36,7 @@ func dataSourceSNMPv3TrapDestination() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"id": {
+			"id_field": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -70,7 +70,7 @@ func dataSourceSNMPv3TrapDestination() *schema.Resource {
 
 func dataSourceSNMPv3TrapDestinationRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Get("id").(string)
+	id := d.Get("id_field").(string)
 	snmpTrap, err := config.ovClient.GetSNMPv3TrapDestinationsById(id)
 	if err != nil || snmpTrap.URI.IsNil() {
 		d.SetId("")
@@ -85,7 +85,7 @@ func dataSourceSNMPv3TrapDestinationRead(d *schema.ResourceData, meta interface{
 	d.Set("user_uri", snmpTrap.UserURI)
 	d.Set("etag", snmpTrap.ETAG)
 	d.Set("user_id", snmpTrap.UserID)
-	d.Set("id", snmpTrap.ID)
+	d.Set("id_field", snmpTrap.ID)
 	d.Set("port", snmpTrap.Port)
 	d.SetId(id)
 	return nil
