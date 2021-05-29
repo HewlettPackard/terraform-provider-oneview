@@ -95,6 +95,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_storage_volume_template":    dataSourceStorageVolumeTemplate(),
 			"oneview_task":                       dataSourceTask(),
 			"oneview_uplink_set":                 dataSourceUplinkSet(),
+			"oneview_version":                    dataSourceVersion(),
 			"oneview_volume":                     dataSourceVolume(),
 		},
 
