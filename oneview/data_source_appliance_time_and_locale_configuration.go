@@ -12,6 +12,9 @@
 package oneview
 
 import (
+	"encoding/json"
+	"io/ioutil"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -78,23 +81,25 @@ func dataSourceTimeAndLocale() *schema.Resource {
 
 func dataSourceTimeAndLocaleRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Get("id").(string)
-	snmpTrap, err := config.ovClient.GetSNMPv3TrapDestinationsById(id)
-	if err != nil || snmpTrap.URI.IsNil() {
+	timeLocale, err := config.ovClient.GetApplianceTimeandLocals("", "", "", "")
+	file, _ := json.MarshalIndent(timeLocale, "", " ")
+	_ = ioutil.WriteFile("test.json", file, 0644)
+	if err != nil || timeLocale.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
-	d.Set("type", snmpTrap.Type)
-	d.Set("created", snmpTrap.Created)
-	d.Set("modified", snmpTrap.Modified)
-	d.Set("uri", snmpTrap.URI.String())
-	d.Set("destination_address", snmpTrap.DestinationAddress)
-	d.Set("category", snmpTrap.Category)
-	d.Set("user_uri", snmpTrap.UserURI)
-	d.Set("etag", snmpTrap.ETAG)
-	d.Set("user_id", snmpTrap.UserID)
-	d.Set("id", snmpTrap.ID)
-	d.Set("port", snmpTrap.Port)
-	d.SetId(id)
+	d.Set("type", timeLocale.Type)
+	d.Set("created", timeLocale.Created)
+	d.Set("modified", timeLocale.Modified)
+	d.Set("uri", timeLocale.URI.String())
+	d.Set("date_time", timeLocale.DateTime)
+	d.Set("category", timeLocale.Category)
+	d.Set("locale", timeLocale.Locale)
+	d.Set("etag", timeLocale.ETAG)
+	d.Set("locale_displayname", timeLocale.LocaleDisplayName)
+	d.Set("polling_interval", timeLocale.PollingInterval)
+	d.Set("timezone", timeLocale.Timezone)
+	d.Set("ntp_servers", timeLocale.NtpServers)
+	d.SetId(timeLocale.Locale)
 	return nil
 }

@@ -68,6 +68,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
+			"oneview_appliance_time_and_locale":  dataSourceTimeAndLocale(),
 			"oneview_connection_templates":       dataSourceConnectionTemplates(),
 			"oneview_deployment_plan":            dataSourceDeploymentPlan(),
 			"oneview_enclosure":                  dataSourceEnclosure(),
