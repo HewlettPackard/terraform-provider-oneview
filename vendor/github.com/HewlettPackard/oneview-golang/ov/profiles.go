@@ -109,7 +109,7 @@ type ManagementProcessor struct {
 	ComplianceControl string       `json:"complianceControl,omitempty"` // complianceControl
 	ManageMp          bool         `json:"manageMp,omitempty"`
 	MpSettings        []mpSettings `json:"mpSettings,omitempty"`
-	ReapplyState      bool         `json:"reapplyState,omitempty"`
+	ReapplyState      string       `json:"reapplyState,omitempty"`
 }
 type mpSettings struct {
 	Args        string `json:"args, omitempty"`
