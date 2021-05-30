@@ -28,6 +28,14 @@ func dataSourceSNMPv3TrapDestination() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"trap_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"engine_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"destination_address": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -87,6 +95,8 @@ func dataSourceSNMPv3TrapDestinationRead(d *schema.ResourceData, meta interface{
 	d.Set("user_id", snmpTrap.UserID)
 	d.Set("id_field", snmpTrap.ID)
 	d.Set("port", snmpTrap.Port)
+	d.Set("engine_id", snmpTrap.EngineID)
+	d.Set("trap_type", snmpTrap.TrapType)
 	d.SetId(id)
 	return nil
 }
