@@ -1,5 +1,5 @@
 /*
-(c) Copyright [2020] Hewlett Packard Enterprise Development LP
+(c) Copyright [2021] Hewlett Packard Enterprise Development LP
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ type ManagementProcessor struct {
 	ComplianceControl string       `json:"complianceControl,omitempty"` // complianceControl
 	ManageMp          bool         `json:"manageMp,omitempty"`
 	MpSettings        []mpSettings `json:"mpSettings,omitempty"`
-	ReapplyState      bool         `json:"reapplyState,omitempty"`
+	ReapplyState      string       `json:"reapplyState,omitempty"`
 }
 type mpSettings struct {
 	Args        string `json:"args, omitempty"`
