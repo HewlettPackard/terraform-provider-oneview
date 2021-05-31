@@ -21,7 +21,7 @@ import (
 )
 
 func TestAccApplianceSNMPv1TrapDestinations_1(t *testing.T) {
-	var ApplianceSNMPv1TrapDestinations ov.SNMPv3Trap
+	var ApplianceSNMPv1TrapDestinations ov.SNMPv1Trap
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -56,7 +56,7 @@ func TestAccApplianceSNMPv1TrapDestinations_1(t *testing.T) {
 	})
 }
 
-func testAccCheckApplianceSNMPv1TrapDestinationsExists(n string, SNMPv3TrapDestinations *ov.SNMPv3Trap) resource.TestCheckFunc {
+func testAccCheckApplianceSNMPv1TrapDestinationsExists(n string, SNMPv1TrapDestinations *ov.SNMPv1Trap) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -72,14 +72,14 @@ func testAccCheckApplianceSNMPv1TrapDestinationsExists(n string, SNMPv3TrapDesti
 			return err
 		}
 
-		testSNMPv1TrapDestinations, err := config.ovClient.GetSNMPv3TrapDestinationsById(rs.Primary.ID)
+		testSNMPv1TrapDestinations, err := config.ovClient.GetSNMPv1TrapDestinationsById(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
 		if testSNMPv1TrapDestinations.ID != rs.Primary.ID {
 			return fmt.Errorf("Instance not found")
 		}
-		*SNMPv1TrapDestinations = testSNMPv3TrapDestinations
+		*SNMPv1TrapDestinations = testSNMPv1TrapDestinations
 		return nil
 	}
 }
