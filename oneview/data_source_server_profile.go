@@ -536,16 +536,16 @@ func dataSourceServerProfile() *schema.Resource {
 													Type:     schema.TypeInt,
 													Optional: true,
 												},
-												"mode": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"predictive_spare_rebuild": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
 											},
 										},
+									},
+									"mode": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"predictive_spare_rebuild": {
+										Type:     schema.TypeString,
+										Optional: true,
 									},
 								},
 							},
@@ -1080,7 +1080,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 		logicalDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers[i].LogicalDrives))
 		for j := 0; j < len(serverProfile.LocalStorage.Controllers[i].LogicalDrives); j++ {
 			logicalDrives = append(logicalDrives, map[string]interface{}{
-				"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
+				"bootable":            *serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 				"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
 				"drive_number":        serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveNumber,
 				"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
@@ -1093,7 +1093,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 		}
 		controllers = append(controllers, map[string]interface{}{
 			"device_slot":              serverProfile.LocalStorage.Controllers[i].DeviceSlot,
-			"initialize":               serverProfile.LocalStorage.Controllers[i].Initialize,
+			"initialize":               *serverProfile.LocalStorage.Controllers[i].Initialize,
 			"import_configuration":     serverProfile.LocalStorage.Controllers[i].ImportConfiguration,
 			"drive_write_cache":        serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
 			"mode":                     serverProfile.LocalStorage.Controllers[i].Mode,
