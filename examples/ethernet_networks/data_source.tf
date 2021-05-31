@@ -11,19 +11,6 @@ provider "oneview" {
 data "oneview_ethernet_network" "ethernetnetworks" {
   name = "TestEthNetwork_terraform_Rename"
 }
-
-resource "oneview_ethernet_network" "ethernetnetwork_1" {
-  name    = "Auto-Ethernet-1"
-  type    = "ethernet-networkV4"
-  vlan_id = 101
+output "oneview_ethernet_network_value"{
+ value =  data.oneview_ethernet_network.ethernetnetworks.uri
 }
-
-resource "oneview_ethernet_network" "ethernetnetwork_2" {
-  name    = "Auto-Ethernet-2"
-  type    = "ethernet-networkV4"
-  vlan_id = 102
-}
-
-#Importing Existing resource
-#resource "oneview_ethernet_network" "import_eth"{
-#}
