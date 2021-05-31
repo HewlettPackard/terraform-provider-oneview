@@ -12,12 +12,19 @@
 package oneview
 
 import (
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func dataSourceTimeAndLocale() *schema.Resource {
+func resourceTimeAndLocale() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceTimeAndLocaleRead,
+		Read:   resourceTimeAndLocaleRead,
+		Create: resourceTimeAndLocaleCreate,
+		Delete: resourceTimeAndLocaleDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"type": {
@@ -26,15 +33,18 @@ func dataSourceTimeAndLocale() *schema.Resource {
 			},
 			"date_time": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
+				ForceNew: true,
 			},
 			"locale": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
+				ForceNew: true,
 			},
 			"locale_displayname": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"ntp_servers": {
 				Type: schema.TypeSet,
@@ -42,7 +52,8 @@ func dataSourceTimeAndLocale() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set:      schema.HashString,
-				Computed: true,
+				Required: true,
+				ForceNew: true,
 			},
 			"polling_interval": {
 				Type:     schema.TypeString,
@@ -54,7 +65,8 @@ func dataSourceTimeAndLocale() *schema.Resource {
 			},
 			"timezone": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
+				ForceNew: true,
 			},
 			"modified": {
 				Type:     schema.TypeString,
@@ -76,7 +88,32 @@ func dataSourceTimeAndLocale() *schema.Resource {
 	}
 }
 
-func dataSourceTimeAndLocaleRead(d *schema.ResourceData, meta interface{}) error {
+func resourceTimeAndLocaleCreate(d *schema.ResourceData, meta interface{}) error {
+	config := meta.(*Config)
+	Locale := ov.ApplianceTimeandLocal{
+		Locale:            d.Get("locale").(string),
+		DateTime:          utils.NewNstring(d.Get("date_time").(string)),
+		Timezone:          utils.NewNstring(d.Get("timezone").(string)),
+		LocaleDisplayName: utils.NewNstring(d.Get("locale_displayname").(string)),
+	}
+	if val, ok := d.GetOk("ntp_servers"); ok {
+		rawNtpServers := val.(*schema.Set).List()
+		NtpServers := make([]utils.Nstring, len(rawNtpServers))
+		for i, raw := range rawNtpServers {
+			NtpServers[i] = utils.Nstring(raw.(string))
+		}
+		Locale.NtpServers = NtpServers
+	}
+
+	err := config.ovClient.CreateApplianceTimeandLocal(Locale)
+	if err != nil {
+		return err
+	}
+	d.SetId(d.Get("locale").(string))
+	return resourceTimeAndLocaleRead(d, meta)
+}
+
+func resourceTimeAndLocaleRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	timeLocale, err := config.ovClient.GetApplianceTimeandLocals("", "", "", "")
 	if err != nil {
@@ -96,5 +133,9 @@ func dataSourceTimeAndLocaleRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("timezone", timeLocale.Timezone)
 	d.Set("ntp_servers", timeLocale.NtpServers)
 	d.SetId(timeLocale.Locale)
+	return nil
+}
+
+func resourceTimeAndLocaleDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
