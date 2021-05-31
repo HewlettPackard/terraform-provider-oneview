@@ -29,7 +29,7 @@ func dataSourceSNMPv1TrapDestination() *schema.Resource {
 				Computed: true,
 			},
 			"destination_id": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Required: true,
 			},
 			"port": {

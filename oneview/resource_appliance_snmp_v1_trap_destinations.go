@@ -12,17 +12,15 @@
 package oneview
 
 import (
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"math/rand"
 	"strconv"
-	"encoding/json"
-	"io/ioutil"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/HewlettPackard/oneview-golang/ov"
 )
 
 func resourceSNMPv1TrapDestination() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceSNMPv1TrapDestinationRead,
+		Read:   dataSourceSNMPv1TrapDestinationRead,
 		Create: resourceSNMPv1TrapDestinationCreate,
 		Update: resourceSNMPv1TrapDestinationUpdate,
 		Delete: resourceSNMPv1TrapDestinationDelete,
@@ -40,7 +38,7 @@ func resourceSNMPv1TrapDestination() *schema.Resource {
 				Optional: true,
 			},
 			"destination_id": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"port": {
@@ -64,9 +62,9 @@ func resourceSNMPv1TrapDestinationCreate(d *schema.ResourceData, meta interface{
 		id = strconv.Itoa(rand.Intn(100))
 	}
 	options := ov.SNMPv1Trap{
-		CommunityString:    d.Get("community_string").(string),
-		Destination:        d.Get("destination").(string),
-		Port:               d.Get("port").(int),
+		CommunityString: d.Get("community_string").(string),
+		Destination:     d.Get("destination").(string),
+		Port:            d.Get("port").(int),
 	}
 
 	err := config.ovClient.CreateSNMPv1TrapDestinations(options, id)
@@ -74,37 +72,34 @@ func resourceSNMPv1TrapDestinationCreate(d *schema.ResourceData, meta interface{
 		d.SetId("")
 		return err
 	}
-	
-	file, _ := json.MarshalIndent(d.Id(), "", " ")
- 	_ = ioutil.WriteFile("test.json", file, 0644)
 
 	d.SetId(id)
 	return resourceSNMPv1TrapDestinationRead(d, meta)
 }
 
 func resourceSNMPv1TrapDestinationRead(d *schema.ResourceData, meta interface{}) error {
-        config := meta.(*Config)
+	config := meta.(*Config)
 
-        snmpTrap, err := config.ovClient.GetSNMPv1TrapDestinationsById(d.Id())
-        if err != nil {
-                d.SetId("")
-                return nil
-        }
-        d.Set("community_string", snmpTrap.CommunityString)
-        d.Set("destination", snmpTrap.Destination)
+	snmpTrap, err := config.ovClient.GetSNMPv1TrapDestinationsById(d.Id())
+	if err != nil {
+		d.SetId("")
+		return nil
+	}
+	d.Set("community_string", snmpTrap.CommunityString)
+	d.Set("destination", snmpTrap.Destination)
 	d.Set("destination_id", d.Id())
-        d.Set("port", snmpTrap.Port)
-        d.Set("uri", snmpTrap.URI)
-        return nil
+	d.Set("port", snmpTrap.Port)
+	d.Set("uri", snmpTrap.URI)
+	return nil
 }
 
 func resourceSNMPv1TrapDestinationUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	updateOptions := ov.SNMPv1Trap{
-		CommunityString:    d.Get("community_string").(string),
-		Port:               d.Get("port").(int),
-		Destination: 	    d.Get("destination").(string),
+		CommunityString: d.Get("community_string").(string),
+		Port:            d.Get("port").(int),
+		Destination:     d.Get("destination").(string),
 	}
 
 	_, err := config.ovClient.UpdateSNMPv1TrapDestinations(updateOptions, d.Id())
@@ -125,4 +120,3 @@ func resourceSNMPv1TrapDestinationDelete(d *schema.ResourceData, meta interface{
 	}
 	return nil
 }
-
