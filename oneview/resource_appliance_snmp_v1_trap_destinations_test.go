@@ -39,12 +39,12 @@ func TestAccApplianceSNMPv1TrapDestinations_1(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						"oneview_appliance_snmp_v1_trap_destinations.test", "destination_id", "4",
 					),
-					 resource.TestCheckResourceAttr(
-                                                "oneview_appliance_snmp_v1_trap_destinations.test", "community_string", "Test1",
-                                        ),
-					 resource.TestCheckResourceAttr(
-                                                "oneview_appliance_snmp_v1_trap_destinations.test", "port", 162,
-                                        ),
+					resource.TestCheckResourceAttr(
+						"oneview_appliance_snmp_v1_trap_destinations.test", "community_string", "Test1",
+					),
+					resource.TestCheckResourceAttr(
+						"oneview_appliance_snmp_v1_trap_destinations.test", "port", 162,
+					),
 				),
 			},
 			{
