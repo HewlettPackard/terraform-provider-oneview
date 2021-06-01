@@ -63,12 +63,9 @@ func testAccCheckTaskExists(n string, task *ov.Task) resource.TestCheckFunc {
 			return err
 		}
 
-		task, err := config.ovClient.GetTasksById("", "", "", "", rs.Primary.ID)
+		testTask, err := config.ovClient.GetTasksById("", "", "", "", rs.Primary.ID)
 		if err != nil {
 			return err
-		}
-		if testTask.TaskId != rs.Primary.ID {
-			return fmt.Errorf("Instance not found")
 		}
 		*task = testTask
 		return nil
