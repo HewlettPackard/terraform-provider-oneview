@@ -8,7 +8,7 @@ description: |-
 
 # oneview\_version
 
-Use this data source to access the attributes of an Ethernet network.
+Use this data source to access the attributes of version
 
 ## Example Usage
 
