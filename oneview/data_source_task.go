@@ -223,11 +223,11 @@ func dataSourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 
 	task, err := config.ovClient.GetTasksById("", "", "", "", id)
 	if filter != "" {
-		task_list, err := config.ovClient.GetTasks(filter, "", "", "", "", "")
+		taskList, err := config.ovClient.GetTasks(filter, "", "", "", "", "")
 		if err != nil {
 			d.SetId("")
 		}
-		for _, raw_task := range task_list.Members {
+		for _, raw_task := range taskList.Members {
 			if raw_task.IsCancellable {
 				task = raw_task
 			}
