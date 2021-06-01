@@ -64,7 +64,7 @@ func testAccCheckLabelsExists(n string, label *ov.AssignedLabel) resource.TestCh
 			return err
 		}
 
-		testLabel, err := config.ovClient.GetAssignedLabels(utils.Nstring(rs.Primary.ID))1G
+		testLabel, err := config.ovClient.GetAssignedLabels(utils.Nstring(rs.Primary.ID))
 		if err != nil {
 			return err
 		}
