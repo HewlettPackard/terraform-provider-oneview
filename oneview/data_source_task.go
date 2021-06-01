@@ -227,9 +227,9 @@ func dataSourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 		if err != nil {
 			d.SetId("")
 		}
-		for _, raw_task := range taskList.Members {
-			if raw_task.IsCancellable {
-				task = raw_task
+		for _, rawTask := range taskList.Members {
+			if rawTask.IsCancellable {
+				task = rawTask
 			}
 		}
 	}
