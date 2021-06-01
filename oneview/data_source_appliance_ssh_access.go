@@ -17,7 +17,7 @@ import (
 
 func dataSourceSSHAccess() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceSshAccessRead,
+		Read: dataSourceSSHAccessRead,
 
 		Schema: map[string]*schema.Schema{
 			"allow_ssh_access": {
