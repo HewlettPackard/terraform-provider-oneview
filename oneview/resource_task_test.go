@@ -73,7 +73,6 @@ func testAccCheckTaskExists(n string, task *ov.Task) resource.TestCheckFunc {
 }
 
 func testAccCheckTaskDestroy(s *terraform.State) error {
-	config := testAccProvider.Meta().(*Config)
 
 	return nil
 }
