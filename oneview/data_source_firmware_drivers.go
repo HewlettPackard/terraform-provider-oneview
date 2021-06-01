@@ -20,6 +20,10 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 		Read: dataSourceFirmwareDriversRead,
 
 		Schema: map[string]*schema.Schema{
+			"id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"category": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -66,6 +70,10 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 			},
 			"bundle_size": {
 				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"bundle_type": {
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"esxi_os_driver_meta_data": {
@@ -138,19 +146,17 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 			},
 			"mirror_list": {
 				Computed: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeMap,
 				Elem: &schema.Schema{
-					Type: schema.TypeString,
+					Type: schema.TypeList,
 				},
-				Set: schema.HashString,
 			},
 			"locations": {
 				Computed: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeMap,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Set: schema.HashString,
 			},
 			"parent_bundle": {
 				Computed: true,
@@ -186,7 +192,7 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 			},
 			"scope_uri": {
 				Computed: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeString,
 			},
 			"signature_file_name": {
 				Type:     schema.TypeString,
@@ -230,30 +236,75 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 
 func dataSourceFirmwareDriversRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	name := d.Get("name").(string)
-	cTemplate, err := config.ovClient.GetConnectionTemplateByName(name)
-	if err != nil || cTemplate.URI.IsNil() {
+	id := d.Get("id").(string)
+	firmware, err := config.ovClient.GetFirmwareBaselineByUri(id)
+	if err != nil || firmware.Uri.IsNil() {
 		d.SetId("")
 		return nil
 	}
-	d.Set("name", cTemplate.Name)
-	d.Set("type", cTemplate.Type)
-	d.Set("created", cTemplate.Created)
-	d.Set("modified", cTemplate.Modified)
-	d.Set("uri", cTemplate.URI.String())
-	d.Set("status", cTemplate.Status)
-	d.Set("category", cTemplate.Category)
-	d.Set("state", cTemplate.State)
-	d.Set("etag", cTemplate.ETAG)
-	d.Set("description", cTemplate.Description)
-	bandwidth := make([]map[string]interface{}, 0, 1)
+	d.Set("name", firmware.Name)
+	d.Set("type", firmware.Type)
+	d.Set("created", firmware.Created)
+	d.Set("modified", firmware.Modified)
+	d.Set("uri", firmware.Uri.String())
+	d.Set("status", firmware.Status)
+	d.Set("category", firmware.Category)
+	d.Set("state", firmware.State)
+	d.Set("etag", firmware.ETAG)
+	d.Set("description", firmware.Description)
+	d.Set("baseline_short_name", firmware.BaselineShortName)
+	d.Set("bundle_size", firmware.BundleSize)
+	d.Set("bundle_type", firmware.BundleType)
+	d.Set("esxi_os_driver_meta_data", firmware.EsxiOsDriverMetaData)
+	d.Set("hpsum_version", firmware.HpsumVersion)
+	d.Set("iso_file_name", firmware.IsoFileName)
+	d.Set("last_task_uri", firmware.LastTaskUri)
+	d.Set("release_data", firmware.ReleaseDate)
+	d.Set("resource_id", firmware.ResourceId)
+	d.Set("resource_state", firmware.ResourceState)
+	d.Set("scope_uri", firmware.ScopesUri)
+	d.Set("signature_file_name", firmware.SignatureFileName)
+	d.Set("signature_file_required", firmware.SignatureFileRequired)
+	d.Set("supported_languages", firmware.SupportedLanguages)
+	d.Set("supported_os_list", firmware.SupportedOSList)
+	d.Set("sw_packages_full_path", firmware.SwPackagesFullPath)
+	d.Set("uuid", firmware.Uuid)
+	d.Set("version", firmware.Version)
+	d.Set("xml_key_name", firmware.XmlKeyName)
 
-	bandwidth = append(bandwidth, map[string]interface{}{
-		"maximum_bandwidth": cTemplate.Bandwidth.MaximumBandwidth,
-		"typical_bandwidth": cTemplate.Bandwidth.TypicalBandwidth,
+	fwcomponent := make([]map[string]interface{}, 0, len(firmware.FwComponents))
+	for _, component := range firmware.FwComponents {
+		fwcomponent = append(fwcomponent, map[string]interface{}{
+			"component_version": component.ComponentVersion,
+			"file_name":         component.FileName,
+			"name":              component.Name,
+			"sw_key_name_list":  component.SwKeyNameList,
+		})
+	}
+	d.Set("fw_components", fwcomponent)
+
+	hotFixes := make([]map[string]interface{}, 0, len(firmware.Hotfixes))
+	for _, hotfix := range firmware.Hotfixes {
+		hotFixes = append(hotFixes, map[string]interface{}{
+			"hotfix_name":  hotfix.HotfixName,
+			"release_data": hotfix.ReleaseDate,
+			"resource_id":  hotfix.ResourceId,
+		})
+	}
+	d.Set("hotfixes", hotFixes)
+
+	parentBundle := make([]map[string]interface{}, 0, 1)
+	parentBundle = append(parentBundle, map[string]interface{}{
+		"parent_bundle_name": firmware.ParentBundle.ParentBundleName,
+		"release_data":       firmware.ParentBundle.ReleaseDate,
+		"version":            firmware.ParentBundle.Version,
 	})
 
-	d.Set("bandwidth", bandwidth)
-	d.SetId(name)
+	d.Set("parent_bundle", parentBundle)
+
+	d.Set("locations", firmware.Locations)
+	d.Set("mirror_list", firmware.Mirrorlist)
+
+	d.SetId(id)
 	return nil
 }
