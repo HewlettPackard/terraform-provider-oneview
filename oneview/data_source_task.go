@@ -223,13 +223,13 @@ func dataSourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 
 	task, err := config.ovClient.GetTasksById("", "", "", "", id)
 	if filter != "" {
-		task_list, err := config.ovClient.GetTasks(filter, "", "", "")
+		taskList, err := config.ovClient.GetTasks(filter, "", "", "", "", "")
 		if err != nil {
 			d.SetId("")
 		}
-		for _, raw_task := range task_list.Members {
-			if raw_task.IsCancellable {
-				task = raw_task
+		for _, rawTask := range taskList.Members {
+			if rawTask.IsCancellable {
+				task = rawTask
 			}
 		}
 	}
@@ -239,25 +239,25 @@ func dataSourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	associated_res := make([]map[string]interface{}, 0, 1)
-	associated_res = append(associated_res, map[string]interface{}{
+	associatedRes := make([]map[string]interface{}, 0, 1)
+	associatedRes = append(associatedRes, map[string]interface{}{
 		"association_type":  task.AssociatedRes.AssociationType,
 		"resource_category": task.AssociatedRes.ResourceCateogry,
 		"resource_name":     task.AssociatedRes.ResourceName,
 		"resource_uri":      task.AssociatedRes.ResourceURI,
 	})
 
-	progress_updates := make([]map[string]interface{}, 0, len(task.ProgressUpdates))
+	progressUpdates := make([]map[string]interface{}, 0, len(task.ProgressUpdates))
 	for _, update := range task.ProgressUpdates {
-		progress_updates = append(progress_updates, map[string]interface{}{
+		progressUpdates = append(progressUpdates, map[string]interface{}{
 			"time_stamp":    update.TimeStamp,
 			"status_update": update.StatusUpdate,
 			"id":            update.ID,
 		})
 	}
 
-	d.Set("associated_resources", associated_res)
-	d.Set("progress_updates", progress_updates)
+	d.Set("associated_resources", associatedRes)
+	d.Set("progress_updates", progressUpdates)
 	d.Set("type", task.Type)
 	d.Set("category", task.Category)
 	d.Set("computed_percent_complete", task.ComputedPercentComplete)

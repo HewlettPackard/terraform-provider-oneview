@@ -13,7 +13,6 @@ package oneview
 
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -29,8 +28,8 @@ func resourceSshAccess() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"allow_ssh_access": {
 				Type:     schema.TypeBool,
-				Required: true,
-				ForceNew: true,
+				Default:  false,
+				Optional: true,
 			},
 			"category": {
 				Type:     schema.TypeString,
@@ -63,7 +62,7 @@ func resourceSshAccess() *schema.Resource {
 func resourceSshAccessUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	Sshaccess := ov.ApplianceSshAccess{
-		AllowSshAccess:            d.Get("allow_ssh_access").(bool),
+		AllowSshAccess: d.Get("allow_ssh_access").(bool),
 	}
 
 	err := config.ovClient.SetSshAccess(Sshaccess)
@@ -76,7 +75,7 @@ func resourceSshAccessUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceSshAccessRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	timeLocale, err := config.ovClient.GetSshAccess()
+	sshAccess, err := config.ovClient.GetSshAccess()
 	if err != nil {
 		d.SetId("")
 		return nil

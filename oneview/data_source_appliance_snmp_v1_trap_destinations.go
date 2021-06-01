@@ -15,33 +15,25 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func dataSourceSshAccess() *schema.Resource {
+func dataSourceSNMPv1TrapDestination() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceSshAccessRead,
+		Read: dataSourceSNMPv1TrapDestinationRead,
 
 		Schema: map[string]*schema.Schema{
-			"allow_ssh_access": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
-			"category": {
+			"community_string": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"created": {
+			"destination": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"etag": {
+			"destination_id": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
-			"modified": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
+			"port": {
+				Type:     schema.TypeInt,
 				Computed: true,
 			},
 			"uri": {
@@ -52,20 +44,18 @@ func dataSourceSshAccess() *schema.Resource {
 	}
 }
 
-func dataSourceSshAccessRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceSNMPv1TrapDestinationRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	sshAccess, err := config.ovClient.GetSshAccess()
-	if err != nil {
+	id := d.Get("destination_id").(string)
+	snmpTrap, err := config.ovClient.GetSNMPv1TrapDestinationsById(id)
+	if err != nil || snmpTrap.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
-	d.SetId(sshAccess.Type)
-	d.Set("allow_ssh_access", sshAccess.AllowSshAccess)
-	d.Set("category", sshAccess.Category)
-	d.Set("created", sshAccess.Created)
-	d.Set("etag", sshAccess.ETAG)
-	d.Set("modified", sshAccess.Modified)
-	d.Set("type", sshAccess.Type)
-	d.Set("uri", sshAccess.URI.String())
+	d.Set("community_string", snmpTrap.CommunityString)
+	d.Set("destination", snmpTrap.Destination)
+	d.Set("port", snmpTrap.Port)
+	d.Set("uri", snmpTrap.URI.String())
+	d.SetId(id)
 	return nil
 }

@@ -110,4 +110,3 @@ var testAccsshAccessUpdated = `
   resource "oneview_connection_templates" "test" {
     allow_ssh_access = false
   }`
-
