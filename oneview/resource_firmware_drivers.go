@@ -291,12 +291,12 @@ func resourceFirmwareDriversCreate(d *schema.ResourceData, meta interface{}) err
 		customBundle.InitialScopeUris = initialScopeUris
 	}
 
-	rawHotflixUri := d.Get("hotfix_uris").(*schema.Set).List()
-	HotflixUri := make([]utils.Nstring, len(rawHotflixUri))
-	for i, raw := range rawHotflixUri {
-		HotflixUri[i] = utils.Nstring(raw.(string))
+	rawHotflixURI := d.Get("hotfix_uris").(*schema.Set).List()
+	HotflixURI := make([]utils.Nstring, len(rawHotflixURI))
+	for i, raw := range rawHotflixURI {
+		HotflixURI[i] = utils.Nstring(raw.(string))
 	}
-	customBundle.HotfixUris = HotflixUri
+	customBundle.HotfixUris = HotflixURI
 
 	err := config.ovClient.CreateCustomServicePack(customBundle, force)
 	if err != nil {
@@ -308,17 +308,17 @@ func resourceFirmwareDriversCreate(d *schema.ResourceData, meta interface{}) err
 
 func resourceFirmwareDriversRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	firmware_all, err := config.ovClient.GetFirmwareBaselineList("", "", "")
-	if err != nil || firmware_all.Uri.IsNil() {
+	firmwareAll, err := config.ovClient.GetFirmwareBaselineList("", "", "")
+	if err != nil || firmwareAll.Uri.IsNil() {
 		d.SetId("")
 		return nil
 	}
 	firmware := ov.FirmwareDrivers{}
-	for i := range firmware_all.Members {
-		if firmware_all.Members[i].Name != d.Get("custom_baseline_name").(string) {
+	for i := range firmwareAll.Members {
+		if firmwareAll.Members[i].Name != d.Get("custom_baseline_name").(string) {
 			continue
 		} else {
-			firmware = firmware_all.Members[i]
+			firmware = firmwareAll.Members[i]
 			d.Set("name", firmware.Name)
 			d.Set("type", firmware.Type)
 			d.Set("created", firmware.Created)
