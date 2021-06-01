@@ -20,7 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
-func TestAccLabels(t *testing.T) {
+func TestAccLabels_1(t *testing.T) {
 	var label ov.AssignedLabel
 
 	resource.Test(t, resource.TestCase{
@@ -29,9 +29,9 @@ func TestAccLabels(t *testing.T) {
 		CheckDestroy: testAccCheckLabelsDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccLables,
+				Config: testAccLabels,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckLablesExists(
+					testAccCheckLabelsExists(
 						"oneview_labels.test", &label),
 					resource.TestCheckResourceAttr(
 						"oneview_labels.test", "resource_uri", "/rest/labels/resources/resource_uri",
@@ -92,6 +92,6 @@ func testAccCheckLabelsDestroy(s *terraform.State) error {
 	return nil
 }
 
-var testAccLables = `resource "oneview_labels" "test" {
+var testAccLabels = `resource "oneview_labels" "test" {
   resource_uri = "/rest/labels/resources/resource_uri"
 }`
