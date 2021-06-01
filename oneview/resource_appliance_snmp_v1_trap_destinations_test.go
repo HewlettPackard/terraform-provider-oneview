@@ -76,9 +76,6 @@ func testAccCheckApplianceSNMPv1TrapDestinationsExists(n string, SNMPv1TrapDesti
 		if err != nil {
 			return err
 		}
-		if testSNMPv1TrapDestinations.ID != rs.Primary.ID {
-			return fmt.Errorf("Instance not found")
-		}
 		*SNMPv1TrapDestinations = testSNMPv1TrapDestinations
 		return nil
 	}
