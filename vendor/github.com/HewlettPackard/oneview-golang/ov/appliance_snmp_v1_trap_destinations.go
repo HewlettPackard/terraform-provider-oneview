@@ -30,13 +30,13 @@ type SNMPv1TrapList struct {
 	URI         utils.Nstring `json:"uri,omitempty"`
 }
 
-type ValidationAddress struct {
+type Trapv1ValidationAddress struct {
 	CommunityString string        `json:"communityString, omitempty"`
 	Destination     string        `json:"destination,omitempty"`
 	URI             utils.Nstring `json:"uri,omitempty"`
 }
 
-func (c *OVClient) ValidateDestinationAddress(validate ValidationAddress) error {
+func (c *OVClient) Trapv1ValidateDestinationAddress(validate Trapv1ValidationAddress) error {
 	var (
 		uri = "/rest/appliance/trap-destinations/validation"
 	)
@@ -58,20 +58,18 @@ func (c *OVClient) ValidateDestinationAddress(validate ValidationAddress) error 
 func (c *OVClient) CreateSNMPv1TrapDestinations(trapOption SNMPv1Trap, id string) error {
 	log.Infof("Initializing creation of SNMPv1 Trap Destinations for %s.", trapOption.CommunityString)
 	var (
-		uri      = "/rest/appliance/trap-destinations/"
+		uri      = "/rest/appliance/trap-destinations/" + id
 		trapdata SNMPv1Trap
 	)
 
-	uri = uri + id
 	//validating the Destination Address
-
-	validate := ValidationAddress{
+	validate := Trapv1ValidationAddress{
 		CommunityString: trapOption.CommunityString,
 		Destination:     trapOption.Destination,
 		URI:             utils.Nstring(uri),
 	}
 	log.Infof("Validating SNMPv1 Trap Destinations Address %s.", validate)
-	err := c.ValidateDestinationAddress(validate)
+	err := c.Trapv1ValidateDestinationAddress(validate)
 	if err != nil {
 		return errors.New("Invalid Destination Address")
 	}
@@ -133,7 +131,7 @@ func (c *OVClient) GetSNMPv1TrapDestinations(filter string, sort string, start s
 		return traplist, err
 	}
 
-	log.Debugf("Gettraplist %s", data)
+	log.Debugf("Get v1 Trap list: %s", data)
 	if err := json.Unmarshal(data, &traplist); err != nil {
 		return traplist, err
 	}
@@ -143,11 +141,10 @@ func (c *OVClient) GetSNMPv1TrapDestinations(filter string, sort string, start s
 
 func (c *OVClient) GetSNMPv1TrapDestinationsById(id string) (SNMPv1Trap, error) {
 	var (
-		uri    = "/rest/appliance/trap-destinations/"
+		uri    = "/rest/appliance/trap-destinations/" + id
 		trapId SNMPv1Trap
 	)
 
-	uri = uri + id
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
@@ -156,7 +153,7 @@ func (c *OVClient) GetSNMPv1TrapDestinationsById(id string) (SNMPv1Trap, error) 
 		return trapId, err
 	}
 
-	log.Debugf("GetLocalelist %s", data)
+	log.Debugf("Get Trap By Id %s", data)
 	if err := json.Unmarshal(data, &trapId); err != nil {
 		return trapId, err
 	}
@@ -165,7 +162,7 @@ func (c *OVClient) GetSNMPv1TrapDestinationsById(id string) (SNMPv1Trap, error) 
 
 func (c *OVClient) UpdateSNMPv1TrapDestinations(updateOption SNMPv1Trap, id string) (SNMPv1Trap, error) {
 	var (
-		uri            = "/rest/appliance/trap-destinations/"
+		uri            = "/rest/appliance/trap-destinations/" + id
 		updateResponse SNMPv1Trap
 	)
 
@@ -173,7 +170,6 @@ func (c *OVClient) UpdateSNMPv1TrapDestinations(updateOption SNMPv1Trap, id stri
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
-	uri = uri + id
 	log.Debugf("REST : %s \n %+v\n", uri, updateOption)
 	data, err := c.RestAPICall(rest.PUT, uri, updateOption)
 	if err != nil {
@@ -194,10 +190,9 @@ func (c *OVClient) DeleteSNMPv1TrapDestinations(id string) error {
 	var (
 		trap SNMPv1Trap
 		err  error
-		uri  = "/rest/appliance/trap-destinations/"
+		uri  = "/rest/appliance/trap-destinations/" + id
 	)
 
-	uri = uri + id
 	trap, err = c.GetSNMPv1TrapDestinationsById(id)
 	if err != nil {
 		return err
