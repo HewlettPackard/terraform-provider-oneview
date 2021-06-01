@@ -55,7 +55,7 @@ func dataSourceSNMPv1TrapDestinationRead(d *schema.ResourceData, meta interface{
 	d.Set("community_string", snmpTrap.CommunityString)
 	d.Set("destination", snmpTrap.Destination)
 	d.Set("port", snmpTrap.Port)
-	d.Set("uri", snmpTrap.URI)
+	d.Set("uri", snmpTrap.URI.String())
 	d.SetId(id)
 	return nil
 }

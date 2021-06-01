@@ -35,5 +35,5 @@ func TestAccApplianceSNMPv1TrapDestinations_2(t *testing.T) {
 
 var testAccApplianceSNMPv1TrapDestinationsData = `
   data "oneview_appliance_snmp_v1_trap_destinations" "test" {		  
-    id = "4"
+    destination_id = "4"
   }`

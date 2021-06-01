@@ -89,7 +89,7 @@ func resourceSNMPv1TrapDestinationRead(d *schema.ResourceData, meta interface{})
 	d.Set("destination", snmpTrap.Destination)
 	d.Set("destination_id", d.Id())
 	d.Set("port", snmpTrap.Port)
-	d.Set("uri", snmpTrap.URI)
+	d.Set("uri", snmpTrap.URI.String())
 	return nil
 }
 
