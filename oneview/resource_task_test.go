@@ -63,7 +63,7 @@ func testAccCheckTaskExists(n string, task *ov.Task) resource.TestCheckFunc {
 			return err
 		}
 
-		task, err := config.ovClient.GetTasksById("", "", "", "",rs.Primary.ID)
+		task, err := config.ovClient.GetTasksById("", "", "", "", rs.Primary.ID)
 		if err != nil {
 			return err
 		}
