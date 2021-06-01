@@ -90,7 +90,7 @@ func testAccCheckApplianceSNMPv1TrapDestinationsDestroy(s *terraform.State) erro
 
 		testTrap, _ := config.ovClient.GetSNMPv1TrapDestinationsById(rs.Primary.ID)
 
-		if testTrap.ID != "" {
+		if testTrap.Destination != "" {
 			return fmt.Errorf("ApplianceSNMPv1TrapDestinations still exists")
 		}
 	}
