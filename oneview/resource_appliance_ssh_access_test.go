@@ -40,7 +40,7 @@ func TestAccSshAccess_1(t *testing.T) {
 			{
 				Config: testAccsshAccessUpdated,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckconnectionTemplateExists(
+					testAccChecksshAccessExists(
 						"oneview_appliance_ssh_access.test", &sshAccess),
 					resource.TestCheckResourceAttr(
 						"oneview_appliance_ssh_access.test", "allow_ssh_access", "false",

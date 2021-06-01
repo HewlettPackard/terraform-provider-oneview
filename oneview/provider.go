@@ -68,7 +68,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"oneview_appliance_ssh_access":                dataSourceSshAccess(),
+			"oneview_appliance_ssh_access":                dataSourceSSHAccess(),
 			"oneview_appliance_snmp_v1_trap_destinations": dataSourceSNMPv1TrapDestination(),
 			"oneview_connection_templates":                dataSourceConnectionTemplates(),
 			"oneview_deployment_plan":                     dataSourceDeploymentPlan(),
@@ -101,7 +101,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"oneview_appliance_ssh_access":                resourceSshAccess(),
+			"oneview_appliance_ssh_access":                resourceSSHAccess(),
 			"oneview_appliance_snmp_v1_trap_destinations": resourceSNMPv1TrapDestination(),
 			"oneview_connection_templates":                resourceConnectionTemplates(),
 			"oneview_deployment_plan":                     resourceDeploymentPlan(),

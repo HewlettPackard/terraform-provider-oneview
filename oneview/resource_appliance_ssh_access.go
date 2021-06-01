@@ -16,11 +16,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func resourceSshAccess() *schema.Resource {
+func resourceSSHAccess() *schema.Resource {
 	return &schema.Resource{
-		Read:   resourceSshAccessRead,
-		Update: resourceSshAccessUpdate,
-		Delete: resourceSshAccessDelete,
+		Read:   resourceSSHAccessRead,
+		Update: resourceSSHAccessUpdate,
+		Delete: resourceSSHAccessDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -59,7 +59,7 @@ func resourceSshAccess() *schema.Resource {
 	}
 }
 
-func resourceSshAccessUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceSSHAccessUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	Sshaccess := ov.ApplianceSshAccess{
 		AllowSshAccess: d.Get("allow_ssh_access").(bool),
@@ -70,10 +70,10 @@ func resourceSshAccessUpdate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	d.SetId(d.Get("type").(string))
-	return resourceSshAccessRead(d, meta)
+	return resourceSSHAccessRead(d, meta)
 }
 
-func resourceSshAccessRead(d *schema.ResourceData, meta interface{}) error {
+func resourceSSHAccessRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	sshAccess, err := config.ovClient.GetSshAccess()
 	if err != nil {
@@ -91,6 +91,6 @@ func resourceSshAccessRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func resourceSshAccessDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceSSHAccessDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }

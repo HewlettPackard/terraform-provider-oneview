@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func dataSourceSshAccess() *schema.Resource {
+func dataSourceSSHAccess() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceSshAccessRead,
 
@@ -52,7 +52,7 @@ func dataSourceSshAccess() *schema.Resource {
 	}
 }
 
-func dataSourceSshAccessRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceSSHAccessRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	sshAccess, err := config.ovClient.GetSshAccess()
 	if err != nil {
