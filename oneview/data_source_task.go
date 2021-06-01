@@ -223,7 +223,7 @@ func dataSourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 
 	task, err := config.ovClient.GetTasksById("", "", "", "", id)
 	if filter != "" {
-		task_list, err := config.ovClient.GetTasks(filter, "", "", "")
+		task_list, err := config.ovClient.GetTasks(filter, "", "", "", "", "")
 		if err != nil {
 			d.SetId("")
 		}
