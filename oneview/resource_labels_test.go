@@ -15,8 +15,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
