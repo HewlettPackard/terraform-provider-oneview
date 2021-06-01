@@ -33,7 +33,7 @@ func TestAccSshAccess_1(t *testing.T) {
 					testAccChecksshAccessExists(
 						"oneview_appliance_ssh_access.test", &sshAccess),
 					resource.TestCheckResourceAttr(
-						"oneview_appliance_ssh_access.test", "allow_ssh_access", true,
+						"oneview_appliance_ssh_access.test", "allow_ssh_access", "true",
 					),
 				),
 			},
@@ -43,7 +43,7 @@ func TestAccSshAccess_1(t *testing.T) {
 					testAccCheckconnectionTemplateExists(
 						"oneview_appliance_ssh_access.test", &sshAccess),
 					resource.TestCheckResourceAttr(
-						"oneview_appliance_ssh_access.test", "allow_ssh_access", false,
+						"oneview_appliance_ssh_access.test", "allow_ssh_access", "false",
 					),
 				),
 			},
