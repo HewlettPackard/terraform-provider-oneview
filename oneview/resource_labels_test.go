@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
@@ -63,11 +64,11 @@ func testAccCheckLabelsExists(n string, label *ov.AssignedLabel) resource.TestCh
 			return err
 		}
 
-		testLabel, err := config.ovClient.GetAssignedLabels(rs.Primary.ID)
+		testLabel, err := config.ovClient.GetAssignedLabels(utils.Nstring(rs.Primary.ID))1G
 		if err != nil {
 			return err
 		}
-		if testLabel.ResourceUri != rs.Primary.ID {
+		if testLabel.ResourceUri.String() != rs.Primary.ID {
 			return fmt.Errorf("Instance not found")
 		}
 		*label = testLabel
@@ -82,7 +83,7 @@ func testAccCheckLabelsDestroy(s *terraform.State) error {
 			continue
 		}
 
-		testLabel, _ := config.ovClient.GetAssignedLabels(rs.Primary.ID)
+		testLabel, _ := config.ovClient.GetAssignedLabels(utils.Nstring(rs.Primary.ID))
 
 		if testLabel.ResourceUri != "" {
 			return fmt.Errorf("Labels still exists")
