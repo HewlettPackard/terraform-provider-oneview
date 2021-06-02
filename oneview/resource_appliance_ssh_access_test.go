@@ -48,7 +48,7 @@ func TestAccSshAccess_1(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      testAccconnectionTemplate,
+				ResourceName:      testAccsshAccess,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
