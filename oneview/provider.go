@@ -97,8 +97,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_task":                                dataSourceTask(),
 			"oneview_uplink_set":                          dataSourceUplinkSet(),
 			"oneview_volume":                              dataSourceVolume(),
-      "oneview_version":                             dataSourceVersion(),
-
+			"oneview_version":                             dataSourceVersion(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -128,7 +127,6 @@ func Provider() terraform.ResourceProvider {
 			"oneview_task":                                resourceTask(),
 			"oneview_uplink_set":                          resourceUplinkSet(),
 			"oneview_volume":                              resourceVolume(),
-      
 		},
 		ConfigureFunc: providerConfigure,
 	}
