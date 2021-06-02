@@ -26,7 +26,7 @@ func TestAccSNMPv3TrapDestinations_2(t *testing.T) {
 			{
 				Config: testAccSNMPv3TrapDestinationsData,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("oneview_snmpv3_trap_destinations.test", "id", "TestSNMPv3TrapDestinations"),
+					resource.TestCheckResourceAttr("oneview_appliance_snmpv3_trap_destinations.test", "id", "TestSNMPv3TrapDestinations"),
 				),
 			},
 		},
@@ -34,6 +34,6 @@ func TestAccSNMPv3TrapDestinations_2(t *testing.T) {
 }
 
 var testAccSNMPv3TrapDestinationsData = `
-  data "oneview_snmpv3_trap_destinations" "test" {		  
+  data "oneview_appliance_snmpv3_trap_destinations" "test" {		  
     id = "TestSNMPv3TrapDestinations"
   }`

@@ -6,19 +6,19 @@ description: |-
  Gets information about an existing snmpv3_trap_destinations.
 ---
 
-# oneview\_snmpv3\_trap\_destinations
+# oneview\_appliance\_snmpv3\_trap\_destinations
 
 Use this data source to access the attributes of a snmpv3_trap_destinations.
 
 ## Example Usage
 
 ```hcl
-data "oneview_snmpv3_trap_destinations" "test" {
+data "oneview_appliance_snmpv3_trap_destinations" "test" {
  id_field = "67003649-af34-4a92-a46a-137855ddc8f7"
 }
 
-output "oneview_snmpv3_trap_destination_value" {
- value = "${data.oneview_snmpv3_trap_destinations.snmptrap}"
+output "oneview_snmpv3_trap_destinations" {
+ value = "${data.oneview_snmpv3_trap_destinations.test}"
 }
 ```
 

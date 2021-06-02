@@ -32,12 +32,15 @@ func TestAccSNMPv3TrapDestinations_1(t *testing.T) {
 				Config: testAccSNMPv3TrapDestinations,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSNMPv3TrapDestinationsExists(
-						"oneview_snmpv3_trap_destinations.test", &SNMPv3TrapDestinations),
+						"oneview_appliance_snmpv3_trap_destinations.test", &SNMPv3TrapDestinations),
 					resource.TestCheckResourceAttr(
-						"oneview_snmpv3_trap_destinations.test", "destination_address", "test_destination_address",
+						"oneview_appliance_snmpv3_trap_destinations.test", "destination_address", "test_destination_address",
 					),
 					resource.TestCheckResourceAttr(
-						"oneview_snmpv3_trap_destinations.test", "user_id", "test_user_id",
+						"oneview_appliance_snmpv3_trap_destinations.test", "user_id", "test_user_id",
+					),
+					resource.TestCheckResourceAttr(
+						"oneview_appliance_snmpv3_trap_destinations.test", "port", "162",
 					),
 				),
 			},
@@ -81,7 +84,7 @@ func testAccCheckSNMPv3TrapDestinationsExists(n string, SNMPv3TrapDestinations *
 func testAccCheckSNMPv3TrapDestinationsDestroy(s *terraform.State) error {
 	config := testAccProvider.Meta().(*Config)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "oneview_snmpv3_trap_destinations" {
+		if rs.Type != "oneview_appliance_snmpv3_trap_destinations" {
 			continue
 		}
 
@@ -95,7 +98,7 @@ func testAccCheckSNMPv3TrapDestinationsDestroy(s *terraform.State) error {
 	return nil
 }
 
-var testAccSNMPv3TrapDestinations = `resource "oneview_snmpv3_trap_destinations" "test" {
+var testAccSNMPv3TrapDestinations = `resource "oneview_appliance_snmpv3_trap_destinations" "test" {
     destination_address = "test_destination_address"
     port = 162
     user_id = "test_user_id"

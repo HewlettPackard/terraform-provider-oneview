@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 # Update SNMPv3 Trap Destination - changing port 162 to 190
-resource "oneview_snmpv3_trap_destinations" "snmptrap" {
+resource "oneview_appliance_snmpv3_trap_destinations" "snmptrap" {
     destination_address = "1.1.1.1"
     port = 190
     user_id = "41b96bbb-8f31-44e1-a3aa-8681e3d7c56c"
