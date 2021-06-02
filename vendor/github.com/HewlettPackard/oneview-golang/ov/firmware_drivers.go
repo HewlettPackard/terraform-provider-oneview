@@ -125,7 +125,7 @@ func (c *OVClient) GetFirmwareBaselineList(sort string, start string, count stri
 
 }
 
-func (c *OVClient) GetFirmwareBaselineByUri(id string) (FirmwareDrivers, error) {
+func (c *OVClient) GetFirmwareBaselineById(id string) (FirmwareDrivers, error) {
 	var (
 		uri        = "/rest/firmware-drivers/" + id
 		firmwareId FirmwareDrivers
@@ -192,7 +192,7 @@ func (c *OVClient) DeleteFirmwareBaseline(id string, force string) error {
 		uri      = "/rest/firmware-drivers/" + id
 	)
 
-	firmware, err = c.GetFirmwareBaselineByUri(id)
+	firmware, err = c.GetFirmwareBaselineById(id)
 	if err != nil {
 		return err
 	}

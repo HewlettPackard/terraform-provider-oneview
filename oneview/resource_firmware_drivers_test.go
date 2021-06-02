@@ -66,7 +66,7 @@ func testAccCheckFirmwareDriversExists(n string, FirmwareDrivers *ov.FirmwareDri
 			return err
 		}
 
-		testFirmwareDrivers, err := config.ovClient.GetFirmwareBaselineByUri(rs.Primary.ID)
+		testFirmwareDrivers, err := config.ovClient.GetFirmwareBaselineById(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -85,7 +85,7 @@ func testAccCheckFirmwareDriversDestroy(s *terraform.State) error {
 			continue
 		}
 
-		testFirmware, _ := config.ovClient.GetFirmwareBaselineByUri(rs.Primary.ID)
+		testFirmware, _ := config.ovClient.GetFirmwareBaselineById(rs.Primary.ID)
 
 		if testFirmware.Name != "" {
 			return fmt.Errorf("FirmwareDrivers still exists")
