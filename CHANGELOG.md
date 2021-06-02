@@ -18,6 +18,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
    - POST    /rest/appliance/trap-destinations/{id}
    - PUT     /rest/appliance/trap-destinations/{id}
    - DELETE  /rest/appliance/trap-destinations/{id}
+3. Added support to support to retreive the appliance supported version.
+   - GET /rest/version
+
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
