@@ -69,7 +69,7 @@ func Provider() terraform.ResourceProvider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"oneview_appliance_time_and_locale":           dataSourceTimeAndLocale(),
-      "oneview_appliance_snmp_v1_trap_destinations": dataSourceSNMPv1TrapDestination(),
+			"oneview_appliance_snmp_v1_trap_destinations": dataSourceSNMPv1TrapDestination(),
 			"oneview_connection_templates":                dataSourceConnectionTemplates(),
 			"oneview_deployment_plan":                     dataSourceDeploymentPlan(),
 			"oneview_enclosure":                           dataSourceEnclosure(),
@@ -101,7 +101,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-      "oneview_appliance_time_and_locale":           resourceTimeAndLocale(),
+			"oneview_appliance_time_and_locale":           resourceTimeAndLocale(),
 			"oneview_appliance_snmp_v1_trap_destinations": resourceSNMPv1TrapDestination(),
 			"oneview_connection_templates":                resourceConnectionTemplates(),
 			"oneview_deployment_plan":                     resourceDeploymentPlan(),
