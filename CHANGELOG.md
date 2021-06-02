@@ -1,6 +1,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v6.2.0-13] (Unreleased)
+### Bug fixes & Enhancements:
+- [#289] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/289) Terraform crashes for Logical Interconnect Group Read
+- [#300] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/300) Can't create resource oneview_server_profile_template
+- [#301] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/301) Can't create resource oneview_server_profile
 
 # [v6.2.0-13] (unreleased)
 
@@ -8,13 +13,20 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 1. Added support to Connection Templates Resource.
    - GET /rest/connection-templates/{id}
    - PUT /rest/connection-templates/{id}
-2. Added support to support to retreive the appliance supported version.
+2. Added support to Appliance SNMPv1 Trap Destinations
+   - GET     /rest/appliance/trap-destinations/{id}
+   - POST    /rest/appliance/trap-destinations/{id}
+   - PUT     /rest/appliance/trap-destinations/{id}
+   - DELETE  /rest/appliance/trap-destinations/{id}
+3. Added support to support to retreive the appliance supported version.
    - GET /rest/version
+
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
 ### Oneview Features supported
+- Appliance SNMPv1 Trap Destinations
 - Connection Template
 
 # [v6.1.0-13] 
