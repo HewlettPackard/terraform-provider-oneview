@@ -7,11 +7,11 @@ provider "oneview" {
 	ov_ifmatch    = "*"
   }
   
-  # Testing data source
-  data "oneview_firmware_drivers" "drivers" {
-	id = "Synergy_Custom_SPP_2021_02_01_Z7550-97110"
-  }
-  
-  output "firmware_drivers_value" {
-	value = data.oneview_firmware_drivers.drivers
-  }
+# Testing data source
+data "oneview_firmware_drivers" "drivers" {
+  id = "Synergy_Custom_SPP_2021_02_01_Z7550-97110"
+}
+
+output "firmware_drivers_value" {
+  value = data.oneview_firmware_drivers.drivers
+}

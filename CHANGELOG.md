@@ -8,12 +8,17 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 1. Added support to Connection Templates Resource.
    - GET /rest/connection-templates/{id}
    - PUT /rest/connection-templates/{id}
+2. Added support to Firmware Drivers Resource.
+   - GET    /rest/firmware-drivers/{id}
+   - POST   /rest/firmware-drivers
+   - DELETE /rest/firmware-drivers/{id}
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
 ### Oneview Features supported
 - Connection Template
+- Firmware Drivers
 
 # [v6.1.0-13] 
 
