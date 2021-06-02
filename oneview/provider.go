@@ -102,7 +102,7 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"oneview_snmpv3_trap_destinations":            resourceSNMPv3TrapDestination(),			
-      "oneview_appliance_snmp_v1_trap_destinations": resourceSNMPv1TrapDestination(),
+                        "oneview_appliance_snmp_v1_trap_destinations": resourceSNMPv1TrapDestination(),
 			"oneview_connection_templates":                resourceConnectionTemplates(),
 			"oneview_deployment_plan":                     resourceDeploymentPlan(),
 			"oneview_enclosure":                           resourceEnclosure(),
