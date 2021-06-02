@@ -146,8 +146,9 @@ type Task struct {
 	Modified                string             `json:"modified,omitempty"`      // "modified": "2015-09-07T03:25:54.844Z",
 	URI                     utils.Nstring      `json:"uri,omitempty"`           // "uri": "/rest/tasks/145F808A-A8DD-4E1B-8C86-C2379C97B3B2"
 	TaskIsDone              bool               // when true, task are done
-	Timeout                 int                // time before timeout on Executor
-	WaitTime                time.Duration      // time between task checks
+	IsCancellable           bool
+	Timeout                 int           // time before timeout on Executor
+	WaitTime                time.Duration // time between task checks
 	Client                  *OVClient
 }
 
@@ -282,7 +283,7 @@ func (t *Task) Wait() error {
 	return nil
 }
 
-func (c *OVClient) GetTasks(filter string, sort string, count string, view string) (TasksList, error) {
+func (c *OVClient) GetTasks(filter string, sort string, count string, view string, topCount string, childLimit string) (TasksList, error) {
 	var (
 		uri   = "/rest/tasks"
 		q     map[string]interface{}
@@ -303,6 +304,14 @@ func (c *OVClient) GetTasks(filter string, sort string, count string, view strin
 
 	if count != "" {
 		q["count"] = count
+	}
+
+	if topCount != "" {
+		q["top_count"] = topCount
+	}
+
+	if childLimit != "" {
+		q["child_limit"] = childLimit
 	}
 
 	// refresh login
@@ -367,4 +376,35 @@ func (c *OVClient) GetTasksById(filter string, sort string, count string, view s
 		return tasks, err
 	}
 	return tasks, nil
+}
+
+func (c *OVClient) PatchTask(uri string) error {
+	var (
+		tasks *Task
+	)
+
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	// Creates new task with Auth to hold patch response
+	tasks = tasks.NewProfileTask(c)
+	tasks.ResetTask()
+
+	data, err := c.RestAPICall(rest.PATCH, uri, nil)
+
+	if err != nil {
+		log.Errorf("Error submitting Patch request: %s", err)
+		return err
+	}
+	log.Debugf("Patch Task %s", data)
+	if err := json.Unmarshal([]byte(data), &tasks); err != nil {
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
