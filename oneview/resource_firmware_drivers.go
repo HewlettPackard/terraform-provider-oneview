@@ -395,7 +395,7 @@ func resourceFirmwareDriversRead(d *schema.ResourceData, meta interface{}) error
 func resourceFirmwareDriversDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	err := config.ovClient.DeleteFirmwareBaseline(d.Get("id").(string), "false")
+	err := config.ovClient.DeleteFirmwareBaseline(d.Id(), "false")
 	if err != nil {
 		return err
 	}
