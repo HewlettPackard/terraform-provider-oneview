@@ -259,16 +259,16 @@ func resourceServerProfile() *schema.Resource {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-                                                                                                "boot_taret": {
-                                                                                                        Type:     schema.TypeList,
-                                                                                                        Optional: true,
-                                                                                                        Elem: &schema.Resource{
-                                                                                                                Schema: map[string]*schema.Schema{
-                                                                                                                        "array_wwpn": {
+												"boot_taret": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"array_wwpn": {
 																Type:     schema.TypeString,
 																Optional: true,
 															},
-                                                                                                                        "lun": {
+															"lun": {
 																Type:     schema.TypeString,
 																Optional: true,
 															},
@@ -1016,11 +1016,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 						bootTargets := []ov.BootTarget{}
 						rawBootTargets := bootItem["boot_target"].([]interface{})
 						if rawBootTargets != nil {
-							for _, rawBootTarget := range rawBootTargets{
+							for _, rawBootTarget := range rawBootTargets {
 								bootTarget := rawBootTarget.(map[string]interface{})
 								bootTargets = append(bootTargets, ov.BootTarget{
-									LUN:	bootTarget["lun"].(string),
-									ArrayWWPN:	bootTarget["array_wwpn"].(string),
+									LUN:       bootTarget["lun"].(string),
+									ArrayWWPN: bootTarget["array_wwpn"].(string),
 								})
 							}
 						}
@@ -1056,7 +1056,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
-							Targets:	  bootTargets,
+							Targets:          bootTargets,
 						}
 					}
 				}
@@ -1467,11 +1467,11 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			// Gets Boot Settings
 			if connection.Boot != nil {
 
-				if connection.Boot.Targets != nil{
-					for _, bootTarget := range(connection.Boot.Targets){
+				if connection.Boot.Targets != nil {
+					for _, bootTarget := range connection.Boot.Targets {
 						bootTargets = append(bootTargets, map[string]interface{}{
-							"lun":		bootTarget.LUN,
-							"array_wwpn":	bootTarget.ArrayWWPN,
+							"lun":        bootTarget.LUN,
+							"array_wwpn": bootTarget.ArrayWWPN,
 						})
 					}
 				}
@@ -1484,13 +1484,13 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 						"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
 						"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
 						"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
-						"mutual_chap_name":	   connection.Boot.Iscsi.MutualChapName,
-						"mutual_chap_secret":	   connection.Boot.Iscsi.MutualChapSecret,
-						"boot_target_name":	   connection.Boot.Iscsi.BootTargetName,
-						"boot_target_lun":	   connection.Boot.Iscsi.BootTargetLun,
-						"chap_name":		   connection.Boot.Iscsi.ChapName,
-						"chap_secret":		   connection.Boot.Iscsi.ChapSecret,
-						"initiator_name":	   connection.Boot.Iscsi.InitiatorName,
+						"mutual_chap_name":        connection.Boot.Iscsi.MutualChapName,
+						"mutual_chap_secret":      connection.Boot.Iscsi.MutualChapSecret,
+						"boot_target_name":        connection.Boot.Iscsi.BootTargetName,
+						"boot_target_lun":         connection.Boot.Iscsi.BootTargetLun,
+						"chap_name":               connection.Boot.Iscsi.ChapName,
+						"chap_secret":             connection.Boot.Iscsi.ChapSecret,
+						"initiator_name":          connection.Boot.Iscsi.InitiatorName,
 					})
 				}
 				connectionBoot = append(connectionBoot, map[string]interface{}{
@@ -1499,7 +1499,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 					"ethernet_boot_type": connection.Boot.EthernetBootType,
 					"boot_volume_source": connection.Boot.BootVolumeSource,
 					"iscsi":              iscsi,
-					"boot_target":	      bootTargets,
+					"boot_target":        bootTargets,
 				})
 			}
 			// Get IPV4 Settings for Connection
@@ -1738,11 +1738,11 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							bootTargets := []ov.BootTarget{}
 							rawBootTargets := bootItem["boot_target"].([]interface{})
 							if rawBootTargets != nil {
-								for _, rawBootTarget := range rawBootTargets{
+								for _, rawBootTarget := range rawBootTargets {
 									bootTarget := rawBootTarget.(map[string]interface{})
 									bootTargets = append(bootTargets, ov.BootTarget{
-										LUN:	bootTarget["lun"].(string),
-										ArrayWWPN:	bootTarget["array_wwpn"].(string),
+										LUN:       bootTarget["lun"].(string),
+										ArrayWWPN: bootTarget["array_wwpn"].(string),
 									})
 								}
 							}
@@ -1773,7 +1773,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 								EthernetBootType: bootItem["ethernet_boot_type"].(string),
 								BootVolumeSource: bootItem["boot_volume_source"].(string),
 								Iscsi:            &iscsi,
-								Targets:	  bootTargets,
+								Targets:          bootTargets,
 							}
 						}
 					}
