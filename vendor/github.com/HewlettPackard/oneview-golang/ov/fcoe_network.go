@@ -78,11 +78,8 @@ func (c *OVClient) GetFCoENetworks(filter string, sort string, start string, cou
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
-	// Setup query
-	if len(q) > 0 {
-		c.SetQueryString(q)
-	}
-	data, err := c.RestAPICall(rest.GET, uri, nil)
+
+	data, err := c.RestAPICall(rest.GET, uri, nil, q)
 	if err != nil {
 		return fcoeNetworks, err
 	}

@@ -13,6 +13,8 @@
         ------------------------------------------------------------------------------------
         |  5  | TF_VAR_i3s_endpoint                         | <image_streamer_ip>          |
         ------------------------------------------------------------------------------------
+        |  6  | TF_VAR_api_version                          | <api_version>                |
+        ------------------------------------------------------------------------------------
 */
 
 variable "username" {
@@ -28,6 +30,11 @@ description = "Oneview Appliance Password"
 variable "endpoint" {
  type = string
  description = "Oneview Appliance IP Address"
+}
+
+variable "api_version"{
+ type = number
+ description = "Oneview Appliance REST API Version"
 }
 
 variable "ssl_enabled" {
