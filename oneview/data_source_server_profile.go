@@ -12,7 +12,9 @@
 package oneview
 
 import (
+	"encoding/json"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"io/ioutil"
 )
 
 func dataSourceServerProfile() *schema.Resource {
@@ -476,7 +478,6 @@ func dataSourceServerProfile() *schema.Resource {
 						"controller": {
 							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"device_slot": {
@@ -565,7 +566,6 @@ func dataSourceServerProfile() *schema.Resource {
 						"sas_logical_jbod": {
 							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"description": {
@@ -629,13 +629,13 @@ func dataSourceServerProfile() *schema.Resource {
 				ForceNew: true,
 			},
 			"management_processor": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_mp": {
 							Type:     schema.TypeBool,
-							Required: true,
+							Optional: true,
 						},
 						"mp_settings": {
 							Optional: true,
@@ -1072,33 +1072,31 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName)
 	d.Set("iscsi_initiator_name_type", serverProfile.IscsiInitiatorNameType)
 
-	// Gets Local Storage Body
-	localStorage := make([]map[string]interface{}, 0, 1)
 	// Gets Storage Controller Body
 	controllers := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers))
 	for i := 0; i < len(serverProfile.LocalStorage.Controllers); i++ {
 		logicalDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers[i].LogicalDrives))
 		for j := 0; j < len(serverProfile.LocalStorage.Controllers[i].LogicalDrives); j++ {
 			logicalDrives = append(logicalDrives, map[string]interface{}{
-				"bootable":            *serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 				"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+				"bootable":            *serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 				"drive_number":        serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveNumber,
 				"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
 				"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 				"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
 				"num_spare_drives":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
-				"sas_logical_jbod_id": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
 				"raid_level":          serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
+				"sas_logical_jbod_id": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
 			})
 		}
 		controllers = append(controllers, map[string]interface{}{
 			"device_slot":              serverProfile.LocalStorage.Controllers[i].DeviceSlot,
-			"initialize":               *serverProfile.LocalStorage.Controllers[i].Initialize,
-			"import_configuration":     serverProfile.LocalStorage.Controllers[i].ImportConfiguration,
 			"drive_write_cache":        serverProfile.LocalStorage.Controllers[i].DriveWriteCache,
+			"import_configuration":     serverProfile.LocalStorage.Controllers[i].ImportConfiguration,
+			"initialize":               *serverProfile.LocalStorage.Controllers[i].Initialize,
 			"mode":                     serverProfile.LocalStorage.Controllers[i].Mode,
 			"predictive_spare_rebuild": serverProfile.LocalStorage.Controllers[i].PredictiveSpareRebuild,
-			"logical_drive":            logicalDrives,
+			"logical_drives":           logicalDrives,
 		})
 	}
 	// Gets Sas Logical Jbod Controller Body
@@ -1119,6 +1117,8 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 			"status":               serverProfile.LocalStorage.SasLogicalJBODs[i].Status,
 		})
 	}
+	// Gets Local Storage Body
+	localStorage := make([]map[string]interface{}, 0, 1)
 	localStorage = append(localStorage, map[string]interface{}{
 		"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
 		"initialize":           serverProfile.LocalStorage.Initialize,
@@ -1137,16 +1137,14 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 			"setting_type": mpSetting.SettingType,
 		})
 	}
-	if serverProfile.ManagementProcessor != nil {
-		managementProcessor := make([]map[string]interface{}, 0, 1)
-		managementProcessor = append(managementProcessor, map[string]interface{}{
-			"manage_mp":     serverProfile.ManagementProcessor.ManageMp,
-			"reapply_state": serverProfile.ManagementProcessor.ReapplyState,
-			"mp_settings":   mpSettings,
-		})
+	managementProcessor := make([]map[string]interface{}, 0, 1)
+	managementProcessor = append(managementProcessor, map[string]interface{}{
+		"manage_mp":     serverProfile.ManagementProcessor.ManageMp,
+		"reapply_state": serverProfile.ManagementProcessor.ReapplyState,
+		"mp_settings":   mpSettings,
+	})
+	d.Set("management_processor", managementProcessor)
 
-		d.Set("management_processor", managementProcessor)
-	}
 	d.Set("modified", serverProfile.Modified)
 	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
 
