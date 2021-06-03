@@ -57,7 +57,7 @@ func dataSourceSSHAccessRead(d *schema.ResourceData, meta interface{}) error {
 	sshAccess, err := config.ovClient.GetSshAccess()
 	if err != nil {
 		d.SetId("")
-		return nil
+		return err
 	}
 	d.SetId(sshAccess.Type)
 	d.Set("allow_ssh_access", sshAccess.AllowSshAccess)
