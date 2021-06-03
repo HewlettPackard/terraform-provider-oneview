@@ -1061,7 +1061,6 @@ func resourceServerProfile() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
-
 		},
 	}
 }
@@ -1444,7 +1443,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Persistent:        sasLogicalJbodData["persistent"].(bool),
 					Status:            sasLogicalJbodData["status"].(string),
 					SasLogicalJBODUri: sasLogicalJbodData["sas_logical_jbod_uri"].(string),
-
 				})
 			}
 			localStorage = ov.LocalStorageOptions{
