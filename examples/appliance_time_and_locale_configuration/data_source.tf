@@ -12,5 +12,5 @@ data "oneview_appliance_time_and_locale" "timelocale" {
 }
 
 output "locale_value" {
-    value = data.oneview_appliance_time_and_locale.timelocale.locale
+  value = data.oneview_appliance_time_and_locale.timelocale.locale
 }

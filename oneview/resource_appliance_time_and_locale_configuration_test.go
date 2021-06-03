@@ -40,9 +40,6 @@ func TestAccTimeandLocaleConfiguration_1(t *testing.T) {
 						"oneview_appliance_time_and_locale.test", "timezone", "test_zone",
 					),
 					resource.TestCheckResourceAttr(
-						"oneview_appliance_time_and_locale.test", "datetime", "2014-09-12T14:31:17",
-					),
-					resource.TestCheckResourceAttr(
 						"oneview_appliance_time_and_locale.test", "ntpserver", "[\"server\"]",
 					),
 				),
@@ -106,5 +103,4 @@ var testAccTimeandLocaleConfiguration = `
 	locale = "test_locale"
     timezone = "test_zone"
 	ntpserver = ["server"]
-	datetime = "2014-09-12T14:31:17"
   }`
