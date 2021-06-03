@@ -29,7 +29,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
    - DELETE  /rest/appliance/trap-destinations/{id}
 3. Added support to support to retreive the appliance supported version.
    - GET /rest/version
-
+4. Added support to Appliance SSH Access Resource.
+   - GET  /rest/appliance/ssh-access
+   - PUT /rest/appliance/ssh-access
 
 
 ### Notes
@@ -38,6 +40,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
 - Appliance SNMPv3 Trap Destinations
+- Appliance SSH Access
 - Connection Template
 - Labels
 
