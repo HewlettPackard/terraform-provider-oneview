@@ -15,7 +15,6 @@ Configures the appliance time and locale settings.
 ```js
 resource "oneview_appliance_time_and_locale" "snmptrap" {
     locale = "en_US.UTF-8"
-    date_time = "2014-09-11T12:10:33"
     timezone = "UTC"
     ntp_servers = ["16.110.135.123", "16.85.40.52"]
 }
@@ -25,21 +24,17 @@ resource "oneview_appliance_time_and_locale" "snmptrap" {
 
 The following arguments are supported: 
 
-* `date_time` - Date and time of the appliance.
-
 * `locale` - Contains locale details.
 
 * `ntpServers` - List of NTP servers.
 
 * `timezone` - Time zone of the appliance is in UTC.
 
----
-
-* `locale_display_name` - (Optional) Display name of the locale set on the appliance.
-
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
+
+* `locale_display_name` - (Optional) Display name of the locale set on the appliance.
 
 * `category` - Identifies the resource type.
 

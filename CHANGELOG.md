@@ -27,6 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
+- Appliance Time and Locale Configuration
 - Connection Template
 
 # [v6.1.0-13] 

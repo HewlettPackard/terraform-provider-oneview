@@ -21,6 +21,7 @@ func resourceTimeAndLocale() *schema.Resource {
 	return &schema.Resource{
 		Read:   resourceTimeAndLocaleRead,
 		Create: resourceTimeAndLocaleCreate,
+		Update: resourceTimeAndLocaleUpdate,
 		Delete: resourceTimeAndLocaleDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -33,18 +34,15 @@ func resourceTimeAndLocale() *schema.Resource {
 			},
 			"date_time": {
 				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Computed: true,
 			},
 			"locale": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"locale_displayname": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Optional: true,
 			},
 			"ntp_servers": {
 				Type: schema.TypeSet,
@@ -52,7 +50,6 @@ func resourceTimeAndLocale() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Required: true,
-				ForceNew: true,
 			},
 			"polling_interval": {
 				Type:     schema.TypeString,
@@ -65,7 +62,6 @@ func resourceTimeAndLocale() *schema.Resource {
 			"timezone": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"modified": {
 				Type:     schema.TypeString,
@@ -136,5 +132,9 @@ func resourceTimeAndLocaleRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceTimeAndLocaleDelete(d *schema.ResourceData, meta interface{}) error {
+	return nil
+}
+
+func resourceTimeAndLocaleUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
