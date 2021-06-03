@@ -1174,6 +1174,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.ServerHardwareReapplyState = val.(string)
 	}
 
+	if val, ok := d.GetOk("server_hardware_type_uri"); ok {
+		serverProfile.ServerHardwareTypeURI = utils.NewNstring(val.(string))
+	}
+
 	if val, ok := d.GetOk("service_manager"); ok {
 		serverProfile.ServiceManager = val.(string)
 	}
@@ -1624,13 +1628,17 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
-	if err != nil {
-		return err
+	// when server hardware is assigned
+	if serverProfile.ServerHardwareURI != "" {
+		serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
+		if err != nil {
+			return err
+		}
+		d.Set("enclosure_bay", serverProfile.EnclosureBay)
+		d.Set("hardware_uri", serverHardware.URI.String())
+		d.Set("hardware_name", serverHardware.Name)
+		d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	}
-
-	d.Set("hardware_uri", serverHardware.URI.String())
-	d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	d.Set("serial_number", serverProfile.SerialNumber.String())
 
 	if val, ok := d.GetOk("public_connection"); ok {
@@ -1662,6 +1670,28 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("wwn_type", serverProfile.WWNType)
 	d.Set("mac_type", serverProfile.MACType)
 	d.Set("hide_unused_flex_nics", serverProfile.HideUnusedFlexNics)
+	d.Set("associated_server", serverProfile.AssociatedServer.String())
+	d.Set("category", serverProfile.Category)
+	d.Set("created", serverProfile.Created)
+	d.Set("description", serverProfile.Description)
+	d.Set("etag", serverProfile.ETAG)
+	d.Set("in_progress", serverProfile.InProgress)
+	d.Set("initial_scope_uris", serverProfile.InitialScopeUris)
+	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName)
+	d.Set("iscsi_initiator_name_type", serverProfile.IscsiInitiatorNameType)
+	d.Set("modified", serverProfile.Modified)
+	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
+	d.Set("refresh_state", serverProfile.RefreshState)
+	d.Set("scopes_uri", serverProfile.ScopesUri)
+	d.Set("server_hardware_reapply_state", serverProfile.ServerHardwareReapplyState)
+	d.Set("server_hardware_type_uri", serverProfile.ServerHardwareTypeURI.String())
+	d.Set("service_manager", serverProfile.ServiceManager)
+	d.Set("state", serverProfile.State)
+	d.Set("status", serverProfile.Status)
+	d.Set("task_uri", serverProfile.TaskURI.String())
+	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
+	d.Set("template_compliance", serverProfile.TemplateCompliance)
+	d.Set("uuid", serverProfile.UUID.String())
 
 	if len(serverProfile.ConnectionSettings.Connections) != 0 {
 		// Get connections
@@ -1769,6 +1799,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				logicalDrives = append(logicalDrives, map[string]interface{}{
 					"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 					"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+					"drive_number":        serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveNumber,
 					"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
 					"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 					"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
@@ -1801,12 +1832,15 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
 				"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
 				"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+				"sas_logical_jbod_uri": serverProfile.LocalStorage.SasLogicalJBODs[i].SasLogicalJBODUri.String(),
+				"status":               serverProfile.LocalStorage.SasLogicalJBODs[i].Status,	
 			})
 		}
 		localStorage = append(localStorage, map[string]interface{}{
 			"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
 			"initialize":           serverProfile.LocalStorage.Initialize,
 			"controller":           controllers,
+			"reapply_state":        serverProfile.LocalStorage.ReapplyState,
 			"sas_logical_jbod":     sasLogDrives,
 		})
 		d.Set("local_storage", localStorage)
@@ -1892,6 +1926,90 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.HideUnusedFlexNics = val.(bool)
 		}
 
+		if val, ok := d.GetOk("associated_server"); ok {
+			serverProfile.AssociatedServer = utils.NewNstring(val.(string))
+		}
+	
+		if val, ok := d.GetOk("category"); ok {
+			serverProfile.Category = val.(string)
+		}
+	
+		if val, ok := d.GetOk("created"); ok {
+			serverProfile.Created = val.(string)
+		}
+	
+		if val, ok := d.GetOk("description"); ok {
+			serverProfile.Description = val.(string)
+		}
+	
+		if val, ok := d.GetOk("etag"); ok {
+			serverProfile.ETAG = val.(string)
+		}
+	
+		if val, ok := d.GetOk("enclosure_bay"); ok {
+			serverProfile.EnclosureBay = val.(int)
+		}
+	
+		if val, ok := d.GetOk("in_progress"); ok {
+			serverProfile.InProgress = val.(bool)
+		}
+	
+		if val, ok := d.GetOk("iscsi_initiator_name"); ok {
+			serverProfile.IscsiInitiatorName = val.(string)
+		}
+	
+		if val, ok := d.GetOk("iscsi_initiator_name_type"); ok {
+			serverProfile.IscsiInitiatorNameType = val.(string)
+		}
+	
+		if val, ok := d.GetOk("modified"); ok {
+			serverProfile.Modified = val.(string)
+		}
+	
+		if val, ok := d.GetOk("profile_uuid"); ok {
+			serverProfile.ProfileUUID = utils.NewNstring(val.(string))
+		}
+	
+		if val, ok := d.GetOk("refresh_state"); ok {
+			serverProfile.RefreshState = val.(string)
+		}
+	
+		if val, ok := d.GetOk("scopes_uri"); ok {
+			serverProfile.ScopesUri = utils.NewNstring(val.(string))
+		}
+	
+		if val, ok := d.GetOk("server_hardware_reapply_state"); ok {
+			serverProfile.ServerHardwareReapplyState = val.(string)
+		}
+
+		if val, ok := d.GetOk("server_hardware_type_uri"); ok {
+			serverProfile.ServerHardwareTypeURI = utils.NewNstring(val.(string))
+		}
+	
+		if val, ok := d.GetOk("service_manager"); ok {
+			serverProfile.ServiceManager = val.(string)
+		}
+	
+		if val, ok := d.GetOk("state"); ok {
+			serverProfile.State = val.(string)
+		}
+	
+		if val, ok := d.GetOk("status"); ok {
+			serverProfile.Status = val.(string)
+		}
+	
+		if val, ok := d.GetOk("task_uri"); ok {
+			serverProfile.TaskURI = utils.NewNstring(val.(string))
+		}
+	
+		if val, ok := d.GetOk("template_compliance"); ok {
+			serverProfile.TemplateCompliance = val.(string)
+		}
+	
+		if val, ok := d.GetOk("uuid"); ok {
+			serverProfile.UUID = utils.NewNstring(val.(string))
+		}
+	
 		if val, ok := d.GetOk("enclosure_group"); ok {
 			enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(val.(string))
 			if err != nil {
@@ -2090,6 +2208,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							Bootable:          &boot,
 							RaidLevel:         logicalDrivesItem["raid_level"].(string),
 							Accelerator:       logicalDrivesItem["accelerator"].(string),
+							DriveNumber:       logicalDrivesItem["drive_number"].(int),
 							DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 							Name:              logicalDrivesItem["name"].(string),
 							NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
@@ -2123,12 +2242,15 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Name:              sasLogicalJbodData["name"].(string),
 						NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
 						Persistent:        sasLogicalJbodData["persistent"].(bool),
+						Status:            sasLogicalJbodData["status"].(string),
+						SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 					})
 				}
 				localStorage = ov.LocalStorageOptions{
 					ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
 					Initialize:         localStorageItem["initialize"].(bool),
 					Controllers:        localStorageEmbeddedController,
+					ReapplyState:       localStorageItem["reapply_state"].(string),
 					SasLogicalJBODs:    logicalJbod,
 				}
 			}
