@@ -34,7 +34,7 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
-* `locale_display_name` - (Optional) Display name of the locale set on the appliance.
+* `locale_display_name` - Display name of the locale set on the appliance.
 
 * `category` - Identifies the resource type.
 
