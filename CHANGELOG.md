@@ -15,7 +15,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
    - POST /rest/appliance/snmpv3-trap-forwarding/destinations
    - PUT /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
    - DELETE /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
-
 2. Added support to Connection Templates Resource.
    - GET /rest/connection-templates/{id}
    - PUT /rest/connection-templates/{id}
@@ -31,6 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
+- Appliance SNMPv3 Trap Destinations
 - Connection Template
 
 # [v6.1.0-13] 
