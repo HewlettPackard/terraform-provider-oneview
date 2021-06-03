@@ -23,6 +23,7 @@ func resourceFirmwareDrivers() *schema.Resource {
 	return &schema.Resource{
 		Read:   resourceFirmwareDriversRead,
 		Create: resourceFirmwareDriversCreate,
+		Update: resourceConnectionTemplatesUpdate,
 		Delete: resourceFirmwareDriversDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -238,7 +239,6 @@ func resourceFirmwareDrivers() *schema.Resource {
 			"baseline_uri": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"hotfix_uris": {
 				Type: schema.TypeSet,
@@ -247,12 +247,10 @@ func resourceFirmwareDrivers() *schema.Resource {
 				},
 				Set:      schema.HashString,
 				Required: true,
-				ForceNew: true,
 			},
 			"custom_baseline_name": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"initial_scope_uris": {
 				Optional: true,
@@ -260,13 +258,11 @@ func resourceFirmwareDrivers() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Set:      schema.HashString,
-				ForceNew: true,
+				Set: schema.HashString,
 			},
 			"force": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
 			},
 		},
 	}
@@ -389,6 +385,10 @@ func resourceFirmwareDriversRead(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 	d.SetId("")
+	return nil
+}
+
+func resourceFirmwareDriversUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
