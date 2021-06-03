@@ -1,24 +1,59 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v6.2.0-13] (Unreleased)
 
-# [v6.2.0-13] (unreleased)
+### Notes
+- This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
 #### Major Changes
-1. Added support to Connection Templates Resource.
-   - GET /rest/connection-templates/{id}
-   - PUT /rest/connection-templates/{id}
-2. Added support to Firmware Drivers Resource.
+1. Added support to Appliance SNMPv3 Trap Destinations
+   - GET /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+   - POST /rest/appliance/snmpv3-trap-forwarding/destinations
+   - PUT /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+   - DELETE /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+2. Added support to Appliance Time and Locale Configuration.
+   - GET  /rest/appliance/configuration/time-locale
+   - POST /rest/appliance/configuration/time-locale
+3. Added support to Label Resource. 
+   - GET /rest/labels/resources/**
+   - PUT /rest/labels/resources/**
+   - DELETE /rest/labels/resources/**
+   - POST /rest/labels/resources
+4. Added support to Appliance SNMPv1 Trap Destinations
+   - GET     /rest/appliance/trap-destinations/{id}
+   - POST    /rest/appliance/trap-destinations/{id}
+   - PUT     /rest/appliance/trap-destinations/{id}
+   - DELETE  /rest/appliance/trap-destinations/{id}
+5. Added support to support to retreive the appliance supported version.
+   - GET /rest/version
+6. Added support to Appliance SSH Access Resource.
+   - GET  /rest/appliance/ssh-access
+   - PUT /rest/appliance/ssh-access
+7. Added support to Firmware Drivers Resource.
    - GET    /rest/firmware-drivers/{id}
    - POST   /rest/firmware-drivers
    - DELETE /rest/firmware-drivers/{id}
+8. Added support to Connection Templates Resource.
+   - GET /rest/connection-templates/{id}
+   - PUT /rest/connection-templates/{id}
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
 ### Oneview Features supported
+- Appliance SNMPv1 Trap Destinations
+- Appliance SNMPv3 Trap Destinations
+- Appliance SSH Access
+- Appliance Time and Locale Configuration
 - Connection Template
 - Firmware Drivers
+- Labels
+
+### Bug fixes & Enhancements:
+- [#289] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/289) Terraform crashes for Logical Interconnect Group Read
+- [#300] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/300) Can't create resource oneview_server_profile_template
+- [#301] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/301) Can't create resource oneview_server_profile
 
 # [v6.1.0-13] 
 
