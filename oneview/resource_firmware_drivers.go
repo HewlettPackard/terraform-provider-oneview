@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -88,7 +89,6 @@ func resourceFirmwareDrivers() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Set: schema.HashString,
 			},
 			"fw_components": {
 				Computed: true,
@@ -113,7 +113,6 @@ func resourceFirmwareDrivers() *schema.Resource {
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-							Set: schema.HashString,
 						},
 					},
 				},
@@ -218,7 +217,6 @@ func resourceFirmwareDrivers() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Set: schema.HashString,
 			},
 			"sw_packages_full_path": {
 				Type:     schema.TypeString,
@@ -258,7 +256,6 @@ func resourceFirmwareDrivers() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Set: schema.HashString,
 			},
 			"force": {
 				Type:     schema.TypeString,
@@ -389,7 +386,8 @@ func resourceFirmwareDriversRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceFirmwareDriversUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	err := errors.New("this resource do not support update request")
+	return err
 }
 
 func resourceFirmwareDriversDelete(d *schema.ResourceData, meta interface{}) error {
