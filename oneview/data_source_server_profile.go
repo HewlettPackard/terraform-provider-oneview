@@ -12,9 +12,7 @@
 package oneview
 
 import (
-	"encoding/json"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"io/ioutil"
 )
 
 func dataSourceServerProfile() *schema.Resource {

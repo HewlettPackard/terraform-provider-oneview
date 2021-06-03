@@ -46,6 +46,7 @@ resource "oneview_server_profile" "SP" {
       logical_drives {
         accelerator         = "Unmanaged"
         bootable            = true
+        drive_number        = 1
         drive_technology    = "SasHdd"
         name                = "TestLd"
         num_physical_drives = 2
