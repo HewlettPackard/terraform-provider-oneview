@@ -137,6 +137,6 @@ func resourceTimeAndLocaleDelete(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceTimeAndLocaleUpdate(d *schema.ResourceData, meta interface{}) error {
-	err := errors.New("This resource do not support updates requests.")
+	err := errors.New("this resource do not support update request")
 	return err
 }
