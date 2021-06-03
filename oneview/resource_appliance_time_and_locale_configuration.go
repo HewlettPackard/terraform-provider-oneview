@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"errors"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -136,5 +137,6 @@ func resourceTimeAndLocaleDelete(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceTimeAndLocaleUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	err := errors.New("This resource do not support updates requests.")
+	return err
 }
