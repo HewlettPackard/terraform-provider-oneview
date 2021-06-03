@@ -30,6 +30,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
    - DELETE  /rest/appliance/trap-destinations/{id}
 5. Added support to support to retreive the appliance supported version.
    - GET /rest/version
+6. Added support to Appliance SSH Access Resource.
+   - GET  /rest/appliance/ssh-access
+   - PUT /rest/appliance/ssh-access
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
@@ -37,6 +40,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
 - Appliance SNMPv3 Trap Destinations
+- Appliance SSH Access
 - Appliance Time and Locale Configuration
 - Connection Template
 - Labels
