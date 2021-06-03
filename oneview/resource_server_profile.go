@@ -1822,18 +1822,18 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
 		for i := 0; i < len(serverProfile.LocalStorage.SasLogicalJBODs); i++ {
 			sasLogDrives = append(sasLogDrives, map[string]interface{}{
-				"description":        serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
-				"device_slot":        serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
-				"drive_max_size_gb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
-				"drive_min_size_sb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
-				"drive_technology":   serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
-				"erase_data":         serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
-				"id":                 serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
-				"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
-				"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
-				"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+				"description":          serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
+				"device_slot":          serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
+				"drive_max_size_gb":    serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
+				"drive_min_size_sb":    serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
+				"drive_technology":     serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
+				"erase_data":           serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
+				"id":                   serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
+				"name":                 serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
+				"num_physical_drive":   serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
+				"persistent":           serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
 				"sas_logical_jbod_uri": serverProfile.LocalStorage.SasLogicalJBODs[i].SasLogicalJBODUri.String(),
-				"status":               serverProfile.LocalStorage.SasLogicalJBODs[i].Status,	
+				"status":               serverProfile.LocalStorage.SasLogicalJBODs[i].Status,
 			})
 		}
 		localStorage = append(localStorage, map[string]interface{}{
@@ -1929,55 +1929,55 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		if val, ok := d.GetOk("associated_server"); ok {
 			serverProfile.AssociatedServer = utils.NewNstring(val.(string))
 		}
-	
+
 		if val, ok := d.GetOk("category"); ok {
 			serverProfile.Category = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("created"); ok {
 			serverProfile.Created = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("description"); ok {
 			serverProfile.Description = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("etag"); ok {
 			serverProfile.ETAG = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("enclosure_bay"); ok {
 			serverProfile.EnclosureBay = val.(int)
 		}
-	
+
 		if val, ok := d.GetOk("in_progress"); ok {
 			serverProfile.InProgress = val.(bool)
 		}
-	
+
 		if val, ok := d.GetOk("iscsi_initiator_name"); ok {
 			serverProfile.IscsiInitiatorName = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("iscsi_initiator_name_type"); ok {
 			serverProfile.IscsiInitiatorNameType = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("modified"); ok {
 			serverProfile.Modified = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("profile_uuid"); ok {
 			serverProfile.ProfileUUID = utils.NewNstring(val.(string))
 		}
-	
+
 		if val, ok := d.GetOk("refresh_state"); ok {
 			serverProfile.RefreshState = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("scopes_uri"); ok {
 			serverProfile.ScopesUri = utils.NewNstring(val.(string))
 		}
-	
+
 		if val, ok := d.GetOk("server_hardware_reapply_state"); ok {
 			serverProfile.ServerHardwareReapplyState = val.(string)
 		}
@@ -1985,31 +1985,31 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		if val, ok := d.GetOk("server_hardware_type_uri"); ok {
 			serverProfile.ServerHardwareTypeURI = utils.NewNstring(val.(string))
 		}
-	
+
 		if val, ok := d.GetOk("service_manager"); ok {
 			serverProfile.ServiceManager = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("state"); ok {
 			serverProfile.State = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("status"); ok {
 			serverProfile.Status = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("task_uri"); ok {
 			serverProfile.TaskURI = utils.NewNstring(val.(string))
 		}
-	
+
 		if val, ok := d.GetOk("template_compliance"); ok {
 			serverProfile.TemplateCompliance = val.(string)
 		}
-	
+
 		if val, ok := d.GetOk("uuid"); ok {
 			serverProfile.UUID = utils.NewNstring(val.(string))
 		}
-	
+
 		if val, ok := d.GetOk("enclosure_group"); ok {
 			enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(val.(string))
 			if err != nil {
