@@ -1119,7 +1119,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if val, ok := d.GetOk("associated_server"); ok {
-		serverProfile.AssociatedServer = val.(string)
+		serverProfile.AssociatedServer = utils.NewNstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("category"); ok {
@@ -1139,11 +1139,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if val, ok := d.GetOk("enclosure_bay"); ok {
-		serverProfile.EnclosureBay = val.(string)
+		serverProfile.EnclosureBay = val.(int)
 	}
 
 	if val, ok := d.GetOk("in_progress"); ok {
-		serverProfile.InProgress = val.(string)
+		serverProfile.InProgress = val.(bool)
 	}
 
 	if val, ok := d.GetOk("iscsi_initiator_name"); ok {
@@ -1159,7 +1159,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if val, ok := d.GetOk("profile_uuid"); ok {
-		serverProfile.ProfileUUID = val.(string)
+		serverProfile.ProfileUUID = utils.NewNstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("refresh_state"); ok {
@@ -1167,7 +1167,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if val, ok := d.GetOk("scopes_uri"); ok {
-		serverProfile.ScopesUri = val.(string)
+		serverProfile.ScopesUri = utils.NewNstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("server_hardware_reapply_state"); ok {
@@ -1187,7 +1187,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if val, ok := d.GetOk("task_uri"); ok {
-		serverProfile.TaskURI = val.(string)
+		serverProfile.TaskURI = utils.NewNstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("template_compliance"); ok {
@@ -1195,7 +1195,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if val, ok := d.GetOk("uuid"); ok {
-		serverProfile.UUID = val.(string)
+		serverProfile.UUID = utils.NewNstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("enclosure_group"); ok {
@@ -1442,7 +1442,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
 					Persistent:        sasLogicalJbodData["persistent"].(bool),
 					Status:            sasLogicalJbodData["status"].(string),
-					SasLogicalJBODUri: sasLogicalJbodData["sas_logical_jbod_uri"].(string),
+					SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 				})
 			}
 			localStorage = ov.LocalStorageOptions{
