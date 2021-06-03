@@ -133,7 +133,8 @@ func resourceTimeAndLocaleRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceTimeAndLocaleDelete(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	err := errors.New("this resource do not support delete request")
+	return err
 }
 
 func resourceTimeAndLocaleUpdate(d *schema.ResourceData, meta interface{}) error {
