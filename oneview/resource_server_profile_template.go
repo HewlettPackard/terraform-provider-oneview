@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -1142,10 +1143,10 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 						}
 					}
 					volumes = ov.Volume{
-						IsPermanent:      &tempIsPermanent,
-						Properties:       &properties,
-						InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
-						TemplateUri:      utils.NewNstring(volumeItem["template_uri"].(string)),
+						IsPermanent: &tempIsPermanent,
+						Properties:  &properties,
+						//InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
+						TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 					}
 				}
 			}
@@ -1167,7 +1168,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 							targets = append(targets, ov.Target{
 								IpAddress: storageTargetItem["ip_address"].(string),
 								Name:      storageTargetItem["name"].(string),
-								TcpPort:   storageTargetItem["tcp_port"].(int),
+								TcpPort:   storageTargetItem["tcp_port"].(string),
 							})
 						}
 					}
@@ -1718,10 +1719,10 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 						}
 					}
 					volumes = ov.Volume{
-						IsPermanent:      &tempIsPermanent,
-						Properties:       &properties,
-						InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
-						TemplateUri:      utils.NewNstring(volumeItem["template_uri"].(string)),
+						IsPermanent: &tempIsPermanent,
+						Properties:  &properties,
+						//InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
+						TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 					}
 				}
 			}
@@ -1742,7 +1743,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 							targets = append(targets, ov.Target{
 								IpAddress: storageTargetItem["ip_address"].(string),
 								Name:      storageTargetItem["name"].(string),
-								TcpPort:   storageTargetItem["tcp_port"].(int),
+								TcpPort:   storageTargetItem["tcp_port"].(string),
 							})
 						}
 					}

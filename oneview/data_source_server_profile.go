@@ -808,6 +808,14 @@ func dataSourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"volume_storage_system_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 
 						"storage_paths": {
 							Optional: true,
@@ -848,7 +856,7 @@ func dataSourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"tcp_port": {
-													Type:     schema.TypeInt,
+													Type:     schema.TypeString,
 													Optional: true,
 												},
 											},
@@ -1299,6 +1307,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 
 			}
 			volumeAttachments = append(volumeAttachments, map[string]interface{}{
+
 				"associated_template_attachment_id": serverProfile.SanStorage.VolumeAttachments[i].AssociatedTemplateAttachmentId,
 				"boot_volume_priority":              serverProfile.SanStorage.VolumeAttachments[i].BootVolumePriority,
 				"id":                                serverProfile.SanStorage.VolumeAttachments[i].ID,
@@ -1308,6 +1317,8 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 				"state":                             serverProfile.SanStorage.VolumeAttachments[i].State,
 				"status":                            serverProfile.SanStorage.VolumeAttachments[i].Status,
 				"storage_paths":                     storagePaths,
+				"volume_storage_system_uri":         serverProfile.SanStorage.VolumeAttachments[i].VolumeStorageSystemURI,
+				"volume_uri":                        serverProfile.SanStorage.VolumeAttachments[i].VolumeURI,
 			})
 		}
 
