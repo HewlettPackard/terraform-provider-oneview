@@ -7,7 +7,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
 #### Major Changes
-1. Added support to Connection Templates Resource.
+1. Added support to Appliance SNMPv3 Trap Destinations
+   - GET /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+   - POST /rest/appliance/snmpv3-trap-forwarding/destinations
+   - PUT /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+   - DELETE /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+2. Added support to Connection Templates Resource.
    - GET /rest/connection-templates/{id}
    - PUT /rest/connection-templates/{id}
 2. Added support to Appliance Time and Locale Configuration.
@@ -31,6 +36,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
+- Appliance SNMPv3 Trap Destinations
 - Appliance Time and Locale Configuration
 - Connection Template
 - Labels
