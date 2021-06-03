@@ -81,6 +81,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_hypervisor_manager":                  dataSourceHypervisorManager(),
 			"oneview_interconnect_type":                   dataSourceInterconnectType(),
 			"oneview_interconnect":                        dataSourceInterconnects(),
+			"oneview_label":                               dataSourceLabel(),
 			"oneview_logical_enclosure":                   dataSourceLogicalEnclosure(),
 			"oneview_logical_interconnect":                dataSourceLogicalInterconnect(),
 			"oneview_logical_interconnect_group":          dataSourceLogicalInterconnectGroup(),
@@ -98,6 +99,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_task":                                dataSourceTask(),
 			"oneview_uplink_set":                          dataSourceUplinkSet(),
 			"oneview_volume":                              dataSourceVolume(),
+			"oneview_version":                             dataSourceVersion(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -113,6 +115,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_hypervisor_cluster_profile":          resourceHypervisorClusterProfile(),
 			"oneview_hypervisor_manager":                  resourceHypervisorManager(),
 			"oneview_i3s_plan":                            resourceI3SPlan(),
+			"oneview_label":                               resourceLabel(),
 			"oneview_logical_enclosure":                   resourceLogicalEnclosure(),
 			"oneview_logical_interconnect_group":          resourceLogicalInterconnectGroup(),
 			"oneview_logical_interconnect":                resourceLogicalInterconnect(),

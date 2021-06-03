@@ -1,5 +1,5 @@
 /*
-(c) Copyright [2015] Hewlett Packard Enterprise Development LP
+(c) Copyright [2021] Hewlett Packard Enterprise Development LP
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -105,12 +105,8 @@ func (c *OVClient) GetProfileTemplates(start string, count string, filter string
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
-	// Setup query
-	if len(q) > 0 {
-		c.SetQueryString(q)
-	}
 
-	data, err := c.RestAPICall(rest.GET, uri, nil)
+	data, err := c.RestAPICall(rest.GET, uri, nil, q)
 	if err != nil {
 		return profiles, err
 	}
