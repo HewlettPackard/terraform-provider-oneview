@@ -12,112 +12,15 @@
 package oneview
 
 import (
+	"encoding/json"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"strconv"
-	"time"
+	"io/ioutil"
 )
 
 func dataSourceEthernetNetwork() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceEthernetNetworkRead,
-
-		Schema: map[string]*schema.Schema{
-			"count_": {
-                                Type: schema.TypeInt,
-                                Computed: true,
-                        },
-			"total": {
-                                Type: schema.TypeInt,
-                                Computed: true,
-                        },
-			"list_uri": {
-                                Type: schema.TypeString,
-                                Computed: true,
-                        },
-			"name": {
-				Type: schema.TypeString,
-                                Optional: true,
-                        },
-			"members": {
-				Type: schema.TypeList,
-				Computed: true,
-
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"vlan_id": {
-							Type:     schema.TypeInt,
-							Computed: true,
-						},
-						"purpose": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"private_network": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"smart_link": {
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"ethernet_network_type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"connection_template_uri": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"created": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"modified": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"uri": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"status": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"category": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"state": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"fabric_uri": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"etag": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"scopesuri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
-
-		},
-
+		Read:   dataSourceEthernetNetworkRead,
+		Schema: ethernetSchema().Schema,
 	}
 }
 
@@ -126,32 +29,28 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 	name := d.Get("name").(string)
 
 	if len(name) > 0 {
-		eNet , err := config.ovClient.GetEthernetNetworkByName(name)
+		eNet, err := config.ovClient.GetEthernetNetworkByName(name)
 		if err != nil {
-                        d.SetId("")
-                        return nil
+			d.SetId("")
+			return nil
 		}
-		members := make([]map[string]interface{}, 0, 1)
-		members = append(members, map[string]interface{}{
-                                        "name":   eNet.Name,
-                                        "purpose": eNet.Purpose,
-                                        "vlan_id": eNet.VlanId,
-                                        "smart_link": eNet.SmartLink,
-                                        "private_network": eNet.PrivateNetwork,
-                                        "ethernet_network_type": eNet.EthernetNetworkType,
-                                        "type": eNet.Type,
-                                        "created": eNet.Created,
-                                        "modified": eNet.Modified,
-                                        "uri": eNet.URI,
-                                        "connection_template_uri": eNet.ConnectionTemplateUri,
-                                        "state":  eNet.State,
-                                        "status": eNet.Status,
-                                        "category": eNet.Category,
-                                        "fabric_uri": eNet.FabricUri,
-                                        "etag": eNet.ETAG,
-                                        "scopesuri": eNet.ScopesUri,
-                                })
-		d.Set("members", members)
+		d.Set("name", eNet.Name)
+		d.Set("purpose", eNet.Purpose)
+		d.Set("vlan_id", eNet.VlanId)
+		d.Set("smart_link", eNet.SmartLink)
+		d.Set("private_network", eNet.PrivateNetwork)
+		d.Set("ethernet_network_type", eNet.EthernetNetworkType)
+		d.Set("type", eNet.Type)
+		d.Set("created", eNet.Created)
+		d.Set("modified", eNet.Modified)
+		d.Set("uri", eNet.URI)
+		d.Set("connection_template_uri", eNet.ConnectionTemplateUri)
+		d.Set("state", eNet.State)
+		d.Set("status", eNet.Status)
+		d.Set("category", eNet.Category)
+		d.Set("fabric_uri", eNet.FabricUri)
+		d.Set("etag", eNet.ETAG)
+		d.Set("scopesuri", eNet.ScopesUri)
 		d.SetId(name)
 		return nil
 	} else {
@@ -161,37 +60,33 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 			d.SetId("")
 			return nil
 		} else {
-			d.Set("count_", eNetList.Count)
-			d.Set("total", eNetList.Total)
-			d.Set("list_uri", eNetList.URI)
-
 			members := make([]map[string]interface{}, 0, len(eNetList.Members))
 			for _, eNet := range eNetList.Members {
 				members = append(members, map[string]interface{}{
-					"name":   eNet.Name,
-					"purpose": eNet.Purpose,
-					"vlan_id": eNet.VlanId,
-					"smart_link": eNet.SmartLink,
-					"private_network": eNet.PrivateNetwork,
-					"ethernet_network_type": eNet.EthernetNetworkType,
-					"type": eNet.Type,
-					"created": eNet.Created,
-					"modified": eNet.Modified,
-					"uri": eNet.URI,
+					"name":                    eNet.Name,
+					"purpose":                 eNet.Purpose,
+					"vlan_id":                 eNet.VlanId,
+					"smart_link":              eNet.SmartLink,
+					"private_network":         eNet.PrivateNetwork,
+					"ethernet_network_type":   eNet.EthernetNetworkType,
+					"type":                    eNet.Type,
+					"created":                 eNet.Created,
+					"modified":                eNet.Modified,
+					"uri":                     eNet.URI,
 					"connection_template_uri": eNet.ConnectionTemplateUri,
-					"state":  eNet.State,
-					"status": eNet.Status,
-					"category": eNet.Category,
-					"fabric_uri": eNet.FabricUri,
-					"etag": eNet.ETAG,
-					"scopesuri": eNet.ScopesUri,
+					"state":                   eNet.State,
+					"status":                  eNet.Status,
+					"category":                eNet.Category,
+					"fabric_uri":              eNet.FabricUri,
+					"etag":                    eNet.ETAG,
+					"scopesuri":               eNet.ScopesUri,
 				})
 			}
+			file, _ := json.MarshalIndent(members, "", " ")
+			_ = ioutil.WriteFile("test.json", file, 0644)
 
-			d.Set("members", members)
-			d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+			d.SetId(string(file))
 		}
+		return nil
 	}
-	return nil
-
 }
