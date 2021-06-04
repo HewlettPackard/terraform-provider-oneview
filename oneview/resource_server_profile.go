@@ -1331,7 +1331,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					volumes = ov.Volume{
 						IsPermanent: &tempIsPermanent,
 						Properties:  &properties,
-												
+
 						TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 					}
 				}
