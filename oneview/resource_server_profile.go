@@ -1118,32 +1118,16 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.HideUnusedFlexNics = val.(bool)
 	}
 
-	if val, ok := d.GetOk("associated_server"); ok {
-		serverProfile.AssociatedServer = utils.NewNstring(val.(string))
-	}
-
 	if val, ok := d.GetOk("category"); ok {
 		serverProfile.Category = val.(string)
-	}
-
-	if val, ok := d.GetOk("created"); ok {
-		serverProfile.Created = val.(string)
 	}
 
 	if val, ok := d.GetOk("description"); ok {
 		serverProfile.Description = val.(string)
 	}
 
-	if val, ok := d.GetOk("etag"); ok {
-		serverProfile.ETAG = val.(string)
-	}
-
 	if val, ok := d.GetOk("enclosure_bay"); ok {
 		serverProfile.EnclosureBay = val.(int)
-	}
-
-	if val, ok := d.GetOk("in_progress"); ok {
-		serverProfile.InProgress = val.(bool)
 	}
 
 	if val, ok := d.GetOk("iscsi_initiator_name"); ok {
@@ -1154,24 +1138,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.IscsiInitiatorNameType = val.(string)
 	}
 
-	if val, ok := d.GetOk("modified"); ok {
-		serverProfile.Modified = val.(string)
-	}
-
-	if val, ok := d.GetOk("profile_uuid"); ok {
-		serverProfile.ProfileUUID = utils.NewNstring(val.(string))
-	}
-
-	if val, ok := d.GetOk("refresh_state"); ok {
-		serverProfile.RefreshState = val.(string)
-	}
-
 	if val, ok := d.GetOk("scopes_uri"); ok {
 		serverProfile.ScopesUri = utils.NewNstring(val.(string))
-	}
-
-	if val, ok := d.GetOk("server_hardware_reapply_state"); ok {
-		serverProfile.ServerHardwareReapplyState = val.(string)
 	}
 
 	if val, ok := d.GetOk("server_hardware_type_uri"); ok {
@@ -1182,24 +1150,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.ServiceManager = val.(string)
 	}
 
-	if val, ok := d.GetOk("state"); ok {
-		serverProfile.State = val.(string)
-	}
-
-	if val, ok := d.GetOk("status"); ok {
-		serverProfile.Status = val.(string)
-	}
-
-	if val, ok := d.GetOk("task_uri"); ok {
-		serverProfile.TaskURI = utils.NewNstring(val.(string))
-	}
-
 	if val, ok := d.GetOk("template_compliance"); ok {
 		serverProfile.TemplateCompliance = val.(string)
-	}
-
-	if val, ok := d.GetOk("uuid"); ok {
-		serverProfile.UUID = utils.NewNstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("enclosure_group"); ok {
