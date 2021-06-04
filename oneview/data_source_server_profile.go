@@ -627,7 +627,7 @@ func dataSourceServerProfile() *schema.Resource {
 				ForceNew: true,
 			},
 			"management_processor": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

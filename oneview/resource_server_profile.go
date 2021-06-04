@@ -969,7 +969,7 @@ func resourceServerProfile() *schema.Resource {
 				Computed: true,
 			},
 			"management_processor": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -1361,7 +1361,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 						Bootable:          &boot,
 						RaidLevel:         logicalDrivesItem["raid_level"].(string),
 						Accelerator:       logicalDrivesItem["accelerator"].(string),
-						DriveNumber:       logicalDrivesItem["drive_number"].(int),
 						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 						Name:              logicalDrivesItem["name"].(string),
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
@@ -1397,7 +1396,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Name:              sasLogicalJbodData["name"].(string),
 					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
 					Persistent:        sasLogicalJbodData["persistent"].(bool),
-					Status:            sasLogicalJbodData["status"].(string),
 					SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 				})
 			}
@@ -1405,7 +1403,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
 				Initialize:         localStorageItem["initialize"].(bool),
 				Controllers:        localStorageEmbeddedController,
-				ReapplyState:       localStorageItem["reapply_state"].(string),
 				SasLogicalJBODs:    logicalJbod,
 			}
 		}
@@ -1878,16 +1875,8 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.HideUnusedFlexNics = val.(bool)
 		}
 
-		if val, ok := d.GetOk("associated_server"); ok {
-			serverProfile.AssociatedServer = utils.NewNstring(val.(string))
-		}
-
 		if val, ok := d.GetOk("category"); ok {
 			serverProfile.Category = val.(string)
-		}
-
-		if val, ok := d.GetOk("created"); ok {
-			serverProfile.Created = val.(string)
 		}
 
 		if val, ok := d.GetOk("description"); ok {
@@ -1902,10 +1891,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.EnclosureBay = val.(int)
 		}
 
-		if val, ok := d.GetOk("in_progress"); ok {
-			serverProfile.InProgress = val.(bool)
-		}
-
 		if val, ok := d.GetOk("iscsi_initiator_name"); ok {
 			serverProfile.IscsiInitiatorName = val.(string)
 		}
@@ -1914,24 +1899,12 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.IscsiInitiatorNameType = val.(string)
 		}
 
-		if val, ok := d.GetOk("modified"); ok {
-			serverProfile.Modified = val.(string)
-		}
-
 		if val, ok := d.GetOk("profile_uuid"); ok {
 			serverProfile.ProfileUUID = utils.NewNstring(val.(string))
 		}
 
-		if val, ok := d.GetOk("refresh_state"); ok {
-			serverProfile.RefreshState = val.(string)
-		}
-
 		if val, ok := d.GetOk("scopes_uri"); ok {
 			serverProfile.ScopesUri = utils.NewNstring(val.(string))
-		}
-
-		if val, ok := d.GetOk("server_hardware_reapply_state"); ok {
-			serverProfile.ServerHardwareReapplyState = val.(string)
 		}
 
 		if val, ok := d.GetOk("server_hardware_type_uri"); ok {
@@ -1940,18 +1913,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 		if val, ok := d.GetOk("service_manager"); ok {
 			serverProfile.ServiceManager = val.(string)
-		}
-
-		if val, ok := d.GetOk("state"); ok {
-			serverProfile.State = val.(string)
-		}
-
-		if val, ok := d.GetOk("status"); ok {
-			serverProfile.Status = val.(string)
-		}
-
-		if val, ok := d.GetOk("task_uri"); ok {
-			serverProfile.TaskURI = utils.NewNstring(val.(string))
 		}
 
 		if val, ok := d.GetOk("template_compliance"); ok {
@@ -2194,7 +2155,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Name:              sasLogicalJbodData["name"].(string),
 						NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
 						Persistent:        sasLogicalJbodData["persistent"].(bool),
-						Status:            sasLogicalJbodData["status"].(string),
 						SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 					})
 				}
@@ -2202,7 +2162,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
 					Initialize:         localStorageItem["initialize"].(bool),
 					Controllers:        localStorageEmbeddedController,
-					ReapplyState:       localStorageItem["reapply_state"].(string),
 					SasLogicalJBODs:    logicalJbod,
 				}
 			}
