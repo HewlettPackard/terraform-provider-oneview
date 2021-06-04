@@ -226,17 +226,17 @@ func resourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	associated_res := make([]map[string]interface{}, 0, 1)
-	associated_res = append(associated_res, map[string]interface{}{
+	associatedRes := make([]map[string]interface{}, 0, 1)
+	associatedRes = append(associatedRes, map[string]interface{}{
 		"association_type":  task.AssociatedRes.AssociationType,
 		"resource_category": task.AssociatedRes.ResourceCateogry,
 		"resource_name":     task.AssociatedRes.ResourceName,
 		"resource_uri":      task.AssociatedRes.ResourceURI,
 	})
 
-	progress_updates := make([]map[string]interface{}, 0, len(task.ProgressUpdates))
+	progressUpdates := make([]map[string]interface{}, 0, len(task.ProgressUpdates))
 	for _, update := range task.ProgressUpdates {
-		progress_updates = append(progress_updates, map[string]interface{}{
+		progressUpdates = append(progressUpdates, map[string]interface{}{
 			"time_stamp":    update.TimeStamp,
 			"status_update": update.StatusUpdate,
 			"id":            update.ID,
@@ -258,8 +258,8 @@ func resourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 		})
 	}
 
-	d.Set("associated_resources", associated_res)
-	d.Set("progress_updates", progress_updates)
+	d.Set("associated_resources", associatedRes)
+	d.Set("progress_updates", progressUpdates)
 	d.Set("data", data)
 	d.Set("task_errors", taskErrors)
 	d.Set("type", task.Type)
