@@ -3,7 +3,7 @@ provider "oneview" {
 	ov_password   = var.password
 	ov_endpoint   = var.endpoint
 	ov_sslverify  = var.ssl_enabled
-	ov_apiversion = 3000
+	ov_apiversion = var.api_version
 	ov_ifmatch    = "*"
   }
 
