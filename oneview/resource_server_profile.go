@@ -1331,7 +1331,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					volumes = ov.Volume{
 						IsPermanent: &tempIsPermanent,
 						Properties:  &properties,
-						//InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
+												
 						TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 					}
 				}
@@ -2088,7 +2088,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						volumes = ov.Volume{
 							IsPermanent: &tempIsPermanent,
 							Properties:  &properties,
-							//InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
 							TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 						}
 					}
