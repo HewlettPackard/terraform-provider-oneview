@@ -12,9 +12,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
    - POST /rest/appliance/snmpv3-trap-forwarding/destinations
    - PUT /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
    - DELETE /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
-2. Added support to Connection Templates Resource.
-   - GET /rest/connection-templates/{id}
-   - PUT /rest/connection-templates/{id}
 2. Added support to Appliance Time and Locale Configuration.
    - GET  /rest/appliance/configuration/time-locale
    - POST /rest/appliance/configuration/time-locale
@@ -33,6 +30,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 6. Added support to Appliance SSH Access Resource.
    - GET  /rest/appliance/ssh-access
    - PUT /rest/appliance/ssh-access
+7. Added support to Firmware Drivers Resource.
+   - GET    /rest/firmware-drivers/{id}
+   - POST   /rest/firmware-drivers
+   - DELETE /rest/firmware-drivers/{id}
+8. Added support to Connection Templates Resource.
+   - GET /rest/connection-templates/{id}
+   - PUT /rest/connection-templates/{id}
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
@@ -43,6 +47,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SSH Access
 - Appliance Time and Locale Configuration
 - Connection Template
+- Firmware Drivers
 - Labels
 
 ### Bug fixes & Enhancements:
