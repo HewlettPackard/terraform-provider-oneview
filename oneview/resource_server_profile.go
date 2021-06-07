@@ -486,6 +486,10 @@ func resourceServerProfile() *schema.Resource {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
+												"drive_number": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
 												"drive_technology": {
 													Type:     schema.TypeString,
 													Optional: true,
@@ -515,6 +519,10 @@ func resourceServerProfile() *schema.Resource {
 									},
 								},
 							},
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"sas_logical_jbod": {
 							Optional: true,
@@ -559,6 +567,14 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"persistent": {
 										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"sas_logical_jbod_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
 										Optional: true,
 									},
 								},
@@ -907,6 +923,144 @@ func resourceServerProfile() *schema.Resource {
 					},
 				},
 			},
+			"associated_server": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"category": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"created": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"etag": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"enclosure_bay": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"in_progress": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"iscsi_initiator_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"iscsi_initiator_name_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"management_processor": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_mp": {
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+						"mp_settings": {
+							Optional: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"args": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"setting_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+					},
+				},
+			},
+			"modified": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"profile_uuid": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"refresh_state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"scopes_uri": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"server_hardware_reapply_state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"server_hardware_type_uri": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"service_manager": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"status": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"task_uri": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"template_compliance": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"uuid": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -962,6 +1116,42 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 	if val, ok := d.GetOk("hide_unused_flex_nics"); ok {
 		serverProfile.HideUnusedFlexNics = val.(bool)
+	}
+
+	if val, ok := d.GetOk("category"); ok {
+		serverProfile.Category = val.(string)
+	}
+
+	if val, ok := d.GetOk("description"); ok {
+		serverProfile.Description = val.(string)
+	}
+
+	if val, ok := d.GetOk("enclosure_bay"); ok {
+		serverProfile.EnclosureBay = val.(int)
+	}
+
+	if val, ok := d.GetOk("iscsi_initiator_name"); ok {
+		serverProfile.IscsiInitiatorName = val.(string)
+	}
+
+	if val, ok := d.GetOk("iscsi_initiator_name_type"); ok {
+		serverProfile.IscsiInitiatorNameType = val.(string)
+	}
+
+	if val, ok := d.GetOk("scopes_uri"); ok {
+		serverProfile.ScopesUri = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk("server_hardware_type_uri"); ok {
+		serverProfile.ServerHardwareTypeURI = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk("service_manager"); ok {
+		serverProfile.ServiceManager = val.(string)
+	}
+
+	if val, ok := d.GetOk("template_compliance"); ok {
+		serverProfile.TemplateCompliance = val.(string)
 	}
 
 	if val, ok := d.GetOk("enclosure_group"); ok {
@@ -1206,6 +1396,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Name:              sasLogicalJbodData["name"].(string),
 					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
 					Persistent:        sasLogicalJbodData["persistent"].(bool),
+					SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 				})
 			}
 			localStorage = ov.LocalStorageOptions{
@@ -1386,13 +1577,17 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
-	if err != nil {
-		return err
+	// when server hardware is assigned
+	if serverProfile.ServerHardwareURI != "" {
+		serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
+		if err != nil {
+			return err
+		}
+		d.Set("enclosure_bay", serverProfile.EnclosureBay)
+		d.Set("hardware_uri", serverHardware.URI.String())
+		d.Set("hardware_name", serverHardware.Name)
+		d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	}
-
-	d.Set("hardware_uri", serverHardware.URI.String())
-	d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	d.Set("serial_number", serverProfile.SerialNumber.String())
 
 	if val, ok := d.GetOk("public_connection"); ok {
@@ -1424,6 +1619,28 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("wwn_type", serverProfile.WWNType)
 	d.Set("mac_type", serverProfile.MACType)
 	d.Set("hide_unused_flex_nics", serverProfile.HideUnusedFlexNics)
+	d.Set("associated_server", serverProfile.AssociatedServer.String())
+	d.Set("category", serverProfile.Category)
+	d.Set("created", serverProfile.Created)
+	d.Set("description", serverProfile.Description)
+	d.Set("etag", serverProfile.ETAG)
+	d.Set("in_progress", serverProfile.InProgress)
+	d.Set("initial_scope_uris", serverProfile.InitialScopeUris)
+	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName)
+	d.Set("iscsi_initiator_name_type", serverProfile.IscsiInitiatorNameType)
+	d.Set("modified", serverProfile.Modified)
+	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
+	d.Set("refresh_state", serverProfile.RefreshState)
+	d.Set("scopes_uri", serverProfile.ScopesUri)
+	d.Set("server_hardware_reapply_state", serverProfile.ServerHardwareReapplyState)
+	d.Set("server_hardware_type_uri", serverProfile.ServerHardwareTypeURI.String())
+	d.Set("service_manager", serverProfile.ServiceManager)
+	d.Set("state", serverProfile.State)
+	d.Set("status", serverProfile.Status)
+	d.Set("task_uri", serverProfile.TaskURI.String())
+	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
+	d.Set("template_compliance", serverProfile.TemplateCompliance)
+	d.Set("uuid", serverProfile.UUID.String())
 
 	if len(serverProfile.ConnectionSettings.Connections) != 0 {
 		// Get connections
@@ -1531,6 +1748,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				logicalDrives = append(logicalDrives, map[string]interface{}{
 					"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 					"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+					"drive_number":        serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveNumber,
 					"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
 					"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 					"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
@@ -1553,22 +1771,25 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
 		for i := 0; i < len(serverProfile.LocalStorage.SasLogicalJBODs); i++ {
 			sasLogDrives = append(sasLogDrives, map[string]interface{}{
-				"description":        serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
-				"device_slot":        serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
-				"drive_max_size_gb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
-				"drive_min_size_sb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
-				"drive_technology":   serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
-				"erase_data":         serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
-				"id":                 serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
-				"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
-				"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
-				"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+				"description":          serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
+				"device_slot":          serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
+				"drive_max_size_gb":    serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
+				"drive_min_size_sb":    serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
+				"drive_technology":     serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
+				"erase_data":           serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
+				"id":                   serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
+				"name":                 serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
+				"num_physical_drive":   serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
+				"persistent":           serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+				"sas_logical_jbod_uri": serverProfile.LocalStorage.SasLogicalJBODs[i].SasLogicalJBODUri.String(),
+				"status":               serverProfile.LocalStorage.SasLogicalJBODs[i].Status,
 			})
 		}
 		localStorage = append(localStorage, map[string]interface{}{
 			"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
 			"initialize":           serverProfile.LocalStorage.Initialize,
 			"controller":           controllers,
+			"reapply_state":        serverProfile.LocalStorage.ReapplyState,
 			"sas_logical_jbod":     sasLogDrives,
 		})
 		d.Set("local_storage", localStorage)
@@ -1652,6 +1873,54 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 		if val, ok := d.GetOk("hide_unused_flex_nics"); ok {
 			serverProfile.HideUnusedFlexNics = val.(bool)
+		}
+
+		if val, ok := d.GetOk("category"); ok {
+			serverProfile.Category = val.(string)
+		}
+
+		if val, ok := d.GetOk("description"); ok {
+			serverProfile.Description = val.(string)
+		}
+
+		if val, ok := d.GetOk("etag"); ok {
+			serverProfile.ETAG = val.(string)
+		}
+
+		if val, ok := d.GetOk("enclosure_bay"); ok {
+			serverProfile.EnclosureBay = val.(int)
+		}
+
+		if val, ok := d.GetOk("iscsi_initiator_name"); ok {
+			serverProfile.IscsiInitiatorName = val.(string)
+		}
+
+		if val, ok := d.GetOk("iscsi_initiator_name_type"); ok {
+			serverProfile.IscsiInitiatorNameType = val.(string)
+		}
+
+		if val, ok := d.GetOk("profile_uuid"); ok {
+			serverProfile.ProfileUUID = utils.NewNstring(val.(string))
+		}
+
+		if val, ok := d.GetOk("scopes_uri"); ok {
+			serverProfile.ScopesUri = utils.NewNstring(val.(string))
+		}
+
+		if val, ok := d.GetOk("server_hardware_type_uri"); ok {
+			serverProfile.ServerHardwareTypeURI = utils.NewNstring(val.(string))
+		}
+
+		if val, ok := d.GetOk("service_manager"); ok {
+			serverProfile.ServiceManager = val.(string)
+		}
+
+		if val, ok := d.GetOk("template_compliance"); ok {
+			serverProfile.TemplateCompliance = val.(string)
+		}
+
+		if val, ok := d.GetOk("uuid"); ok {
+			serverProfile.UUID = utils.NewNstring(val.(string))
 		}
 
 		if val, ok := d.GetOk("enclosure_group"); ok {
@@ -1852,6 +2121,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							Bootable:          &boot,
 							RaidLevel:         logicalDrivesItem["raid_level"].(string),
 							Accelerator:       logicalDrivesItem["accelerator"].(string),
+							DriveNumber:       logicalDrivesItem["drive_number"].(int),
 							DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 							Name:              logicalDrivesItem["name"].(string),
 							NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
@@ -1885,6 +2155,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Name:              sasLogicalJbodData["name"].(string),
 						NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
 						Persistent:        sasLogicalJbodData["persistent"].(bool),
+						SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 					})
 				}
 				localStorage = ov.LocalStorageOptions{
