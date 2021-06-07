@@ -9,7 +9,20 @@ provider "oneview" {
 
 # Testing data source
 data "oneview_ethernet_network" "ethernetnetworks" {
-  name = "TestEthNetwork_terraform_Rename"
+get_type = "GetAll"
+}
+
+output "oneview_ethernet_network_value" {
+  value = data.oneview_ethernet_network.ethernetnetworks
+}
+
+data "oneview_ethernet_network" "ethernetnetworkbyname" {
+get_type = "GetById"
+name = "Test"
+}
+
+output "oneview_ethernet_network_by_name_value" {
+  value = data.oneview_ethernet_network.ethernetnetworkbyname
 }
 
 resource "oneview_ethernet_network" "ethernetnetwork_1" {
