@@ -712,6 +712,29 @@ func dataSourceServerProfile() *schema.Resource {
 									"chap_level": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
+									},
+									"chap_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"chap_secret": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"chap_source": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"mutual_chap_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"mutual_chap_secret": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
 									},
 									"storage_system_uri": {
 										Type:     schema.TypeString,
@@ -1282,10 +1305,14 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	}
 	sanSystemCredentials := make([]interface{}, 0)
 	if len(serverProfile.SanStorage.SanSystemCredentials) != 0 {
-		sanSystemCredentials := make([]map[string]interface{}, 0, len(serverProfile.SanStorage.SanSystemCredentials))
 		for i := 0; i < len(serverProfile.SanStorage.SanSystemCredentials); i++ {
 			sanSystemCredentials = append(sanSystemCredentials, map[string]interface{}{
 				"chap_level":         serverProfile.SanStorage.SanSystemCredentials[i].ChapLevel,
+				"chap_name":          serverProfile.SanStorage.SanSystemCredentials[i].ChapName,
+				"chap_secret":        serverProfile.SanStorage.SanSystemCredentials[i].ChapSecret,
+				"chap_source":        serverProfile.SanStorage.SanSystemCredentials[i].ChapSource,
+				"mutual_chap_name":   serverProfile.SanStorage.SanSystemCredentials[i].MutualChapName,
+				"mutual_chap_secret": serverProfile.SanStorage.SanSystemCredentials[i].MutualChapSecret,
 				"storage_system_uri": serverProfile.SanStorage.SanSystemCredentials[i].StorageSystemUri.String(),
 			})
 		}
