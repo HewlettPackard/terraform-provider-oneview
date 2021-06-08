@@ -797,16 +797,20 @@ func resourceServerProfileTemplate() *schema.Resource {
 				},
 			},
 			"os_deployment_settings": {
-				Optional: true,
 				Type:     schema.TypeSet,
+				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"os_deployment_plan_name": {
+						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"os_volume_uri": {
+						"deploy_method": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"deployment_port_id": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -815,7 +819,15 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"constraints": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"type": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -825,6 +837,14 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 								},
 							},
+						},
+						"os_deployment_plan_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_deployment_plan_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 					},
 				},
@@ -956,6 +976,10 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
 			}
 		}
+	}
+
+	if val, ok := d.GetOk("os_deployment_settings"); ok {
+		osDeploymentSettings := val.([]interface{})
 	}
 
 	if val, ok := d.GetOk("bios_option"); ok {
@@ -1417,6 +1441,40 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 
 		d.Set("bios_option", biosOptions)
 	}
+
+	if len(spt.OSDeploymentSettings.OSCustomAttributes) != 0 {
+		osCustomAttributes := make([]map[string]interface{}, 0, len(spt.OSDeploymentSettings.OSCustomAttributes))
+		for i := 0; i < len(spt.OSDeploymentSettings.OSCustomAttributes); i++ {
+			osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
+				"name":        spt.OSDeploymentSettings.OSCustomAttributes[i].Name,
+				"type":        spt.OSDeploymentSettings.OSCustomAttributes[i].Type,
+				"value":       spt.OSDeploymentSettings.OSCustomAttributes[i].Value,
+				"constraints": spt.OSDeploymentSettings.OSCustomAttributes[i].Constraints,
+			})
+		}
+
+		osDeploymentPlanName := ""
+		if spt.OSDeploymentSettings.OSDeploymentPlanUri != nil {
+			osdp, err := config.ovClient.GetOSDeploymentPlan(spt.OSDeploymentSettings.OSDeploymentPlanUri)
+			if err != nil {
+				return err
+			}
+			osDeploymentPlanName = osdp.Name
+		}
+		
+		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
+		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
+			"compliance_control":     spt.OSDeploymentSettings.ComplianceControl,
+			"deploy_method":          spt.OSDeploymentSettings.DeployMethod,
+			"deployment_port_id":     spt.OSDeploymentSettings.DeploymentPortId,
+			"os_custom_attributes":   osCustomAttributes,
+			"os_deployment_plan_name": osDeploymentPlanName,
+			"os_deployment_plan_uri": spt.OSDeploymentSettings.OSDeploymentPlanUri.String(),
+		})
+
+		d.Set("os_deployment_settings", osDeploymentSettingslist)
+	}
+
 	return nil
 }
 

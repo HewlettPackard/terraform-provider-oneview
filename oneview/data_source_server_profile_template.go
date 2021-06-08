@@ -506,7 +506,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"management_processor": {
 				Optional: true,
 				Type:     schema.TypeList,
@@ -570,10 +569,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"os_deployment_plan_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"os_custom_attributes": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -598,6 +593,14 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 								},
 							},
 						},
+						"os_deployment_plan_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_deployment_plan_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -605,7 +608,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-
 			"san_storage": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -859,7 +861,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-
 			"server_profile_description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -876,7 +877,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -1081,12 +1081,22 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 			})
 		}
 
+		osDeploymentPlanName := ""
+		if spt.OSDeploymentSettings.OSDeploymentPlanUri != nil {
+			osdp, err := config.ovClient.GetOSDeploymentPlan(spt.OSDeploymentSettings.OSDeploymentPlanUri)
+			if err != nil {
+				return err
+			}
+			osDeploymentPlanName = osdp.Name
+		}
+		
 		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
 		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
 			"compliance_control":     spt.OSDeploymentSettings.ComplianceControl,
 			"deploy_method":          spt.OSDeploymentSettings.DeployMethod,
 			"deployment_port_id":     spt.OSDeploymentSettings.DeploymentPortId,
 			"os_custom_attributes":   osCustomAttributes,
+			"os_deployment_plan_name": osDeploymentPlanName,
 			"os_deployment_plan_uri": spt.OSDeploymentSettings.OSDeploymentPlanUri.String(),
 		})
 
