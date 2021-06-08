@@ -8,21 +8,22 @@ provider "oneview" {
 }
 
 # Testing data source
+# Gets all ethernet networks if name not given
 data "oneview_ethernet_network" "ethernetnetworks" {
-get_type = "GetAll"
 }
 
 output "oneview_ethernet_network_value" {
   value = data.oneview_ethernet_network.ethernetnetworks
 }
 
+# Gets a network with name Test
 data "oneview_ethernet_network" "ethernetnetworkbyname" {
-get_type = "GetById"
-name = "Test"
+  name = "Test"
 }
 
+
 output "oneview_ethernet_network_by_name_value" {
-  value = data.oneview_ethernet_network.ethernetnetworkbyname
+  value = data.oneview_ethernet_network.ethernetnetworkbyname.members[0]
 }
 
 resource "oneview_ethernet_network" "ethernetnetwork_1" {
