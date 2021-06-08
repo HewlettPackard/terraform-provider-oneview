@@ -692,6 +692,10 @@ func dataSourceServerProfile() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"compliance_control": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"host_os_type": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -700,25 +704,44 @@ func dataSourceServerProfile() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"server_hardware_type_uri": {
-							Type:     schema.TypeString,
+						"san_system_credentials": {
 							Optional: true,
-						},
-						"server_hardware_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"serial_number": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"uri": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"chap_level": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"chap_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"chap_secret": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"chap_source": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"mutual_chap_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"mutual_chap_secret": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"storage_system_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -793,12 +816,21 @@ func dataSourceServerProfile() *schema.Resource {
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"associated_template_attachment_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"boot_volume_priority": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+
 						"id": {
 							Type:     schema.TypeInt,
+							Required: true,
+						},
+						"is_permanent": {
+							Type:     schema.TypeBool,
 							Required: true,
 						},
 						"lun": {
@@ -809,10 +841,23 @@ func dataSourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"permanent": {
-							Type:     schema.TypeBool,
+						"state": {
+							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_storage_system_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"volume_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
 						"storage_paths": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -826,11 +871,11 @@ func dataSourceServerProfile() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 									},
-									"status": {
+									"network_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"storage_target_type": {
+									"status": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
@@ -852,7 +897,7 @@ func dataSourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"tcp_port": {
-													Type:     schema.TypeInt,
+													Type:     schema.TypeString,
 													Optional: true,
 												},
 											},
@@ -861,41 +906,118 @@ func dataSourceServerProfile() *schema.Resource {
 								},
 							},
 						},
-						"volume_description": {
-							Type:     schema.TypeString,
+						"volume": {
+							Type:     schema.TypeSet,
 							Optional: true,
-						},
-						"volume_name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"volume_provision_type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"volume_provisioned_capacity_bytes": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"volume_shareable": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"volume_storage_pool_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"volume_storage_system_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"volume_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"initial_scope_uris": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"is_permanent": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"template_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"properties": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"data_protection_level": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"data_transfer_limit": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"description": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"folder": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"iops_limit": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"is_deduplicated": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_encrypted": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_pinned": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_shareable": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"performance_policy": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"provisioning_type": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"size": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"volume_set": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"is_data_reduction_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_adaptive_optimization_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_compressed": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"snapshot_pool": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"storage_pool": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"template_version": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+								},
+							},
 						},
 					},
 				},
 			},
+
 			"wwn_type": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -914,6 +1036,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 		d.SetId("")
 		return nil
 	}
+
 	d.SetId(d.Get("name").(string))
 
 	d.Set("name", serverProfile.Name)
@@ -1180,6 +1303,114 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 		d.Set("hardware_name", serverHardware.Name)
 		d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	}
+	sanSystemCredentials := make([]interface{}, 0)
+	if len(serverProfile.SanStorage.SanSystemCredentials) != 0 {
+		for i := 0; i < len(serverProfile.SanStorage.SanSystemCredentials); i++ {
+			sanSystemCredentials = append(sanSystemCredentials, map[string]interface{}{
+				"chap_level":         serverProfile.SanStorage.SanSystemCredentials[i].ChapLevel,
+				"chap_name":          serverProfile.SanStorage.SanSystemCredentials[i].ChapName,
+				"chap_secret":        serverProfile.SanStorage.SanSystemCredentials[i].ChapSecret,
+				"chap_source":        serverProfile.SanStorage.SanSystemCredentials[i].ChapSource,
+				"mutual_chap_name":   serverProfile.SanStorage.SanSystemCredentials[i].MutualChapName,
+				"mutual_chap_secret": serverProfile.SanStorage.SanSystemCredentials[i].MutualChapSecret,
+				"storage_system_uri": serverProfile.SanStorage.SanSystemCredentials[i].StorageSystemUri.String(),
+			})
+		}
+	}
+	SanStorageOptions := make([]map[string]interface{}, 0, 1)
+	SanStorageOptions = append(SanStorageOptions, map[string]interface{}{
+		"compliance_control":     serverProfile.SanStorage.ComplianceControl,
+		"host_os_type":           serverProfile.SanStorage.HostOSType,
+		"manage_san_storage":     serverProfile.SanStorage.ManageSanStorage,
+		"san_system_credentials": sanSystemCredentials,
+	})
+	d.Set("san_storage", SanStorageOptions)
+
+	volumeAttachments := make([]interface{}, 0)
+	if len(serverProfile.SanStorage.VolumeAttachments) != 0 {
+		for i := 0; i < len(serverProfile.SanStorage.VolumeAttachments); i++ {
+			storagePaths := make([]interface{}, 0)
+			if len(serverProfile.SanStorage.VolumeAttachments[i].StoragePaths) != 0 {
+				for j := 0; j < len(serverProfile.SanStorage.VolumeAttachments[i].StoragePaths); j++ {
+					targets := make([]interface{}, 0)
+					if len(serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets) != 0 {
+						for k := 0; k < len(serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets); k++ {
+							targets = append(targets, map[string]interface{}{
+								"ip_address": serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].IpAddress,
+								"name":       serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].Name,
+								"tcp_port":   serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].TcpPort,
+							})
+						}
+
+					}
+					storagePaths = append(storagePaths, map[string]interface{}{
+						"connection_id":   serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].ConnectionID,
+						"is_enabled":      serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].IsEnabled,
+						"network_uri":     serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].NetworkUri.String(),
+						"status":          serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Status,
+						"target_selector": serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].TargetSelector,
+						"targets":         targets,
+					})
+				}
+
+			}
+			volumes := make([]interface{}, 0)
+			if serverProfile.SanStorage.VolumeAttachments[i].Volume != nil {
+
+				properties := make([]interface{}, 0)
+				if serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties != nil {
+
+					properties = append(properties, map[string]interface{}{
+						"data_protection_level":            serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.DataProtectionLevel,
+						"data_transfer_limit":              serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.DataTransferLimit,
+						"description":                      serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Description,
+						"folder":                           serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Folder,
+						"iops_limit":                       serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IopsLimit,
+						"is_deduplicated":                  serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsDeduplicated,
+						"is_encrypted":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsEncrypted,
+						"is_pinned":                        serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsPinned,
+						"is_shareable":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsShareable,
+						"name":                             serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Name,
+						"performance_policy":               serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.PerformancePolicy,
+						"provisioning_type":                serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.ProvisioningType,
+						"size":                             serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Size,
+						"volume_set":                       serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.VolumeSet,
+						"is_data_reduction_enabled":        serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsDataReductionEnabled,
+						"is_adaptive_optimization_enabled": serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsAdaptiveOptimizationEnabled,
+						"is_compressed":                    serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsCompressed,
+						"snapshot_pool":                    serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.SnapshotPool,
+						"storage_pool":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.StoragePool,
+						"template_version":                 serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.TemplateVersion,
+					})
+
+				}
+				volumes = append(volumes, map[string]interface{}{
+					"initial_scope_uris": serverProfile.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
+					"is_permanent":       serverProfile.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
+					"template_uri":       serverProfile.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
+					"properties":         properties,
+				})
+
+			}
+
+			volumeAttachments = append(volumeAttachments, map[string]interface{}{
+				"associated_template_attachment_id": serverProfile.SanStorage.VolumeAttachments[i].AssociatedTemplateAttachmentId,
+				"boot_volume_priority":              serverProfile.SanStorage.VolumeAttachments[i].BootVolumePriority,
+				"id":                                serverProfile.SanStorage.VolumeAttachments[i].ID,
+				"is_permanent":                      serverProfile.SanStorage.VolumeAttachments[i].IsPermanent,
+				"lun":                               serverProfile.SanStorage.VolumeAttachments[i].LUN,
+				"lun_type":                          serverProfile.SanStorage.VolumeAttachments[i].LUNType,
+				"state":                             serverProfile.SanStorage.VolumeAttachments[i].State,
+				"status":                            serverProfile.SanStorage.VolumeAttachments[i].Status,
+				"storage_paths":                     storagePaths,
+				"volume_storage_system_uri":         serverProfile.SanStorage.VolumeAttachments[i].VolumeStorageSystemURI,
+				"volume_uri":                        serverProfile.SanStorage.VolumeAttachments[i].VolumeURI,
+				"volume":                            volumes,
+			})
+		}
+
+	}
+	d.Set("volume_attachments", volumeAttachments)
 
 	d.Set("service_manager", serverProfile.ServiceManager)
 	d.Set("state", serverProfile.State)

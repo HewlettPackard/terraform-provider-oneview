@@ -145,7 +145,7 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `logical_drives` - The list of logical drives associated with the controller. 
 
-* `san_storage` - The profile san storage configuration.
+* `san_storage` - The profile san storage configuration. The san storage attributes list is available in the oneview Rest API reference guide.
 
 * `volume_attachments` - The list of storage volume attachments.
 

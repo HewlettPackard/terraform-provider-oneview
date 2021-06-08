@@ -97,7 +97,7 @@ The following arguments are supported:
 
 * `refresh_state` - Current refresh State of this Server Profile.
 
-* `san_storage` - The profile san storage configuration.
+* `san_storage` - The profile san storage configuration.The san storage attributes list is available in the oneview Rest API reference guide.
 
 * `scopes_uri` - The URI for the resource scope assignments.
 

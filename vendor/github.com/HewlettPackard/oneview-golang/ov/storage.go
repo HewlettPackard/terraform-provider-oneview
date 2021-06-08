@@ -53,7 +53,7 @@ type StoragePath struct {
 type Target struct {
 	IpAddress string `json:"IpAddress,omitempty"`
 	Name      string `json:"name,omitempty"`
-	TcpPort   int    `json:"tcpPort,omitempty"`
+	TcpPort   string `json:"tcpPort,omitempty"`
 }
 
 type PropertiesSP struct {
@@ -81,10 +81,10 @@ type PropertiesSP struct {
 }
 
 type Volume struct {
-	InitialScopeUris utils.Nstring `json:"initialScopeUris,omitempty"` //Initial scopes for the volume.
-	IsPermanent      *bool         `json:"isPermanent,omitempty"`      //If true, indicates that the volume will persist when the profile using this volume is deleted.
-	Properties       *PropertiesSP `json:"properties"`                 //The properties specific to a storage system family required for the creation of a storage volume.
-	TemplateUri      utils.Nstring `json:"templateUri,omitempty"`      //URI of the storage volume template from which the volume will be created.
+	InitialScopeUris []utils.Nstring `json:"initialScopeUris,omitempty"` //Initial scopes for the volume.
+	IsPermanent      *bool           `json:"isPermanent,omitempty"`      //If true, indicates that the volume will persist when the profile using this volume is deleted.
+	Properties       *PropertiesSP   `json:"properties"`                 //The properties specific to a storage system family required for the creation of a storage volume.
+	TemplateUri      utils.Nstring   `json:"templateUri,omitempty"`      //URI of the storage volume template from which the volume will be created.
 
 }
 
@@ -95,7 +95,7 @@ type VolumeAttachment struct {
 	ID                             int           `json:"id,omitempty"`                             // id, The ID of the attached storage volume.
 	LUN                            string        `json:"lun,omitempty"`                            // lun, The logical unit number.
 	LUNType                        string        `json:"lunType,omitempty"`                        // lunType(required), The logical unit number type: Auto or Manual.
-	Permanent                      *bool         `json:"permanent,omitempty"`                      // permanent, If true, indicates that the volume will persist when the profile is deleted. If false, then the volume will be deleted when the profile is deleted.
+	IsPermanent                    *bool         `json:"isPermanent,omitempty"`                    // permanent, If true, indicates that the volume will persist when the profile is deleted. If false, then the volume will be deleted when the profile is deleted.
 	State                          string        `json:"state,omitempty"`                          // state(read only), current state of the attachment
 	Status                         string        `json:"status,omitempty"`                         // status(read only), The current status of the attachment.
 	StoragePaths                   []StoragePath `json:"storagePaths,omitempty"`                   // A list of host-to-target path associations.
