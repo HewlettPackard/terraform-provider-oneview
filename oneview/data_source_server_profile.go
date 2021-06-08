@@ -1327,8 +1327,46 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 				}
 
 			}
-			volumeAttachments = append(volumeAttachments, map[string]interface{}{
+			volumes := make([]interface{}, 0)
+			if serverProfile.SanStorage.VolumeAttachments[i].Volume != nil {
 
+				properties := make([]interface{}, 0)
+				if serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties != nil {
+
+					properties = append(properties, map[string]interface{}{
+						"data_protection_level":            serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.DataProtectionLevel,
+						"data_transfer_limit":              serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.DataTransferLimit,
+						"description":                      serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Description,
+						"folder":                           serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Folder,
+						"iops_limit":                       serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IopsLimit,
+						"is_deduplicated":                  serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsDeduplicated,
+						"is_encrypted":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsEncrypted,
+						"is_pinned":                        serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsPinned,
+						"is_shareable":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsShareable,
+						"name":                             serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Name,
+						"performance_policy":               serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.PerformancePolicy,
+						"provisioning_type":                serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.ProvisioningType,
+						"size":                             serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Size,
+						"volume_set":                       serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.VolumeSet,
+						"is_data_reduction_enabled":        serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsDataReductionEnabled,
+						"is_adaptive_optimization_enabled": serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsAdaptiveOptimizationEnabled,
+						"is_compressed":                    serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsCompressed,
+						"snapshot_pool":                    serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.SnapshotPool,
+						"storage_pool":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.StoragePool,
+						"template_version":                 serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.TemplateVersion,
+					})
+
+				}
+				volumes = append(volumes, map[string]interface{}{
+					"initial_scope_uris": serverProfile.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
+					"is_permanent":       serverProfile.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
+					"template_uri":       serverProfile.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
+					"properties":         properties,
+				})
+
+			}
+
+			volumeAttachments = append(volumeAttachments, map[string]interface{}{
 				"associated_template_attachment_id": serverProfile.SanStorage.VolumeAttachments[i].AssociatedTemplateAttachmentId,
 				"boot_volume_priority":              serverProfile.SanStorage.VolumeAttachments[i].BootVolumePriority,
 				"id":                                serverProfile.SanStorage.VolumeAttachments[i].ID,
@@ -1340,6 +1378,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 				"storage_paths":                     storagePaths,
 				"volume_storage_system_uri":         serverProfile.SanStorage.VolumeAttachments[i].VolumeStorageSystemURI,
 				"volume_uri":                        serverProfile.SanStorage.VolumeAttachments[i].VolumeURI,
+				"volume":                            volumes,
 			})
 		}
 
