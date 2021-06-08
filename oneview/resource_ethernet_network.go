@@ -15,6 +15,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/HewlettPackard/terraform-provider-oneview/oneview/common_schema"
 )
 
 func resourceEthernetNetwork() *schema.Resource {
@@ -27,7 +28,7 @@ func resourceEthernetNetwork() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: ethernetSchema().Schema,
+		Schema: common_schema.EthernetSchema().Schema,
 	}
 }
 

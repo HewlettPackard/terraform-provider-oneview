@@ -1,10 +1,10 @@
-package oneview
+package common_schema
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func ethernetSchema() *schema.Resource {
+func EthernetSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {

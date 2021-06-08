@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/HewlettPackard/terraform-provider-oneview/oneview/common_schema"
 )
 
 func dataSourceEthernetNetwork() *schema.Resource {
@@ -28,7 +29,7 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				Computed: true,
 
 				Elem: &schema.Resource{
-					Schema: ethernetSchema().Schema,
+					Schema: common_schema.EthernetSchema().Schema,
 				},
 			},
 		},
@@ -66,6 +67,7 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 			"scopesuri":               eNet.ScopesUri,
 		})
 		d.Set("members", members)
+		d.Set("name", eNet.Name)
 		d.SetId(name)
 		return nil
 
@@ -99,6 +101,7 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 			})
 		}
 		d.Set("members", members)
+		d.Set("name", "EthernetList")
 		d.SetId(string(eNetList.Members[0].URI))
 		return nil
 	}
