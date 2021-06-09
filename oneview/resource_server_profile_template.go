@@ -16,6 +16,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"reflect"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
@@ -978,10 +979,6 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		}
 	}
 
-	if val, ok := d.GetOk("os_deployment_settings"); ok {
-		osDeploymentSettings := val.([]interface{})
-	}
-
 	if val, ok := d.GetOk("bios_option"); ok {
 		rawBiosOption := val.(*schema.Set).List()
 		biosOption := ov.BiosOption{}
@@ -1442,7 +1439,8 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		d.Set("bios_option", biosOptions)
 	}
 
-	if len(spt.OSDeploymentSettings.OSCustomAttributes) != 0 {
+	if reflect.DeepEqual(spt.OSDeploymentSettings, OsDeploymentSetting) == false {
+		//      if len(spt.OSDeploymentSettings.OSCustomAttributes) != 0 {
 		osCustomAttributes := make([]map[string]interface{}, 0, len(spt.OSDeploymentSettings.OSCustomAttributes))
 		for i := 0; i < len(spt.OSDeploymentSettings.OSCustomAttributes); i++ {
 			osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
@@ -1454,22 +1452,20 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		}
 
 		osDeploymentPlanName := ""
-		if spt.OSDeploymentSettings.OSDeploymentPlanUri != nil {
-			osdp, err := config.ovClient.GetOSDeploymentPlan(spt.OSDeploymentSettings.OSDeploymentPlanUri)
-			if err != nil {
-				return err
-			}
-			osDeploymentPlanName = osdp.Name
+		osdp, err := config.ovClient.GetOSDeploymentPlan(spt.OSDeploymentSettings.OSDeploymentPlanUri)
+		if err != nil {
+			return err
 		}
-		
+		osDeploymentPlanName = osdp.Name
+
 		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
 		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
-			"compliance_control":     spt.OSDeploymentSettings.ComplianceControl,
-			"deploy_method":          spt.OSDeploymentSettings.DeployMethod,
-			"deployment_port_id":     spt.OSDeploymentSettings.DeploymentPortId,
-			"os_custom_attributes":   osCustomAttributes,
+			"compliance_control":      spt.OSDeploymentSettings.ComplianceControl,
+			"deploy_method":           spt.OSDeploymentSettings.DeployMethod,
+			"deployment_port_id":      spt.OSDeploymentSettings.DeploymentPortId,
+			"os_custom_attributes":    osCustomAttributes,
 			"os_deployment_plan_name": osDeploymentPlanName,
-			"os_deployment_plan_uri": spt.OSDeploymentSettings.OSDeploymentPlanUri.String(),
+			"os_deployment_plan_uri":  spt.OSDeploymentSettings.OSDeploymentPlanUri.String(),
 		})
 
 		d.Set("os_deployment_settings", osDeploymentSettingslist)
