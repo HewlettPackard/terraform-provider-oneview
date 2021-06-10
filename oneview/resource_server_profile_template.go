@@ -901,7 +901,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 								iscsi = ov.BootIscsi{
 									Chaplevel:            rawIscsiItem["chap_level"].(string),
 									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-									FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+									FirstBootTargetPort:  rawIscsiItem["first_boot_target_port"].(string),
 									SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
 									SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 								}
@@ -1219,38 +1219,41 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		}
 		serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
 	}
-	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
-	osDeploySetting := ov.OSDeploymentSettings{}
-	for _, raw := range rawOsDeploySetting {
-		osDeploySettingItem := raw.(map[string]interface{})
-		osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
-		if err != nil {
-			return err
-		}
-		if osDeploymentPlan.URI == "" {
-			return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
-		}
 
-		osCustomAttributes := make([]ov.OSCustomAttribute, 0)
-		if osDeploySettingItem["os_custom_attributes"] != nil {
-			rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
-			for _, rawDeploySetting := range rawOsDeploySettings {
-				rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
-				osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-					Name:  rawOsDeploySetting["name"].(string),
-					Value: rawOsDeploySetting["value"].(string),
-				})
+	if _, ok := d.GetOk("os_deployment_settings"); ok {
+		rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+		osDeploySetting := ov.OSDeploymentSettings{}
+		for _, raw := range rawOsDeploySetting {
+			osDeploySettingItem := raw.(map[string]interface{})
+			osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+			if err != nil {
+				return err
+			}
+			if osDeploymentPlan.URI == "" {
+				return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+			}
+
+			osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+			if osDeploySettingItem["os_custom_attributes"] != nil {
+				rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+				for _, rawDeploySetting := range rawOsDeploySettings {
+					rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+					osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+						Name:  rawOsDeploySetting["name"].(string),
+						Value: rawOsDeploySetting["value"].(string),
+					})
+				}
+			}
+
+			osDeploySetting = ov.OSDeploymentSettings{
+				ComplianceControl:   osDeploySettingItem["compliance_control"].(string),
+				OSDeploymentPlanUri: osDeploymentPlan.URI,
+				OSCustomAttributes:  osCustomAttributes,
 			}
 		}
-
-		osDeploySetting = ov.OSDeploymentSettings{
-			OSDeploymentPlanUri: osDeploymentPlan.URI,
-			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
-			OSCustomAttributes:  osCustomAttributes,
-		}
+		serverProfileTemplate.OSDeploymentSettings = osDeploySetting
 	}
 
-	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
 	sptError := config.ovClient.CreateProfileTemplate(serverProfileTemplate)
 	d.SetId(d.Get("name").(string))
 	if sptError != nil {
@@ -1439,6 +1442,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		d.Set("bios_option", biosOptions)
 	}
 
+	OsDeploymentSetting := ov.OSDeploymentSettings{}
 	if reflect.DeepEqual(spt.OSDeploymentSettings, OsDeploymentSetting) == false {
 		//      if len(spt.OSDeploymentSettings.OSCustomAttributes) != 0 {
 		osCustomAttributes := make([]map[string]interface{}, 0, len(spt.OSDeploymentSettings.OSCustomAttributes))
@@ -1827,38 +1831,39 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
 	}
 
-	rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
-	osDeploySetting := ov.OSDeploymentSettings{}
-	for _, raw := range rawOsDeploySetting {
-		osDeploySettingItem := raw.(map[string]interface{})
-		osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
-		if err != nil {
-			return err
-		}
-		if osDeploymentPlan.URI == "" {
-			return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
-		}
+	if _, ok := d.GetOk("os_deployment_settings"); ok {
+		rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+		osDeploySetting := ov.OSDeploymentSettings{}
+		for _, raw := range rawOsDeploySetting {
+			osDeploySettingItem := raw.(map[string]interface{})
+			osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+			if err != nil {
+				return err
+			}
+			if osDeploymentPlan.URI == "" {
+				return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+			}
 
-		osCustomAttributes := make([]ov.OSCustomAttribute, 0)
-		if osDeploySettingItem["os_custom_attributes"] != nil {
-			rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
-			for _, rawDeploySetting := range rawOsDeploySettings {
-				rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
-				osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-					Name:  rawOsDeploySetting["name"].(string),
-					Value: rawOsDeploySetting["value"].(string),
-				})
+			osCustomAttributes := make([]ov.OSCustomAttribute, 0)
+			if osDeploySettingItem["os_custom_attributes"] != nil {
+				rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
+				for _, rawDeploySetting := range rawOsDeploySettings {
+					rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
+					osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
+						Name:  rawOsDeploySetting["name"].(string),
+						Value: rawOsDeploySetting["value"].(string),
+					})
+				}
+			}
+
+			osDeploySetting = ov.OSDeploymentSettings{
+				ComplianceControl:   osDeploySettingItem["compliance_control"].(string),
+				OSDeploymentPlanUri: osDeploymentPlan.URI,
+				OSCustomAttributes:  osCustomAttributes,
 			}
 		}
-
-		osDeploySetting = ov.OSDeploymentSettings{
-			OSDeploymentPlanUri: osDeploymentPlan.URI,
-			OSVolumeUri:         utils.NewNstring(osDeploySettingItem["os_volume_uri"].(string)),
-			OSCustomAttributes:  osCustomAttributes,
-		}
+		serverProfileTemplate.OSDeploymentSettings = osDeploySetting
 	}
-
-	serverProfileTemplate.OSDeploymentSettings = osDeploySetting
 
 	err = config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
 	if err != nil {

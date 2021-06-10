@@ -1073,6 +1073,7 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	})
 	d.Set("firmware", firmwareOption)
 
+	OsDeploymentSetting := ov.OSDeploymentSettings{}
 	if reflect.DeepEqual(spt.OSDeploymentSettings, OsDeploymentSetting) == false {
 		//	if len(spt.OSDeploymentSettings.OSCustomAttributes) != 0 {
 		osCustomAttributes := make([]map[string]interface{}, 0, len(spt.OSDeploymentSettings.OSCustomAttributes))
