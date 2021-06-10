@@ -912,8 +912,12 @@ func dataSourceServerProfile() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
+										Type:     schema.TypeSet,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+										Set: schema.HashString,
 									},
 									"is_permanent": {
 										Type:     schema.TypeBool,
@@ -1105,7 +1109,6 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 			// Get Boot targets list
 			targets := make([]map[string]interface{}, 0)
 			if len(connection.Boot.Targets) != 0 {
-				targets := make([]map[string]interface{}, 0, len(connection.Boot.Targets))
 				for j := 0; j < len(connection.Boot.Targets); j++ {
 					targets = append(targets, map[string]interface{}{
 						"array_wwpn": connection.Boot.Targets[j].ArrayWWPN,
@@ -1251,12 +1254,14 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("mac_type", serverProfile.MACType)
 
 	// Management Processor
-	mpSettings := make([]interface{}, 0, len(serverProfile.ManagementProcessor.MpSettings))
-	for _, mpSetting := range serverProfile.ManagementProcessor.MpSettings {
-		mpSettings = append(mpSettings, map[string]interface{}{
-			"args":         mpSetting.Args,
-			"setting_type": mpSetting.SettingType,
-		})
+	mpSettings := make([]interface{}, 0)
+	if len(serverProfile.ManagementProcessor.MpSettings) != 0 {
+		for _, mpSetting := range serverProfile.ManagementProcessor.MpSettings {
+			mpSettings = append(mpSettings, map[string]interface{}{
+				"args":         mpSetting.Args,
+				"setting_type": mpSetting.SettingType,
+			})
+		}
 	}
 	managementProcessor := make([]map[string]interface{}, 0, 1)
 	managementProcessor = append(managementProcessor, map[string]interface{}{
