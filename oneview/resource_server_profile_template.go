@@ -34,74 +34,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"affinity": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
-			},
-			"boot": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"compliance_control": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"manage_boot": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"boot_order": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
-					},
-				},
-			},
-			"category": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"created": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"enclosure_group_uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"etag": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-
-			"boot_mode": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"compliance_control": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"manage_mode": {
-							Type:     schema.TypeBool,
-							Required: true,
-						},
-						"mode": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"pxe_boot_policy": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-					},
-				},
 			},
 			"bios_option": {
 				Type:     schema.TypeSet,
@@ -117,8 +51,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Required: true,
 						},
 						"overridden_settings": {
-							Optional: true,
 							Type:     schema.TypeList,
+							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"id": {
@@ -135,48 +69,96 @@ func resourceServerProfileTemplate() *schema.Resource {
 					},
 				},
 			},
+			"boot": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"compliance_control": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"manage_boot": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Computed: true,
+						},
+						"boot_order": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem:     &schema.Schema{Type: schema.TypeString},
+							Set:      schema.HashString,
+						},
+					},
+				},
+			},
+			"boot_mode": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"compliance_control": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"manage_mode": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"pxe_boot_policy": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"secure_boot": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"category": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+
 			"connection_settings": {
 				Optional: true,
 				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"manage_connections": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"reapply_state": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"connections": {
 							Optional: true,
+							Computed: true,
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"boot": {
 										Optional: true,
+										Computed: true,
 										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"priority": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
 												"boot_vlan_id": {
 													Type:     schema.TypeInt,
 													Optional: true,
+													Computed: true,
 												},
-
-												"ethernet_boot_type": {
+												"boot_volume_source": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"boot_volume_source": {
+												"ethernet_boot_type": {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
@@ -236,6 +218,12 @@ func resourceServerProfileTemplate() *schema.Resource {
 														},
 													},
 												},
+
+												"priority": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Computed: true,
+												},
 												"targets": {
 													Type:     schema.TypeList,
 													Optional: true,
@@ -263,6 +251,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeInt,
 										Optional: true,
 									},
+
 									"ipv4": {
 										Type:     schema.TypeList,
 										Optional: true,
@@ -287,7 +276,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 											},
 										},
 									},
-
 									"isolated_trunk": {
 										Type:     schema.TypeBool,
 										Optional: true,
@@ -299,6 +287,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"managed": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										Computed: true,
 									},
 									"name": {
 										Type:     schema.TypeString,
@@ -315,20 +304,112 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"port_id": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Default:  "Lom 1:1-a",
 									},
 									"requested_mbps": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "2500",
+									},
+									"allocated_mbps": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"allocated_vfs": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+
+									"requested_vfs": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"state": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwnn": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwpn": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"wwpn_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+
+									"interconnect_port": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"interconnect_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+
+									"mac": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"mac_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+
+									"maximum_mbps": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+
+									"private_vlan_port_type": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
 								},
 							},
 						},
+						"manage_connections": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
-			"firmware": {
-				Type:     schema.TypeSet,
+			"created": {
+				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"etag": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"enclosure_group": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"enclosure_group_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"firmware": {
+				Optional: true,
+				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -336,7 +417,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-
 						"firmware_activation_type": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -357,25 +437,42 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
+
+						"consistency_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"firmware_schedule_date_time": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
-				Computed: true,
+				Optional: true,
+				Default:  true,
 			},
 			"initial_scope_uris": {
-				Computed: true,
-				Optional: true,
 				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
 				Elem: &schema.Schema{
-					Type: schema.TypeString,
+					Type:     schema.TypeString,
+					Optional: true,
+					Computed: true,
 				},
 				Set: schema.HashString,
 			},
 			"iscsi_initiator_name_type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"local_storage": {
 				Optional: true,
@@ -404,17 +501,21 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 									},
+									"import_configuration": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
 									"logical_drives": {
 										Optional: true,
 										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"bootable": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
 												"accelerator": {
 													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"bootable": {
+													Type:     schema.TypeBool,
 													Optional: true,
 												},
 												"drive_technology": {
@@ -444,6 +545,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 											},
 										},
 									},
+
 									"mode": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -517,9 +619,9 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"mac_type": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
-
 			"management_processor": {
 				Optional: true,
 				Type:     schema.TypeList,
@@ -566,8 +668,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Required: true,
 			},
 			"os_deployment_settings": {
-				Type:     schema.TypeSet,
 				Optional: true,
+				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -580,10 +682,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Optional: true,
 						},
 						"deployment_port_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"os_deployment_plan_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -611,23 +709,36 @@ func resourceServerProfileTemplate() *schema.Resource {
 								},
 							},
 						},
+						"os_deployment_plan_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_deployment_plan_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_volume_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
 			"refresh_state": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
-
 			"san_storage": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"host_os_type": {
 							Type:     schema.TypeString,
@@ -681,12 +792,13 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"volume_attachments": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"associated_template_attachment_id": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"id": {
 							Type:     schema.TypeInt,
@@ -722,7 +834,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"storage_paths": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"status": {
@@ -746,7 +858,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Optional: true,
 									},
 									"targets": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -769,12 +881,14 @@ func resourceServerProfileTemplate() *schema.Resource {
 							},
 						},
 						"volume": {
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
 										Computed: true,
+										Optional: true,
 										Type:     schema.TypeSet,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -784,13 +898,15 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"is_permanent": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										Computed: true,
 									},
 									"template_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"properties": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -886,30 +1002,23 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"scopes_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Optional: true,
 			},
 			"serial_number_type": {
 				Type:     schema.TypeString,
-				Computed: true,
 				Optional: true,
+				Computed: true,
 			},
 			"server_hardware_type": {
 				Type:     schema.TypeString,
-				Computed: true,
 				Optional: true,
 			},
 			"server_hardware_type_uri": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
-
 			"server_profile_description": {
 				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"enclosure_group": {
-				Type:     schema.TypeString,
-				Computed: true,
 				Optional: true,
 			},
 			"state": {
@@ -923,17 +1032,19 @@ func resourceServerProfileTemplate() *schema.Resource {
 
 			"type": {
 				Type:     schema.TypeString,
-				Computed: true,
 				Optional: true,
+				Computed: true,
 			},
+
 			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+
 			"wwn_type": {
 				Type:     schema.TypeString,
-				Computed: true,
 				Optional: true,
+				Computed: true,
 			},
 		},
 	}
@@ -1384,49 +1495,49 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		d.SetId("")
 		return nil
 	}
-
-	d.Set("name", spt.Name)
-	d.Set("type", spt.Type)
+	d.Set("affinity", spt.Affinity)
+	d.Set("category", spt.Category)
+	d.Set("created", spt.Created)
+	d.Set("description", spt.Description)
 
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
 	if err != nil {
 		return err
 	}
 	d.Set("enclosure_group", enclosureGroup.Name)
+	d.Set("enclosure_group_uri", spt.EnclosureGroupURI)
+	d.Set("etag", spt.ETAG)
+	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
+	d.Set("initial_scope_uris", spt.InitialScopeUris)
+	d.Set("iscsi_initiator_name", spt.IscsiInitiatorName)
+	d.Set("iscsi_initiator_name_type", spt.IscsiInitiatorNameType)
+	d.Set("mac_type", spt.MACType)
+	d.Set("modified", spt.Modified)
+	d.Set("name", spt.Name)
+	d.Set("refresh_state", spt.RefreshState)
+	d.Set("scopes_uri", spt.ScopesUri)
+	d.Set("serial_number_type", spt.SerialNumberType)
 
 	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByUri(spt.ServerHardwareTypeURI)
 	if err != nil {
 		return err
 	}
 	d.Set("server_hardware_type", serverHardwareType.Name)
-	d.Set("affinity", spt.Affinity)
-	d.Set("serial_number_type", spt.SerialNumberType)
-	d.Set("wwn_type", spt.WWNType)
-	d.Set("mac_type", spt.MACType)
-	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
-	d.Set("associated_server", spt.AssociatedServer.String())
-	d.Set("category", spt.Category)
-	d.Set("created", spt.Created)
-	d.Set("description", spt.Description)
-	d.Set("etag", spt.ETAG)
-	d.Set("in_progress", spt.InProgress)
-	d.Set("initial_scope_uris", spt.InitialScopeUris)
-	d.Set("iscsi_initiator_name", spt.IscsiInitiatorName)
-	d.Set("iscsi_initiator_name_type", spt.IscsiInitiatorNameType)
-	d.Set("modified", spt.Modified)
-	d.Set("profile_uuid", spt.ProfileUUID.String())
-	d.Set("refresh_state", spt.RefreshState)
-	d.Set("scopes_uri", spt.ScopesUri)
-	d.Set("server_hardware_reapply_state", spt.ServerHardwareReapplyState)
 	d.Set("server_hardware_type_uri", spt.ServerHardwareTypeURI.String())
+	d.Set("associated_server", spt.AssociatedServer.String())
+	d.Set("in_progress", spt.InProgress)
+	d.Set("profile_uuid", spt.ProfileUUID.String())
+	d.Set("server_hardware_reapply_state", spt.ServerHardwareReapplyState)
 	d.Set("service_manager", spt.ServiceManager)
 	d.Set("state", spt.State)
 	d.Set("status", spt.Status)
 	d.Set("task_uri", spt.TaskURI.String())
 	d.Set("template", spt.ServerProfileTemplateURI.String())
 	d.Set("template_compliance", spt.TemplateCompliance)
+	d.Set("type", spt.Type)
 	d.Set("uri", spt.URI.String())
 	d.Set("uuid", spt.UUID.String())
+	d.Set("wwn_type", spt.WWNType)
 
 	bootOrder := make([]interface{}, 0)
 	if len(spt.Boot.Order) != 0 {
