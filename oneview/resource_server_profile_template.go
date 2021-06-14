@@ -1225,12 +1225,18 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		osDeploySetting := ov.OSDeploymentSettings{}
 		for _, raw := range rawOsDeploySetting {
 			osDeploySettingItem := raw.(map[string]interface{})
-			osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
-			if err != nil {
-				return err
-			}
-			if osDeploymentPlan.URI == "" {
-				return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+			osdp := ""
+			if osDeploySettingItem["os_deployment_plan_uri"] != "" {
+				osdp = osDeploySettingItem["os_deployment_plan_uri"].(string)
+			} else if osDeploySettingItem["os_deployment_plan_name"] != "" {
+				osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+				if err != nil {
+					return err
+				}
+				if osDeploymentPlan.URI == "" {
+					return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+				}
+				osdp = osDeploymentPlan.URI.String()
 			}
 
 			osCustomAttributes := make([]ov.OSCustomAttribute, 0)
@@ -1247,7 +1253,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 			osDeploySetting = ov.OSDeploymentSettings{
 				ComplianceControl:   osDeploySettingItem["compliance_control"].(string),
-				OSDeploymentPlanUri: osDeploymentPlan.URI,
+				OSDeploymentPlanUri: utils.NewNstring(osdp),
 				OSCustomAttributes:  osCustomAttributes,
 			}
 		}
@@ -1836,12 +1842,18 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		osDeploySetting := ov.OSDeploymentSettings{}
 		for _, raw := range rawOsDeploySetting {
 			osDeploySettingItem := raw.(map[string]interface{})
-			osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
-			if err != nil {
-				return err
-			}
-			if osDeploymentPlan.URI == "" {
-				return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+			osdp := ""
+			if osDeploySettingItem["os_deployment_plan_uri"] != "" {
+				osdp = osDeploySettingItem["os_deployment_plan_uri"].(string)
+			} else if osDeploySettingItem["os_deployment_plan_name"] != "" {
+				osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
+				if err != nil {
+					return err
+				}
+				if osDeploymentPlan.URI == "" {
+					return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
+				}
+				osdp = osDeploymentPlan.URI.String()
 			}
 
 			osCustomAttributes := make([]ov.OSCustomAttribute, 0)
@@ -1858,7 +1870,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 			osDeploySetting = ov.OSDeploymentSettings{
 				ComplianceControl:   osDeploySettingItem["compliance_control"].(string),
-				OSDeploymentPlanUri: osDeploymentPlan.URI,
+				OSDeploymentPlanUri: utils.NewNstring(osdp),
 				OSCustomAttributes:  osCustomAttributes,
 			}
 		}
