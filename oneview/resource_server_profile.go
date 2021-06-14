@@ -268,6 +268,22 @@ func resourceServerProfile() *schema.Resource {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
+												"boot_target": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"array_wwpn": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"lun": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
 												"iscsi": {
 													Type:     schema.TypeList,
 													Optional: true,
@@ -295,6 +311,10 @@ func resourceServerProfile() *schema.Resource {
 																Optional: true,
 															},
 															"mutual_chap_name": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"mutual_chap_secret": {
 																Type:     schema.TypeString,
 																Optional: true,
 															},
@@ -958,6 +978,7 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"update_type": {
 				Type:     schema.TypeString,
+				Default:  "put",
 				Optional: true,
 			},
 			"os_deployment_settings": {
@@ -1195,9 +1216,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		if err != nil {
 			return err
 		}
-		if !strings.EqualFold(serverHardware.PowerState, "off") {
-			return errors.New("Server Hardware must be powered off to assign to the server profile")
-		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
 
@@ -1286,7 +1304,17 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					rawBoots := rawNetworkItem["boot"].([]interface{})
 					for _, rawBoot := range rawBoots {
 						bootItem := rawBoot.(map[string]interface{})
-
+						bootTargets := []ov.BootTarget{}
+						rawBootTargets := bootItem["boot_target"].([]interface{})
+						if rawBootTargets != nil {
+							for _, rawBootTarget := range rawBootTargets {
+								bootTarget := rawBootTarget.(map[string]interface{})
+								bootTargets = append(bootTargets, ov.BootTarget{
+									LUN:       bootTarget["lun"].(string),
+									ArrayWWPN: bootTarget["array_wwpn"].(string),
+								})
+							}
+						}
 						iscsi := ov.BootIscsi{}
 						if bootItem["iscsi"] != nil {
 							rawIscsis := bootItem["iscsi"].([]interface{})
@@ -1300,6 +1328,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 									InitiatorName:        rawIscsiItem["initiator_name"].(string),
 									InitiatorNameSource:  rawIscsiItem["initiator_name_source"].(string),
 									MutualChapName:       rawIscsiItem["mutual_chap_name"].(string),
+									MutualChapSecret:     rawIscsiItem["mutual_chap_secret"].(string),
 									Chaplevel:            rawIscsiItem["chap_level"].(string),
 									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
 									FirstBootTargetPort:  rawIscsiItem["first_boot_target_port"].(string),
@@ -1318,6 +1347,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
+							Targets:          bootTargets,
 						}
 					}
 				}
@@ -1767,8 +1797,19 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		for _, connection := range serverProfile.ConnectionSettings.Connections {
 			iscsi := make([]map[string]interface{}, 0, 1)
 			connectionBoot := make([]map[string]interface{}, 0, 1)
+			bootTargets := make([]map[string]interface{}, 0, len(connection.Boot.Targets))
 			// Gets Boot Settings
 			if connection.Boot != nil {
+
+				if connection.Boot.Targets != nil {
+					for _, bootTarget := range connection.Boot.Targets {
+						bootTargets = append(bootTargets, map[string]interface{}{
+							"lun":        bootTarget.LUN,
+							"array_wwpn": bootTarget.ArrayWWPN,
+						})
+					}
+				}
+
 				if connection.Boot.Iscsi != nil {
 					iscsi = append(iscsi, map[string]interface{}{
 						"chap_level":              connection.Boot.Iscsi.Chaplevel,
@@ -1777,6 +1818,13 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 						"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
 						"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
 						"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
+						"mutual_chap_name":        connection.Boot.Iscsi.MutualChapName,
+						"mutual_chap_secret":      connection.Boot.Iscsi.MutualChapSecret,
+						"boot_target_name":        connection.Boot.Iscsi.BootTargetName,
+						"boot_target_lun":         connection.Boot.Iscsi.BootTargetLun,
+						"chap_name":               connection.Boot.Iscsi.ChapName,
+						"chap_secret":             connection.Boot.Iscsi.ChapSecret,
+						"initiator_name":          connection.Boot.Iscsi.InitiatorName,
 					})
 				}
 				connectionBoot = append(connectionBoot, map[string]interface{}{
@@ -1785,6 +1833,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 					"ethernet_boot_type": connection.Boot.EthernetBootType,
 					"boot_volume_source": connection.Boot.BootVolumeSource,
 					"iscsi":              iscsi,
+					"boot_target":        bootTargets,
 				})
 			}
 			// Get IPV4 Settings for Connection
@@ -2105,9 +2154,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			if err != nil {
 				return err
 			}
-			if !strings.EqualFold(serverHardware.PowerState, "off") {
-				return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
-			}
 			serverProfile.ServerHardwareURI = serverHardware.URI
 		}
 
@@ -2217,15 +2263,33 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						for _, rawBoot := range rawBoots {
 							bootItem := rawBoot.(map[string]interface{})
 
+							bootTargets := []ov.BootTarget{}
+							rawBootTargets := bootItem["boot_target"].([]interface{})
+							if rawBootTargets != nil {
+								for _, rawBootTarget := range rawBootTargets {
+									bootTarget := rawBootTarget.(map[string]interface{})
+									bootTargets = append(bootTargets, ov.BootTarget{
+										LUN:       bootTarget["lun"].(string),
+										ArrayWWPN: bootTarget["array_wwpn"].(string),
+									})
+								}
+							}
+
 							iscsi := ov.BootIscsi{}
 							if bootItem["iscsi"] != nil {
 								rawIscsis := bootItem["iscsi"].([]interface{})
 								for _, rawIscsi := range rawIscsis {
 									rawIscsiItem := rawIscsi.(map[string]interface{})
 									iscsi = ov.BootIscsi{
-										Chaplevel:            rawIscsiItem["chap_level"].(string),
+										BootTargetLun:        rawIscsiItem["boot_target_lun"].(string),
+										BootTargetName:       rawIscsiItem["boot_target_name"].(string),
+										ChapName:             rawIscsiItem["chap_name"].(string),
+										ChapSecret:           rawIscsiItem["chap_secret"].(string),
 										InitiatorName:        rawIscsiItem["initiator_name"].(string),
 										InitiatorNameSource:  rawIscsiItem["initiator_name_source"].(string),
+										MutualChapName:       rawIscsiItem["mutual_chap_name"].(string),
+										MutualChapSecret:     rawIscsiItem["mutual_chap_secret"].(string),
+										Chaplevel:            rawIscsiItem["chap_level"].(string),
 										FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
 										FirstBootTargetPort:  rawIscsiItem["first_boot_target_port"].(string),
 										SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
@@ -2242,6 +2306,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 								EthernetBootType: bootItem["ethernet_boot_type"].(string),
 								BootVolumeSource: bootItem["boot_volume_source"].(string),
 								Iscsi:            &iscsi,
+								Targets:          bootTargets,
 							}
 						}
 					}
@@ -2253,7 +2318,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							rawIpv4Item := rawIpv4.(map[string]interface{})
 							ipv4 = ov.Ipv4Option{
 								Gateway:         rawIpv4Item["gateway"].(string),
-								SubnetMask:      rawIpv4Item["subne_mask"].(string),
+								SubnetMask:      rawIpv4Item["subnet_mask"].(string),
 								IpAddress:       rawIpv4Item["ip_address"].(string),
 								IpAddressSource: rawIpv4Item["ip_address_source"].(string),
 							}
