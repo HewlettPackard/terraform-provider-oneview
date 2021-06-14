@@ -15,7 +15,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -259,7 +258,7 @@ func resourceServerProfile() *schema.Resource {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
-												"boot_taret": {
+												"boot_target": {
 													Type:     schema.TypeList,
 													Optional: true,
 													Elem: &schema.Resource{
@@ -900,6 +899,7 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"update_type": {
 				Type:     schema.TypeString,
+				Default:  "put",
 				Optional: true,
 			},
 			"os_deployment_settings": {
@@ -957,9 +957,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverHardware, err = config.ovClient.GetServerHardwareByName(val.(string))
 		if err != nil {
 			return err
-		}
-		if !strings.EqualFold(serverHardware.PowerState, "off") {
-			return errors.New("Server Hardware must be powered off to assign to the server profile")
 		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
 	}
@@ -1040,7 +1037,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 									MutualChapSecret:     rawIscsiItem["mutual_chap_secret"].(string),
 									Chaplevel:            rawIscsiItem["chap_level"].(string),
 									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-									FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+									FirstBootTargetPort:  rawIscsiItem["first_boot_target_port"].(string),
 									SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
 									SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 								}
@@ -1671,9 +1668,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			if err != nil {
 				return err
 			}
-			if !strings.EqualFold(serverHardware.PowerState, "off") {
-				return fmt.Errorf("Server Hardware must be powered off to assign to server profile")
-			}
 			serverProfile.ServerHardwareURI = serverHardware.URI
 		}
 
@@ -1753,12 +1747,17 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 								for _, rawIscsi := range rawIscsis {
 									rawIscsiItem := rawIscsi.(map[string]interface{})
 									iscsi = ov.BootIscsi{
-										Chaplevel:            rawIscsiItem["chap_level"].(string),
-										MutualChapSecret:     rawIscsiItem["mutual_chap_secret"].(string),
+										BootTargetLun:        rawIscsiItem["boot_target_lun"].(string),
+										BootTargetName:       rawIscsiItem["boot_target_name"].(string),
+										ChapName:             rawIscsiItem["chap_name"].(string),
+										ChapSecret:           rawIscsiItem["chap_secret"].(string),
 										InitiatorName:        rawIscsiItem["initiator_name"].(string),
 										InitiatorNameSource:  rawIscsiItem["initiator_name_source"].(string),
+										MutualChapName:       rawIscsiItem["mutual_chap_name"].(string),
+										MutualChapSecret:     rawIscsiItem["mutual_chap_secret"].(string),
+										Chaplevel:            rawIscsiItem["chap_level"].(string),
 										FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-										FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+										FirstBootTargetPort:  rawIscsiItem["first_boot_target_port"].(string),
 										SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
 										SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 									}
@@ -1785,7 +1784,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							rawIpv4Item := rawIpv4.(map[string]interface{})
 							ipv4 = ov.Ipv4Option{
 								Gateway:         rawIpv4Item["gateway"].(string),
-								SubnetMask:      rawIpv4Item["subne_mask"].(string),
+								SubnetMask:      rawIpv4Item["subnet_mask"].(string),
 								IpAddress:       rawIpv4Item["ip_address"].(string),
 								IpAddressSource: rawIpv4Item["ip_address_source"].(string),
 							}
