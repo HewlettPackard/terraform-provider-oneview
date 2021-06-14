@@ -90,10 +90,12 @@ func resourceServerProfile() *schema.Resource {
 						"consistency_state": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"overridden_settings": {
 							Optional: true,
@@ -159,7 +161,8 @@ func resourceServerProfile() *schema.Resource {
 									"port_id": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Default:  "Lom 1:1-a",
+										Computed: true,
+										//Default:  "Lom 1:1-a",
 									},
 									"requested_mbps": {
 										Type:     schema.TypeString,
@@ -216,10 +219,12 @@ func resourceServerProfile() *schema.Resource {
 									"mac_type": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"managed": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										Computed: true,
 									},
 									"maximum_mbps": {
 										Type:     schema.TypeInt,
@@ -239,16 +244,19 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"boot": {
 										Optional: true,
+										Computed: true,
 										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"priority": {
 													Type:     schema.TypeString,
 													Optional: true,
+													Computed: true,
 												},
 												"boot_vlan_id": {
 													Type:     schema.TypeInt,
 													Optional: true,
+													Computed: true,
 												},
 												"ethernet_boot_type": {
 													Type:     schema.TypeString,
@@ -371,6 +379,7 @@ func resourceServerProfile() *schema.Resource {
 			"server_hardware_type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"enclosure_group": {
 				Type:     schema.TypeString,
@@ -465,6 +474,7 @@ func resourceServerProfile() *schema.Resource {
 						},
 						"controller": {
 							Optional: true,
+							Computed: true,
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -479,6 +489,7 @@ func resourceServerProfile() *schema.Resource {
 									"initialize": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										Computed: true,
 									},
 									"drive_write_cache": {
 										Type:     schema.TypeString,
@@ -503,6 +514,10 @@ func resourceServerProfile() *schema.Resource {
 												},
 												"accelerator": {
 													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"drive_number": {
+													Type:     schema.TypeInt,
 													Optional: true,
 												},
 												"drive_technology": {
@@ -534,6 +549,10 @@ func resourceServerProfile() *schema.Resource {
 									},
 								},
 							},
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"sas_logical_jbod": {
 							Optional: true,
@@ -580,6 +599,14 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 									},
+									"sas_logical_jbod_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 								},
 							},
 						},
@@ -588,10 +615,12 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"san_storage": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+
 						"host_os_type": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -600,25 +629,44 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"server_hardware_type_uri": {
-							Type:     schema.TypeString,
+						"san_system_credentials": {
 							Optional: true,
-						},
-						"server_hardware_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"serial_number": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"uri": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"chap_level": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"chap_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"chap_secret": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"chap_source": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"mutual_chap_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"mutual_chap_secret": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"storage_system_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -626,22 +674,11 @@ func resourceServerProfile() *schema.Resource {
 			// schema for ov.SanStorage.VolumeAttachments
 			"volume_attachments": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Computed: true,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"associated_template_attachment_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"id": {
-							Type:     schema.TypeInt,
-							Required: true,
-						},
-						"lun": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"lun_type": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -649,30 +686,114 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"volume_storage_system_uri": {
-							Type:     schema.TypeString,
+
+						"id": {
+							Type:     schema.TypeInt,
+							Computed: true,
 							Optional: true,
 						},
-						"volume_uri": {
+						"is_permanent": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Computed: true,
+						},
+						"lun": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
+						},
+						"lun_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"status": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
+						},
+						"volume_storage_system_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"volume_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+
+						"storage_paths": {
+							Optional: true,
+							Computed: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"connection_id": {
+										Type:     schema.TypeInt,
+										Optional: true,
+										Computed: true,
+									},
+									"is_enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Computed: true,
+									},
+									"network_uri": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"status": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"target_selector": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"targets": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"ip_address": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"name": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"tcp_port": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+											},
+										},
+									},
+								},
+							},
 						},
 						"volume": {
-							Type:     schema.TypeSet,
+							Type:     schema.TypeList,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
+										Type:     schema.TypeSet,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+										Set: schema.HashString,
 									},
 									"is_permanent": {
 										Type:     schema.TypeBool,
@@ -683,14 +804,10 @@ func resourceServerProfile() *schema.Resource {
 										Optional: true,
 									},
 									"properties": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"volume_set": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
 												"data_protection_level": {
 													Type:     schema.TypeString,
 													Optional: true,
@@ -711,12 +828,40 @@ func resourceServerProfile() *schema.Resource {
 													Type:     schema.TypeInt,
 													Optional: true,
 												},
-												"is_shareable": {
+												"is_deduplicated": {
 													Type:     schema.TypeBool,
 													Optional: true,
 												},
 												"is_encrypted": {
 													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_pinned": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"is_shareable": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"performance_policy": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"provisioning_type": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"size": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"volume_set": {
+													Type:     schema.TypeString,
 													Optional: true,
 												},
 												"is_data_reduction_enabled": {
@@ -731,26 +876,6 @@ func resourceServerProfile() *schema.Resource {
 													Type:     schema.TypeBool,
 													Optional: true,
 												},
-												"is_pinned": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
-												"is_deduplicated": {
-													Type:     schema.TypeBool,
-													Optional: true,
-												},
-												"name": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"performance_policy": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"size": {
-													Type:     schema.TypeInt,
-													Optional: true,
-												},
 												"snapshot_pool": {
 													Type:     schema.TypeString,
 													Optional: true,
@@ -761,54 +886,6 @@ func resourceServerProfile() *schema.Resource {
 												},
 												"template_version": {
 													Type:     schema.TypeString,
-													Optional: true,
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-						"storage_paths": {
-							Optional: true,
-							Type:     schema.TypeSet,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"status": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"network_uri": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"target_selector": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"is_enabled": {
-										Type:     schema.TypeBool,
-										Optional: true,
-									},
-									"connection_id": {
-										Type:     schema.TypeInt,
-										Optional: true,
-									},
-									"targets": {
-										Type:     schema.TypeSet,
-										Optional: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"ip_address": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"name": {
-													Type:     schema.TypeString,
-													Optional: true,
-												},
-												"tcp_port": {
-													Type:     schema.TypeInt,
 													Optional: true,
 												},
 											},
@@ -927,6 +1004,144 @@ func resourceServerProfile() *schema.Resource {
 					},
 				},
 			},
+			"associated_server": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"category": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"created": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"etag": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"enclosure_bay": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"in_progress": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"iscsi_initiator_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"iscsi_initiator_name_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"management_processor": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"manage_mp": {
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+						"mp_settings": {
+							Optional: true,
+							Type:     schema.TypeList,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"args": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"setting_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+					},
+				},
+			},
+			"modified": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"profile_uuid": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"refresh_state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"scopes_uri": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"server_hardware_reapply_state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"server_hardware_type_uri": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"service_manager": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"status": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"task_uri": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"template_compliance": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"uuid": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -979,6 +1194,42 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 	if val, ok := d.GetOk("hide_unused_flex_nics"); ok {
 		serverProfile.HideUnusedFlexNics = val.(bool)
+	}
+
+	if val, ok := d.GetOk("category"); ok {
+		serverProfile.Category = val.(string)
+	}
+
+	if val, ok := d.GetOk("description"); ok {
+		serverProfile.Description = val.(string)
+	}
+
+	if val, ok := d.GetOk("enclosure_bay"); ok {
+		serverProfile.EnclosureBay = val.(int)
+	}
+
+	if val, ok := d.GetOk("iscsi_initiator_name"); ok {
+		serverProfile.IscsiInitiatorName = val.(string)
+	}
+
+	if val, ok := d.GetOk("iscsi_initiator_name_type"); ok {
+		serverProfile.IscsiInitiatorNameType = val.(string)
+	}
+
+	if val, ok := d.GetOk("scopes_uri"); ok {
+		serverProfile.ScopesUri = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk("server_hardware_type_uri"); ok {
+		serverProfile.ServerHardwareTypeURI = utils.NewNstring(val.(string))
+	}
+
+	if val, ok := d.GetOk("service_manager"); ok {
+		serverProfile.ServiceManager = val.(string)
+	}
+
+	if val, ok := d.GetOk("template_compliance"); ok {
+		serverProfile.TemplateCompliance = val.(string)
 	}
 
 	if val, ok := d.GetOk("enclosure_group"); ok {
@@ -1235,6 +1486,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Name:              sasLogicalJbodData["name"].(string),
 					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
 					Persistent:        sasLogicalJbodData["persistent"].(bool),
+					SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 				})
 			}
 			localStorage = ov.LocalStorageOptions{
@@ -1254,31 +1506,26 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		for _, raw := range rawSanStorage {
 			sanStorageItem := raw.(map[string]interface{})
 			sanStorage = ov.SanStorageOptions{
-				HostOSType:            sanStorageItem["host_os_type"].(string),
-				ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
-				ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
-				ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
-				SerialNumber:          sanStorageItem["serial_number"].(string),
-				Type:                  sanStorageItem["type"].(string),
-				URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
+				HostOSType:       sanStorageItem["host_os_type"].(string),
+				ManageSanStorage: sanStorageItem["manage_san_storage"].(bool),
 			}
 		}
 		serverProfile.SanStorage = sanStorage
 	}
 	if _, ok := d.GetOk("volume_attachments"); ok {
-		rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+		rawVolumeAttachments := d.Get("volume_attachments").([]interface{})
 		volumeAttachments := make([]ov.VolumeAttachment, 0)
 		for _, rawVolumeAttachment := range rawVolumeAttachments {
 			volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
 			volumes := ov.Volume{}
 			if volumeAttachmentItem["volume"] != nil {
-				rawVolume := volumeAttachmentItem["volume"].(*schema.Set).List()
+				rawVolume := volumeAttachmentItem["volume"].([]interface{}) //(*schema.Set).List()
 				for _, rawVol := range rawVolume {
 					volumeItem := rawVol.(map[string]interface{})
 					tempIsPermanent := volumeItem["is_permanent"].(bool)
 					properties := ov.PropertiesSP{}
 					if volumeItem["properties"] != nil {
-						rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
+						rawVolumeProperties := volumeItem["properties"].([]interface{})
 						for _, rawVolProp := range rawVolumeProperties {
 							propertyItem := rawVolProp.(map[string]interface{})
 							tempIsShareable := propertyItem["is_shareable"].(bool)
@@ -1306,18 +1553,27 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 							}
 						}
 					}
+
+					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
+						rawInitialScopeUris := val.(*schema.Set).List()
+						initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+						for i, raw := range rawInitialScopeUris {
+							initialScopeUris[i] = utils.Nstring(raw.(string))
+						}
+						volumes.InitialScopeUris = initialScopeUris
+					}
 					volumes = ov.Volume{
-						IsPermanent:      &tempIsPermanent,
-						Properties:       &properties,
-						InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
-						TemplateUri:      utils.NewNstring(volumeItem["template_uri"].(string)),
+						IsPermanent: &tempIsPermanent,
+						Properties:  &properties,
+
+						TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 					}
 				}
 			}
 			// get volumeAttachemts.storagepaths
 			storagePaths := make([]ov.StoragePath, 0)
 			if volumeAttachmentItem["storage_paths"] != nil {
-				rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+				rawStoragePaths := volumeAttachmentItem["storage_paths"].([]interface{}) //.(*schema.Set).List()
 
 				for _, rawStoragePath := range rawStoragePaths {
 					storagePathItem := rawStoragePath.(map[string]interface{})
@@ -1325,13 +1581,13 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					// get volumeAttachemts.storagepaths.targets
 					targets := make([]ov.Target, 0)
 					if storagePathItem["targets"] != nil {
-						rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
+						rawStorageTargets := storagePathItem["targets"].([]interface{}) //.(*schema.Set).List()
 						for _, rawStorageTarget := range rawStorageTargets {
 							storageTargetItem := rawStorageTarget.(map[string]interface{})
 							targets = append(targets, ov.Target{
 								IpAddress: storageTargetItem["ip_address"].(string),
 								Name:      storageTargetItem["name"].(string),
-								TcpPort:   storageTargetItem["tcp_port"].(int),
+								TcpPort:   storageTargetItem["tcp_port"].(string),
 							})
 						}
 					}
@@ -1391,6 +1647,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 		}
 	}
+
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
 
@@ -1402,7 +1659,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			return err
 		}
 	}
-
 	return resourceServerProfileRead(d, meta)
 }
 
@@ -1410,18 +1666,23 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	serverProfile, err := config.ovClient.GetProfileByName(d.Id())
+
 	if err != nil || serverProfile.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
 
-	serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
-	if err != nil {
-		return err
+	// when server hardware is assigned
+	if serverProfile.ServerHardwareURI != "" {
+		serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
+		if err != nil {
+			return err
+		}
+		d.Set("enclosure_bay", serverProfile.EnclosureBay)
+		d.Set("hardware_uri", serverHardware.URI.String())
+		d.Set("hardware_name", serverHardware.Name)
+		d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	}
-
-	d.Set("hardware_uri", serverHardware.URI.String())
-	d.Set("ilo_ip", serverHardware.GetIloIPAddress())
 	d.Set("serial_number", serverProfile.SerialNumber.String())
 
 	if val, ok := d.GetOk("public_connection"); ok {
@@ -1453,6 +1714,28 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("wwn_type", serverProfile.WWNType)
 	d.Set("mac_type", serverProfile.MACType)
 	d.Set("hide_unused_flex_nics", serverProfile.HideUnusedFlexNics)
+	d.Set("associated_server", serverProfile.AssociatedServer.String())
+	d.Set("category", serverProfile.Category)
+	d.Set("created", serverProfile.Created)
+	d.Set("description", serverProfile.Description)
+	d.Set("etag", serverProfile.ETAG)
+	d.Set("in_progress", serverProfile.InProgress)
+	d.Set("initial_scope_uris", serverProfile.InitialScopeUris)
+	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName)
+	d.Set("iscsi_initiator_name_type", serverProfile.IscsiInitiatorNameType)
+	d.Set("modified", serverProfile.Modified)
+	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
+	d.Set("refresh_state", serverProfile.RefreshState)
+	d.Set("scopes_uri", serverProfile.ScopesUri)
+	d.Set("server_hardware_reapply_state", serverProfile.ServerHardwareReapplyState)
+	d.Set("server_hardware_type_uri", serverProfile.ServerHardwareTypeURI.String())
+	d.Set("service_manager", serverProfile.ServiceManager)
+	d.Set("state", serverProfile.State)
+	d.Set("status", serverProfile.Status)
+	d.Set("task_uri", serverProfile.TaskURI.String())
+	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
+	d.Set("template_compliance", serverProfile.TemplateCompliance)
+	d.Set("uuid", serverProfile.UUID.String())
 
 	if len(serverProfile.ConnectionSettings.Connections) != 0 {
 		// Get connections
@@ -1579,6 +1862,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				logicalDrives = append(logicalDrives, map[string]interface{}{
 					"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 					"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
+					"drive_number":        serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveNumber,
 					"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
 					"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 					"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
@@ -1601,26 +1885,139 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
 		for i := 0; i < len(serverProfile.LocalStorage.SasLogicalJBODs); i++ {
 			sasLogDrives = append(sasLogDrives, map[string]interface{}{
-				"description":        serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
-				"device_slot":        serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
-				"drive_max_size_gb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
-				"drive_min_size_sb":  serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
-				"drive_technology":   serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
-				"erase_data":         serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
-				"id":                 serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
-				"name":               serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
-				"num_physical_drive": serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
-				"persistent":         serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+				"description":          serverProfile.LocalStorage.SasLogicalJBODs[i].Description,
+				"device_slot":          serverProfile.LocalStorage.SasLogicalJBODs[i].DeviceSlot,
+				"drive_max_size_gb":    serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMaxSizeGB,
+				"drive_min_size_sb":    serverProfile.LocalStorage.SasLogicalJBODs[i].DriveMinSizeGB,
+				"drive_technology":     serverProfile.LocalStorage.SasLogicalJBODs[i].DriveTechnology,
+				"erase_data":           serverProfile.LocalStorage.SasLogicalJBODs[i].EraseData,
+				"id":                   serverProfile.LocalStorage.SasLogicalJBODs[i].ID,
+				"name":                 serverProfile.LocalStorage.SasLogicalJBODs[i].Name,
+				"num_physical_drive":   serverProfile.LocalStorage.SasLogicalJBODs[i].NumPhysicalDrives,
+				"persistent":           serverProfile.LocalStorage.SasLogicalJBODs[i].Persistent,
+				"sas_logical_jbod_uri": serverProfile.LocalStorage.SasLogicalJBODs[i].SasLogicalJBODUri.String(),
+				"status":               serverProfile.LocalStorage.SasLogicalJBODs[i].Status,
 			})
 		}
 		localStorage = append(localStorage, map[string]interface{}{
 			"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
 			"initialize":           serverProfile.LocalStorage.Initialize,
 			"controller":           controllers,
+			"reapply_state":        serverProfile.LocalStorage.ReapplyState,
 			"sas_logical_jbod":     sasLogDrives,
 		})
 		d.Set("local_storage", localStorage)
+
 	}
+	sanSystemCredentials := make([]interface{}, 0)
+	if len(serverProfile.SanStorage.SanSystemCredentials) != 0 {
+		for i := 0; i < len(serverProfile.SanStorage.SanSystemCredentials); i++ {
+			sanSystemCredentials = append(sanSystemCredentials, map[string]interface{}{
+				"chap_level":         serverProfile.SanStorage.SanSystemCredentials[i].ChapLevel,
+				"chap_name":          serverProfile.SanStorage.SanSystemCredentials[i].ChapName,
+				"chap_secret":        serverProfile.SanStorage.SanSystemCredentials[i].ChapSecret,
+				"chap_source":        serverProfile.SanStorage.SanSystemCredentials[i].ChapSource,
+				"mutual_chap_name":   serverProfile.SanStorage.SanSystemCredentials[i].MutualChapName,
+				"mutual_chap_secret": serverProfile.SanStorage.SanSystemCredentials[i].MutualChapSecret,
+				"storage_system_uri": serverProfile.SanStorage.SanSystemCredentials[i].StorageSystemUri.String(),
+			})
+		}
+	}
+	SanStorageOptions := make([]map[string]interface{}, 0, 1)
+	SanStorageOptions = append(SanStorageOptions, map[string]interface{}{
+		"compliance_control":     serverProfile.SanStorage.ComplianceControl,
+		"host_os_type":           serverProfile.SanStorage.HostOSType,
+		"manage_san_storage":     serverProfile.SanStorage.ManageSanStorage,
+		"san_system_credentials": sanSystemCredentials,
+	})
+	d.Set("san_storage", SanStorageOptions)
+
+	volumeAttachments := make([]interface{}, 0)
+	if len(serverProfile.SanStorage.VolumeAttachments) != 0 {
+		for i := 0; i < len(serverProfile.SanStorage.VolumeAttachments); i++ {
+			storagePaths := make([]interface{}, 0)
+			if len(serverProfile.SanStorage.VolumeAttachments[i].StoragePaths) != 0 {
+				for j := 0; j < len(serverProfile.SanStorage.VolumeAttachments[i].StoragePaths); j++ {
+					targets := make([]interface{}, 0)
+					if len(serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets) != 0 {
+						for k := 0; k < len(serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets); k++ {
+							targets = append(targets, map[string]interface{}{
+								"ip_address": serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].IpAddress,
+								"name":       serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].Name,
+								"tcp_port":   serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].TcpPort,
+							})
+						}
+
+					}
+					storagePaths = append(storagePaths, map[string]interface{}{
+						"connection_id":   serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].ConnectionID,
+						"is_enabled":      serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].IsEnabled,
+						"network_uri":     serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].NetworkUri.String(),
+						"status":          serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].Status,
+						"target_selector": serverProfile.SanStorage.VolumeAttachments[i].StoragePaths[j].TargetSelector,
+						"targets":         targets,
+					})
+				}
+
+			}
+			volumes := make([]interface{}, 0)
+			if serverProfile.SanStorage.VolumeAttachments[i].Volume != nil {
+
+				properties := make([]interface{}, 0)
+				if serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties != nil {
+
+					properties = append(properties, map[string]interface{}{
+						"data_protection_level":            serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.DataProtectionLevel,
+						"data_transfer_limit":              serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.DataTransferLimit,
+						"description":                      serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Description,
+						"folder":                           serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Folder,
+						"iops_limit":                       serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IopsLimit,
+						"is_deduplicated":                  serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsDeduplicated,
+						"is_encrypted":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsEncrypted,
+						"is_pinned":                        serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsPinned,
+						"is_shareable":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsShareable,
+						"name":                             serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Name,
+						"performance_policy":               serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.PerformancePolicy,
+						"provisioning_type":                serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.ProvisioningType,
+						"size":                             serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.Size,
+						"volume_set":                       serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.VolumeSet,
+						"is_data_reduction_enabled":        serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsDataReductionEnabled,
+						"is_adaptive_optimization_enabled": serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsAdaptiveOptimizationEnabled,
+						"is_compressed":                    serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.IsCompressed,
+						"snapshot_pool":                    serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.SnapshotPool,
+						"storage_pool":                     serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.StoragePool,
+						"template_version":                 serverProfile.SanStorage.VolumeAttachments[i].Volume.Properties.TemplateVersion,
+					})
+
+				}
+				volumes = append(volumes, map[string]interface{}{
+					"initial_scope_uris": serverProfile.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
+					"is_permanent":       serverProfile.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
+					"template_uri":       serverProfile.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
+					"properties":         properties,
+				})
+
+			}
+
+			volumeAttachments = append(volumeAttachments, map[string]interface{}{
+
+				"associated_template_attachment_id": serverProfile.SanStorage.VolumeAttachments[i].AssociatedTemplateAttachmentId,
+				"boot_volume_priority":              serverProfile.SanStorage.VolumeAttachments[i].BootVolumePriority,
+				"id":                                serverProfile.SanStorage.VolumeAttachments[i].ID,
+				"is_permanent":                      serverProfile.SanStorage.VolumeAttachments[i].IsPermanent,
+				"lun":                               serverProfile.SanStorage.VolumeAttachments[i].LUN,
+				"lun_type":                          serverProfile.SanStorage.VolumeAttachments[i].LUNType,
+				"state":                             serverProfile.SanStorage.VolumeAttachments[i].State,
+				"status":                            serverProfile.SanStorage.VolumeAttachments[i].Status,
+				"storage_paths":                     storagePaths,
+				"volume_storage_system_uri":         serverProfile.SanStorage.VolumeAttachments[i].VolumeStorageSystemURI,
+				"volume_uri":                        serverProfile.SanStorage.VolumeAttachments[i].VolumeURI,
+				"volume":                            volumes,
+			})
+		}
+
+	}
+	d.Set("volume_attachments", volumeAttachments)
 	return nil
 }
 
@@ -1697,6 +2094,54 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 		if val, ok := d.GetOk("hide_unused_flex_nics"); ok {
 			serverProfile.HideUnusedFlexNics = val.(bool)
+		}
+
+		if val, ok := d.GetOk("category"); ok {
+			serverProfile.Category = val.(string)
+		}
+
+		if val, ok := d.GetOk("description"); ok {
+			serverProfile.Description = val.(string)
+		}
+
+		if val, ok := d.GetOk("etag"); ok {
+			serverProfile.ETAG = val.(string)
+		}
+
+		if val, ok := d.GetOk("enclosure_bay"); ok {
+			serverProfile.EnclosureBay = val.(int)
+		}
+
+		if val, ok := d.GetOk("iscsi_initiator_name"); ok {
+			serverProfile.IscsiInitiatorName = val.(string)
+		}
+
+		if val, ok := d.GetOk("iscsi_initiator_name_type"); ok {
+			serverProfile.IscsiInitiatorNameType = val.(string)
+		}
+
+		if val, ok := d.GetOk("profile_uuid"); ok {
+			serverProfile.ProfileUUID = utils.NewNstring(val.(string))
+		}
+
+		if val, ok := d.GetOk("scopes_uri"); ok {
+			serverProfile.ScopesUri = utils.NewNstring(val.(string))
+		}
+
+		if val, ok := d.GetOk("server_hardware_type_uri"); ok {
+			serverProfile.ServerHardwareTypeURI = utils.NewNstring(val.(string))
+		}
+
+		if val, ok := d.GetOk("service_manager"); ok {
+			serverProfile.ServiceManager = val.(string)
+		}
+
+		if val, ok := d.GetOk("template_compliance"); ok {
+			serverProfile.TemplateCompliance = val.(string)
+		}
+
+		if val, ok := d.GetOk("uuid"); ok {
+			serverProfile.UUID = utils.NewNstring(val.(string))
 		}
 
 		if val, ok := d.GetOk("enclosure_group"); ok {
@@ -1916,6 +2361,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							Bootable:          &boot,
 							RaidLevel:         logicalDrivesItem["raid_level"].(string),
 							Accelerator:       logicalDrivesItem["accelerator"].(string),
+							DriveNumber:       logicalDrivesItem["drive_number"].(int),
 							DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 							Name:              logicalDrivesItem["name"].(string),
 							NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
@@ -1949,6 +2395,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Name:              sasLogicalJbodData["name"].(string),
 						NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
 						Persistent:        sasLogicalJbodData["persistent"].(bool),
+						SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 					})
 				}
 				localStorage = ov.LocalStorageOptions{
@@ -1968,19 +2415,16 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			for _, raw := range rawSanStorage {
 				sanStorageItem := raw.(map[string]interface{})
 				sanStorage = ov.SanStorageOptions{
-					HostOSType:            sanStorageItem["host_os_type"].(string),
-					ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
-					ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
-					ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
-					SerialNumber:          sanStorageItem["serial_number"].(string),
-					Type:                  sanStorageItem["type"].(string),
-					URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
+					HostOSType:       sanStorageItem["host_os_type"].(string),
+					ManageSanStorage: sanStorageItem["manage_san_storage"].(bool),
 				}
 			}
 			serverProfile.SanStorage = sanStorage
 		}
+
 		if _, ok := d.GetOk("volume_attachments"); ok {
-			rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+
+			rawVolumeAttachments := d.Get("volume_attachments").([]interface{})
 			volumeAttachments := make([]ov.VolumeAttachment, 0)
 			for _, rawVolumeAttachment := range rawVolumeAttachments {
 				volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
@@ -2020,18 +2464,26 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 								}
 							}
 						}
+
+						if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
+							rawInitialScopeUris := val.(*schema.Set).List()
+							initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+							for i, raw := range rawInitialScopeUris {
+								initialScopeUris[i] = utils.Nstring(raw.(string))
+							}
+							volumes.InitialScopeUris = initialScopeUris
+						}
 						volumes = ov.Volume{
-							IsPermanent:      &tempIsPermanent,
-							Properties:       &properties,
-							InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
-							TemplateUri:      utils.NewNstring(volumeItem["template_uri"].(string)),
+							IsPermanent: &tempIsPermanent,
+							Properties:  &properties,
+							TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 						}
 					}
 				}
 				// get volumeAttachemts.storagepaths
 				storagePaths := make([]ov.StoragePath, 0)
 				if volumeAttachmentItem["storage_paths"] != nil {
-					rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+					rawStoragePaths := volumeAttachmentItem["storage_paths"].([]interface{})
 
 					for _, rawStoragePath := range rawStoragePaths {
 						storagePathItem := rawStoragePath.(map[string]interface{})
@@ -2039,13 +2491,13 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						// get volumeAttachemts.storagepaths.targets
 						targets := make([]ov.Target, 0)
 						if storagePathItem["targets"] != nil {
-							rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
+							rawStorageTargets := storagePathItem["targets"].([]interface{})
 							for _, rawStorageTarget := range rawStorageTargets {
 								storageTargetItem := rawStorageTarget.(map[string]interface{})
 								targets = append(targets, ov.Target{
 									IpAddress: storageTargetItem["ip_address"].(string),
 									Name:      storageTargetItem["name"].(string),
-									TcpPort:   storageTargetItem["tcp_port"].(int),
+									TcpPort:   storageTargetItem["tcp_port"].(string),
 								})
 							}
 						}
@@ -2121,7 +2573,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 func resourceServerProfileDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	err := config.ovClient.DeleteProfile(d.Get("name").(string))
+	err := config.ovClient.DeleteProfile(d.Id())
 	if err != nil {
 		return err
 	}

@@ -7,31 +7,47 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
 #### Major Changes
-1. Added support to Connection Templates Resource.
-   - GET /rest/connection-templates/{id}
-   - PUT /rest/connection-templates/{id}
-
-2. Added support to Label Resource. 
+1. Added support to Appliance SNMPv3 Trap Destinations
+   - GET /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+   - POST /rest/appliance/snmpv3-trap-forwarding/destinations
+   - PUT /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+   - DELETE /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+2. Added support to Appliance Time and Locale Configuration.
+   - GET  /rest/appliance/configuration/time-locale
+   - POST /rest/appliance/configuration/time-locale
+3. Added support to Label Resource. 
    - GET /rest/labels/resources/**
    - PUT /rest/labels/resources/**
    - DELETE /rest/labels/resources/**
    - POST /rest/labels/resources
-
-2. Added support to Appliance SNMPv1 Trap Destinations
+4. Added support to Appliance SNMPv1 Trap Destinations
    - GET     /rest/appliance/trap-destinations/{id}
    - POST    /rest/appliance/trap-destinations/{id}
    - PUT     /rest/appliance/trap-destinations/{id}
    - DELETE  /rest/appliance/trap-destinations/{id}
-3. Added support to support to retreive the appliance supported version.
+5. Added support to support to retreive the appliance supported version.
    - GET /rest/version
-
+6. Added support to Appliance SSH Access Resource.
+   - GET  /rest/appliance/ssh-access
+   - PUT /rest/appliance/ssh-access
+7. Added support to Firmware Drivers Resource.
+   - GET    /rest/firmware-drivers/{id}
+   - POST   /rest/firmware-drivers
+   - DELETE /rest/firmware-drivers/{id}
+8. Added support to Connection Templates Resource.
+   - GET /rest/connection-templates/{id}
+   - PUT /rest/connection-templates/{id}
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
+- Appliance SNMPv3 Trap Destinations
+- Appliance SSH Access
+- Appliance Time and Locale Configuration
 - Connection Template
+- Firmware Drivers
 - Labels
 
 ### Bug fixes & Enhancements:
