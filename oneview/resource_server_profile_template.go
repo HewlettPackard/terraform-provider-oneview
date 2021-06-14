@@ -1533,7 +1533,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 								iscsi = ov.BootIscsi{
 									Chaplevel:            rawIscsiItem["chap_level"].(string),
 									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-									FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+									FirstBootTargetPort:  rawIscsiItem["first_boot_target_port"].(string),
 									SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
 									SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 								}
