@@ -69,6 +69,9 @@ func Provider() terraform.ResourceProvider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"oneview_appliance_snmp_v1_trap_destinations": dataSourceSNMPv1TrapDestination(),
+			"oneview_appliance_snmpv3_trap_destinations":  dataSourceSNMPv3TrapDestination(),
+			"oneview_appliance_ssh_access":                dataSourceSSHAccess(),
+			"oneview_appliance_time_and_locale":           dataSourceTimeAndLocale(),
 			"oneview_connection_templates":                dataSourceConnectionTemplates(),
 			"oneview_deployment_plan":                     dataSourceDeploymentPlan(),
 			"oneview_enclosure":                           dataSourceEnclosure(),
@@ -76,6 +79,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_ethernet_network":                    dataSourceEthernetNetwork(),
 			"oneview_fc_network":                          dataSourceFCNetwork(),
 			"oneview_fcoe_network":                        dataSourceFCoENetwork(),
+			"oneview_firmware_drivers":                    dataSourceFirmwareDrivers(),
 			"oneview_hypervisor_cluster_profile":          dataSourceHypervisorClusterProfile(),
 			"oneview_hypervisor_manager":                  dataSourceHypervisorManager(),
 			"oneview_interconnect_type":                   dataSourceInterconnectType(),
@@ -103,6 +107,9 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"oneview_appliance_snmp_v1_trap_destinations": resourceSNMPv1TrapDestination(),
+			"oneview_appliance_snmpv3_trap_destinations":  resourceSNMPv3TrapDestination(),
+			"oneview_appliance_ssh_access":                resourceSSHAccess(),
+			"oneview_appliance_time_and_locale":           resourceTimeAndLocale(),
 			"oneview_connection_templates":                resourceConnectionTemplates(),
 			"oneview_deployment_plan":                     resourceDeploymentPlan(),
 			"oneview_enclosure":                           resourceEnclosure(),
@@ -110,6 +117,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_ethernet_network":                    resourceEthernetNetwork(),
 			"oneview_fcoe_network":                        resourceFCoENetwork(),
 			"oneview_fc_network":                          resourceFCNetwork(),
+			"oneview_firmware_drivers":                    resourceFirmwareDrivers(),
 			"oneview_hypervisor_cluster_profile":          resourceHypervisorClusterProfile(),
 			"oneview_hypervisor_manager":                  resourceHypervisorManager(),
 			"oneview_i3s_plan":                            resourceI3SPlan(),

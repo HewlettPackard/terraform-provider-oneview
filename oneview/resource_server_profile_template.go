@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -1141,11 +1142,18 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 							}
 						}
 					}
+					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
+						rawInitialScopeUris := val.(*schema.Set).List()
+						initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+						for i, raw := range rawInitialScopeUris {
+							initialScopeUris[i] = utils.Nstring(raw.(string))
+						}
+						volumes.InitialScopeUris = initialScopeUris
+					}
 					volumes = ov.Volume{
-						IsPermanent:      &tempIsPermanent,
-						Properties:       &properties,
-						InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
-						TemplateUri:      utils.NewNstring(volumeItem["template_uri"].(string)),
+						IsPermanent: &tempIsPermanent,
+						Properties:  &properties,
+						TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 					}
 				}
 			}
@@ -1167,7 +1175,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 							targets = append(targets, ov.Target{
 								IpAddress: storageTargetItem["ip_address"].(string),
 								Name:      storageTargetItem["name"].(string),
-								TcpPort:   storageTargetItem["tcp_port"].(int),
+								TcpPort:   storageTargetItem["tcp_port"].(string),
 							})
 						}
 					}
@@ -1717,11 +1725,18 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 							}
 						}
 					}
+					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
+						rawInitialScopeUris := val.(*schema.Set).List()
+						initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+						for i, raw := range rawInitialScopeUris {
+							initialScopeUris[i] = utils.Nstring(raw.(string))
+						}
+						volumes.InitialScopeUris = initialScopeUris
+					}
 					volumes = ov.Volume{
-						IsPermanent:      &tempIsPermanent,
-						Properties:       &properties,
-						InitialScopeUris: utils.NewNstring(volumeItem["initial_scope_uris"].(string)),
-						TemplateUri:      utils.NewNstring(volumeItem["template_uri"].(string)),
+						IsPermanent: &tempIsPermanent,
+						Properties:  &properties,
+						TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
 					}
 				}
 			}
@@ -1742,7 +1757,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 							targets = append(targets, ov.Target{
 								IpAddress: storageTargetItem["ip_address"].(string),
 								Name:      storageTargetItem["name"].(string),
-								TcpPort:   storageTargetItem["tcp_port"].(int),
+								TcpPort:   storageTargetItem["tcp_port"].(string),
 							})
 						}
 					}
