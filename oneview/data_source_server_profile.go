@@ -196,6 +196,10 @@ func dataSourceServerProfile() *schema.Resource {
 																Type:     schema.TypeString,
 																Optional: true,
 															},
+															"mutual_chap_secret": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
 															"second_boot_target_ip": {
 																Type:     schema.TypeString,
 																Optional: true,
@@ -1100,6 +1104,13 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 					"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
 					"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
 					"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
+					"mutual_chap_name":        connection.Boot.Iscsi.MutualChapName,
+					"mutual_chap_secret":      connection.Boot.Iscsi.MutualChapSecret,
+					"boot_target_name":        connection.Boot.Iscsi.BootTargetName,
+					"boot_target_lun":         connection.Boot.Iscsi.BootTargetLun,
+					"chap_name":               connection.Boot.Iscsi.ChapName,
+					"chap_secret":             connection.Boot.Iscsi.ChapSecret,
+					"initiator_name":          connection.Boot.Iscsi.InitiatorName,
 				})
 			}
 			// Get Boot targets list
