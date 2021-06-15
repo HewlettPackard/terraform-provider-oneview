@@ -39,26 +39,26 @@ resource "oneview_server_profile" "SP" {
     mode            = "UEFIOptimized"
     pxe_boot_policy = "Auto"
   }
-  local_storage {
-    controller {
-      device_slot       = "Embedded"
-      drive_write_cache = "Unmanaged"
-      initialize        = true
-      import_configuration = false
-      mode                     = "RAID"
-      predictive_spare_rebuild = "Unmanaged"
-      logical_drives {
-        accelerator         = "Unmanaged"
-        bootable            = true
-        drive_technology    = "SasHdd"
-        name                = "TestLd"
-        num_physical_drives = 2
-        raid_level          = "RAID1"
-      }
-    }
-  }
+#  local_storage {
+#    controller {
+#      device_slot       = "Embedded"
+#      drive_write_cache = "Unmanaged"
+#      initialize        = true
+#      import_configuration = false
+#      mode                     = "RAID"
+#      predictive_spare_rebuild = "Unmanaged"
+#      logical_drives {
+#        accelerator         = "Unmanaged"
+#        bootable            = true
+#        drive_technology    = "SasHdd"
+#        name                = "TestLd"
+#        num_physical_drives = 2
+#        raid_level          = "RAID1"
+#      }
+#    }
+#  }
   os_deployment_settings {
-    compliance_control      = "Checked"
+    force_os_deployment = false
     os_deployment_plan_name = "Simple Deployment-HPE-Support 1.0"
     os_custom_attributes {
       name  = "ExampleOption"
@@ -88,6 +88,9 @@ resource "oneview_server_profile" "SP" {
         boot_volume_source = "UserDefined"
         priority           = "Primary"
         ethernet_boot_type = "iSCSI"
+        iscsi {
+          initiator_name_source = "ProfileInitiatorName"
+        }
       }
       ipv4 {
         ip_address_source  = "SubnetPool"
@@ -106,6 +109,9 @@ resource "oneview_server_profile" "SP" {
         boot_volume_source = "UserDefined"
         priority           = "Secondary"
         ethernet_boot_type = "iSCSI"
+        iscsi {
+          initiator_name_source = "ProfileInitiatorName"
+        }
       }
       ipv4 {
         ip_address_source  = "SubnetPool"

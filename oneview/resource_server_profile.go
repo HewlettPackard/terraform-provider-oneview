@@ -15,8 +15,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
-	"reflect"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -1694,7 +1692,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			}
 
 			osDeploySetting = ov.OSDeploymentSettings{
-				ForceOsDeployment  : osDeploySettingItem["force_os_deployment"].(bool),
+				ForceOsDeployment:   osDeploySettingItem["force_os_deployment"].(bool),
 				OSDeploymentPlanUri: utils.NewNstring(osdp),
 				OSCustomAttributes:  osCustomAttributes,
 			}
@@ -1964,8 +1962,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 
 	}
 
-	OsDeploymentSetting := ov.OSDeploymentSettings{}
-	if reflect.DeepEqual(serverProfile.OSDeploymentSettings, OsDeploymentSetting) == false {
+	if serverProfile.OSDeploymentSettings.OSDeploymentPlanUri != "" {
 		osCustomAttributes := make([]map[string]interface{}, 0, len(serverProfile.OSDeploymentSettings.OSCustomAttributes))
 		for i := 0; i < len(serverProfile.OSDeploymentSettings.OSCustomAttributes); i++ {
 			osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
@@ -1976,12 +1973,11 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			})
 		}
 
-		osDeploymentPlanName := ""
 		osdp, err := config.ovClient.GetOSDeploymentPlan(serverProfile.OSDeploymentSettings.OSDeploymentPlanUri)
 		if err != nil {
 			return err
 		}
-		osDeploymentPlanName = osdp.Name
+		osDeploymentPlanName := osdp.Name
 
 		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
 		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
@@ -2636,7 +2632,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					}
 					osdp = osDeploymentPlan.URI.String()
 				}
-	
+
 				osCustomAttributes := make([]ov.OSCustomAttribute, 0)
 				if osDeploySettingItem["os_custom_attributes"] != nil {
 					rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
@@ -2648,9 +2644,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						})
 					}
 				}
-	
+
 				osDeploySetting = ov.OSDeploymentSettings{
-					ForceOsDeployment  : osDeploySettingItem["force_os_deployment"].(bool),
+					ForceOsDeployment:   osDeploySettingItem["force_os_deployment"].(bool),
 					OSDeploymentPlanUri: utils.NewNstring(osdp),
 					OSCustomAttributes:  osCustomAttributes,
 				}

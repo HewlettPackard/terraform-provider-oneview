@@ -12,9 +12,7 @@
 package oneview
 
 import (
-	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"reflect"
 )
 
 func dataSourceServerProfile() *schema.Resource {
@@ -1346,8 +1344,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 
 	d.Set("modified", serverProfile.Modified)
 
-	OsDeploymentSetting := ov.OSDeploymentSettings{}
-	if reflect.DeepEqual(serverProfile.OSDeploymentSettings, OsDeploymentSetting) == false {
+	if serverProfile.OSDeploymentSettings.OSDeploymentPlanUri != "" {
 		osCustomAttributes := make([]map[string]interface{}, 0, len(serverProfile.OSDeploymentSettings.OSCustomAttributes))
 		for i := 0; i < len(serverProfile.OSDeploymentSettings.OSCustomAttributes); i++ {
 			osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
@@ -1358,12 +1355,12 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 			})
 		}
 
-		osDeploymentPlanName := ""
+		//		osDeploymentPlanName := ""
 		osdp, err := config.ovClient.GetOSDeploymentPlan(serverProfile.OSDeploymentSettings.OSDeploymentPlanUri)
 		if err != nil {
 			return err
 		}
-		osDeploymentPlanName = osdp.Name
+		osDeploymentPlanName := osdp.Name
 
 		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
 		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
