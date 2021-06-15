@@ -242,6 +242,22 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Type:     schema.TypeString,
 													Optional: true,
 												},
+												"boot_target": {
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"array_wwpn": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+															"lun": {
+																Type:     schema.TypeString,
+																Optional: true,
+															},
+														},
+													},
+												},
 												"iscsi": {
 													Type:     schema.TypeList,
 													Optional: true,
@@ -872,7 +888,17 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					rawBoots := rawNetworkItem["boot"].([]interface{})
 					for _, rawBoot := range rawBoots {
 						bootItem := rawBoot.(map[string]interface{})
-
+						bootTargets := []ov.BootTarget{}
+						rawBootTargets := bootItem["boot_target"].([]interface{})
+						if rawBootTargets != nil {
+							for _, rawBootTarget := range rawBootTargets {
+								bootTarget := rawBootTarget.(map[string]interface{})
+								bootTargets = append(bootTargets, ov.BootTarget{
+									LUN:       bootTarget["lun"].(string),
+									ArrayWWPN: bootTarget["array_wwpn"].(string),
+								})
+							}
+						}
 						iscsi := ov.BootIscsi{}
 						if bootItem["iscsi"] != nil {
 							rawIscsis := bootItem["iscsi"].([]interface{})
@@ -881,7 +907,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 								iscsi = ov.BootIscsi{
 									Chaplevel:            rawIscsiItem["chap_level"].(string),
 									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-									FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+									FirstBootTargetPort:  rawIscsiItem["first_boot_target_port"].(string),
 									SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
 									SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 								}
@@ -896,6 +922,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
+							Targets:          bootTargets,
 						}
 					}
 				}
@@ -1338,6 +1365,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		for _, connection := range spt.ConnectionSettings.Connections {
 			// Gets Boot for Connection
 			iscsi := make([]map[string]interface{}, 0, 1)
+			bootTargets := make([]map[string]interface{}, 0, len(connection.Boot.Targets))
 			if connection.Boot.Iscsi != nil {
 				iscsi = append(iscsi, map[string]interface{}{
 					"chap_level":              connection.Boot.Iscsi.Chaplevel,
@@ -1351,12 +1379,22 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			// Gets Boot Settings
 			connectionBoot := make([]map[string]interface{}, 0, 1)
 			if connection.Boot != nil {
+
+				if connection.Boot.Targets != nil {
+					for _, bootTarget := range connection.Boot.Targets {
+						bootTargets = append(bootTargets, map[string]interface{}{
+							"lun":        bootTarget.LUN,
+							"array_wwpn": bootTarget.ArrayWWPN,
+						})
+					}
+				}
 				connectionBoot = append(connectionBoot, map[string]interface{}{
 					"priority":           connection.Boot.Priority,
 					"boot_vlan_id":       connection.Boot.BootOptionV3.BootVlanId,
 					"ethernet_boot_type": connection.Boot.EthernetBootType,
 					"boot_volume_source": connection.Boot.BootVolumeSource,
 					"iscsi":              iscsi,
+					"boot_target":        bootTargets,
 				})
 			}
 			// Get IPV4 Settings for Connection
@@ -1469,6 +1507,18 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					for _, rawBoot := range rawBoots {
 						bootItem := rawBoot.(map[string]interface{})
 
+						bootTargets := []ov.BootTarget{}
+						rawBootTargets := bootItem["boot_target"].([]interface{})
+						if rawBootTargets != nil {
+							for _, rawBootTarget := range rawBootTargets {
+								bootTarget := rawBootTarget.(map[string]interface{})
+								bootTargets = append(bootTargets, ov.BootTarget{
+									LUN:       bootTarget["lun"].(string),
+									ArrayWWPN: bootTarget["array_wwpn"].(string),
+								})
+							}
+						}
+
 						iscsi := ov.BootIscsi{}
 						if bootItem["iscsi"] != nil {
 							rawIscsis := bootItem["iscsi"].([]interface{})
@@ -1477,7 +1527,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 								iscsi = ov.BootIscsi{
 									Chaplevel:            rawIscsiItem["chap_level"].(string),
 									FirstBootTargetIp:    rawIscsiItem["first_boot_target_ip"].(string),
-									FirstBootTargetPort:  rawIscsiItem["first_boot_target_ip"].(string),
+									FirstBootTargetPort:  rawIscsiItem["first_boot_target_port"].(string),
 									SecondBootTargetIp:   rawIscsiItem["second_boot_target_ip"].(string),
 									SecondBootTargetPort: rawIscsiItem["second_boot_target_port"].(string),
 								}
@@ -1493,6 +1543,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							Iscsi:            &iscsi,
+							Targets:          bootTargets,
 						}
 					}
 				}
