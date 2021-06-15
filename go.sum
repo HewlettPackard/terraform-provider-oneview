@@ -11,6 +11,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/HewlettPackard/oneview-golang v6.1.1-0.20210614115832-efa49ff06566+incompatible h1:ivs2H5CeTY0K+ntp1WwSg1cUPmE8FtFrY+nWyNk0p1Q=
 github.com/HewlettPackard/oneview-golang v6.1.1-0.20210614115832-efa49ff06566+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
+github.com/HewlettPackard/oneview-golang v6.1.1-0.20210615084657-70973bd109fb+incompatible h1:UBSh7Izsim92K8XtTNnB/fengnKSztWyO+1BFkMuZUk=
+github.com/HewlettPackard/oneview-golang v6.1.1-0.20210615084657-70973bd109fb+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
 github.com/agext/levenshtein v1.2.2 h1:0S/Yg6LYmFJ5stwQeRp6EeOcCbj7xiqQSdNelsXvaqE=
 github.com/agext/levenshtein v1.2.2/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
