@@ -1355,7 +1355,6 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 			})
 		}
 
-		//		osDeploymentPlanName := ""
 		osdp, err := config.ovClient.GetOSDeploymentPlan(serverProfile.OSDeploymentSettings.OSDeploymentPlanUri)
 		if err != nil {
 			return err
