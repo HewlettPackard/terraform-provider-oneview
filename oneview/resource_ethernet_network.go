@@ -107,6 +107,11 @@ func resourceEthernetNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"subnet_uri": {
+				Optional: true,
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"initial_scope_uris": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -175,6 +180,7 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("fabric_uri", eNet.FabricUri.String())
 	d.Set("etag", eNet.ETAG)
 	d.Set("scopesuri", eNet.ScopesUri.String())
+	d.Set("subnet_uri", eNet.SubnetUri.String())
 	d.Set("initial_scope_uris", eNet.InitialScopeUris)
 
 	return nil

@@ -37,7 +37,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 8. Added support to Connection Templates Resource.
    - GET /rest/connection-templates/{id}
    - PUT /rest/connection-templates/{id}
-
+9. Added support to Id Pools IPv4 Subnets
+   - GET      /rest/id-pools/ipv4/subnets/{id}
+   - POST     /rest/id-pools/ipv4/subnets
+   - PUT      /rest/id-pools/ipv4/subnets/{id}
+   - PUT      /rest/id-pools/ipv4/subnets/{id}/allocator
+   - PUT      /rest/id-pools/ipv4/subnets/{id}/collector
+   - DELETE   /rest/id-pools/ipv4/subnets/{id}
+  
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
@@ -48,6 +55,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance Time and Locale Configuration
 - Connection Template
 - Firmware Drivers
+- Id Pools IPv4 Subnets
 - Labels
 
 ### Bug fixes & Enhancements:

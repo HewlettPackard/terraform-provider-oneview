@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"strings"
 )
@@ -31,6 +32,10 @@ func resourceIPv4Subnets() *schema.Resource {
 			"allocator_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+			"allocator_count": {
+				Type:     schema.TypeInt,
+				Optional: true,
 			},
 			"associated_resources": {
 				Type:     schema.TypeList,
@@ -60,6 +65,13 @@ func resourceIPv4Subnets() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"collector_id_list": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"collector_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -85,7 +97,7 @@ func resourceIPv4Subnets() *schema.Resource {
 			},
 			"gateway": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"modified": {
 				Type:     schema.TypeString,
@@ -97,7 +109,7 @@ func resourceIPv4Subnets() *schema.Resource {
 			},
 			"network_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"range_uris": {
 				Computed: true,
@@ -108,7 +120,7 @@ func resourceIPv4Subnets() *schema.Resource {
 			},
 			"subnet_mask": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -165,10 +177,13 @@ func resourceIPv4SubnetRead(d *schema.ResourceData, meta interface{}) error {
 		})
 	}
 
+	idList := make([]map[string]interface{}, 0)
+	d.Set("allocator_count", 0)
 	d.Set("allocator_uri", subnet.AllocatorUri)
 	d.Set("associated_resources", associatedRes)
 	d.Set("category", subnet.Category)
 	d.Set("collector_uri", subnet.CollectorUri)
+	d.Set("collector_id_list", idList)
 	d.Set("created", subnet.Created)
 	d.Set("dns_servers", subnet.DnsServers)
 	d.Set("domain", subnet.Domain)
@@ -188,20 +203,49 @@ func resourceIPv4SubnetRead(d *schema.ResourceData, meta interface{}) error {
 func resourceIPv4SubnetUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	subnet := ov.Ipv4Subnet{
-		Name:       d.Get("name").(string),
-		Gateway:    d.Get("gateway").(string),
-		NetworkId:  d.Get("network_id").(string),
-		SubnetMask: d.Get("subnet_mask").(string),
+	if d.HasChange("allocator_count") {
+		allocator := ov.SubnetAllocatorList{
+			Count: d.Get("allocator_count").(int),
+		}
+		_, err := config.ovClient.AllocateIpv4Subnet(d.Id(), allocator)
+		if err != nil {
+			d.SetId("")
+			return err
+		}
+
+	} else if d.HasChange("collector_id_list") {
+		ids := d.Get("collector_id_list").(*schema.Set).List()
+
+		idsList := make([]utils.Nstring, len(ids))
+		for i, raw := range ids {
+			idsList[i] = utils.Nstring(raw.(string))
+		}
+
+		collect := ov.SubnetCollectorList{
+			IdList: idsList,
+		}
+		_, err := config.ovClient.CollectIpv4Subnet(d.Id(), collect)
+		if err != nil {
+			d.SetId("")
+			return err
+		}
+
+	} else {
+
+		subnet := ov.Ipv4Subnet{
+			Name:       d.Get("name").(string),
+			Gateway:    d.Get("gateway").(string),
+			NetworkId:  d.Get("network_id").(string),
+			SubnetMask: d.Get("subnet_mask").(string),
+		}
+
+		err := config.ovClient.UpdateIpv4Subnet(d.Id(), subnet)
+
+		if err != nil {
+			d.SetId("")
+			return err
+		}
 	}
-
-	err := config.ovClient.UpdateIpv4Subnet(d.Id(), subnet)
-
-	if err != nil {
-		d.SetId("")
-		return err
-	}
-
 	d.SetId(d.Id())
 	return resourceIPv4SubnetRead(d, meta)
 }
