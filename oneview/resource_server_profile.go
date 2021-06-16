@@ -1009,7 +1009,7 @@ func resourceServerProfile() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"constraints": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"name": {
 										Type:     schema.TypeString,
@@ -1017,7 +1017,7 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"type": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"value": {
 										Type:     schema.TypeString,
@@ -1693,6 +1693,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 			osDeploySetting = ov.OSDeploymentSettings{
 				ForceOsDeployment:   osDeploySettingItem["force_os_deployment"].(bool),
+				DeployMethod:        osDeploySettingItem["deploy_method"].(string),
+				DeploymentMac:       osDeploySettingItem["deployment_mac"].(string),
+				DeploymentPortId:    osDeploySettingItem["deployment_port_id"].(string),
 				OSDeploymentPlanUri: utils.NewNstring(osdp),
 				OSCustomAttributes:  osCustomAttributes,
 			}
@@ -2647,6 +2650,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 				osDeploySetting = ov.OSDeploymentSettings{
 					ForceOsDeployment:   osDeploySettingItem["force_os_deployment"].(bool),
+					DeployMethod:        osDeploySettingItem["deploy_method"].(string),
+					DeploymentMac:       osDeploySettingItem["deployment_mac"].(string),
+					DeploymentPortId:    osDeploySettingItem["deployment_port_id"].(string),
 					OSDeploymentPlanUri: utils.NewNstring(osdp),
 					OSCustomAttributes:  osCustomAttributes,
 				}
