@@ -75,6 +75,10 @@ func dataSourceIPv4Subnets() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"gateway": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"modified": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -116,8 +120,8 @@ func dataSourceIPv4Subnets() *schema.Resource {
 
 func dataSourceIPv4SubnetsRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	subnet_id := d.Get("subnet_id").(string)
-	subnet, err := config.ovClient.GetIPv4SubnetbyId(subnet_id)
+	subnetId := d.Get("subnet_id").(string)
+	subnet, err := config.ovClient.GetIPv4SubnetbyId(subnetId)
 	if err != nil || subnet.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -149,6 +153,6 @@ func dataSourceIPv4SubnetsRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("subnet_mask", subnet.SubnetMask)
 	d.Set("type", subnet.Type)
 	d.Set("uri", subnet.URI.String())
-	d.SetId(subnet_id)
+	d.SetId(subnetId)
 	return nil
 }

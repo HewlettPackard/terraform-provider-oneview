@@ -7,24 +7,18 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-# Updates Subnet Name
+# Collects allocated ips from the Resource
 resource "oneview_id_pools_ipv4_subnets" "ipv4_subnets" {
-  name = "RenamedSF"
-  network_id="192.169.1.0"
-  subnet_mask="255.255.255.0"
-  gateway="192.169.1.1"
+  collector_id_list = ["192.169.1.10", "192.169.1.11"]
 }
 
-# Below resources are prerequisite for update_resource_allocator.tf
-# which allocates IPs from subnet to the resource
+# Retaining dependent resource state for the above update operation
+# TF destroys when resource instance not in .tf file
 
-# Gets subnet details using id
 data "oneview_id_pools_ipv4_subnets" "ipv4_subnets_data" {
-  subnet_id = "e3dc8b2a-cee0-4c16-82a8-c48092993853"
+  subnet_id = "5698662c-235e-473e-828a-73716731fc75"
 }
 
-# Creates Range of Ip Addresses for the subnet 
-# To allocate ips from subnet to associated resource
 resource "oneview_ipv4_range" "ipv4range" {
   name = "IpRange"
   subnet_uri = data.oneview_id_pools_ipv4_subnets.ipv4_subnets_data.uri

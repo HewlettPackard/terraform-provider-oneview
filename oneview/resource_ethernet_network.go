@@ -110,7 +110,6 @@ func resourceEthernetNetwork() *schema.Resource {
 			"subnet_uri": {
 				Optional: true,
 				Type:     schema.TypeString,
-				Computed: true,
 			},
 			"initial_scope_uris": {
 				Optional: true,
@@ -135,6 +134,7 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 		PrivateNetwork:      d.Get("private_network").(bool),
 		EthernetNetworkType: d.Get("ethernet_network_type").(string),
 		Type:                d.Get("type").(string),
+		SubnetUri:           utils.NewNstring(d.Get("subnet_uri").(string)),
 		Description:         utils.NewNstring(d.Get("description").(string)),
 	}
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
