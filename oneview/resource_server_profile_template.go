@@ -822,7 +822,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"constraints": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"name": {
 										Type:     schema.TypeString,
@@ -830,7 +830,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"type": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"value": {
 										Type:     schema.TypeString,
@@ -1253,6 +1253,8 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 			osDeploySetting = ov.OSDeploymentSettings{
 				ComplianceControl:   osDeploySettingItem["compliance_control"].(string),
+				DeployMethod:        osDeploySettingItem["deploy_method"].(string),
+				DeploymentPortId:    osDeploySettingItem["deployment_port_id"].(string),
 				OSDeploymentPlanUri: utils.NewNstring(osdp),
 				OSCustomAttributes:  osCustomAttributes,
 			}
@@ -1868,6 +1870,8 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 			osDeploySetting = ov.OSDeploymentSettings{
 				ComplianceControl:   osDeploySettingItem["compliance_control"].(string),
+				DeployMethod:        osDeploySettingItem["deploy_method"].(string),
+				DeploymentPortId:    osDeploySettingItem["deployment_port_id"].(string),
 				OSDeploymentPlanUri: utils.NewNstring(osdp),
 				OSCustomAttributes:  osCustomAttributes,
 			}
