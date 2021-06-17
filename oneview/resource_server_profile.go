@@ -1660,8 +1660,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
 	}
 
-	if _, ok := d.GetOk("os_deployment_settings"); ok {
-		rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+	if val, ok := d.GetOk("os_deployment_settings"); ok {
+		rawOsDeploySetting := val.(*schema.Set).List()
 		osDeploySetting := ov.OSDeploymentSettings{}
 		for _, raw := range rawOsDeploySetting {
 			osDeploySettingItem := raw.(map[string]interface{})
@@ -2617,8 +2617,8 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments
 		}
 
-		if _, ok := d.GetOk("os_deployment_settings"); ok {
-			rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+		if val, ok := d.GetOk("os_deployment_settings"); ok {
+			rawOsDeploySetting := val.(*schema.Set).List()
 			osDeploySetting := ov.OSDeploymentSettings{}
 			for _, raw := range rawOsDeploySetting {
 				osDeploySettingItem := raw.(map[string]interface{})
