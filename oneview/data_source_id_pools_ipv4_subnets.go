@@ -12,7 +12,9 @@
 package oneview
 
 import (
+	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"strings"
 )
 
 func dataSourceIPv4Subnets() *schema.Resource {
@@ -89,7 +91,7 @@ func dataSourceIPv4Subnets() *schema.Resource {
 			},
 			"network_id": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"range_uris": {
 				Computed: true,
@@ -100,7 +102,7 @@ func dataSourceIPv4Subnets() *schema.Resource {
 			},
 			"subnet_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"subnet_mask": {
 				Type:     schema.TypeString,
@@ -120,12 +122,29 @@ func dataSourceIPv4Subnets() *schema.Resource {
 
 func dataSourceIPv4SubnetsRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	subnetId := d.Get("subnet_id").(string)
-	subnet, err := config.ovClient.GetIPv4SubnetbyId(subnetId)
-	if err != nil || subnet.URI.IsNil() {
-		d.SetId("")
-		return nil
+	subnet := ov.Ipv4Subnet{}
+
+	if _, ok := d.GetOk("subnet_id"); ok {
+		subnetId := d.Get("subnet_id").(string)
+		subnetById, err := config.ovClient.GetIPv4SubnetbyId(subnetId)
+		subnet = subnetById
+		if err != nil || subnet.URI.IsNil() {
+			d.SetId("")
+			return nil
+		}
+	} else {
+		networkId := d.Get("network_id").(string)
+		subnetByNetwork, err := config.ovClient.GetSubnetByNetworkId(networkId)
+		subnet = subnetByNetwork
+		if err != nil || subnet.URI.IsNil() {
+			d.SetId("")
+			return nil
+		}
+
 	}
+
+	uri := subnet.URI.String()
+	subnetId := strings.Split(uri, "/")[5]
 
 	associatedRes := make([]map[string]interface{}, 0, len(subnet.AssociatedResources))
 	for _, res := range subnet.AssociatedResources {

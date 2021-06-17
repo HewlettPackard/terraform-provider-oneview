@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 2800
+  ov_apiversion = var.api_version
   ov_ifmatch    = "*"
 }
 
@@ -16,19 +16,18 @@ resource "oneview_id_pools_ipv4_subnets" "ipv4_subnets" {
 # TF destroys when resource instance not in .tf file
 
 data "oneview_id_pools_ipv4_subnets" "ipv4_subnets_data" {
-  subnet_id = "5698662c-235e-473e-828a-73716731fc75"
+  network_id = "<network_id>"
 }
 
 resource "oneview_ipv4_range" "ipv4range" {
   name = "IpRange"
   subnet_uri = data.oneview_id_pools_ipv4_subnets.ipv4_subnets_data.uri
   start_stop_fragments {
-    start_address = "192.169.1.10"
-    end_address = "192.169.1.20"
+    start_address = "<startAddress>"
+    end_address = "<endAddress>"
   }
 }
 
-# Associate Ethernet Resource with subnet
 resource "oneview_ethernet_network" "ethernetnetwork" {
   name    = "SubnetEthernet"
   type    = "ethernet-networkV4"
