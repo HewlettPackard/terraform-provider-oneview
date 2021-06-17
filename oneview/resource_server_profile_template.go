@@ -11,7 +11,7 @@
 
 package oneview
 
-import (	
+import (
 	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
