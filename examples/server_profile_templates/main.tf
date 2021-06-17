@@ -7,6 +7,11 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
+# Testing data source
+data "oneview_ethernet_network" "ethernetnetworks" {
+  name = "TestNetwork_1"
+}
+
 data "oneview_scope" "scope" {
   name = "Auto-Scope"
 }
@@ -34,44 +39,92 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
     mode            = "UEFIOptimized"
     pxe_boot_policy = "Auto"
   }
-  local_storage {
-    controller {
-      device_slot       = "Embedded"
-      drive_write_cache = "Unmanaged"
-      initialize        = true
-      import_configuration = false 
-      mode                     = "RAID"
-      predictive_spare_rebuild = "Unmanaged"
-      logical_drives {
-        accelerator         = "Unmanaged"
-        bootable            = true
-        drive_technology    = "SasHdd"
-        name                = "TestLD-01"
-        num_physical_drives = 2
-        raid_level          = "RAID1"
-      }
+#  local_storage {
+#    controller {
+#      device_slot       = "Embedded"
+#      drive_write_cache = "Unmanaged"
+#      initialize        = true
+#      import_configuration = false 
+#      mode                     = "RAID"
+#      predictive_spare_rebuild = "Unmanaged"
+#      logical_drives {
+#        accelerator         = "Unmanaged"
+#        bootable            = true
+#        drive_technology    = "SasHdd"
+#        name                = "TestLD-01"
+#        num_physical_drives = 2
+#        raid_level          = "RAID1"
+#      }
+#    }
+#  }
+  os_deployment_settings {
+    compliance_control      = "Checked"
+    os_deployment_plan_name = "Simple Deployment-HPE-Support 1.0"
+    os_custom_attributes {
+      name  = "ExampleOption"
+      value = "Option1"
+    }
+    os_custom_attributes {
+      name  = "ExampleNumber"
+      value = "50"
+    }
+    os_custom_attributes {
+      name  = "ExampleString"
+      value = "Hello World!"
     }
   }
   connection_settings {
     manage_connections = true
     compliance_control = "CheckedMinimum"
     connections {
-      id            = 1
-      allocated_mbps = 0
-      allocated_vfs  = 0
-      name          = "Management-01"
+      id             = 1
+      name           = "Deployment Network A"
       isolated_trunk = false
       managed        = true
-      maximum_mbps   = 0
-      function_type = "Ethernet"
-      network_uri   = "/rest/ethernet-networks/9ada4ca7-5832-4378-b972-a44d7f2ce652"
-      port_id       = "Mezz 3:1-a"
+      function_type  = "Ethernet"
+      network_uri    = "/rest/ethernet-networks/8bd7a0e0-75e8-40c7-9f52-d08b007e5270"
+      port_id        = "Mezz 3:1-a"
       requested_mbps = "2500"
       boot {
-        boot_vlan_id       = 0
+        boot_volume_source = "UserDefined"
         priority           = "Primary"
-        ethernet_boot_type = "PXE"
+        ethernet_boot_type = "iSCSI"
       }
+      ipv4 {
+        ip_address_source  = "SubnetPool"
+      }
+    }
+    connections {
+      id             = 2
+      name           = "Deployment Network B"
+      isolated_trunk = false
+      managed        = true
+      function_type  = "Ethernet"
+      network_uri    = "/rest/ethernet-networks/8bd7a0e0-75e8-40c7-9f52-d08b007e5270"
+      port_id        = "Mezz 3:2-a"
+      requested_mbps = "2500"
+      boot {
+        boot_volume_source = "UserDefined"
+        priority           = "Secondary"
+        ethernet_boot_type = "iSCSI"
+      }
+      ipv4 {
+        ip_address_source  = "SubnetPool"
+      }
+    }
+    connections {
+      id             = 3
+      name           = "Management-01"
+      isolated_trunk = false
+      managed        = true
+      function_type  = "Ethernet"
+      network_uri    = data.oneview_ethernet_network.ethernetnetworks.uri
+      port_id        = "Auto"
+      requested_mbps = "2500"
+#      boot {
+#        priority           = "Primary"
+#        ethernet_boot_type = "PXE"
+#      }
     }
   }
 }

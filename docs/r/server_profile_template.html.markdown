@@ -63,8 +63,60 @@ This defaults to 'Virtual'.
 
 * `manage_connections` - (Optional)  Identifies whether connections should be managed by server profile template. If this is false then the compliance check between server profile template and server profile is disabled, this allows a server profile created from a profile template to define any connectivity.
 
-* `network` - (Optional) Network connection to be configured for the server. Can be specified multiple times. 
-Network configuration is specified below.
+* `connection_settings` - Connection downlinks associated with server profile. 
+  *  `reapply_state` - Current reapply state of the connection downlinks associated with the server profile.
+  * `connection` - A list of connections associated with server profile.
+    * `allocated_mbps` -  The transmit throughput (mbps) currently allocated to this connection. 
+    * `name` - A string used to identify the respective connection.
+    * `allocated_vfs` - The number of virtual functions allocated to this connection.
+    * `function_type` - Type of function required for the connection. functionType cannot be modified after the connection is created.
+    * `network_uri` - The name of the network or network set to be connected.
+    * `port_id` - Identifies the port/FlexNIC on an adapter used for this connection.
+    * `requested_mbps` - The transmit throughput (mbps) that should be allocated to this connection.
+    * `requested_vfs` - The SR-IOV virtual functions that should be allocated to this connection.
+    *  `state` - The state of a connection.
+    *  `status` - The status of a connection.
+    *  `wwnn` - The node WWN address that is currently programmed on the FlexNic. 
+    *  `wwpn` - The port WWN address that is currently programmed on the FlexNIC. 
+    *  `wwpn_type` -  Specifies the type of WWN address to be porgrammed on the FlexNIC. 
+    *  `id` - A unique identifier for this connection. 
+    *  `interconnect_port` - The interconnect port associated with the connection.
+    *  `interconnect_uri` - The interconnectUri associated with the connection.
+    *  `isolated_trunk` - When selected, for each PVLAN domain, primary VLAN ID tags will translated to the isolated VLAN ID tags for traffic egressing to the downlink ports. 
+    *  `lag_name` - The link aggregation group name for a server profile connection. 
+    *  `mac` - The MAC address that is currently programmed on the FlexNic. 
+    *  `mac_type` - Specifies the type of MAC address to be programmed into the IO Devices. 
+    *  `managed` - Indicates whether the connection is capable of Virtual Connect functionality and managed by OneView. 
+    *  `maximum_mbps` - Maximum transmit throughput (mbps) allowed on this connection.
+    *  `network_name` - The name of the network or network set to be connected. 
+    *  `private_vlan_port_type` - Private Vlan port type.This is a read only field
+    *  `boot` - Indicates that the server will attempt to boot from this connection.
+    	* `priority` - Indicates the boot priority for this connection. 
+    	* `boot_vlan_id` - The virtual LAN ID of the boot connection
+    	* `ethernet_boot_type` - Indicates the boot protocol for a connection with Ethernet functionType. 
+    	* `boot_volume_source` - Indicates boot volume source for the connection.
+    	* `targets` - Defines the boot targets that the server will attempt to boot. 
+    	  * `array_wwpn` - The wwpn of the target device that provides access to the Boot Volume.
+    	  * `lun` - The LUN of the Boot Volume presented by the target device.
+    	* `iscsi` - This object contains the iSCSI parameters of the connection when functionType is iSCSI, or when functionType is Ethernet and ethernetBootType is iSCSI.
+    	  * `chap_level` - The iSCSI Challenge Handshake Authentication Protocol (CHAP) method. 
+    	  * `chap_name` - The iSCSI CHAP name. 
+    	  * `chap_secret` - The iSCSI CHAP secret. 
+    	  * `initiator_name` - The unique identifier of the iSCSI initiator in iQN, EUI or NAA format.
+    	  * `initiator_name_source` - Indicates how the iSCSI initiator name initiatorName was created. 
+    	  * `mutual_chap_name` - The iSCSI Mutual Challenge Handshake Authentication Protocol (Mutual-CHAP) name. 
+    	  * `mutual_chap_secret` - The iSCSI Mutual-CHAP secret.
+    	  * `boot_target_lun` - The LUN number of the iSCSI target volume.
+    	  * `boot_target_name` - The unique identifier of the iSCSI target volume in iQN, EUI or NAA format.
+    	  * `first_boot_target_ip` - The IP address of the iSCSI target volume that is used first to attempt to connect. 
+    	  * `first_boot_target_port` - The port number to be used for the iSCSI target volume designated by firstBootTargetIp. 
+    	  * `second_boot_target_ip` - The IP address of the iSCSI target volume that is used (if given) if the connection designated by firstBootTargetIp fails
+    	  * `second_boot_target_port` - The port number to be used for the iSCSI target volume designated by secondBootTargetIp.
+    	* `ipv4` - The IP information for a connection. This is only used for iSCSI connections. 
+    	  * `gateway` - The gateway for the iSCSI initiator. 
+    	  * `ip_address` - The IPv4 address of the iSCSI initiator. When creating a connection, if ipAddressSource is DHCP, then this must be omitted.
+    	  * `subnet_mask` - The subnet mask of the iSCSI initiator. 
+    	  * `ip_address_source` - Specifies how the IPv4 parameters are to be supplied.
 
 * `os_deployment_settings` - (Optional) OS Deployment settings applicable when deployment is invoked through a server profile.
 OS Deploymennt Stting configuration is specified below.
@@ -111,26 +163,6 @@ Firmware Supports the following:
 * `manage_firmware` - (Optional) Indicates that the server firmware should be configured on the server profiles created from the template. Value can be 'true' or 'false'.
 
 * `firmware_install_type` - (Optional) Force installation of firmware even if same or newer version is installed. Downgrading the firmware can result in the installation of unsupported firmware which can cause the hardware to cease operating. Value can be 'true' or 'false'.
-
-Network supports the following:
-
-* `name` - (Required) A unique name for the resource.
-
-* `function_type` - (Required) Type of function required for the connection. Values can be 'Ethernet' or 'FibreChannel'
-Changing this forces a new resoure.
-
-* `network_uri` - (Required) Identifies the network or network set to be connected. 
-
-* `port_id` - (Optional) Identifies the port (FlexNIC) used for this connection. Defaults to "Lom 1:1-a".
-
-* `requested_mbps` - (Optional) The transmit throughput (mbps) that should be allocated to this connection.
-Defaults to `2500`
-
-* `boot` - (Optional) Boot setting required for the server profile template.
-
-* `id` - (Optional) A unique identifier for this connection.
-
-* `ipv4` - (Optional)  The IP information for a connection. This is only used for iSCSI connections. It must be omitted for other connection types.
 
 Os Deployment Settings support the following:
 
