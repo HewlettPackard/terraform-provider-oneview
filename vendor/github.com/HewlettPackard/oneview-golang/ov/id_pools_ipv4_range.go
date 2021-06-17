@@ -23,6 +23,7 @@ type Ipv4Range struct {
 	Name                 string                `json:"name,omitempty"`
 	EndAddress           utils.Nstring         `json:"endAddress,omitempty"`
 	FreeFragmentUri      utils.Nstring         `json:"freeFragmentUri,omitempty"`
+	FreeIdCount          int                   `json:"freeIdCount,omitempty"`
 	URI                  utils.Nstring         `json:"uri,omitempty"`
 	Prefix               utils.Nstring         `json:"prefix,omitempty"`
 	RangeCategory        utils.Nstring         `json:"rangeCategory,omitempty"`
@@ -85,17 +86,25 @@ type UpdateIpv4 struct {
 	Type    string `json:"type,omitempty"`
 }
 
-func (c *OVClient) GetIPv4RangebyId(id string) (Ipv4Range, error) {
+func (c *OVClient) GetIPv4RangebyId(view string, id string) (Ipv4Range, error) {
 	var (
 		uri       = "/rest/id-pools/ipv4/ranges/"
+		q         = make(map[string]interface{})
 		ipv4Range Ipv4Range
 	)
+
+	if view != "" {
+		q["view"] = view
+	}
 
 	uri = uri + id
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
+	if len(q) > 0 {
+		c.SetQueryString(q)
+	}
 	data, err := c.RestAPICall(rest.GET, uri, nil)
 	if err != nil {
 		return ipv4Range, err
@@ -108,20 +117,12 @@ func (c *OVClient) GetIPv4RangebyId(id string) (Ipv4Range, error) {
 	return ipv4Range, nil
 }
 
-func (c *OVClient) GetAllocatedFragments(filter string, sort string, start string, count string, id string) (FragmentsList, error) {
+func (c *OVClient) GetAllocatedFragments(start string, count string, id string) (FragmentsList, error) {
 	var (
 		uri                = "/rest/id-pools/ipv4/ranges/" + id + "/allocated-fragments"
 		q                  = make(map[string]interface{})
 		allocatedFragments FragmentsList
 	)
-
-	if len(filter) > 0 {
-		q["filter"] = filter
-	}
-
-	if sort != "" {
-		q["sort"] = sort
-	}
 
 	if start != "" {
 		q["start"] = start
@@ -151,20 +152,12 @@ func (c *OVClient) GetAllocatedFragments(filter string, sort string, start strin
 	return allocatedFragments, nil
 }
 
-func (c *OVClient) GetFreeFragments(filter string, sort string, start string, count string, id string) (FragmentsList, error) {
+func (c *OVClient) GetFreeFragments(start string, count string, id string) (FragmentsList, error) {
 	var (
 		uri           = "/rest/id-pools/ipv4/ranges/" + id + "/free-fragments"
 		q             = make(map[string]interface{})
 		freeFragments FragmentsList
 	)
-
-	if len(filter) > 0 {
-		q["filter"] = filter
-	}
-
-	if sort != "" {
-		q["sort"] = sort
-	}
 
 	if start != "" {
 		q["start"] = start
@@ -193,81 +186,56 @@ func (c *OVClient) GetFreeFragments(filter string, sort string, start string, co
 	return freeFragments, nil
 }
 
-func (c *OVClient) CreateIPv4Range(ipv4 CreateIpv4Range) error {
+func (c *OVClient) CreateIPv4Range(ipv4 CreateIpv4Range) (Ipv4Range, error) {
 	log.Infof("Initializing creation of ipv4Range for %s.", ipv4.Name)
 	var (
-		uri = "/rest/id-pools/ipv4/ranges/"
-		t   = (&Task{}).NewProfileTask(c)
+		uri     = "/rest/id-pools/ipv4/ranges/"
+		iprange Ipv4Range
 	)
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
-	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, ipv4)
-	log.Debugf("task -> %+v", t)
 	data, err := c.RestAPICall(rest.POST, uri, ipv4)
 	if err != nil {
-		t.TaskIsDone = true
 		log.Errorf("Error submitting new ipv4Range creation request: %s", err)
-		return err
+		return iprange, err
 	}
 
 	log.Debugf("Response New ipv4Range %s", data)
-	if err := json.Unmarshal(data, &t); err != nil {
-		t.TaskIsDone = true
+	if err := json.Unmarshal(data, &iprange); err != nil {
 		log.Errorf("Error with task un-marshal: %s", err)
-		return err
+		return iprange, err
 	}
 
-	err = t.Wait()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return iprange, nil
 }
 
 func (c *OVClient) DeleteIpv4Range(id string) error {
 	var (
 		ipv4 Ipv4Range
 		err  error
-		t    *Task
 		uri  string
 	)
 
-	ipv4, err = c.GetIPv4RangebyId(id)
+	ipv4, err = c.GetIPv4RangebyId("", id)
 	if err != nil {
 		return err
 	}
 	if ipv4.Name != "" {
-		t = t.NewProfileTask(c)
-		t.ResetTask()
 		log.Debugf("REST : %s \n %+v\n", ipv4.URI, ipv4)
-		log.Debugf("task -> %+v", t)
 		uri = ipv4.URI.String()
 		if uri == "" {
 			log.Warn("Unable to post delete, no uri found.")
-			t.TaskIsDone = true
 			return err
 		}
-		data, err := c.RestAPICall(rest.DELETE, uri, nil)
+		_, err := c.RestAPICall(rest.DELETE, uri, nil)
 		if err != nil {
 			log.Errorf("Error submitting new ipv4 delete request: %s", err)
-			t.TaskIsDone = true
 			return err
 		}
 
-		log.Debugf("Response delete ipv4 Range %s", data)
-		if err := json.Unmarshal(data, &t); err != nil {
-			t.TaskIsDone = true
-			log.Errorf("Error with task un-marshal: %s", err)
-			return err
-		}
-		err = t.Wait()
-		if err != nil {
-			return err
-		}
 		return nil
 	} else {
 		log.Infof("ipv4 Range could not be found to delete, %s, skipping delete ...", ipv4.Name)
@@ -275,34 +243,68 @@ func (c *OVClient) DeleteIpv4Range(id string) error {
 	return nil
 }
 
-func (c *OVClient) UpdateIpv4Range(id string, ipv4 UpdateIpv4) error {
+func (c *OVClient) UpdateIpv4Range(id string, ipv4 Ipv4Range) (Ipv4Range, error) {
 	log.Infof("Initializing update of ipv4 Range")
 	var (
-		uri = "/rest/id-pools/ipv4/ranges/" + id
-		t   *Task
+		uri      = "/rest/id-pools/ipv4/ranges/" + id
+		response Ipv4Range
 	)
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
-	t = t.NewProfileTask(c)
-	t.ResetTask()
-
 	log.Debugf("REST : %s \n %+v\n", uri, ipv4)
-	log.Debugf("task -> %+v", t)
 	data, err := c.RestAPICall(rest.PUT, uri, ipv4)
 	if err != nil {
-		t.TaskIsDone = true
 		log.Errorf("Error submitting update ipv4 Range request: %s", err)
-		return err
+		return response, err
 	}
 
 	log.Debugf("Response update ipv4 Range %s", data)
-	if err := json.Unmarshal([]byte(data), &t); err != nil {
-		t.TaskIsDone = true
+	if err := json.Unmarshal([]byte(data), &response); err != nil {
 		log.Errorf("Error with task un-marshal: %s", err)
-		return err
+		return response, err
 	}
 
-	return nil
+	return response, nil
+}
+
+func (c *OVClient) AllocateId(allocator UpdateAllocatorList, id string) (UpdateAllocatorList, error) {
+	var (
+		uri = "/rest/id-pools/ipv4/ranges/" + id + "/allocator"
+	)
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.PUT, uri, allocator)
+	if err != nil {
+		return allocator, err
+	}
+
+	log.Debugf("Getallocator %s", data)
+	if err := json.Unmarshal(data, &allocator); err != nil {
+		return allocator, err
+	}
+	return allocator, nil
+}
+
+func (c *OVClient) CollectId(collector UpdateCollectorList, id string) (UpdateCollectorList, error) {
+	var (
+		uri = "/rest/id-pools/ipv4/ranges/" + id + "/collector"
+	)
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.PUT, uri, collector)
+	if err != nil {
+		return collector, err
+	}
+
+	log.Debugf("Getcollector %s", data)
+	if err := json.Unmarshal(data, &collector); err != nil {
+		return collector, err
+	}
+	return collector, nil
 }

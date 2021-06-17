@@ -12,7 +12,9 @@
 package oneview
 
 import (
+	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"reflect"
 )
 
 func dataSourceServerProfileTemplate() *schema.Resource {
@@ -506,7 +508,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"management_processor": {
 				Optional: true,
 				Type:     schema.TypeList,
@@ -570,10 +571,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"os_deployment_plan_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"os_custom_attributes": {
 							Optional: true,
 							Type:     schema.TypeSet,
@@ -581,7 +578,7 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"constraints": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"name": {
 										Type:     schema.TypeString,
@@ -589,7 +586,7 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 									},
 									"type": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"value": {
 										Type:     schema.TypeString,
@@ -598,6 +595,14 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 								},
 							},
 						},
+						"os_deployment_plan_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_deployment_plan_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -605,7 +610,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-
 			"san_storage": {
 				Optional: true,
 				Type:     schema.TypeSet,
@@ -886,7 +890,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-
 			"server_profile_description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -903,7 +906,6 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"type": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -926,9 +928,10 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	name := d.Get("name").(string)
 
 	spt, err := config.ovClient.GetProfileTemplateByName(name)
+
 	if err != nil || spt.URI.IsNil() {
 		d.SetId("")
-		return nil
+		return err
 	}
 	d.Set("affinity", spt.Affinity)
 	d.Set("category", spt.Category)
@@ -1096,7 +1099,9 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 		"manage_firmware":          spt.Firmware.ManageFirmware,
 	})
 	d.Set("firmware", firmwareOption)
-	if len(spt.OSDeploymentSettings.OSCustomAttributes) != 0 {
+
+	OsDeploymentSetting := ov.OSDeploymentSettings{}
+	if reflect.DeepEqual(spt.OSDeploymentSettings, OsDeploymentSetting) == false {
 		osCustomAttributes := make([]map[string]interface{}, 0, len(spt.OSDeploymentSettings.OSCustomAttributes))
 		for i := 0; i < len(spt.OSDeploymentSettings.OSCustomAttributes); i++ {
 			osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
@@ -1107,13 +1112,20 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 			})
 		}
 
+		osdp, err := config.ovClient.GetOSDeploymentPlan(spt.OSDeploymentSettings.OSDeploymentPlanUri)
+		if err != nil {
+			return err
+		}
+		osDeploymentPlanName := osdp.Name
+
 		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
 		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
-			"compliance_control":     spt.OSDeploymentSettings.ComplianceControl,
-			"deploy_method":          spt.OSDeploymentSettings.DeployMethod,
-			"deployment_port_id":     spt.OSDeploymentSettings.DeploymentPortId,
-			"os_custom_attributes":   osCustomAttributes,
-			"os_deployment_plan_uri": spt.OSDeploymentSettings.OSDeploymentPlanUri.String(),
+			"compliance_control":      spt.OSDeploymentSettings.ComplianceControl,
+			"deploy_method":           spt.OSDeploymentSettings.DeployMethod,
+			"deployment_port_id":      spt.OSDeploymentSettings.DeploymentPortId,
+			"os_custom_attributes":    osCustomAttributes,
+			"os_deployment_plan_name": osDeploymentPlanName,
+			"os_deployment_plan_uri":  spt.OSDeploymentSettings.OSDeploymentPlanUri.String(),
 		})
 
 		d.Set("os_deployment_settings", osDeploymentSettingslist)
