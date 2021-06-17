@@ -2036,9 +2036,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			}
 		}
 		// Applies biosOption to Payload
-		serverPro
-
-		Template.Bios = &biosOption
+		serverProfileTemplate.Bios = &biosOption
 	}
 
 	if _, ok := d.GetOk("firmware"); ok {
