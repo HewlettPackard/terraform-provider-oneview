@@ -14,3 +14,7 @@ provider "oneview" {
 data "oneview_id_pools_ipv4_subnets" "ipv4_subnets" {
   network_id = "<network_id>"
 }
+
+output "oneview_id_pools_ipv4_subnets_value" {
+  value = data.oneview_id_pools_ipv4_subnets.ipv4_subnets.uri
+}
