@@ -89,6 +89,7 @@ func resourceIPv4Subnets() *schema.Resource {
 			},
 			"dns_servers": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -97,6 +98,7 @@ func resourceIPv4Subnets() *schema.Resource {
 			"domain": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"etag": {
 				Type:     schema.TypeString,
@@ -105,6 +107,7 @@ func resourceIPv4Subnets() *schema.Resource {
 			"gateway": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"modified": {
 				Type:     schema.TypeString,
@@ -113,13 +116,16 @@ func resourceIPv4Subnets() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"network_id": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"range_uris": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -128,6 +134,7 @@ func resourceIPv4Subnets() *schema.Resource {
 			"subnet_mask": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
