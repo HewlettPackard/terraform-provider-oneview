@@ -14,7 +14,7 @@ package oneview
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"strings"
+	"path"
 )
 
 func dataSourceIPv4Subnets() *schema.Resource {
@@ -143,8 +143,7 @@ func dataSourceIPv4SubnetsRead(d *schema.ResourceData, meta interface{}) error {
 
 	}
 
-	uri := subnet.URI.String()
-	subnetId := strings.Split(uri, "/")[5]
+	subnetId := path.Base(subnet.URI.String())
 
 	associatedRes := make([]map[string]interface{}, 0, len(subnet.AssociatedResources))
 	for _, res := range subnet.AssociatedResources {

@@ -15,7 +15,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"strings"
+	"path"
 )
 
 func resourceIPv4Subnets() *schema.Resource {
@@ -32,6 +32,7 @@ func resourceIPv4Subnets() *schema.Resource {
 			"allocator_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"allocator_count": {
 				Type:     schema.TypeInt,
@@ -40,23 +41,28 @@ func resourceIPv4Subnets() *schema.Resource {
 			"associated_resources": {
 				Type:     schema.TypeList,
 				Computed: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"association_type": {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 						"resource_category": {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 						"resource_name": {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 						"resource_uri": {
 							Type:     schema.TypeString,
 							Computed: true,
+							Optional: true,
 						},
 					},
 				},
@@ -75,13 +81,14 @@ func resourceIPv4Subnets() *schema.Resource {
 			"collector_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"dns_servers": {
-				Computed: true,
+				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -112,7 +119,7 @@ func resourceIPv4Subnets() *schema.Resource {
 				Optional: true,
 			},
 			"range_uris": {
-				Computed: true,
+				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -151,8 +158,7 @@ func resourceIPv4SubnetCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	sNet, err := config.ovClient.GetSubnetByNetworkId(d.Get("network_id").(string))
-	uri := sNet.URI.String()
-	subnet_id := strings.Split(uri, "/")[5]
+	subnet_id := path.Base(sNet.URI.String())
 	d.SetId(subnet_id)
 
 	return resourceIPv4SubnetRead(d, meta)
