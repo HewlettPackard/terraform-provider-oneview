@@ -20,32 +20,32 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
-func TestAccSNMPv3TrapDestinations_1(t *testing.T) {
-	var SNMPv3TrapDestinations ov.SNMPv3Trap
+func TestAccSNMPv3User_1(t *testing.T) {
+	var SNMPv3User ov.SNMPv3User
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckSNMPv3TrapDestinationsDestroy,
+		CheckDestroy: testAccCheckSNMPv3UserDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSNMPv3TrapDestinations,
+				Config: testAccSNMPv3User,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckSNMPv3TrapDestinationsExists(
-						"oneview_appliance_snmpv3_trap_destinations.test", &SNMPv3TrapDestinations),
+					testAccCheckSNMPv3UserExists(
+						"oneview_appliance_snmpv3_user.test", &SNMPv3User),
 					resource.TestCheckResourceAttr(
-						"oneview_appliance_snmpv3_trap_destinations.test", "destination_address", "test_destination_address",
+						"oneview_appliance_snmpv3_user.test", "destination_address", "test_destination_address",
 					),
 					resource.TestCheckResourceAttr(
-						"oneview_appliance_snmpv3_trap_destinations.test", "user_id", "test_user_id",
+						"oneview_appliance_snmpv3_user.test", "user_id", "test_user_id",
 					),
 					resource.TestCheckResourceAttr(
-						"oneview_appliance_snmpv3_trap_destinations.test", "port", "162",
+						"oneview_appliance_snmpv3_user.test", "port", "162",
 					),
 				),
 			},
 			{
-				ResourceName:      testAccSNMPv3TrapDestinations,
+				ResourceName:      testAccSNMPv3User,
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -53,7 +53,7 @@ func TestAccSNMPv3TrapDestinations_1(t *testing.T) {
 	})
 }
 
-func testAccCheckSNMPv3TrapDestinationsExists(n string, SNMPv3TrapDestinations *ov.SNMPv3Trap) resource.TestCheckFunc {
+func testAccCheckSNMPv3UserExists(n string, SNMPv3User *ov.SNMPv3User) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -69,37 +69,40 @@ func testAccCheckSNMPv3TrapDestinationsExists(n string, SNMPv3TrapDestinations *
 			return err
 		}
 
-		testSNMPv3TrapDestinations, err := config.ovClient.GetSNMPv3TrapDestinationsById(rs.Primary.ID)
+		testSNMPv3User, err := config.ovClient.GetSNMPv3UserByUserName(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
-		if testSNMPv3TrapDestinations.ID != rs.Primary.ID {
+		if testSNMPv3User.Id != rs.Primary.ID {
 			return fmt.Errorf("Instance not found")
 		}
-		*SNMPv3TrapDestinations = testSNMPv3TrapDestinations
+		*SNMPv3User = testSNMPv3User
 		return nil
 	}
 }
 
-func testAccCheckSNMPv3TrapDestinationsDestroy(s *terraform.State) error {
+func testAccCheckSNMPv3UserDestroy(s *terraform.State) error {
 	config := testAccProvider.Meta().(*Config)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "oneview_appliance_snmpv3_trap_destinations" {
+		if rs.Type != "oneview_appliance_snmpv3_user" {
 			continue
 		}
 
-		testTrap, _ := config.ovClient.GetSNMPv3TrapDestinationsById(rs.Primary.ID)
+		testUser, _ := config.ovClient.GetSNMPv3UserByUserName(rs.Primary.ID)
 
-		if testTrap.ID != "" {
-			return fmt.Errorf("SNMPv3TrapDestinations still exists")
+		if testUser.Id != "" {
+			return fmt.Errorf("SNMPv3User still exists")
 		}
 	}
 
 	return nil
 }
 
-var testAccSNMPv3TrapDestinations = `resource "oneview_appliance_snmpv3_trap_destinations" "test" {
-    destination_address = "test_destination_address"
-    port = 162
-    user_id = "test_user_id"
+var testAccSNMPv3User = `resource "oneview_appliance_snmpv3_user" "test" {
+  user_name                 = "user"
+  security_level            = "Authentication and privacy"
+  authentication_protocol   = "SHA1"
+  authentication_passphrase = "authPass"
+  privacy_protocol          = "AES-128"
+  privacy_passphrase        = "1234567812345678"
 }`

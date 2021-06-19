@@ -168,7 +168,7 @@ func resourceSNMPv3UserUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceSNMPv3UserDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	err := config.ovClient.DeleteSNMPv3UserById(d.Id())
+	err := config.ovClient.DeleteSNMPv3UserByName(d.Id())
 	if err != nil {
 		return err
 	}

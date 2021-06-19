@@ -17,23 +17,23 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
-func TestAccSNMPv3TrapDestinations_2(t *testing.T) {
+func TestAccSNMPv3User_2(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccSNMPv3TrapDestinationsData,
+				Config: testAccSNMPv3UserData,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("oneview_appliance_snmpv3_trap_destinations.test", "id", "TestSNMPv3TrapDestinations"),
+					resource.TestCheckResourceAttr("oneview_appliance_snmpv3_user.test", "id", "TestSNMPv3User"),
 				),
 			},
 		},
 	})
 }
 
-var testAccSNMPv3TrapDestinationsData = `
-  data "oneview_appliance_snmpv3_trap_destinations" "test" {		  
-    id = "TestSNMPv3TrapDestinations"
+var testAccSNMPv3UserData = `
+  data "oneview_appliance_snmpv3_user" "test" {		  
+    user_name = "TestSNMPv3User"
   }`
