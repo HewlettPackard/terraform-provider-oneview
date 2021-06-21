@@ -25,7 +25,7 @@ resource "oneview_volume" "volume" {
   properties {
     name              = "testvol"
     storage_pool      = data.oneview_storage_pool.st_pool.uri
-    size              = 268435456
+    size              =  element(tolist(data.oneview_storage_volume_template.st_vt.tp_size[*].default),0)
     provisioning_type = "Thin"
     is_deduplicated   = false
   }
