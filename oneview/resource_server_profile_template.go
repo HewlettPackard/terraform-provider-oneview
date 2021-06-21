@@ -477,9 +477,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Optional: true,
 				Computed: true,
 				Elem: &schema.Schema{
-					Type:     schema.TypeString,
-					Optional: true,
-					Computed: true,
+					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
 			},
@@ -897,9 +895,9 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
+										Type:     schema.TypeSet,
 										Computed: true,
 										Optional: true,
-										Type:     schema.TypeSet,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -1187,12 +1185,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				ManageBoot: rawBoot["manage_boot"].(bool),
 				Order:      bootOrder,
 			}
-			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-			manageMode := rawBootMode["manage_mode"].(bool)
-			serverProfileTemplate.BootMode = ov.BootModeOption{
-				ManageMode:    &manageMode,
-				Mode:          rawBootMode["mode"].(string),
-				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+			if _, ok := d.GetOk("boot_mode"); ok {
+				rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+				manageMode := rawBootMode["manage_mode"].(bool)
+				serverProfileTemplate.BootMode = ov.BootModeOption{
+					ManageMode:    &manageMode,
+					Mode:          rawBootMode["mode"].(string),
+					PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+				}
 			}
 		}
 	}
@@ -1319,7 +1319,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 	// get SAN storage data if provided
 	if _, ok := d.GetOk("san_storage"); ok {
-		rawSanStorage := d.Get("san_storage").(*schema.Set).List()
+		rawSanStorage := d.Get("san_storage").([]interface{})
 		sanStorage := ov.SanStorageOptions{}
 		for _, raw := range rawSanStorage {
 			sanStorageItem := raw.(map[string]interface{})
@@ -1399,14 +1399,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 							}
 						}
 					}
-					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
+					/*if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
 						rawInitialScopeUris := val.(*schema.Set).List()
 						initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
 						for i, raw := range rawInitialScopeUris {
 							initialScopeUris[i] = utils.Nstring(raw.(string))
 						}
 						volumes.InitialScopeUris = initialScopeUris
-					}
+					}*/
 					volumes = ov.Volume{
 						IsPermanent: &tempIsPermanent,
 						Properties:  &properties,
@@ -1580,15 +1580,17 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	})
 	d.Set("boot", boot)
 
-	overriddenSettings := make([]interface{}, 0, len(spt.Bios.OverriddenSettings))
-	for _, overriddenSetting := range spt.Bios.OverriddenSettings {
-		overriddenSettings = append(overriddenSettings, map[string]interface{}{
-			"id":    overriddenSetting.ID,
-			"value": overriddenSetting.Value,
-		})
-	}
 	if spt.Bios != nil {
 		biosOptions := make([]map[string]interface{}, 0, 1)
+		overriddenSettings := make([]interface{}, 0, len(spt.Bios.OverriddenSettings))
+		if spt.Bios.OverriddenSettings != nil {
+			for _, overriddenSetting := range spt.Bios.OverriddenSettings {
+				overriddenSettings = append(overriddenSettings, map[string]interface{}{
+					"id":    overriddenSetting.ID,
+					"value": overriddenSetting.Value,
+				})
+			}
+		}
 		biosOptions = append(biosOptions, map[string]interface{}{
 			"manage_bios":         spt.Bios.ManageBios,
 			"overridden_settings": overriddenSettings,
@@ -1603,21 +1605,10 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		for _, connection := range spt.ConnectionSettings.Connections {
 			// Gets Boot for Connection
 			iscsi := make([]map[string]interface{}, 0, 1)
-			bootTargets := make([]map[string]interface{}, 0, len(connection.Boot.Targets))
-			if connection.Boot.Iscsi != nil {
-				iscsi = append(iscsi, map[string]interface{}{
-					"chap_level":              connection.Boot.Iscsi.Chaplevel,
-					"initiator_name_source":   connection.Boot.Iscsi.InitiatorNameSource,
-					"first_boot_target_ip":    connection.Boot.Iscsi.FirstBootTargetIp,
-					"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
-					"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
-					"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
-				})
-			}
+			bootTargets := make([]map[string]interface{}, 0, 0)
 			// Gets Boot Settings
 			connectionBoot := make([]map[string]interface{}, 0, 1)
 			if connection.Boot != nil {
-
 				if connection.Boot.Targets != nil {
 					for _, bootTarget := range connection.Boot.Targets {
 						bootTargets = append(bootTargets, map[string]interface{}{
@@ -1626,6 +1617,18 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 						})
 					}
 				}
+
+				if connection.Boot.Iscsi != nil {
+					iscsi = append(iscsi, map[string]interface{}{
+						"chap_level":              connection.Boot.Iscsi.Chaplevel,
+						"initiator_name_source":   connection.Boot.Iscsi.InitiatorNameSource,
+						"first_boot_target_ip":    connection.Boot.Iscsi.FirstBootTargetIp,
+						"first_boot_target_port":  connection.Boot.Iscsi.FirstBootTargetPort,
+						"second_boot_target_ip":   connection.Boot.Iscsi.SecondBootTargetIp,
+						"second_boot_target_port": connection.Boot.Iscsi.SecondBootTargetPort,
+					})
+				}
+
 				connectionBoot = append(connectionBoot, map[string]interface{}{
 					"priority":           connection.Boot.Priority,
 					"boot_vlan_id":       connection.Boot.BootOptionV3.BootVlanId,
@@ -1808,10 +1811,10 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 
 				}
 				volumes = append(volumes, map[string]interface{}{
-					"initial_scope_uris": spt.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
-					"is_permanent":       spt.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
-					"template_uri":       spt.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
-					"properties":         properties,
+					//"initial_scope_uris": spt.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
+					"is_permanent": spt.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
+					"template_uri": spt.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
+					"properties":   properties,
 				})
 
 			}
@@ -2001,12 +2004,14 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				ManageBoot: rawBoot["manage_boot"].(bool),
 				Order:      bootOrder,
 			}
-			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-			manageMode := rawBootMode["manage_mode"].(bool)
-			serverProfileTemplate.BootMode = ov.BootModeOption{
-				ManageMode:    &manageMode,
-				Mode:          rawBootMode["mode"].(string),
-				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+			if _, ok := d.GetOk("boot_mode"); ok {
+				rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+				manageMode := rawBootMode["manage_mode"].(bool)
+				serverProfileTemplate.BootMode = ov.BootModeOption{
+					ManageMode:    &manageMode,
+					Mode:          rawBootMode["mode"].(string),
+					PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+				}
 			}
 		}
 	}
@@ -2019,7 +2024,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			rawBiosItem := raw.(map[string]interface{})
 			// Gets OverRiddenSettings for Bios Options
 			overriddenSettings := make([]ov.BiosSettings, 0)
-			rawoverRiddenSettings := rawBiosItem["overridden_settings"].(*schema.Set).List()
+			rawoverRiddenSettings := rawBiosItem["overridden_settings"].([]interface{})
 			// Gets OverRidden Settings on overriddenSettings
 			for _, vall := range rawoverRiddenSettings {
 				rawOverriddenSettingItem := vall.(map[string]interface{})
@@ -2121,7 +2126,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	serverProfileTemplate.LocalStorage = localStorage
 
 	// get SAN storage data if provided
-	rawSanStorage := d.Get("san_storage").(*schema.Set).List()
+	rawSanStorage := d.Get("san_storage").([]interface{})
 	sanStorage := ov.SanStorageOptions{}
 	for _, raw := range rawSanStorage {
 		sanStorageItem := raw.(map[string]interface{})
@@ -2180,14 +2185,15 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 							}
 						}
 					}
-					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
-						rawInitialScopeUris := val.(*schema.Set).List()
-						initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-						for i, raw := range rawInitialScopeUris {
-							initialScopeUris[i] = utils.Nstring(raw.(string))
-						}
-						volumes.InitialScopeUris = initialScopeUris
-					}
+					/*					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
+											rawInitialScopeUris := val.(*schema.Set).List()
+											initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+											for i, raw := range rawInitialScopeUris {
+												initialScopeUris[i] = utils.Nstring(raw.(string))
+											}
+											volumes.InitialScopeUris = initialScopeUris
+										}
+					*/
 					volumes = ov.Volume{
 						IsPermanent: &tempIsPermanent,
 						Properties:  &properties,
