@@ -1399,14 +1399,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 							}
 						}
 					}
-					/*if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
+					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
 						rawInitialScopeUris := val.(*schema.Set).List()
 						initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
 						for i, raw := range rawInitialScopeUris {
 							initialScopeUris[i] = utils.Nstring(raw.(string))
 						}
 						volumes.InitialScopeUris = initialScopeUris
-					}*/
+					}
 					volumes = ov.Volume{
 						IsPermanent: &tempIsPermanent,
 						Properties:  &properties,
@@ -2185,15 +2185,14 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 							}
 						}
 					}
-					/*					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
-											rawInitialScopeUris := val.(*schema.Set).List()
-											initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-											for i, raw := range rawInitialScopeUris {
-												initialScopeUris[i] = utils.Nstring(raw.(string))
-											}
-											volumes.InitialScopeUris = initialScopeUris
-										}
-					*/
+					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
+						rawInitialScopeUris := val.(*schema.Set).List()
+						initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+						for i, raw := range rawInitialScopeUris {
+							initialScopeUris[i] = utils.Nstring(raw.(string))
+						}
+						volumes.InitialScopeUris = initialScopeUris
+					}
 					volumes = ov.Volume{
 						IsPermanent: &tempIsPermanent,
 						Properties:  &properties,
