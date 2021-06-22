@@ -70,6 +70,7 @@ func Provider() terraform.ResourceProvider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"oneview_appliance_snmp_v1_trap_destinations": dataSourceSNMPv1TrapDestination(),
 			"oneview_appliance_snmpv3_trap_destinations":  dataSourceSNMPv3TrapDestination(),
+			"oneview_appliance_snmpv3_user":               dataSourceSNMPv3User(),
 			"oneview_appliance_ssh_access":                dataSourceSSHAccess(),
 			"oneview_appliance_time_and_locale":           dataSourceTimeAndLocale(),
 			"oneview_connection_templates":                dataSourceConnectionTemplates(),
@@ -82,6 +83,8 @@ func Provider() terraform.ResourceProvider {
 			"oneview_firmware_drivers":                    dataSourceFirmwareDrivers(),
 			"oneview_hypervisor_cluster_profile":          dataSourceHypervisorClusterProfile(),
 			"oneview_hypervisor_manager":                  dataSourceHypervisorManager(),
+			"oneview_id_pools_ipv4_subnets":               dataSourceIPv4Subnets(),
+			"oneview_ipv4_range":                          dataSourceIPv4Ranges(),
 			"oneview_interconnect_type":                   dataSourceInterconnectType(),
 			"oneview_interconnect":                        dataSourceInterconnects(),
 			"oneview_label":                               dataSourceLabel(),
@@ -108,6 +111,7 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"oneview_appliance_snmp_v1_trap_destinations": resourceSNMPv1TrapDestination(),
 			"oneview_appliance_snmpv3_trap_destinations":  resourceSNMPv3TrapDestination(),
+			"oneview_appliance_snmpv3_user":               resourceSNMPv3User(),
 			"oneview_appliance_ssh_access":                resourceSSHAccess(),
 			"oneview_appliance_time_and_locale":           resourceTimeAndLocale(),
 			"oneview_connection_templates":                resourceConnectionTemplates(),
@@ -120,6 +124,8 @@ func Provider() terraform.ResourceProvider {
 			"oneview_firmware_drivers":                    resourceFirmwareDrivers(),
 			"oneview_hypervisor_cluster_profile":          resourceHypervisorClusterProfile(),
 			"oneview_hypervisor_manager":                  resourceHypervisorManager(),
+			"oneview_id_pools_ipv4_subnets":               resourceIPv4Subnets(),
+			"oneview_ipv4_range":                          resourceIPv4Ranges(),
 			"oneview_i3s_plan":                            resourceI3SPlan(),
 			"oneview_label":                               resourceLabel(),
 			"oneview_logical_enclosure":                   resourceLogicalEnclosure(),

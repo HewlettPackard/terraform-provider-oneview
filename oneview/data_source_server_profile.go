@@ -670,6 +670,71 @@ func dataSourceServerProfile() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"os_deployment_settings": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"deploy_method": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"deployment_mac": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"deployment_port_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"force_os_deployment": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"os_custom_attributes": {
+							Optional: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"constraints": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"type": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"value": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"os_deployment_plan_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_deployment_plan_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"os_volume": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"reapply_state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"profile_uuid": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -916,8 +981,12 @@ func dataSourceServerProfile() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
+										Type:     schema.TypeSet,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+										Set: schema.HashString,
 									},
 									"is_permanent": {
 										Type:     schema.TypeBool,
@@ -1116,7 +1185,6 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 			// Get Boot targets list
 			targets := make([]map[string]interface{}, 0)
 			if len(connection.Boot.Targets) != 0 {
-				targets := make([]map[string]interface{}, 0, len(connection.Boot.Targets))
 				for j := 0; j < len(connection.Boot.Targets); j++ {
 					targets = append(targets, map[string]interface{}{
 						"array_wwpn": connection.Boot.Targets[j].ArrayWWPN,
@@ -1262,12 +1330,14 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("mac_type", serverProfile.MACType)
 
 	// Management Processor
-	mpSettings := make([]interface{}, 0, len(serverProfile.ManagementProcessor.MpSettings))
-	for _, mpSetting := range serverProfile.ManagementProcessor.MpSettings {
-		mpSettings = append(mpSettings, map[string]interface{}{
-			"args":         mpSetting.Args,
-			"setting_type": mpSetting.SettingType,
-		})
+	mpSettings := make([]interface{}, 0)
+	if len(serverProfile.ManagementProcessor.MpSettings) != 0 {
+		for _, mpSetting := range serverProfile.ManagementProcessor.MpSettings {
+			mpSettings = append(mpSettings, map[string]interface{}{
+				"args":         mpSetting.Args,
+				"setting_type": mpSetting.SettingType,
+			})
+		}
 	}
 	managementProcessor := make([]map[string]interface{}, 0, 1)
 	managementProcessor = append(managementProcessor, map[string]interface{}{
@@ -1278,6 +1348,39 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("management_processor", managementProcessor)
 
 	d.Set("modified", serverProfile.Modified)
+
+	if serverProfile.OSDeploymentSettings.OSDeploymentPlanUri != "" {
+		osCustomAttributes := make([]map[string]interface{}, 0, len(serverProfile.OSDeploymentSettings.OSCustomAttributes))
+		for i := 0; i < len(serverProfile.OSDeploymentSettings.OSCustomAttributes); i++ {
+			osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
+				"name":        serverProfile.OSDeploymentSettings.OSCustomAttributes[i].Name,
+				"type":        serverProfile.OSDeploymentSettings.OSCustomAttributes[i].Type,
+				"value":       serverProfile.OSDeploymentSettings.OSCustomAttributes[i].Value,
+				"constraints": serverProfile.OSDeploymentSettings.OSCustomAttributes[i].Constraints,
+			})
+		}
+
+		osdp, err := config.ovClient.GetOSDeploymentPlan(serverProfile.OSDeploymentSettings.OSDeploymentPlanUri)
+		if err != nil {
+			return err
+		}
+		osDeploymentPlanName := osdp.Name
+
+		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
+		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
+			"deploy_method":           serverProfile.OSDeploymentSettings.DeployMethod,
+			"deployment_mac":          serverProfile.OSDeploymentSettings.DeploymentMac,
+			"deployment_port_id":      serverProfile.OSDeploymentSettings.DeploymentPortId,
+			"force_os_deployment":     serverProfile.OSDeploymentSettings.ForceOsDeployment,
+			"os_custom_attributes":    osCustomAttributes,
+			"os_deployment_plan_name": osDeploymentPlanName,
+			"os_deployment_plan_uri":  serverProfile.OSDeploymentSettings.OSDeploymentPlanUri.String(),
+			"os_volume":               serverProfile.OSDeploymentSettings.OSVolumeUri.String(),
+			"reapply_state":           serverProfile.OSDeploymentSettings.ReapplyState,
+		})
+		d.Set("os_deployment_settings", osDeploymentSettingslist)
+	}
+
 	d.Set("profile_uuid", serverProfile.ProfileUUID.String())
 
 	if val, ok := d.GetOk("public_connection"); ok {

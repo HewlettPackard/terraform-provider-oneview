@@ -37,6 +37,24 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 8. Added support to Connection Templates Resource.
    - GET /rest/connection-templates/{id}
    - PUT /rest/connection-templates/{id}
+9. Added support to Id Pools Ipv4 Range
+   - GET     /rest/id-pools/ipv4/ranges/{id}
+   - POST    /rest/id-pools/ipv4/ranges
+   - PUT     /rest/id-pools/ipv4/ranges/{id}
+   - DELETE  /rest/id-pools/ipv4/ranges/{id}
+10. Added support to Id Pools IPv4 Subnets
+   - GET      /rest/id-pools/ipv4/subnets/{id}
+   - POST     /rest/id-pools/ipv4/subnets
+   - PUT      /rest/id-pools/ipv4/subnets/{id}
+   - PUT      /rest/id-pools/ipv4/subnets/{id}/allocator
+   - PUT      /rest/id-pools/ipv4/subnets/{id}/collector
+   - DELETE   /rest/id-pools/ipv4/subnets/{id}
+10. Added support to SNMPv3 User
+   - GET      /rest/appliance/snmpv3-trap-forwarding/users/{id}
+   - POST     /rest/appliance/snmpv3-trap-forwarding/users
+   - PUT      /rest/appliance/snmpv3-trap-forwarding/users/{id}   
+   - DELETE   /rest/appliance/snmpv3-trap-forwarding/users/{id}
+
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
@@ -48,6 +66,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance Time and Locale Configuration
 - Connection Template
 - Firmware Drivers
+- Id Pools Ipv4 Range
+- Id Pools IPv4 Subnets
 - Labels
 
 ### Bug fixes & Enhancements:
