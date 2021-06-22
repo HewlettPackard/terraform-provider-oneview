@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -74,6 +75,7 @@ func resourceServerProfile() *schema.Resource {
 						"secure_boot": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -90,16 +92,14 @@ func resourceServerProfile() *schema.Resource {
 						"consistency_state": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Computed: true,
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Computed: true,
 						},
 						"overridden_settings": {
 							Optional: true,
-							Type:     schema.TypeList,
+							Type: schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"id": {
@@ -140,7 +140,7 @@ func resourceServerProfile() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"name": {
 										Type:     schema.TypeString,
-										Required: true,
+										Optional: true,
 									},
 									"allocated_mbps": {
 										Type:     schema.TypeInt,
@@ -161,7 +161,6 @@ func resourceServerProfile() *schema.Resource {
 									"port_id": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Computed: true,
 										//Default:  "Lom 1:1-a",
 									},
 									"requested_mbps": {
@@ -219,12 +218,10 @@ func resourceServerProfile() *schema.Resource {
 									"mac_type": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Computed: true,
 									},
 									"managed": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										Computed: true,
 									},
 									"maximum_mbps": {
 										Type:     schema.TypeInt,
@@ -238,25 +235,18 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"request_": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
 									"boot": {
 										Optional: true,
-										Computed: true,
 										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"priority": {
 													Type:     schema.TypeString,
 													Optional: true,
-													Computed: true,
 												},
 												"boot_vlan_id": {
 													Type:     schema.TypeInt,
 													Optional: true,
-													Computed: true,
 												},
 												"ethernet_boot_type": {
 													Type:     schema.TypeString,
@@ -319,6 +309,7 @@ func resourceServerProfile() *schema.Resource {
 															"boot_target_lun": {
 																Type:     schema.TypeString,
 																Optional: true,
+
 															},
 															"boot_target_name": {
 																Type:     schema.TypeString,
@@ -379,7 +370,6 @@ func resourceServerProfile() *schema.Resource {
 			"server_hardware_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"enclosure_group": {
 				Type:     schema.TypeString,
@@ -474,7 +464,6 @@ func resourceServerProfile() *schema.Resource {
 						},
 						"controller": {
 							Optional: true,
-							Computed: true,
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -489,7 +478,6 @@ func resourceServerProfile() *schema.Resource {
 									"initialize": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										Computed: true,
 									},
 									"drive_write_cache": {
 										Type:     schema.TypeString,
@@ -785,6 +773,7 @@ func resourceServerProfile() *schema.Resource {
 						"volume": {
 							Type:     schema.TypeList,
 							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
@@ -908,7 +897,6 @@ func resourceServerProfile() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
@@ -1061,7 +1049,7 @@ func resourceServerProfile() *schema.Resource {
 						"mp_settings": {
 							Optional: true,
 							Type:     schema.TypeList,
-							Elem: &schema.Resource{
+							Elem: &schema.Resource
 								Schema: map[string]*schema.Schema{
 									"args": {
 										Type:     schema.TypeString,
@@ -1366,16 +1354,18 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				ManageBoot: rawBoot["manage_boot"].(bool),
 				Order:      bootOrder,
 			}
-			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-			manageMode := rawBootMode["manage_mode"].(bool)
-			serverProfile.BootMode = ov.BootModeOption{
-				ManageMode:    &manageMode,
-				Mode:          rawBootMode["mode"].(string),
-				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
-				SecureBoot:    rawBootMode["secure_boot"].(string),
-			}
 		}
 	}
+			if _, ok := d.GetOk("boot_mode"); ok {
+				rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+				manageMode := rawBootMode["manage_mode"].(bool)
+				serverProfile.BootMode = ov.BootModeOption{
+					ManageMode:    &manageMode,
+					Mode:          rawBootMode["mode"].(string),
+					PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+					SecureBoot:    rawBootMode["secure_boot"].(string),
+				}
+			}
 
 	if val, ok := d.GetOk("bios_option"); ok {
 		rawBiosOption := val.([]interface{})
@@ -1832,15 +1822,29 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	})
 	d.Set("boot", boot)
 
-	overriddenSettings := make([]interface{}, 0, len(serverProfile.Bios.OverriddenSettings))
-	for _, overriddenSetting := range serverProfile.Bios.OverriddenSettings {
-		overriddenSettings = append(overriddenSettings, map[string]interface{}{
-			"id":    overriddenSetting.ID,
-			"value": overriddenSetting.Value,
+	emptyBootMode := ov.BootModeOption {}
+	if serverProfile.BootMode != emptyBootMode {
+		bootMode := make([]map[string]interface{}, 0, 1)
+		bootMode = append(bootMode, map[string]interface{}{
+			"manage_mode":	serverProfile.BootMode.ManageMode,
+			"mode":		serverProfile.BootMode.Mode,
+			"pxe_boot_policy": serverProfile.BootMode.PXEBootPolicy,
+			"secure_boot":	serverProfile.BootMode.SecureBoot,
 		})
+		d.Set("boot_mode", bootMode)
 	}
+
 	if serverProfile.Bios != nil {
 		biosOptions := make([]map[string]interface{}, 0, 1)
+		overriddenSettings := make([]interface{}, 0)
+		if len(serverProfile.Bios.OverriddenSettings) > 0 {
+			for _, overriddenSetting := range serverProfile.Bios.OverriddenSettings {
+				overriddenSettings = append(overriddenSettings, map[string]interface{}{
+					"id":    overriddenSetting.ID,
+					"value": overriddenSetting.Value,
+				})
+			}
+		}
 		biosOptions = append(biosOptions, map[string]interface{}{
 			"manage_bios":         serverProfile.Bios.ManageBios,
 			"reapply_state":       serverProfile.Bios.ReapplyState,
@@ -2069,11 +2073,13 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		}
 
 		if val, ok := d.GetOk("template"); ok {
-			serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
-			if err != nil || serverProfileTemplate.URI.IsNil() {
-				return err
+			if val != "null" {
+				serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
+				if err != nil || serverProfileTemplate.URI.IsNil() {
+					return err
+				}
+				serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 			}
-			serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 		}
 
 		if val, ok := d.GetOk("affinity"); ok {
@@ -2168,6 +2174,12 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				networks := make([]ov.Connection, 0)
 				for i := 0; i < len(rawNetwork); i++ {
 					rawNetworkItem := rawNetwork[i].(map[string]interface{})
+					if rawNetworkItem["name"].(string) == "" {
+						file, _ := json.MarshalIndent(rawNetworkItem["name"].(string), "", " ")
+						_ = ioutil.WriteFile("test.json", file, 0644)
+						continue
+					}
+
 					bootOptions := ov.BootOption{}
 					if rawNetworkItem["boot"] != nil {
 						rawBoots := rawNetworkItem["boot"].([]interface{})
@@ -2257,7 +2269,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Ipv4:             &ipv4,
 					})
 					if len(rawNetworkItem["boot"].([]interface{})) != 0 {
-						networks[i].Boot = &bootOptions
+						networks[len(networks)-1].Boot = &bootOptions
 					}
 				}
 				serverProfile.ConnectionSettings = ov.ConnectionSettings{
@@ -2280,36 +2292,43 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					ManageBoot: rawBoot["manage_boot"].(bool),
 					Order:      bootOrder,
 				}
-				rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-				manageMode := rawBootMode["manage_mode"].(bool)
-				serverProfile.BootMode = ov.BootModeOption{
-					ManageMode:    &manageMode,
-					Mode:          rawBootMode["mode"].(string),
-					PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
-				}
 			}
 		}
+				if _, ok := d.GetOk("boot_mode"); ok {
+					rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+					manageMode := rawBootMode["manage_mode"].(bool)
+					serverProfile.BootMode = ov.BootModeOption{
+						ManageMode:    &manageMode,
+						Mode:          rawBootMode["mode"].(string),
+						PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+					}
+				}
+
 
 		if val, ok := d.GetOk("bios_option"); ok {
 			rawBiosOption := val.([]interface{})
 			biosOption := ov.BiosOption{}
 			for _, raw := range rawBiosOption {
 				rawBiosItem := raw.(map[string]interface{})
-
-				overriddenSettings := make([]ov.BiosSettings, 0)
-				rawOverriddenSetting := rawBiosItem["overridden_settings"].([]interface{})
-
-				for _, raw2 := range rawOverriddenSetting {
-					rawOverriddenSettingItem := raw2.(map[string]interface{})
-					overriddenSettings = append(overriddenSettings, ov.BiosSettings{
-						ID:    rawOverriddenSettingItem["id"].(string),
-						Value: rawOverriddenSettingItem["value"].(string),
-					})
+				if _, ok := d.GetOk("overridden_settings"); ok {
+					overriddenSettings := make([]ov.BiosSettings, 0)
+					rawOverriddenSetting := rawBiosItem["overridden_settings"].([]interface{})
+					for _, raw2 := range rawOverriddenSetting {
+						rawOverriddenSettingItem := raw2.(map[string]interface{})
+						if d.HasChanges(rawOverriddenSettingItem["id"].(string), rawOverriddenSettingItem["value"].(string)) {
+							overriddenSettings = append(overriddenSettings, ov.BiosSettings{
+								ID:    rawOverriddenSettingItem["id"].(string),
+								Value: rawOverriddenSettingItem["value"].(string),
+							})
+						}
+					}
+					biosOption = ov.BiosOption{
+						OverriddenSettings: overriddenSettings,
+					}
 				}
 				manageBios := rawBiosItem["manage_bios"].(bool)
 				biosOption = ov.BiosOption{
-					ManageBios:         &manageBios,
-					OverriddenSettings: overriddenSettings,
+					ManageBios: &manageBios,
 				}
 			}
 			serverProfile.Bios = &biosOption
