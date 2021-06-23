@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"strings"
+	"path"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -30,6 +30,116 @@ func resourceIPv4Ranges() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"allocator_count": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"allocated_fragment_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"allocated_id_count": {
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"allocator_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"associated_resources": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"association_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+						},
+						"resource_category": {
+							Type:     schema.TypeString,
+							Computed: true,
+							Optional: true,
+						},
+						"resource_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"resource_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
+			"category": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"collector_id_list": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"collector_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"created": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"default_range": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
+			"end_address": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"enabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Computed: true,
+			},
+			"etag": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"free_fragment_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"free_id_count": {
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"modified": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"prefix": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"range_category": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"reserved_id_count": {
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"start_address": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"start_stop_fragments": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -51,63 +161,11 @@ func resourceIPv4Ranges() *schema.Resource {
 					},
 				},
 			},
-			"associated_resources": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"association_type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"resource_category": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"resource_name": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"resource_uri": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
-			},
-			"category": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"created": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"modified": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"subnet_uri": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"etag": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"total_count": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"reserved_id_count": {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
@@ -116,51 +174,7 @@ func resourceIPv4Ranges() *schema.Resource {
 				Optional: true,
 				Default:  "Range",
 			},
-			"start_address": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"range_category": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"prefix": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"free_fragment_uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"free_id_count": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"end_address": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"enabled": {
-				Type:     schema.TypeBool,
-				Optional: true,
-			},
-			"default_range": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
-			"collector_uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"allocated_fragment_uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"allocated_id_count": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"allocator_uri": {
+			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -196,7 +210,7 @@ func resourceIPv4RangesCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	id := strings.Split(data.URI.String(), "/")[5]
+	id := path.Base(data.URI.String())
 	d.SetId(id)
 	return resourceIPv4RangesRead(d, meta)
 }
@@ -208,6 +222,9 @@ func resourceIPv4RangesRead(d *schema.ResourceData, meta interface{}) error {
 		d.SetId("")
 		return nil
 	}
+	idList := make([]map[string]interface{}, 0)
+	d.Set("allocator_count", 0)
+	d.Set("collector_id_list", idList)
 	d.Set("name", ipv4range.Name)
 	d.Set("type", ipv4range.Type)
 	d.Set("created", ipv4range.Created)
@@ -255,39 +272,70 @@ func resourceIPv4RangesRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.Set("associated_resources", AssociatedResources)
-
+	d.SetId(d.Id())
 	return nil
 }
 
 func resourceIPv4RangesUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	ipv4Range := ov.Ipv4Range{
-		Type: d.Get("type").(string),
-		Name: d.Get("name").(string),
-	}
-	if val, ok := d.GetOk("start_stop_fragments"); ok {
-		rawfragments := val.(*schema.Set).List()
-		fragments := make([]ov.StartStopFragments, 0)
-		for _, rawfrag := range rawfragments {
-			rawitem := rawfrag.(map[string]interface{})
-			startstopfragment := ov.StartStopFragments{
-				StartAddress: utils.NewNstring(rawitem["start_address"].(string)),
-				EndAddress:   utils.NewNstring(rawitem["end_address"].(string)),
-			}
-			fragments = append(fragments, startstopfragment)
+	if d.HasChange("allocator_count") {
+		allocator := ov.UpdateAllocatorList{
+			Count: d.Get("allocator_count").(int),
 		}
-		ipv4Range.StartStopFragments = fragments
-	}
-	if _, ok := d.GetOk("enabled"); ok {
-		ipv4Range.Enabled = d.Get("enabled").(bool)
-	}
+		_, err := config.ovClient.AllocateId(allocator, d.Id())
+		if err != nil {
+			d.SetId("")
+			return err
+		}
 
-	_, err := config.ovClient.UpdateIpv4Range(d.Id(), ipv4Range)
-	if err != nil {
-		d.SetId("")
-		return err
+	} else if d.HasChange("collector_id_list") {
+		ids := d.Get("collector_id_list").(*schema.Set).List()
+
+		idsList := make([]utils.Nstring, len(ids))
+		for i, raw := range ids {
+			idsList[i] = utils.Nstring(raw.(string))
+		}
+
+		collect := ov.UpdateCollectorList{
+			IdList: idsList,
+		}
+		_, err := config.ovClient.CollectId(collect, d.Id())
+		if err != nil {
+			d.SetId("")
+			return err
+		}
+
+	} else {
+
+		ipv4Range := ov.Ipv4Range{
+			Type: d.Get("type").(string),
+			Name: d.Get("name").(string),
+		}
+		if val, ok := d.GetOk("start_stop_fragments"); ok {
+			rawfragments := val.(*schema.Set).List()
+			fragments := make([]ov.StartStopFragments, 0)
+			for _, rawfrag := range rawfragments {
+				rawitem := rawfrag.(map[string]interface{})
+				startstopfragment := ov.StartStopFragments{
+					StartAddress: utils.NewNstring(rawitem["start_address"].(string)),
+					EndAddress:   utils.NewNstring(rawitem["end_address"].(string)),
+				}
+				fragments = append(fragments, startstopfragment)
+			}
+			ipv4Range.StartStopFragments = fragments
+		}
+		if _, ok := d.GetOk("enabled"); ok {
+			ipv4Range.Enabled = d.Get("enabled").(bool)
+		}
+
+		_, err := config.ovClient.UpdateIpv4Range(d.Id(), ipv4Range)
+		if err != nil {
+			d.SetId("")
+			return err
+		}
 	}
+	d.SetId(d.Id())
 
 	return resourceIPv4RangesRead(d, meta)
 }

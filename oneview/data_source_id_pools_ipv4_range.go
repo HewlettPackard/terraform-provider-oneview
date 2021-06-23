@@ -20,25 +20,17 @@ func dataSourceIPv4Ranges() *schema.Resource {
 		Read: dataSourceIPv4RangesRead,
 
 		Schema: map[string]*schema.Schema{
-			"start_stop_fragments": {
-				Type:     schema.TypeList,
+			"allocated_fragment_uri": {
+				Type:     schema.TypeString,
 				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"end_address": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"fragment_type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"start_address": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
+			},
+			"allocated_id_count": {
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"allocator_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"associated_resources": {
 				Type:     schema.TypeList,
@@ -72,47 +64,24 @@ func dataSourceIPv4Ranges() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified": {
+
+			"collector_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"subnet_uri": {
+			"default_range": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
+			"end_address": {
 				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"enabled": {
+				Type:     schema.TypeBool,
 				Computed: true,
 			},
 			"etag": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"total_count": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"reserved_id_count": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"start_address": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"range_category": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"prefix": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -124,37 +93,70 @@ func dataSourceIPv4Ranges() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
-			"end_address": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"enabled": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
-			"default_range": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
-			"collector_uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"allocated_fragment_uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"allocated_id_count": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"allocator_uri": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"id": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+
+			"modified": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"prefix": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"range_category": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"reserved_id_count": {
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"start_address": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"start_stop_fragments": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"end_address": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"fragment_type": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"start_address": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
+			"subnet_uri": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"total_count": {
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"uri": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
