@@ -49,7 +49,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
    - PUT      /rest/id-pools/ipv4/subnets/{id}/allocator
    - PUT      /rest/id-pools/ipv4/subnets/{id}/collector
    - DELETE   /rest/id-pools/ipv4/subnets/{id}
-10. Added support to SNMPv3 User
+11. Added support to SNMPv3 User
    - GET      /rest/appliance/snmpv3-trap-forwarding/users/{id}
    - POST     /rest/appliance/snmpv3-trap-forwarding/users
    - PUT      /rest/appliance/snmpv3-trap-forwarding/users/{id}   
@@ -74,6 +74,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#289] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/289) Terraform crashes for Logical Interconnect Group Read
 - [#300] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/300) Can't create resource oneview_server_profile_template
 - [#301] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/301) Can't create resource oneview_server_profile
+- [#336] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/336) Terraform crash creating Server Profile Template 
 
 # [v6.1.0-13] 
 
