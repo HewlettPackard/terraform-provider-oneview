@@ -636,6 +636,29 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 									"chap_level": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
+									},
+									"chap_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"chap_secret": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"chap_source": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"mutual_chap_name": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"mutual_chap_secret": {
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
 									},
 									"storage_system_uri": {
 										Type:     schema.TypeString,
@@ -742,8 +765,12 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
+										Type:     schema.TypeSet,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+										Set: schema.HashString,
 									},
 									"is_permanent": {
 										Type:     schema.TypeBool,
@@ -960,7 +987,6 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 			// Get Boot targets list
 			targets := make([]map[string]interface{}, 0)
 			if len(spt.ConnectionSettings.Connections[i].Boot.Targets) != 0 {
-				targets := make([]map[string]interface{}, 0, len(spt.ConnectionSettings.Connections[i].Boot.Targets))
 				for j := 0; j < len(spt.ConnectionSettings.Connections[i].Boot.Targets); j++ {
 					targets = append(targets, map[string]interface{}{
 						"array_wwpn": spt.ConnectionSettings.Connections[i].Boot.Targets[j].ArrayWWPN,
@@ -1107,7 +1133,6 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 
 	mpSettings := make([]interface{}, 0)
 	if len(spt.ManagementProcessor.MpSettings) != 0 {
-		mpSettings := make([]map[string]interface{}, 0, len(spt.ManagementProcessor.MpSettings))
 		for i := 0; i < len(spt.ManagementProcessor.MpSettings); i++ {
 			mpSettings = append(mpSettings, map[string]interface{}{
 				"args":         spt.ManagementProcessor.MpSettings[i].Args,
@@ -1125,10 +1150,14 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	d.Set("management_processor", managementProcessor)
 	sanSystemCredentials := make([]interface{}, 0)
 	if len(spt.SanStorage.SanSystemCredentials) != 0 {
-		sanSystemCredentials := make([]map[string]interface{}, 0, len(spt.SanStorage.SanSystemCredentials))
 		for i := 0; i < len(spt.SanStorage.SanSystemCredentials); i++ {
 			sanSystemCredentials = append(sanSystemCredentials, map[string]interface{}{
 				"chap_level":         spt.SanStorage.SanSystemCredentials[i].ChapLevel,
+				"chap_name":          spt.SanStorage.SanSystemCredentials[i].ChapName,
+				"chap_secret":        spt.SanStorage.SanSystemCredentials[i].ChapSecret,
+				"chap_source":        spt.SanStorage.SanSystemCredentials[i].ChapSource,
+				"mutual_chap_name":   spt.SanStorage.SanSystemCredentials[i].MutualChapName,
+				"mutual_chap_secret": spt.SanStorage.SanSystemCredentials[i].MutualChapSecret,
 				"storage_system_uri": spt.SanStorage.SanSystemCredentials[i].StorageSystemUri.String(),
 			})
 		}
@@ -1141,6 +1170,93 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 		"san_system_credentials": sanSystemCredentials,
 	})
 	d.Set("san_storage", SanStorageOptions)
+
+	volumeAttachments := make([]interface{}, 0)
+	if len(spt.SanStorage.VolumeAttachments) != 0 {
+
+		for i := 0; i < len(spt.SanStorage.VolumeAttachments); i++ {
+			storagePaths := make([]interface{}, 0)
+			if len(spt.SanStorage.VolumeAttachments[i].StoragePaths) != 0 {
+				for j := 0; j < len(spt.SanStorage.VolumeAttachments[i].StoragePaths); j++ {
+					targets := make([]interface{}, 0)
+					if len(spt.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets) != 0 {
+						for k := 0; k < len(spt.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets); k++ {
+							targets = append(targets, map[string]interface{}{
+								"ip_address": spt.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].IpAddress,
+								"name":       spt.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].Name,
+								"tcp_port":   spt.SanStorage.VolumeAttachments[i].StoragePaths[j].Targets[k].TcpPort,
+							})
+						}
+
+					}
+					storagePaths = append(storagePaths, map[string]interface{}{
+						"connection_id":   spt.SanStorage.VolumeAttachments[i].StoragePaths[j].ConnectionID,
+						"is_enabled":      spt.SanStorage.VolumeAttachments[i].StoragePaths[j].IsEnabled,
+						"network_uri":     spt.SanStorage.VolumeAttachments[i].StoragePaths[j].NetworkUri.String(),
+						"status":          spt.SanStorage.VolumeAttachments[i].StoragePaths[j].Status,
+						"target_selector": spt.SanStorage.VolumeAttachments[i].StoragePaths[j].TargetSelector,
+						"targets":         targets,
+					})
+				}
+
+			}
+			volumes := make([]interface{}, 0)
+			if spt.SanStorage.VolumeAttachments[i].Volume != nil {
+
+				properties := make([]interface{}, 0)
+				if spt.SanStorage.VolumeAttachments[i].Volume.Properties != nil {
+
+					properties = append(properties, map[string]interface{}{
+						"data_protection_level":            spt.SanStorage.VolumeAttachments[i].Volume.Properties.DataProtectionLevel,
+						"data_transfer_limit":              spt.SanStorage.VolumeAttachments[i].Volume.Properties.DataTransferLimit,
+						"description":                      spt.SanStorage.VolumeAttachments[i].Volume.Properties.Description,
+						"folder":                           spt.SanStorage.VolumeAttachments[i].Volume.Properties.Folder,
+						"iops_limit":                       spt.SanStorage.VolumeAttachments[i].Volume.Properties.IopsLimit,
+						"is_deduplicated":                  spt.SanStorage.VolumeAttachments[i].Volume.Properties.IsDeduplicated,
+						"is_encrypted":                     spt.SanStorage.VolumeAttachments[i].Volume.Properties.IsEncrypted,
+						"is_pinned":                        spt.SanStorage.VolumeAttachments[i].Volume.Properties.IsPinned,
+						"is_shareable":                     spt.SanStorage.VolumeAttachments[i].Volume.Properties.IsShareable,
+						"name":                             spt.SanStorage.VolumeAttachments[i].Volume.Properties.Name,
+						"performance_policy":               spt.SanStorage.VolumeAttachments[i].Volume.Properties.PerformancePolicy,
+						"provisioning_type":                spt.SanStorage.VolumeAttachments[i].Volume.Properties.ProvisioningType,
+						"size":                             spt.SanStorage.VolumeAttachments[i].Volume.Properties.Size,
+						"volume_set":                       spt.SanStorage.VolumeAttachments[i].Volume.Properties.VolumeSet,
+						"is_data_reduction_enabled":        spt.SanStorage.VolumeAttachments[i].Volume.Properties.IsDataReductionEnabled,
+						"is_adaptive_optimization_enabled": spt.SanStorage.VolumeAttachments[i].Volume.Properties.IsAdaptiveOptimizationEnabled,
+						"is_compressed":                    spt.SanStorage.VolumeAttachments[i].Volume.Properties.IsCompressed,
+						"snapshot_pool":                    spt.SanStorage.VolumeAttachments[i].Volume.Properties.SnapshotPool,
+						"storage_pool":                     spt.SanStorage.VolumeAttachments[i].Volume.Properties.StoragePool,
+						"template_version":                 spt.SanStorage.VolumeAttachments[i].Volume.Properties.TemplateVersion,
+					})
+
+				}
+
+				volumes = append(volumes, map[string]interface{}{
+					"initial_scope_uris": spt.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
+					"is_permanent":       spt.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
+					"template_uri":       spt.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
+					"properties":         properties,
+				})
+
+			}
+
+			volumeAttachments = append(volumeAttachments, map[string]interface{}{
+				"associated_template_attachment_id": spt.SanStorage.VolumeAttachments[i].AssociatedTemplateAttachmentId,
+				"boot_volume_priority":              spt.SanStorage.VolumeAttachments[i].BootVolumePriority,
+				"id":                                spt.SanStorage.VolumeAttachments[i].ID,
+				"lun":                               spt.SanStorage.VolumeAttachments[i].LUN,
+				"lun_type":                          spt.SanStorage.VolumeAttachments[i].LUNType,
+				"state":                             spt.SanStorage.VolumeAttachments[i].State,
+				"status":                            spt.SanStorage.VolumeAttachments[i].Status,
+				"storage_paths":                     storagePaths,
+				"volume_storage_system_uri":         spt.SanStorage.VolumeAttachments[i].VolumeStorageSystemURI,
+				"volume_uri":                        spt.SanStorage.VolumeAttachments[i].VolumeURI,
+				"volume":                            volumes,
+			})
+		}
+
+	}
+	d.Set("volume_attachments", volumeAttachments)
 
 	if len(spt.LocalStorage.Controllers) != 0 {
 		// Gets Storage Controller Body
