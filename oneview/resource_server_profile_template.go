@@ -477,9 +477,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Optional: true,
 				Computed: true,
 				Elem: &schema.Schema{
-					Type:     schema.TypeString,
-					Optional: true,
-					Computed: true,
+					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
 			},
