@@ -2749,7 +2749,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 					}
 				}
-				volumeAttachment = ov.VolumeAttachment{
+				volumeAttachment := ov.VolumeAttachment{
 					ID:                             volumeAttachmentItem["id"].(int),
 					LUN:                            volumeAttachmentItem["lun"].(string),
 					LUNType:                        volumeAttachmentItem["lun_type"].(string),
