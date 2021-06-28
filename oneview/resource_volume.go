@@ -211,23 +211,17 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 	var volumeSize int
 	var storagePoolUri utils.Nstring
 
-	if val, ok := properties["size"]; ok {
-		if val != 0 {
-			volumeSize = val.(int)
-		} else {
-			volumeSize = volTemplate.TemplateProperties.Size.Default
-		}
-
+	if properties["size"] != 0 {
+		volumeSize = properties["size"].(int)
+	} else {
+		volumeSize = volTemplate.TemplateProperties.Size.Default
+	}
+	if properties["storage_pool"] != "" {
+		storagePoolUri = utils.Nstring(properties["storage_pool"].(string))
+	} else {
+		storagePoolUri = utils.Nstring(volTemplate.StoragePoolUri)
 	}
 
-	if val, ok := properties["storage_pool"]; ok {
-		if val != "" {
-			storagePoolUri = utils.Nstring(val.(string))
-		} else {
-			storagePoolUri = utils.Nstring(volTemplate.StoragePoolUri)
-		}
-
-	}
 	volumeProperties := ov.Properties{
 		Storagepool:         storagePoolUri,
 		Name:                d.Get("name").(string),
@@ -318,45 +312,6 @@ func resourceVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	volume := ov.StorageVolume{}
-	volTemplate, err1 := config.ovClient.GetStorageVolumeTemplateByName(d.Get("template_name").(string))
-	if err1 != nil {
-		return err1
-	}
-	properties := d.Get("properties").(*schema.Set).List()[0].(map[string]interface{})
-
-	var volumeSize int
-	var storagePoolUri utils.Nstring
-
-	if val, ok := properties["size"]; ok {
-		if val != 0 {
-			volumeSize = val.(int)
-		} else {
-			volumeSize = volTemplate.TemplateProperties.Size.Default
-		}
-
-	}
-
-	if val, ok := properties["storage_pool"]; ok {
-		if val != "" {
-			storagePoolUri = utils.Nstring(val.(string))
-		} else {
-			storagePoolUri = utils.Nstring(volTemplate.StoragePoolUri)
-		}
-
-	}
-	volumeProperties := ov.Properties{
-		Storagepool:         storagePoolUri,
-		Name:                d.Get("name").(string),
-		Size:                volumeSize,
-		ProvisioningType:    properties["provisioning_type"].(string),
-		DataTransferLimit:   properties["data_transfer_limit"].(int),
-		DataProtectionLevel: properties["data_protection_level"].(string),
-		IsDeduplicated:      properties["is_deduplicated"].(bool),
-		IsEncrypted:         properties["is_encrypted"].(bool),
-		IsPinned:            properties["is_pinned"].(bool),
-		IsCompressed:        properties["is_compressed"].(bool),
-	}
-	volume.Properties = &volumeProperties
 
 	isPermanent := d.Get("is_permanent").(bool)
 	isShareable := d.Get("is_shareable").(bool)
