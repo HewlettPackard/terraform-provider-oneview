@@ -223,7 +223,6 @@ func resourceServerProfile() *schema.Resource {
 									"mac_type": {
 										Type:     schema.TypeString,
 										Optional: true,
-										//	Computed: true,
 									},
 									"managed": {
 										Type:     schema.TypeBool,
