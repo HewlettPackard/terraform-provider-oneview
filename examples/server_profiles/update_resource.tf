@@ -83,3 +83,21 @@ resource "oneview_server_profile" "SP" {
   }
 }
 
+/*
+# Patch request - Server profile Refresh
+resource "oneview_server_profile" "SP" {
+        update_type = "patch"
+        options = [
+        {
+          op = "replace"
+          path = "/refreshState"
+          value = "RefreshPending"
+        }
+        ]
+        name = "TestSP_Renamed"
+        type = "ServerProfileV12"
+        server_hardware_type = "SY 480 Gen9 1"
+        enclosure_group = "EG-Synergy-Local"
+        hardware_name = "Synergy-Encl-2, bay 8"
+}
+*/
