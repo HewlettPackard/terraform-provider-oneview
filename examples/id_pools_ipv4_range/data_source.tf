@@ -7,10 +7,17 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
+data "oneview_id_pools_ipv4_subnets" "ipv4_subnets_data" {
+  network_id = "<network_id>"
+}
+
+# Fetches range details using range_id
+# When multiple Ranges there, gets last one details
+
 data "oneview_ipv4_range" "ipranges" {
-  id = "b1b869f8-3d5a-4d4a-b0a2-fb6634f045d6"
+  id = basename(join("",data.oneview_id_pools_ipv4_subnets.ipv4_subnets_data.range_uris))
 }
 
 output "ipranges_value" {
-  value = data.oneview_ipv4_range.ipranges
+  value =  data.oneview_ipv4_range.ipranges
 }

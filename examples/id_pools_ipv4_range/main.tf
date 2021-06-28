@@ -7,15 +7,16 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
+data "oneview_id_pools_ipv4_subnets" "ipv4_subnets_data" {
+  network_id = "<network_id>"
+}
+
+# Creates a subnet range
 resource "oneview_ipv4_range" "ipv4range" {
   name = "IpRange"
-  subnet_uri = "/rest/id-pools/ipv4/subnets/40f76df9-1e39-4e5a-81fc-14614efea5e8"
+  subnet_uri = data.oneview_id_pools_ipv4_subnets.ipv4_subnets_data.uri
   start_stop_fragments {
-    start_address = "<ip_address>"
-    end_address = "<ip_address>"
-  }
-  start_stop_fragments {
-    start_address = "<ip_address>"
-    end_address = "<ip_address>"
+    start_address = "<start_address>"
+    end_address = "<end_address>"
   }
 }
