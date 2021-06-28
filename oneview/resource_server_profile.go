@@ -2116,6 +2116,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
+// IsZeroOfUnderlyingType returns true if value is null
 func IsZeroOfUnderlyingType(x interface{}) bool {
 	if reflect.ValueOf(x).Kind() == reflect.Ptr {
 		return true
@@ -2123,7 +2124,7 @@ func IsZeroOfUnderlyingType(x interface{}) bool {
 	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
 }
 
-// IsZeroOfUnderlyingType returns true if value is null
+// IsStructNil return true if struct is null
 func IsStructNil(x interface{}) bool {
 	v := reflect.ValueOf(x)
 	for j := 0; j < v.NumField(); j++ {
