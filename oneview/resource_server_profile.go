@@ -92,12 +92,10 @@ func resourceServerProfile() *schema.Resource {
 						},
 						"consistency_state": {
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"overridden_settings": {
@@ -133,7 +131,6 @@ func resourceServerProfile() *schema.Resource {
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"compliance_control": {
@@ -153,12 +150,10 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"allocated_mbps": {
 										Type:     schema.TypeInt,
-										Optional: true,
 										Computed: true,
 									},
 									"allocated_vfs": {
 										Type:     schema.TypeInt,
-										Optional: true,
 										Computed: true,
 									},
 									"function_type": {
@@ -182,13 +177,11 @@ func resourceServerProfile() *schema.Resource {
 										Optional: true,
 									},
 									"state": {
-										Type: schema.TypeString,
-										//										Computed: true,
-										Optional: true,
+										Type:     schema.TypeString,
+										Computed: true,
 									},
 									"status": {
-										Type: schema.TypeString,
-										//										Optional: true,
+										Type:     schema.TypeString,
 										Computed: true,
 									},
 									"wwnn": {
@@ -213,8 +206,7 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"interconnect_uri": {
 										Type:     schema.TypeString,
-										Optional: true,
-										//										Computed: true,
+										Computed: true,
 									},
 									"isolated_trunk": {
 										Type:     schema.TypeBool,
@@ -235,23 +227,19 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"managed": {
 										Type:     schema.TypeBool,
-										Optional: true,
-										//										Computed: true,
+										Computed: true,
 									},
 									"maximum_mbps": {
 										Type:     schema.TypeInt,
-										Optional: true,
-										//										Computed: true,
+										Computed: true,
 									},
 									"network_name": {
 										Type:     schema.TypeString,
-										Optional: true,
-										//										Computed: true,
+										Computed: true,
 									},
 									"private_vlan_port_type": {
 										Type:     schema.TypeString,
-										Optional: true,
-										//										Computed: true,
+										Computed: true,
 									},
 									"boot": {
 										Optional: true,
@@ -260,14 +248,12 @@ func resourceServerProfile() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"priority": {
-													Type: schema.TypeString,
-													//													Computed: true,
+													Type:     schema.TypeString,
 													Optional: true,
 												},
 												"boot_vlan_id": {
 													Type:     schema.TypeInt,
 													Optional: true,
-													//													Computed: true,
 												},
 												"ethernet_boot_type": {
 													Type:     schema.TypeString,
@@ -461,7 +447,6 @@ func resourceServerProfile() *schema.Resource {
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"manage_firmware": {
@@ -537,7 +522,6 @@ func resourceServerProfile() *schema.Resource {
 												"drive_number": {
 													Type:     schema.TypeInt,
 													Optional: true,
-													Computed: true,
 												},
 												"drive_technology": {
 													Type:     schema.TypeString,
@@ -571,7 +555,6 @@ func resourceServerProfile() *schema.Resource {
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"sas_logical_jbod": {
@@ -626,7 +609,7 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"status": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 								},
 							},
@@ -641,7 +624,6 @@ func resourceServerProfile() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-
 						"host_os_type": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -649,7 +631,6 @@ func resourceServerProfile() *schema.Resource {
 						"manage_san_storage": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Computed: true,
 						},
 						"san_system_credentials": {
 							Optional: true,
@@ -667,7 +648,6 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"chap_secret": {
 										Type:     schema.TypeString,
-										Optional: true,
 										Computed: true,
 									},
 									"chap_source": {
@@ -680,7 +660,6 @@ func resourceServerProfile() *schema.Resource {
 									},
 									"mutual_chap_secret": {
 										Type:     schema.TypeString,
-										Optional: true,
 										Computed: true,
 									},
 									"storage_system_uri": {
@@ -708,48 +687,38 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-
 						"id": {
 							Type:     schema.TypeInt,
-							Computed: true,
 							Optional: true,
 						},
 						"is_permanent": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Computed: true,
 						},
 						"lun": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Computed: true,
 						},
 						"lun_type": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"status": {
 							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"volume_storage_system_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Computed: true,
 						},
 						"volume_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Computed: true,
 						},
-
 						"storage_paths": {
 							Optional: true,
 							Computed: true,
@@ -759,17 +728,14 @@ func resourceServerProfile() *schema.Resource {
 									"connection_id": {
 										Type:     schema.TypeInt,
 										Optional: true,
-										Computed: true,
 									},
 									"is_enabled": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										Computed: true,
 									},
 									"network_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Computed: true,
 									},
 									"status": {
 										Type:     schema.TypeString,
@@ -778,7 +744,6 @@ func resourceServerProfile() *schema.Resource {
 									"target_selector": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Computed: true,
 									},
 									"targets": {
 										Type:     schema.TypeList,
@@ -788,15 +753,15 @@ func resourceServerProfile() *schema.Resource {
 											Schema: map[string]*schema.Schema{
 												"ip_address": {
 													Type:     schema.TypeString,
-													Computed: true,
+													Optional: true,
 												},
 												"name": {
 													Type:     schema.TypeString,
-													Computed: true,
+													Optional: true,
 												},
 												"tcp_port": {
 													Type:     schema.TypeString,
-													Computed: true,
+													Optional: true,
 												},
 											},
 										},
@@ -811,7 +776,7 @@ func resourceServerProfile() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
-										Computed: true,
+										Optional: true,
 										Type:     schema.TypeSet,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -1073,12 +1038,10 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"associated_server": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"category": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"created": {
@@ -1092,7 +1055,6 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"etag": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"enclosure_bay": {
@@ -1264,10 +1226,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 	if val, ok := d.GetOk("hide_unused_flex_nics"); ok {
 		serverProfile.HideUnusedFlexNics = val.(bool)
-	}
-
-	if val, ok := d.GetOk("category"); ok {
-		serverProfile.Category = val.(string)
 	}
 
 	if val, ok := d.GetOk("description"); ok {
@@ -1498,10 +1456,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				FirmwareBaselineUri:      utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
 				ManageFirmware:           firmwareItem["manage_firmware"].(bool),
 				FirmwareInstallType:      firmwareItem["firmware_install_type"].(string),
-				ConsistencyState:         firmwareItem["consistency_state"].(string),
 				FirmwareActivationType:   firmwareItem["firmware_activation_type"].(string),
 				FirmwareScheduleDateTime: firmwareItem["firmware_schedule_date_time"].(string),
-				ReapplyState:             firmwareItem["reapply_state"].(string),
 			}
 		}
 		serverProfile.Firmware = firmware
@@ -1595,7 +1551,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
 			volumes := ov.Volume{}
 			if volumeAttachmentItem["volume"] != nil {
-				rawVolume := volumeAttachmentItem["volume"].([]interface{}) //(*schema.Set).List()
+				rawVolume := volumeAttachmentItem["volume"].([]interface{})
 				for _, rawVol := range rawVolume {
 					volumeItem := rawVol.(map[string]interface{})
 					tempIsPermanent := volumeItem["is_permanent"].(bool)
@@ -1885,19 +1841,26 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			}
 			// Gets Connection Body
 			connections = append(connections, map[string]interface{}{
-				"function_type":  connection.FunctionType,
-				"network_uri":    connection.NetworkURI,
-				"port_id":        connection.PortID,
-				"requested_mbps": connection.RequestedMbps,
-				"id":             connection.ID,
-				"name":           connection.Name,
-				"isolated_trunk": connection.IsolatedTrunk,
-				"lag_name":       connection.LagName,
-				"mac_type":       connection.MacType,
-				"managed":        connection.Managed,
-				"network_name":   connection.NetworkName,
-				"boot":           connectionBoot,
-				"ipv4":           connectionIpv4,
+				"function_type":          connection.FunctionType,
+				"allocated_mbps":         connection.AllocatedMbps,
+				"allocated_vfs":          connection.Connectionv200.AllocatedVFs,
+				"interconnect_uri":       connection.InterconnectURI.String(),
+				"maximum_mbps":           connection.MaximumMbps,
+				"state":                  connection.State,
+				"status":                 connection.Status,
+				"private_vlan_port_type": connection.PrivateVlanPortType,
+				"network_uri":            connection.NetworkURI,
+				"port_id":                connection.PortID,
+				"requested_mbps":         connection.RequestedMbps,
+				"id":                     connection.ID,
+				"name":                   connection.Name,
+				"isolated_trunk":         connection.IsolatedTrunk,
+				"lag_name":               connection.LagName,
+				"mac_type":               connection.MacType,
+				"managed":                connection.Managed,
+				"network_name":           connection.NetworkName,
+				"boot":                   connectionBoot,
+				"ipv4":                   connectionIpv4,
 			})
 		}
 		// Connection Settings
@@ -1905,6 +1868,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		connectionSettings = append(connectionSettings, map[string]interface{}{
 			"manage_connections": serverProfile.ConnectionSettings.ManageConnections,
 			"compliance_control": serverProfile.ConnectionSettings.ComplianceControl,
+			"reapply_state":      serverProfile.ConnectionSettings.ReapplyState,
 			"connections":        connections,
 		})
 		d.Set("connection_settings", connectionSettings)
@@ -2052,11 +2016,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		for i := 0; i < len(serverProfile.SanStorage.SanSystemCredentials); i++ {
 			sanSystemCredentials = append(sanSystemCredentials, map[string]interface{}{
 				"chap_level":         serverProfile.SanStorage.SanSystemCredentials[i].ChapLevel,
-				"chap_name":          serverProfile.SanStorage.SanSystemCredentials[i].ChapName,
-				"chap_secret":        serverProfile.SanStorage.SanSystemCredentials[i].ChapSecret,
-				"chap_source":        serverProfile.SanStorage.SanSystemCredentials[i].ChapSource,
-				"mutual_chap_name":   serverProfile.SanStorage.SanSystemCredentials[i].MutualChapName,
-				"mutual_chap_secret": serverProfile.SanStorage.SanSystemCredentials[i].MutualChapSecret,
 				"storage_system_uri": serverProfile.SanStorage.SanSystemCredentials[i].StorageSystemUri.String(),
 			})
 		}
@@ -2138,7 +2097,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			}
 
 			volumeAttachments = append(volumeAttachments, map[string]interface{}{
-
 				"associated_template_attachment_id": serverProfile.SanStorage.VolumeAttachments[i].AssociatedTemplateAttachmentId,
 				"boot_volume_priority":              serverProfile.SanStorage.VolumeAttachments[i].BootVolumePriority,
 				"id":                                serverProfile.SanStorage.VolumeAttachments[i].ID,
@@ -2257,19 +2215,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.HideUnusedFlexNics = val.(bool)
 		}
 
-		if d.HasChange("category") {
-			val := d.Get("category")
-			serverProfile.Category = val.(string)
-		}
-
 		if d.HasChange("description") {
 			val := d.Get("description")
 			serverProfile.Description = val.(string)
-		}
-
-		if d.HasChange("etag") {
-			val := d.Get("etage")
-			serverProfile.ETAG = val.(string)
 		}
 
 		if d.HasChange("enclosure_bay") {
@@ -2544,10 +2492,8 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					FirmwareBaselineUri:      utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
 					ManageFirmware:           firmwareItem["manage_firmware"].(bool),
 					FirmwareInstallType:      firmwareItem["firmware_install_type"].(string),
-					ConsistencyState:         firmwareItem["consistency_state"].(string),
 					FirmwareActivationType:   firmwareItem["firmware_activation_type"].(string),
 					FirmwareScheduleDateTime: firmwareItem["firmware_schedule_date_time"].(string),
-					ReapplyState:             firmwareItem["reapply_state"].(string),
 				}
 			}
 			serverProfile.Firmware = firmware
@@ -2756,8 +2702,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
 					VolumeStorageSystemURI:         utils.NewNstring(volumeAttachmentItem["volume_storage_system_uri"].(string)),
 					AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
-					State:                          volumeAttachmentItem["state"].(string),
-					Status:                         volumeAttachmentItem["status"].(string),
 					StoragePaths:                   storagePaths,
 					BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
 					Volume:                         &volumes,
