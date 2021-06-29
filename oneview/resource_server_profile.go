@@ -1707,7 +1707,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.OSDeploymentSettings = osDeploySetting
 	}
 	//Cleaning up SP  by removing spt related fields
-	CleanupSp(&serverProfile)
+	cleanupSp(&serverProfile)
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
@@ -1723,7 +1723,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	return resourceServerProfileRead(d, meta)
 }
 
-func CleanupSp(sp *ov.ServerProfile) {
+func cleanupSp(sp *ov.ServerProfile) {
 	sp.Bios.ComplianceControl = ""
 	sp.Boot.ComplianceControl = ""
 	sp.BootMode.ComplianceControl = ""
