@@ -1193,10 +1193,12 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	serverProfile := ov.ServerProfile{}
 
 	if val, ok := d.GetOk("template"); ok {
+
 		serverProfileByTemplate, err := config.ovClient.GetProfileTemplateByName(val.(string))
 		if err != nil || serverProfileByTemplate.URI.IsNil() {
 			return err
 		}
+
 		serverProfile = serverProfileByTemplate
 		serverProfile.ServerProfileTemplateURI = serverProfileByTemplate.URI
 		serverProfile.ConnectionSettings = ov.ConnectionSettings{
@@ -1440,7 +1442,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				OverriddenSettings: overriddenSettings,
 			}
 		}
+
 		serverProfile.Bios = &biosOption
+
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
@@ -1702,6 +1706,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 		serverProfile.OSDeploymentSettings = osDeploySetting
 	}
+	//Cleaning up SP  by removing spt related fields
+	CleanupSp(&serverProfile)
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
@@ -1715,6 +1721,19 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 	return resourceServerProfileRead(d, meta)
+}
+
+func CleanupSp(sp *ov.ServerProfile) {
+	sp.Bios.ComplianceControl = ""
+	sp.Boot.ComplianceControl = ""
+	sp.BootMode.ComplianceControl = ""
+	sp.ConnectionSettings.ComplianceControl = ""
+	sp.Firmware.ComplianceControl = ""
+	sp.LocalStorage.ComplianceControl = ""
+	sp.ManagementProcessor.ComplianceControl = ""
+	sp.OSDeploymentSettings.ComplianceControl = ""
+	sp.SanStorage.ComplianceControl = ""
+	sp.ServerProfileDescription = ""
 }
 
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {

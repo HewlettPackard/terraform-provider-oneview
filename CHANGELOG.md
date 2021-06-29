@@ -75,6 +75,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#300] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/300) Can't create resource oneview_server_profile_template
 - [#301] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/301) Can't create resource oneview_server_profile
 - [#336] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/336) Terraform crash creating Server Profile Template 
+- [#334] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/338) volume creation is not derived from volume template
+- [#343] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/343) Creating Server Profile produces an Error 404
 
 # [v6.1.0-13] 
 
