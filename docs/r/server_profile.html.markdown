@@ -3,52 +3,92 @@ layout: "oneview"
 page_title: "Oneview: server_profile"
 sidebar_current: "docs-oneview-server-profile"
 description: |-
-  Creates a server profile.
+  Create/Update a Server Profile.
 ---
 
 # oneview\_server\_profile
-
-Creates a server profile.
-et
+Creates or updates a Server Profile.
 ## Example Usage
 
+Create server profile with local storages.
+```hcl
+resource "oneview_server_profile" "default" {
+  name = "test-server-profile"
+  hardware_name = "00AT092 bay 2"
+  type = "ServerProfileV10"
+  local_storage {
+    controller {
+      device_slot       = "Embedded"
+      drive_write_cache = "Unmanaged"
+      initialize        = false
+      import_configuration = false
+      mode                     = "RAID"
+      predictive_spare_rebuild = "Unmanaged"
+      logical_drives {
+        name                = "LD-1"
+	drive_number	    = 1
+	num_physical_drives = 2
+        bootable            = false
+        drive_technology    = "SasHdd"
+        raid_level          = "RAID1"
+        accelerator         = "Unmanaged"
+      }
+      logical_drives {
+        name                = "LD-2"
+	drive_number	    = 2
+	num_physical_drives = 2
+        bootable            = false
+        drive_technology    = "SasHdd"
+        raid_level          = "RAID1"
+        accelerator         = "Unmanaged"
+      }
+    }
+  }
+}
+```
+Update: Removing LD-1 Logical Drive from the server profile.
+
+Note: If you want to delete a block from the server profile resource, you will need to keep it as a empty block in your configuration.
+```hcl
+resource "oneview_server_profile" "default" {
+  name = "test-server-profile"
+  hardware_name = "00AT092 bay 2"
+  type = "ServerProfileV10"
+  local_storage {
+    controller {
+      device_slot       = "Embedded"
+      drive_write_cache = "Unmanaged"
+      initialize        = false
+      import_configuration = false
+      mode                     = "RAID"
+      predictive_spare_rebuild = "Unmanaged"
+      
+      // Keeping logical_drive as an empty block in its position to delete it.
+      logical_drives {
+      }
+      
+      logical_drives {
+        name                = "LD-2"
+	drive_number	    = 2
+	num_physical_drives = 2
+        bootable            = false
+        drive_technology    = "SasHdd"
+        raid_level          = "RAID1"
+        accelerator         = "Unmanaged"
+      }
+    }
+  }
+}
+```
 Create server profile using server profile template.
-```js
+```hcl
 resource "oneview_server_profile" "default" {
   name = "test-server-profile"
   template = "${oneview_server_profile_template.test.name}"
 }
 ```
-
-Create server profile without server profile template.
-```js
-resource "oneview_server_profile" "default" {
-  name = "test-server-profile"
-  hardware_name = "00AT092 bay 2"
-  type = "ServerProfileV10"
-}
-```
-Update server profile
-```js
-resource "oneview_server_profile" "default" {
-        update_type = "patch"
-        options = [
-        {
-          op = "replace"
-          path = "/refreshState"
-          value = "RefreshPending"
-        }
-        ]
-        name = "TestSP_Renamed"
-        type = "ServerProfileV10"
-        server_hardware_type = "SY 480 Gen9 3"
-        enclosure_group = "SYN03_EC"
-        hardware_name = "SYN03_Frame3, bay 1"
-}
-```
-
 Patch request for server profile
-```js
+```hcl
 resource "oneview_server_profile" "default" {
         update_type = "patch"
         options = [
@@ -76,12 +116,10 @@ The following arguments are supported:
 
 * `update_type` - (Required) Type of update of Server Profile.
 
-	| NO |  Type of Update   |   Update String |
-	|----|-------------------|-----------------|
-	|  1 |`Update`           |'put'            |
-	|----|-------------------|-----------------|
-	|  1 |`Patch`            |'patch'          |
-	|----|-------------------|-----------------|
+	| NO |  Type of Update       |   Update String |
+	|----|-----------------------|-----------------|
+	|  1 (Default)|`Update`   |'put'            |
+	|  2 |`Patch`                |'patch'          |
 
 - - -
 
