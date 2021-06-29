@@ -24,11 +24,13 @@ data "oneview_storage_volume_template" "st_vt" {
 resource "oneview_volume" "volume" {
   properties {
     name              = "testvol"
-    storage_pool      = data.oneview_storage_pool.st_pool.uri
-    size              = 268435456
-    provisioning_type = "Thin"
+     /* uncomment the below two line to provide the size and storage pool uri or it will be taken from the volume template*/
+    //storage_pool      = data.oneview_storage_pool.st_pool.uri
+    //size              = 1221225472/
+    provisioning_type = "Thin" 
     is_deduplicated   = false
   }
+  template_name        = "RenameDemoStorageTemplate"
   template_uri         = data.oneview_storage_volume_template.st_vt.uri
   is_permanent         = true
   name                 = "testvol"

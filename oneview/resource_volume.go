@@ -151,6 +151,11 @@ func resourceVolume() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"template_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -197,11 +202,30 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 
 	volume := ov.StorageVolume{}
 
+	volTemplate, err1 := config.ovClient.GetStorageVolumeTemplateByName(d.Get("template_name").(string))
+	if err1 != nil {
+		return err1
+	}
 	properties := d.Get("properties").(*schema.Set).List()[0].(map[string]interface{})
+
+	var volumeSize int
+	var storagePoolUri utils.Nstring
+
+	if properties["size"] != 0 {
+		volumeSize = properties["size"].(int)
+	} else {
+		volumeSize = volTemplate.TemplateProperties.Size.Default
+	}
+	if properties["storage_pool"] != "" {
+		storagePoolUri = utils.Nstring(properties["storage_pool"].(string))
+	} else {
+		storagePoolUri = utils.Nstring(volTemplate.StoragePoolUri)
+	}
+
 	volumeProperties := ov.Properties{
-		Storagepool:         utils.NewNstring(properties["storage_pool"].(string)),
+		Storagepool:         storagePoolUri,
 		Name:                d.Get("name").(string),
-		Size:                properties["size"].(int),
+		Size:                volumeSize,
 		ProvisioningType:    properties["provisioning_type"].(string),
 		DataTransferLimit:   properties["data_transfer_limit"].(int),
 		DataProtectionLevel: properties["data_protection_level"].(string),
@@ -211,7 +235,7 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 		IsCompressed:        properties["is_compressed"].(bool),
 	}
 	volume.Properties = &volumeProperties
-	volume.TemplateURI = utils.NewNstring(d.Get("template_uri").(string))
+	volume.TemplateURI = volTemplate.URI
 
 	if value, exist := d.GetOk("is_permanent"); exist {
 		val := value.(bool)
@@ -225,6 +249,7 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 		volume.InitialScopeUris = initialScopeUris
 	}
+
 	err := config.ovClient.CreateStorageVolume(volume)
 	d.SetId(d.Get("name").(string))
 
@@ -287,6 +312,7 @@ func resourceVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	volume := ov.StorageVolume{}
+
 	isPermanent := d.Get("is_permanent").(bool)
 	isShareable := d.Get("is_shareable").(bool)
 
