@@ -1,6 +1,38 @@
 All notable changes to this project will be documented in this file. 
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v6.2.0-11](Unreleased)
+
+### Notes
+- This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
+
+### Oneview Features supported
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Hypervisor Manager
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups
+- Network Set
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
+
+
 # [v6.1.0-11]
 
 ### Notes

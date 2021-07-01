@@ -3,14 +3,14 @@ provider "oneview" {
   ov_password =   "${var.password}"
   ov_endpoint =   "${var.endpoint}"
   ov_sslverify =  "${var.ssl_enabled}"
-  ov_apiversion = 2800
+  ov_apiversion = 3000
   ov_ifmatch = "*"
 }
 
 variable "hm_endpoint" {
  type = "string"
  description = "Hypervisor Manager IP"
- default = "172.18.13.11" //"<HM-IP>"
+ default = "<HM-IP>"
 }
 
 # Testing data source
