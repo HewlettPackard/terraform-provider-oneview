@@ -6,10 +6,9 @@ provider "oneview" {
   ov_apiversion = 2800
   ov_ifmatch    = "*"
 }
-/*
-# Testing data source
+
 data "oneview_ethernet_network" "ethernetnetworks1" {
-  name = "mgmt_untagged"
+  name = "TestNetwork_1"
 }
 
 data "oneview_ethernet_network" "ethernetnetworks2" {
@@ -19,12 +18,12 @@ data "oneview_ethernet_network" "ethernetnetworks2" {
 data "oneview_scope" "scope" {
   name = "Auto-Scope"
 }
-*/
 
+# Creating Server Profile Template with Management Settings
 resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
-/*  name                 = "TestServerProfileTemplate_with_local_storage"
+  name                 = "TestServerProfileTemplate_with_local_storage"
   type                 = "ServerProfileTemplateV8"
-  enclosure_group      = "EG"
+  enclosure_group      = "Auto-EG"
   server_hardware_type = "SY 480 Gen9 1"
   bios_option {
     manage_bios = true
@@ -92,7 +91,7 @@ resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
 	password = "test_password"
       }
     }
-  }*/
+  }
 }
 
 /*
@@ -157,6 +156,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
   }
 }
 */
+	
 /*
 # Creates server profile template with OS deployment settings
 resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
