@@ -509,35 +509,226 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 				Computed: true,
 			},
 			"management_processor": {
-				Optional: true,
 				Type:     schema.TypeList,
-				MaxItems: 1,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"compliance_control": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"manage_mp": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Computed: true,
 						},
 						"reapply_state": {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 						"mp_settings": {
-							Optional: true,
+							Computed: true,
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"args": {
-										Type:     schema.TypeString,
-										Optional: true,
+									"administrator_account": {
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"delete_administrator_account": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"password": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+											},
+										},
 									},
-									"setting_type": {
-										Type:     schema.TypeBool,
-										Optional: true,
+									"directory": {
+										Type:     schema.TypeList,
+										MaxItems: 1,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"directory_authentication": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"directory_generic_ldap": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"directory_server_address": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"directory_server_port": {
+													Type:     schema.TypeInt,
+													Computed: true,
+												},
+												"directory_server_certificate": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"directory_user_context": {
+													Type:     schema.TypeSet,
+													Computed: true,
+													Elem:     &schema.Schema{Type: schema.TypeString},
+													Set:      schema.HashString,
+												},
+												"ilo_distinguished_name": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"password": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"kerberos_authentication": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"kerberos_realm": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"kerberos_kdc_server_address": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"kerberos_kdc_server_port": {
+													Type:     schema.TypeInt,
+													Computed: true,
+												},
+												"kerberos_key_tab": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+											},
+										},
+									},
+									"key_manager": {
+										MaxItems: 1,
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"primary_server_address": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"primary_server_port": {
+													Type:     schema.TypeInt,
+													Computed: true,
+												},
+												"secondary_server_address": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"secondary_server_port": {
+													Type:     schema.TypeInt,
+													Computed: true,
+												},
+												"redundancy_required": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"group_name": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"certificate_name": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"login_name": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"password": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+											},
+										},
+									},
+									"directory_groups": {
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"group_dn": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"group_sid": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"user_config_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"remote_console_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"virtual_media_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"virtual_power_and_reset_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"ilo_config_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+											},
+										},
+									},
+									"local_accounts": {
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"user_name": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"display_name": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"password": {
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"user_config_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"remote_console_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"virtual_media_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"virtual_power_and_reset_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+												"ilo_config_priv": {
+													Type:     schema.TypeBool,
+													Computed: true,
+												},
+											},
+										},
 									},
 								},
 							},
@@ -1131,23 +1322,220 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 		d.Set("os_deployment_settings", osDeploymentSettingslist)
 	}
 
-	mpSettings := make([]interface{}, 0)
-	if len(spt.ManagementProcessor.MpSettings) != 0 {
-		for i := 0; i < len(spt.ManagementProcessor.MpSettings); i++ {
+	// Management Processor
+	emptyManagementProcessor := ov.IntManagementProcessor{}
+	if !reflect.DeepEqual(spt.ManagementProcessor, emptyManagementProcessor) {
+		mpSettings := make([]map[string]interface{}, 0)
+		if len(spt.ManagementProcessor.MpSettings) != 0 {
+			// initializing schema variables...
+			adminAcc := make([]map[string]interface{}, 1)
+			directory := make([]map[string]interface{}, 1)
+			keyManager := make([]map[string]interface{}, 1)
+			directoryGroups := make([]map[string]interface{}, 0)
+			localAccounts := make([]map[string]interface{}, 0)
+
+			for _, val := range spt.ManagementProcessor.MpSettings {
+
+				if val.SettingType == "AdministratorAccount" {
+					// initializing 0th location...
+					adminAcc[0] = map[string]interface{}{}
+					// adding attributes if they exists...
+
+					if daa, ok := val.Args["deleteAdministratorAccount"]; ok {
+						adminAcc[0]["delete_administrator_account"] = daa
+					}
+					if pass, ok := val.Args["password"]; ok {
+						if pass != nil {
+							adminAcc[0]["password"] = pass
+						}
+					}
+				}
+
+				if val.SettingType == "Directory" {
+					// initializing 0th location...
+					directory[0] = map[string]interface{}{}
+
+					// adding attributes if they exists...
+					if dgl, ok := val.Args["directoryGenericLDAP"]; ok {
+						directory[0]["directory_generic_ldap"] = dgl
+					}
+					if dsa, ok := val.Args["directoryServerAddress"]; ok {
+						directory[0]["directory_server_address"] = dsa
+					}
+					if dsp, ok := val.Args["directoryServerPort"]; ok {
+						directory[0]["directory_server_port"] = dsp
+					}
+					if dsc, ok := val.Args["directoryServerCertificate"]; ok {
+						directory[0]["directory_server_certificate"] = dsc
+					}
+					if iodn, ok := val.Args["iloObjectDistinguishedName"]; ok {
+						directory[0]["ilo_distinguished_name"] = iodn
+					}
+					if p, ok := val.Args["password"]; ok {
+						if p != nil {
+							directory[0]["password"] = p
+						}
+					}
+					if ka, ok := val.Args["kerberosAuthentication"]; ok {
+						directory[0]["kerberos_authentication"] = ka
+					}
+					if kr, ok := val.Args["kerberosRealm"]; ok {
+						directory[0]["kerberos_realm"] = kr
+					}
+					if kksa, ok := val.Args["kerberosKDCServerAddress"]; ok {
+						directory[0]["kerberos_kdc_server_address"] = kksa
+					}
+					if kksp, ok := val.Args["kerberosKDCServerPort"]; ok {
+						directory[0]["kerberos_kdc_server_port"] = kksp
+					}
+					if kkt, ok := val.Args["kerberosKeytab"]; ok {
+						directory[0]["kerberos_key_tab"] = kkt
+					}
+					if duc, ok := val.Args["directoryUserContext"]; ok {
+						ducSet := []string{}
+						switch reflect.TypeOf(duc).Kind() {
+						case reflect.Slice:
+							s := reflect.ValueOf(duc)
+							for i := 0; i < s.Len(); i++ {
+								ducSet = append(ducSet, s.Index(i).Interface().(string))
+							}
+							directory[0]["directory_user_context"] = ducSet
+						}
+					}
+				}
+				if val.SettingType == "DirectoryGroups" {
+					if dga, ok := val.Args["directoryGroupAccounts"]; ok {
+						// dectectng type of interface value
+						switch reflect.TypeOf(dga).Kind() {
+						case reflect.Slice:
+							s := reflect.ValueOf(dga)
+							for i := 0; i < s.Len(); i++ {
+								// since slice elements will be maps converting interface to map
+								w := s.Index(i).Interface().(map[string]interface{})
+								dg := map[string]interface{}{}
+								if gd, ok := w["groupDN"]; ok {
+									dg["group_dn"] = gd
+								}
+								if gs, ok := w["groupSID"]; ok {
+									dg["group_sid"] = gs
+								}
+								if ucp, ok := w["userConfigPriv"]; ok {
+									dg["user_config_priv"] = ucp
+								}
+								if rcp, ok := w["remoteConsolePriv"]; ok {
+									dg["remote_console_priv"] = rcp
+								}
+								if vmp, ok := w["virtualMediaPriv"]; ok {
+									dg["virtual_media_priv"] = vmp
+								}
+								if vparp, ok := w["virtualPowerAndResetPriv"]; ok {
+									dg["virtual_power_and_reset_priv"] = vparp
+								}
+								if icp, ok := w["iLOConfigPriv"]; ok {
+									dg["ilo_config_priv"] = icp
+								}
+								// adding directory groups
+								directoryGroups = append(directoryGroups, dg)
+							}
+						}
+					}
+				}
+
+				if val.SettingType == "LocalAccounts" {
+					if las, ok := val.Args["localAccounts"]; ok {
+						// dectectng type of interface value
+						switch reflect.TypeOf(las).Kind() {
+						case reflect.Slice:
+							s := reflect.ValueOf(las)
+							for i := 0; i < s.Len(); i++ {
+								// since slice elements will be maps converting interface to map
+								w := s.Index(i).Interface().(map[string]interface{})
+								la := map[string]interface{}{}
+								if un, ok := w["userName"]; ok {
+									la["user_name"] = un
+								}
+								if dn, ok := w["displayName"]; ok {
+									la["display_name"] = dn
+								}
+								if p, ok := w["password"]; ok {
+									if p != nil {
+										la["password"] = p
+									}
+								}
+								if ucp, ok := w["userConfigPriv"]; ok {
+									la["user_config_priv"] = ucp
+								}
+								if rcp, ok := w["remoteConsolePriv"]; ok {
+									la["remote_console_priv"] = rcp
+								}
+								if vmp, ok := w["virtualMediaPriv"]; ok {
+									la["virtual_media_priv"] = vmp
+								}
+								if vpar, ok := w["virtualPowerAndResetPriv"]; ok {
+									la["virtual_power_and_reset_priv"] = vpar
+								}
+								if icp, ok := w["iLOConfigPriv"]; ok {
+									la["ilo_config_priv"] = icp
+								}
+								// adding local account
+								localAccounts = append(localAccounts, la)
+							}
+						}
+					}
+				}
+
+				if val.SettingType == "KeyManager" {
+					// initializing 0th location...
+					keyManager[0] = map[string]interface{}{}
+					// extratcing values if exists...
+					if psa, ok := val.Args["primaryServerAddress"]; ok {
+						keyManager[0]["primary_server_address"] = psa
+					}
+					if psp, ok := val.Args["primaryServerPort"]; ok {
+						keyManager[0]["primary_server_port"] = psp
+					}
+					if ssa, ok := val.Args["secondaryServerAddress"]; ok {
+						keyManager[0]["secondary_server_address"] = ssa
+					}
+					if ssp, ok := val.Args["secondaryServerPort"]; ok {
+						keyManager[0]["secondary_server_port"] = ssp
+					}
+					if rr, ok := val.Args["redundancyRequired"]; ok {
+						keyManager[0]["redundancy_required"] = rr
+					}
+					if gn, ok := val.Args["groupName"]; ok {
+						keyManager[0]["group_name"] = gn
+					}
+					if cn, ok := val.Args["certificateName"]; ok {
+						keyManager[0]["certificate_name"] = cn
+					}
+					if ln, ok := val.Args["loginName"]; ok {
+						keyManager[0]["login_name"] = ln
+					}
+					if p, ok := val.Args["password"]; ok {
+						keyManager[0]["password"] = p
+					}
+				}
+
+			}
+			// setting MpSettings
 			mpSettings = append(mpSettings, map[string]interface{}{
-				"args":         spt.ManagementProcessor.MpSettings[i].Args,
-				"setting_type": spt.ManagementProcessor.MpSettings[i].SettingType,
+				"administrator_account": adminAcc,
+				"directory":             directory,
+				"key_manager":           keyManager,
+				"directory_groups":      directoryGroups,
+				"local_accounts":        localAccounts,
 			})
 		}
+
+		mp := make([]map[string]interface{}, 0)
+		mp = append(mp, map[string]interface{}{
+			"compliance_control": spt.ManagementProcessor.ComplianceControl,
+			"manage_mp":          spt.ManagementProcessor.ManageMp,
+			"mp_settings":        mpSettings,
+		})
+		d.Set("management_processor", mp)
 	}
-	managementProcessor := make([]map[string]interface{}, 0, 1)
-	managementProcessor = append(managementProcessor, map[string]interface{}{
-		"compliance_control": spt.ManagementProcessor.ComplianceControl,
-		"manage_mp":          spt.ManagementProcessor.ManageMp,
-		"reapply_state":      spt.ManagementProcessor.ReapplyState,
-		"mp_settings":        mpSettings,
-	})
-	d.Set("management_processor", managementProcessor)
 	sanSystemCredentials := make([]interface{}, 0)
 	if len(spt.SanStorage.SanSystemCredentials) != 0 {
 		for i := 0; i < len(spt.SanStorage.SanSystemCredentials); i++ {

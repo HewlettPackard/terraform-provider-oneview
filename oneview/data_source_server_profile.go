@@ -14,8 +14,8 @@ package oneview
 import (
 	"reflect"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func dataSourceServerProfile() *schema.Resource {
