@@ -2044,7 +2044,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 									la["display_name"] = dn
 								}
 								if p, ok := w["password"]; ok {
-									if p!= nil{
+									if p != nil {
 										la["password"] = p
 									}
 								}

@@ -15,3 +15,8 @@ func IsEmpty(s string) bool {
 	}
 	return false
 }
+
+// GetBoolPointer  returns pointer value
+func GetBoolPointer(value bool) *bool {
+	return &value
+}
