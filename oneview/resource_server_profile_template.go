@@ -2434,9 +2434,9 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		}
 		serverProfileTemplate.OSDeploymentSettings = osDeploySetting
 	}
-	err_create := config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
-	if err_create != nil {
-		return err_create
+	errC := config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
+	if errC != nil {
+		return errC
 	}
 	d.SetId(d.Get("name").(string))
 
