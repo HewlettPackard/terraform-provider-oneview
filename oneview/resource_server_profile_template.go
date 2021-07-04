@@ -13,10 +13,11 @@ package oneview
 
 import (
 	"fmt"
+	"reflect"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"reflect"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
@@ -36,7 +37,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Computed: true,
 			},
 			"bios_option": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -51,6 +52,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"overridden_settings": {
 							Type:     schema.TypeList,
 							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"id": {
@@ -80,7 +82,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"manage_boot": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Computed: true,
 						},
 						"boot_order": {
 							Type:     schema.TypeSet,
@@ -93,6 +94,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"boot_mode": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -102,31 +104,32 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"manage_mode": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Required: true,
 						},
 						"mode": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 						"pxe_boot_policy": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 						"secure_boot": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"category": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 
 			"connection_settings": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -134,6 +137,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"connections": {
 							Optional: true,
@@ -150,7 +154,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"boot_vlan_id": {
 													Type:     schema.TypeInt,
 													Optional: true,
-													Computed: true,
 												},
 												"boot_volume_source": {
 													Type:     schema.TypeString,
@@ -163,6 +166,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"boot_target": {
 													Type:     schema.TypeList,
 													Optional: true,
+													Computed: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"array_wwpn": {
@@ -179,6 +183,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"iscsi": {
 													Type:     schema.TypeList,
 													Optional: true,
+													Computed: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"chap_level": {
@@ -196,6 +201,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 															"initiator_name": {
 																Type:     schema.TypeString,
 																Optional: true,
+																Computed: true,
 															},
 															"initiator_name_source": {
 																Type:     schema.TypeString,
@@ -236,11 +242,11 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"priority": {
 													Type:     schema.TypeString,
 													Optional: true,
-													Computed: true,
 												},
 												"targets": {
 													Type:     schema.TypeList,
 													Optional: true,
+													Computed: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"array_wwpn": {
@@ -269,6 +275,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"ipv4": {
 										Type:     schema.TypeList,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"gateway": {
@@ -300,16 +307,15 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"managed": {
 										Type:     schema.TypeBool,
-										Optional: true,
 										Computed: true,
 									},
 									"name": {
 										Type:     schema.TypeString,
-										Required: true,
+										Optional: true,
 									},
 									"network_name": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"network_uri": {
 										Type:     schema.TypeString,
@@ -318,20 +324,24 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"port_id": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Default:  "Lom 1:1-a",
+										DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+											if new == "Auto" {
+												return true
+											}
+											return false
+										},
 									},
 									"requested_mbps": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Default:  "2500",
 									},
 									"allocated_mbps": {
 										Type:     schema.TypeInt,
-										Optional: true,
+										Computed: true,
 									},
 									"allocated_vfs": {
 										Type:     schema.TypeInt,
-										Optional: true,
+										Computed: true,
 									},
 
 									"requested_vfs": {
@@ -340,11 +350,11 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"state": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"status": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 									"wwnn": {
 										Type:     schema.TypeString,
@@ -365,7 +375,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"interconnect_uri": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 
 									"mac": {
@@ -379,12 +389,12 @@ func resourceServerProfileTemplate() *schema.Resource {
 
 									"maximum_mbps": {
 										Type:     schema.TypeInt,
-										Optional: true,
+										Computed: true,
 									},
 
 									"private_vlan_port_type": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Computed: true,
 									},
 								},
 							},
@@ -392,22 +402,23 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"manage_connections": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
 			},
 			"created": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"etag": {
 				Type:     schema.TypeString,
@@ -423,6 +434,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"firmware": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -446,15 +458,17 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"force_install_firmware": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 						"manage_firmware": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 
 						"consistency_state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"firmware_schedule_date_time": {
 							Type:     schema.TypeString,
@@ -462,7 +476,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -475,7 +489,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"initial_scope_uris": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -498,6 +511,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"controller": {
 							Optional: true,
+							Computed: true,
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -519,6 +533,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"logical_drives": {
 										Optional: true,
+										Computed: true,
 										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -580,6 +595,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 
 						"sas_logical_jbod": {
 							Optional: true,
+							Computed: true,
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -636,8 +652,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"management_processor": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeList,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"compliance_control": {
@@ -646,11 +662,12 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"manage_mp": {
 							Type:     schema.TypeBool,
-							Optional: true,
+							Required: true,
 						},
 						"reapply_state": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 						"mp_settings": {
 							Optional: true,
@@ -674,6 +691,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"modified": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -682,6 +700,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"os_deployment_settings": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Computed: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -699,6 +718,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"os_custom_attributes": {
 							Optional: true,
+							Computed: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -739,6 +759,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"san_storage": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -772,7 +793,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"chap_secret": {
 										Type:     schema.TypeString,
-										Optional: true,
 										Computed: true,
 									},
 									"chap_source": {
@@ -785,7 +805,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"mutual_chap_secret": {
 										Type:     schema.TypeString,
-										Optional: true,
 										Computed: true,
 									},
 									"storage_system_uri": {
@@ -800,6 +819,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"volume_attachments": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -810,7 +830,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"id": {
 							Type:     schema.TypeInt,
-							Required: true,
+							Optional: true,
 						},
 						"lun": {
 							Type:     schema.TypeString,
@@ -834,14 +854,15 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"state": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"status": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"storage_paths": {
 							Optional: true,
+							Computed: true,
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -868,6 +889,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"targets": {
 										Type:     schema.TypeList,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"ip_address": {
@@ -896,7 +918,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
 										Type:     schema.TypeSet,
-										Computed: true,
 										Optional: true,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -906,12 +927,10 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"is_permanent": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										Computed: true,
 									},
 									"template_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Computed: true,
 									},
 									"properties": {
 										Type:     schema.TypeList,
@@ -1011,6 +1030,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"scopes_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"serial_number_type": {
 				Type:     schema.TypeString,
@@ -1029,20 +1049,22 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"server_profile_description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 
 			"uri": {
@@ -1192,13 +1214,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					ManageMode:    &manageMode,
 					Mode:          rawBootMode["mode"].(string),
 					PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+					SecureBoot:    rawBootMode["secure_boot"].(string),
 				}
 			}
 		}
 	}
 
 	if val, ok := d.GetOk("bios_option"); ok {
-		rawBiosOption := val.(*schema.Set).List()
+		rawBiosOption := val.([]interface{})
 		biosOption := ov.BiosOption{}
 		for _, raw := range rawBiosOption {
 			rawBiosItem := raw.(map[string]interface{})
@@ -1241,10 +1264,8 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				FirmwareBaselineUri:      utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
 				ManageFirmware:           firmwareItem["manage_firmware"].(bool),
 				FirmwareInstallType:      firmwareItem["firmware_install_type"].(string),
-				ConsistencyState:         firmwareItem["consistency_state"].(string),
 				FirmwareActivationType:   firmwareItem["firmware_activation_type"].(string),
 				FirmwareScheduleDateTime: firmwareItem["firmware_schedule_date_time"].(string),
-				ReapplyState:             firmwareItem["reapply_state"].(string),
 			}
 		}
 		serverProfileTemplate.Firmware = firmware
@@ -1356,7 +1377,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	// Get volume attachment data for san storage
 	if _, ok := d.GetOk("volume_attachments"); ok {
 
-		rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+		rawVolumeAttachments := d.Get("volume_attachments").([]interface{})
 		volumeAttachments := make([]ov.VolumeAttachment, 0)
 
 		for _, rawVolumeAttachment := range rawVolumeAttachments {
@@ -1364,14 +1385,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			volumes := ov.Volume{}
 
 			if volumeAttachmentItem["volume"] != nil {
-				rawVolume := volumeAttachmentItem["volume"].(*schema.Set).List()
+				rawVolume := volumeAttachmentItem["volume"].([]interface{})
 				for _, rawVol := range rawVolume {
 					volumeItem := rawVol.(map[string]interface{})
 					tempIsPermanent := volumeItem["is_permanent"].(bool)
 					properties := ov.PropertiesSP{}
 
 					if volumeItem["properties"] != nil {
-						rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
+						rawVolumeProperties := volumeItem["properties"].([]interface{})
 						for _, rawVolProp := range rawVolumeProperties {
 							propertyItem := rawVolProp.(map[string]interface{})
 							tempIsShareable := propertyItem["is_shareable"].(bool)
@@ -1418,7 +1439,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 			// get volumeAttachemts.storagepaths
 			storagePaths := make([]ov.StoragePath, 0)
 			if volumeAttachmentItem["storage_paths"] != nil {
-				rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+				rawStoragePaths := volumeAttachmentItem["storage_paths"].([]interface{})
 
 				for _, rawStoragePath := range rawStoragePaths {
 					storagePathItem := rawStoragePath.(map[string]interface{})
@@ -1426,7 +1447,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					// get volumeAttachemts.storagepaths.targets
 					targets := make([]ov.Target, 0)
 					if storagePathItem["targets"] != nil {
-						rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
+						rawStorageTargets := storagePathItem["targets"].([]interface{})
 						for _, rawStorageTarget := range rawStorageTargets {
 							storageTargetItem := rawStorageTarget.(map[string]interface{})
 							targets = append(targets, ov.Target{
@@ -1579,11 +1600,22 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		"boot_order":  bootOrder,
 	})
 	d.Set("boot", boot)
+	emptyBootMode := ov.BootModeOption{}
+	if spt.BootMode != emptyBootMode {
+		bootMode := make([]map[string]interface{}, 0, 1)
+		bootMode = append(bootMode, map[string]interface{}{
+			"manage_mode":     spt.BootMode.ManageMode,
+			"mode":            spt.BootMode.Mode,
+			"pxe_boot_policy": spt.BootMode.PXEBootPolicy,
+			"secure_boot":     spt.BootMode.SecureBoot,
+		})
+		d.Set("boot_mode", bootMode)
+	}
 
 	if spt.Bios != nil {
 		biosOptions := make([]map[string]interface{}, 0, 1)
-		overriddenSettings := make([]interface{}, 0, len(spt.Bios.OverriddenSettings))
-		if spt.Bios.OverriddenSettings != nil {
+		overriddenSettings := make([]interface{}, 0)
+		if len(spt.Bios.OverriddenSettings) > 0 {
 			for _, overriddenSetting := range spt.Bios.OverriddenSettings {
 				overriddenSettings = append(overriddenSettings, map[string]interface{}{
 					"id":    overriddenSetting.ID,
@@ -1650,19 +1682,26 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			}
 			// Gets Connection Body
 			connections = append(connections, map[string]interface{}{
-				"function_type":  connection.FunctionType,
-				"network_uri":    connection.NetworkURI,
-				"port_id":        connection.PortID,
-				"requested_mbps": connection.RequestedMbps,
-				"id":             connection.ID,
-				"name":           connection.Name,
-				"isolated_trunk": connection.IsolatedTrunk,
-				"lag_name":       connection.LagName,
-				"mac_type":       connection.MacType,
-				"managed":        connection.Managed,
-				"network_name":   connection.NetworkName,
-				"boot":           connectionBoot,
-				"ipv4":           connectionIpv4,
+				"allocated_mbps":         connection.AllocatedMbps,
+				"allocated_vfs":          connection.Connectionv200.AllocatedVFs,
+				"boot":                   connectionBoot,
+				"function_type":          connection.FunctionType,
+				"id":                     connection.ID,
+				"interconnect_uri":       connection.InterconnectURI.String(),
+				"ipv4":                   connectionIpv4,
+				"isolated_trunk":         connection.IsolatedTrunk,
+				"lag_name":               connection.LagName,
+				"mac_type":               connection.MacType,
+				"managed":                connection.Managed,
+				"maximum_mbps":           connection.MaximumMbps,
+				"name":                   connection.Name,
+				"network_name":           connection.NetworkName,
+				"network_uri":            connection.NetworkURI,
+				"port_id":                connection.PortID,
+				"private_vlan_port_type": connection.PrivateVlanPortType,
+				"requested_mbps":         connection.RequestedMbps,
+				"state":                  connection.State,
+				"status":                 connection.Status,
 			})
 		}
 		// Connection Settings
@@ -1734,11 +1773,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		for i := 0; i < len(spt.SanStorage.SanSystemCredentials); i++ {
 			sanSystemCredentials = append(sanSystemCredentials, map[string]interface{}{
 				"chap_level":         spt.SanStorage.SanSystemCredentials[i].ChapLevel,
-				"chap_name":          spt.SanStorage.SanSystemCredentials[i].ChapName,
-				"chap_secret":        spt.SanStorage.SanSystemCredentials[i].ChapSecret,
-				"chap_source":        spt.SanStorage.SanSystemCredentials[i].ChapSource,
-				"mutual_chap_name":   spt.SanStorage.SanSystemCredentials[i].MutualChapName,
-				"mutual_chap_secret": spt.SanStorage.SanSystemCredentials[i].MutualChapSecret,
 				"storage_system_uri": spt.SanStorage.SanSystemCredentials[i].StorageSystemUri.String(),
 			})
 		}
@@ -1811,10 +1845,10 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 
 				}
 				volumes = append(volumes, map[string]interface{}{
-					//"initial_scope_uris": spt.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
-					"is_permanent": spt.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
-					"template_uri": spt.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
-					"properties":   properties,
+					"initial_scope_uris": spt.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
+					"is_permanent":       spt.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
+					"template_uri":       spt.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
+					"properties":         properties,
 				})
 
 			}
@@ -1873,34 +1907,73 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
+// IsZeroOfUnderlyingType returns true if value is null
+func isZeroOfUnderlyingType(x interface{}) bool {
+	if reflect.ValueOf(x).Kind() == reflect.Ptr {
+		return true
+	}
+	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
+}
+
+// IsStructNil return true if struct is null
+func isStructNil(x interface{}) bool {
+	v := reflect.ValueOf(x)
+	for j := 0; j < v.NumField(); j++ {
+		if !isZeroOfUnderlyingType(v.Field(j).Interface()) {
+			return true
+		}
+	}
+	return false
+}
+
 func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	serverProfileTemplate := ov.ServerProfile{
-		Name:               d.Get("name").(string),
-		Type:               d.Get("type").(string),
-		Affinity:           d.Get("affinity").(string),
-		URI:                utils.NewNstring(d.Get("uri").(string)),
-		ETAG:               d.Get("etag").(string),
-		SerialNumberType:   d.Get("serial_number_type").(string),
-		WWNType:            d.Get("wwn_type").(string),
-		MACType:            d.Get("mac_type").(string),
-		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
+		Name: d.Get("name").(string),
+		Type: d.Get("type").(string),
+		URI:  utils.NewNstring(d.Get("uri").(string)),
+		ETAG: d.Get("etag").(string),
 	}
 
-	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("enclosure_group").(string))
+	if d.HasChange("affinity") {
+		val := d.Get("affinity")
+		serverProfileTemplate.Affinity = val.(string)
+	}
+	if d.HasChange("serial_number_type") {
+		val := d.Get("serial_number_type")
+		serverProfileTemplate.SerialNumberType = val.(string)
+	}
+
+	if d.HasChange("wwn_type") {
+		val := d.Get("wwn_type")
+		serverProfileTemplate.WWNType = val.(string)
+	}
+	if d.HasChange("mac_type") {
+		val := d.Get("mac_type")
+		serverProfileTemplate.MACType = val.(string)
+	}
+	if d.HasChange("hide_unused_flex_nics") {
+		val := d.Get("hide_unused_flex_nics")
+		serverProfileTemplate.HideUnusedFlexNics = val.(bool)
+	}
+
+	val := d.Get("enclosure_group")
+	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(val.(string))
 	if err != nil {
 		return err
 	}
 	serverProfileTemplate.EnclosureGroupURI = enclosureGroup.URI
 
-	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByName(d.Get("server_hardware_type").(string))
+	valsht := d.Get("server_hardware_type")
+	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByName(valsht.(string))
 	if err != nil {
 		return err
 	}
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
-	if val, ok := d.GetOk("connection_settings"); ok {
+	if d.HasChange("connection_settings") {
+		val := d.Get("connection_settings")
 		connections := val.([]interface{})
 		for _, rawConSettings := range connections {
 			rawConSetting := rawConSettings.(map[string]interface{})
@@ -1919,10 +1992,16 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 						if rawBootTargets != nil {
 							for _, rawBootTarget := range rawBootTargets {
 								bootTarget := rawBootTarget.(map[string]interface{})
-								bootTargets = append(bootTargets, ov.BootTarget{
+								bootTargett := ov.BootTarget{
 									LUN:       bootTarget["lun"].(string),
 									ArrayWWPN: bootTarget["array_wwpn"].(string),
-								})
+								}
+								// checks if all elements are empty
+								// skips if empty
+								if !isStructNil(bootTargett) {
+									continue
+								}
+								bootTargets = append(bootTargets, bootTargett)
 							}
 						}
 
@@ -1968,7 +2047,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					}
 				}
 
-				networks = append(networks, ov.Connection{
+				network := ov.Connection{
 					ID:            rawNetworkItem["id"].(int),
 					Name:          rawNetworkItem["name"].(string),
 					FunctionType:  rawNetworkItem["function_type"].(string),
@@ -1980,9 +2059,19 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					Managed:       rawNetworkItem["managed"].(bool),
 					NetworkName:   rawNetworkItem["network_name"].(string),
 					Ipv4:          &ipv4,
-					Boot:          &bootOptions,
-				})
+				}
+				// checks if all elements are empty
+				// skips connection if empty
+				if !isStructNil(network) {
+					continue
+				}
+				networks = append(networks, network)
+				if len(rawNetworkItem["boot"].([]interface{})) != 0 {
+					networks[len(networks)-1].Boot = &bootOptions
+				}
+
 			}
+
 			serverProfileTemplate.ConnectionSettings = ov.ConnectionSettings{
 				Connections:       networks,
 				ComplianceControl: rawConSetting["compliance_control"].(string),
@@ -1991,7 +2080,8 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		}
 	}
 
-	if val, ok := d.GetOk("boot"); ok {
+	if d.HasChange("boot") {
+		val := d.Get("boot")
 		boot := val.([]interface{})
 		for _, rawBoots := range boot {
 			rawBoot := rawBoots.(map[string]interface{})
@@ -2004,47 +2094,72 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				ManageBoot: rawBoot["manage_boot"].(bool),
 				Order:      bootOrder,
 			}
-			if _, ok := d.GetOk("boot_mode"); ok {
-				rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-				manageMode := rawBootMode["manage_mode"].(bool)
-				serverProfileTemplate.BootMode = ov.BootModeOption{
-					ManageMode:    &manageMode,
-					Mode:          rawBootMode["mode"].(string),
-					PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
-				}
-			}
+
+		}
+	}
+	if d.HasChange("boot_mode") {
+		rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+		manageMode := rawBootMode["manage_mode"].(bool)
+		serverProfileTemplate.BootMode = ov.BootModeOption{
+			ManageMode:    &manageMode,
+			Mode:          rawBootMode["mode"].(string),
+			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
 		}
 	}
 
-	if val, ok := d.GetOk("bios_option"); ok {
+	if d.HasChange("bios_option") {
 		// Gets Bios Options
-		rawBiosOption := val.(*schema.Set).List()
+		val := d.Get("bios_option")
+		rawBiosOption := val.([]interface{})
 		biosOption := ov.BiosOption{}
 		for _, raw := range rawBiosOption {
 			rawBiosItem := raw.(map[string]interface{})
 			// Gets OverRiddenSettings for Bios Options
-			overriddenSettings := make([]ov.BiosSettings, 0)
-			rawoverRiddenSettings := rawBiosItem["overridden_settings"].([]interface{})
-			// Gets OverRidden Settings on overriddenSettings
-			for _, vall := range rawoverRiddenSettings {
-				rawOverriddenSettingItem := vall.(map[string]interface{})
-				overriddenSettings = append(overriddenSettings, ov.BiosSettings{
-					ID:    rawOverriddenSettingItem["id"].(string),
-					Value: rawOverriddenSettingItem["value"].(string),
-				})
+			if _, ok := d.GetOk("overridden_settings"); ok {
+				overriddenSettings := make([]ov.BiosSettings, 0)
+				rawoverRiddenSettings := rawBiosItem["overridden_settings"].([]interface{})
+				// Gets OverRidden Settings on overriddenSettings
+
+				for _, vall := range rawoverRiddenSettings {
+					rawOverriddenSettingItem := vall.(map[string]interface{})
+					if d.HasChanges(rawOverriddenSettingItem["id"].(string), rawOverriddenSettingItem["value"].(string)) {
+						overriddenSetting := ov.BiosSettings{
+							ID:    rawOverriddenSettingItem["id"].(string),
+							Value: rawOverriddenSettingItem["value"].(string),
+						}
+						// checks if all elements are empty
+						// skips if empty
+						if !isStructNil(overriddenSetting) {
+							continue
+						}
+						overriddenSettings = append(overriddenSettings, overriddenSetting)
+					}
+				}
+				biosOption = ov.BiosOption{
+					OverriddenSettings: overriddenSettings,
+				}
 			}
 			// Gets Bios Options with OverRidden Settings on biosOption
 			manageBios := rawBiosItem["manage_bios"].(bool)
 			biosOption = ov.BiosOption{
-				ManageBios:         &manageBios,
-				OverriddenSettings: overriddenSettings,
+				ManageBios: &manageBios,
 			}
 		}
 		// Applies biosOption to Payload
 		serverProfileTemplate.Bios = &biosOption
 	}
+	if d.HasChange("initial_scope_uris") {
+		val := d.Get("initial_scope_uris")
+		initialScopeUrisOrder := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
+		for i, raw := range initialScopeUrisOrder {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		serverProfileTemplate.InitialScopeUris = initialScopeUris
+	}
 
-	if _, ok := d.GetOk("firmware"); ok {
+	// Get firmware details
+	if d.HasChange("firmware") {
 		rawFirmware := d.Get("firmware").(*schema.Set).List()
 		firmware := ov.FirmwareOption{}
 		for _, raw := range rawFirmware {
@@ -2054,110 +2169,127 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				FirmwareBaselineUri:      utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
 				ManageFirmware:           firmwareItem["manage_firmware"].(bool),
 				FirmwareInstallType:      firmwareItem["firmware_install_type"].(string),
-				ConsistencyState:         firmwareItem["consistency_state"].(string),
 				FirmwareActivationType:   firmwareItem["firmware_activation_type"].(string),
 				FirmwareScheduleDateTime: firmwareItem["firmware_schedule_date_time"].(string),
-				ReapplyState:             firmwareItem["reapply_state"].(string),
 			}
 		}
 		serverProfileTemplate.Firmware = firmware
 	}
 
 	// Get local storage data if provided
-	rawLocalStorage := d.Get("local_storage").([]interface{})
-	localStorage := ov.LocalStorageOptions{}
-	for _, raw := range rawLocalStorage {
-		localStorageItem := raw.(map[string]interface{})
-		rawLocalStorageController := localStorageItem["controller"].([]interface{})
-		localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
-		for _, raw2 := range rawLocalStorageController {
-			controllerData := raw2.(map[string]interface{})
-			rawLogicalDrives := controllerData["logical_drives"].([]interface{})
-			logicalDrives := make([]ov.LogicalDriveV3, 0)
-			for _, rawLogicalDrive := range rawLogicalDrives {
-				logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
-				boot := logicalDrivesItem["bootable"].(bool)
-				logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
-					Bootable:          &boot,
-					RaidLevel:         logicalDrivesItem["raid_level"].(string),
-					Accelerator:       logicalDrivesItem["accelerator"].(string),
-					DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
-					Name:              logicalDrivesItem["name"].(string),
-					NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-					NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-					SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
-				})
+	if d.HasChange("local_storage") {
+		rawLocalStorage := d.Get("local_storage").([]interface{})
+		localStorage := ov.LocalStorageOptions{}
+		for _, raw := range rawLocalStorage {
+			localStorageItem := raw.(map[string]interface{})
+			rawLocalStorageController := localStorageItem["controller"].([]interface{})
+			localStorageEmbeddedControllers := make([]ov.LocalStorageEmbeddedController, 0)
+			for _, raw2 := range rawLocalStorageController {
+				controllerData := raw2.(map[string]interface{})
+				rawLogicalDrives := controllerData["logical_drives"].([]interface{})
+				logicalDrives := make([]ov.LogicalDriveV3, 0)
+				for _, rawLogicalDrive := range rawLogicalDrives {
+					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
+					boot := logicalDrivesItem["bootable"].(bool)
+					logicalDrive := ov.LogicalDriveV3{
+						Bootable:          &boot,
+						RaidLevel:         logicalDrivesItem["raid_level"].(string),
+						Accelerator:       logicalDrivesItem["accelerator"].(string),
+						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
+						Name:              logicalDrivesItem["name"].(string),
+						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
+						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
+						SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+					}
+					// checks if all elements are empty
+					// skip if empty
+					if !isStructNil(logicalDrive) {
+						continue
+					}
+					logicalDrives = append(logicalDrives, logicalDrive)
+
+				}
+				init, _ := controllerData["initialize"].(bool)
+				localStorageEmbeddedController := ov.LocalStorageEmbeddedController{
+					DeviceSlot:             controllerData["device_slot"].(string),
+					DriveWriteCache:        controllerData["drive_write_cache"].(string),
+					Initialize:             &init,
+					ImportConfiguration:    controllerData["import_configuration"].(bool),
+					Mode:                   controllerData["mode"].(string),
+					PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
+					LogicalDrives:          logicalDrives,
+				}
+				// checks if all elements are empty
+				// skips connection if empty
+				if !isStructNil(localStorageEmbeddedController) {
+					continue
+				}
+				localStorageEmbeddedControllers = append(localStorageEmbeddedControllers, localStorageEmbeddedController)
 			}
-			init, _ := controllerData["initialize"].(bool)
-			localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
-				DeviceSlot:             controllerData["device_slot"].(string),
-				DriveWriteCache:        controllerData["drive_write_cache"].(string),
-				Initialize:             &init,
-				ImportConfiguration:    controllerData["import_configuration"].(bool),
-				Mode:                   controllerData["mode"].(string),
-				PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
-				LogicalDrives:          logicalDrives,
-			})
+			rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].([]interface{})
+			logicalJbods := make([]ov.LogicalJbod, 0)
+			for _, raw3 := range rawLocalStorageSasJbod {
+				sasLogicalJbodData := raw3.(map[string]interface{})
+				logicalJbod := ov.LogicalJbod{
+					Description:       sasLogicalJbodData["description"].(string),
+					DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
+					DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
+					DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
+					DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
+					EraseData:         sasLogicalJbodData["erase_data"].(bool),
+					ID:                sasLogicalJbodData["id"].(int),
+					Name:              sasLogicalJbodData["name"].(string),
+					NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
+					Persistent:        sasLogicalJbodData["persistent"].(bool),
+				}
+				// checks if all elements are empty
+				// skip if empty
+				if !isStructNil(logicalJbod) {
+					continue
+				}
+				logicalJbods = append(logicalJbods, logicalJbod)
+
+			}
+			localStorage = ov.LocalStorageOptions{
+				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				Initialize:         localStorageItem["initialize"].(bool),
+				Controllers:        localStorageEmbeddedControllers,
+				SasLogicalJBODs:    logicalJbods,
+			}
 		}
-		rawLocalStorageSasJbod := localStorageItem["sas_logical_jbod"].([]interface{})
-		logicalJbod := make([]ov.LogicalJbod, 0)
-		for _, raw3 := range rawLocalStorageSasJbod {
-			sasLogicalJbodData := raw3.(map[string]interface{})
-			logicalJbod = append(logicalJbod, ov.LogicalJbod{
-				Description:       sasLogicalJbodData["description"].(string),
-				DeviceSlot:        sasLogicalJbodData["drive_slot"].(string),
-				DriveMaxSizeGB:    sasLogicalJbodData["drive_max_size_gb"].(int),
-				DriveMinSizeGB:    sasLogicalJbodData["drive_min_size_gb"].(int),
-				DriveTechnology:   sasLogicalJbodData["drive_technology"].(string),
-				EraseData:         sasLogicalJbodData["erase_data"].(bool),
-				ID:                sasLogicalJbodData["id"].(int),
-				Name:              sasLogicalJbodData["name"].(string),
-				NumPhysicalDrives: sasLogicalJbodData["num_physical_drive"].(int),
-				Persistent:        sasLogicalJbodData["persistent"].(bool),
-			})
-		}
-		localStorage = ov.LocalStorageOptions{
-			ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-			Initialize:         localStorageItem["initialize"].(bool),
-			Controllers:        localStorageEmbeddedController,
-			SasLogicalJBODs:    logicalJbod,
-		}
+		serverProfileTemplate.LocalStorage = localStorage
 	}
-	serverProfileTemplate.LocalStorage = localStorage
 
 	// get SAN storage data if provided
-	rawSanStorage := d.Get("san_storage").([]interface{})
-	sanStorage := ov.SanStorageOptions{}
-	for _, raw := range rawSanStorage {
-		sanStorageItem := raw.(map[string]interface{})
-		sanStorage = ov.SanStorageOptions{
-			HostOSType:            sanStorageItem["host_os_type"].(string),
-			ManageSanStorage:      sanStorageItem["manage_san_storage"].(bool),
-			ServerHardwareTypeURI: utils.NewNstring(sanStorageItem["server_hardware_type_uri"].(string)),
-			ServerHardwareURI:     utils.NewNstring(sanStorageItem["server_hardware_uri"].(string)),
-			SerialNumber:          sanStorageItem["serial_number"].(string),
-			Type:                  sanStorageItem["type"].(string),
-			URI:                   utils.NewNstring(sanStorageItem["uri"].(string)),
+	if d.HasChange("san_storage") {
+		rawSanStorage := d.Get("san_storage").([]interface{})
+		sanStorage := ov.SanStorageOptions{}
+		for _, raw := range rawSanStorage {
+			sanStorageItem := raw.(map[string]interface{})
+			sanStorage = ov.SanStorageOptions{
+				HostOSType:       sanStorageItem["host_os_type"].(string),
+				ManageSanStorage: sanStorageItem["manage_san_storage"].(bool),
+			}
 		}
+		serverProfileTemplate.SanStorage = sanStorage
 	}
-	serverProfileTemplate.SanStorage = sanStorage
 
 	// Get volume attachment data for san storage
-	if _, ok := d.GetOk("volume_attachments"); ok {
-		rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
+	if d.HasChange("volume_attachments") {
+		rawVolumeAttachments := d.Get("volume_attachments").([]interface{})
 		volumeAttachments := make([]ov.VolumeAttachment, 0)
 		for _, rawVolumeAttachment := range rawVolumeAttachments {
 			volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
 			volumes := ov.Volume{}
 			if volumeAttachmentItem["volume"] != nil {
-				rawVolume := volumeAttachmentItem["volume"].(*schema.Set).List()
+				rawVolume := volumeAttachmentItem["volume"].([]interface{})
 				for _, rawVol := range rawVolume {
 					volumeItem := rawVol.(map[string]interface{})
 					tempIsPermanent := volumeItem["is_permanent"].(bool)
 					properties := ov.PropertiesSP{}
 					if volumeItem["properties"] != nil {
 
-						rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
+						rawVolumeProperties := volumeItem["properties"].([]interface{})
 						for _, rawVolProp := range rawVolumeProperties {
 							propertyItem := rawVolProp.(map[string]interface{})
 							tempIsShareable := propertyItem["is_shareable"].(bool)
@@ -2185,14 +2317,13 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 							}
 						}
 					}
-					if val, ok := d.GetOk(volumeItem["initial_scope_uris"].(string)); ok {
-						rawInitialScopeUris := val.(*schema.Set).List()
-						initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-						for i, raw := range rawInitialScopeUris {
-							initialScopeUris[i] = utils.Nstring(raw.(string))
-						}
-						volumes.InitialScopeUris = initialScopeUris
+					rawInitialScopeUris := volumeItem["initial_scope_uris"].(*schema.Set).List()
+					initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+					for i, raw := range rawInitialScopeUris {
+						initialScopeUris[i] = utils.Nstring(raw.(string))
 					}
+					volumes.InitialScopeUris = initialScopeUris
+					//}
 					volumes = ov.Volume{
 						IsPermanent: &tempIsPermanent,
 						Properties:  &properties,
@@ -2203,7 +2334,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			// get volumeAttachemts.storagepaths
 			storagePaths := make([]ov.StoragePath, 0)
 			if volumeAttachmentItem["storage_paths"] != nil {
-				rawStoragePaths := volumeAttachmentItem["storage_paths"].(*schema.Set).List()
+				rawStoragePaths := volumeAttachmentItem["storage_paths"].([]interface{})
 
 				for _, rawStoragePath := range rawStoragePaths {
 					storagePathItem := rawStoragePath.(map[string]interface{})
@@ -2211,7 +2342,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					// get volumeAttachemts.storagepaths.targets
 					targets := make([]ov.Target, 0)
 					if storagePathItem["targets"] != nil {
-						rawStorageTargets := storagePathItem["targets"].(*schema.Set).List()
+						rawStorageTargets := storagePathItem["targets"].([]interface{})
 						for _, rawStorageTarget := range rawStorageTargets {
 							storageTargetItem := rawStorageTarget.(map[string]interface{})
 							targets = append(targets, ov.Target{
@@ -2221,17 +2352,23 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 							})
 						}
 					}
-					storagePaths = append(storagePaths, ov.StoragePath{
+					storagePath := ov.StoragePath{
 						ConnectionID:   storagePathItem["connection_id"].(int),
 						IsEnabled:      storagePathItem["is_enabled"].(bool),
 						NetworkUri:     utils.NewNstring(storagePathItem["network_uri"].(string)),
 						Status:         storagePathItem["status"].(string),
 						Targets:        targets,
 						TargetSelector: storagePathItem["target_selector"].(string),
-					})
+					}
+					// checks if all elements are empty
+					// skips if empty
+					if !isStructNil(storagePath) {
+						continue
+					}
+					storagePaths = append(storagePaths, storagePath)
 				}
 			}
-			volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
+			volumeAttachment := ov.VolumeAttachment{
 				ID:                             volumeAttachmentItem["id"].(int),
 				LUN:                            volumeAttachmentItem["lun"].(string),
 				LUNType:                        volumeAttachmentItem["lun_type"].(string),
@@ -2243,13 +2380,21 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				StoragePaths:                   storagePaths,
 				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
 				Volume:                         &volumes,
-			})
+			}
+			// checks if all elements are empty
+			// skips if empty
+			if !isStructNil(volumeAttachment) {
+				continue
+			}
+			volumeAttachments = append(volumeAttachments, volumeAttachment)
+
 		}
 		serverProfileTemplate.SanStorage.VolumeAttachments = volumeAttachments
 	}
 
-	if _, ok := d.GetOk("os_deployment_settings"); ok {
-		rawOsDeploySetting := d.Get("os_deployment_settings").(*schema.Set).List()
+	if d.HasChange("os_deployment_settings") {
+		val := d.Get("os_deployment_settings")
+		rawOsDeploySetting := val.(*schema.Set).List()
 		osDeploySetting := ov.OSDeploymentSettings{}
 		for _, raw := range rawOsDeploySetting {
 			osDeploySettingItem := raw.(map[string]interface{})
@@ -2289,10 +2434,9 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		}
 		serverProfileTemplate.OSDeploymentSettings = osDeploySetting
 	}
-
-	err = config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
-	if err != nil {
-		return err
+	err_create := config.ovClient.UpdateProfileTemplate(serverProfileTemplate)
+	if err_create != nil {
+		return err_create
 	}
 	d.SetId(d.Get("name").(string))
 
