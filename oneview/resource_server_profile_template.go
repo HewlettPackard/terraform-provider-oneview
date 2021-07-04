@@ -838,7 +838,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"lun_type": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 						"boot_volume_priority": {
 							Type:     schema.TypeString,
@@ -2095,15 +2095,14 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				Order:      bootOrder,
 			}
 
-		}
-	}
-	if d.HasChange("boot_mode") {
-		rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
-		manageMode := rawBootMode["manage_mode"].(bool)
-		serverProfileTemplate.BootMode = ov.BootModeOption{
-			ManageMode:    &manageMode,
-			Mode:          rawBootMode["mode"].(string),
-			PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+			rawBootMode := d.Get("boot_mode").(*schema.Set).List()[0].(map[string]interface{})
+			manageMode := rawBootMode["manage_mode"].(bool)
+			serverProfileTemplate.BootMode = ov.BootModeOption{
+				ManageMode:    &manageMode,
+				Mode:          rawBootMode["mode"].(string),
+				PXEBootPolicy: utils.Nstring(rawBootMode["pxe_boot_policy"].(string)),
+			}
+
 		}
 	}
 
