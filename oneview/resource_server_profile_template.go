@@ -819,7 +819,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"volume_attachments": {
 				Optional: true,
-				Computed: true,
 				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -913,7 +912,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"volume": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"initial_scope_uris": {
@@ -1929,11 +1927,14 @@ func isStructNil(x interface{}) bool {
 func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	serverProfileTemplate := ov.ServerProfile{
-		Name: d.Get("name").(string),
-		Type: d.Get("type").(string),
-		URI:  utils.NewNstring(d.Get("uri").(string)),
-		ETAG: d.Get("etag").(string),
+	serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(d.Id())
+	if err != nil {
+		return err
+	}
+
+	if d.HasChange("name") {
+		val := d.Get("name")
+		serverProfileTemplate.Name = val.(string)
 	}
 
 	if d.HasChange("affinity") {
