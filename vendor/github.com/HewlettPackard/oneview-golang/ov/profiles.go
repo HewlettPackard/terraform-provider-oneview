@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -105,64 +106,135 @@ type AvailableTarget struct {
 	Members []Servers `json:"targets, omitempty"`
 }
 
-type ManagementProcessor struct {
-	ComplianceControl string       `json:"complianceControl,omitempty"` // complianceControl
-	ManageMp          bool         `json:"manageMp,omitempty"`
-	MpSettings        []mpSettings `json:"mpSettings,omitempty"`
-	ReapplyState      string       `json:"reapplyState,omitempty"`
+type KeyManager struct {
+	PrimaryServerAddress   string `json:"-"`
+	PrimaryServerPort      int    `json:"-"`
+	SecondaryServerAddress string `json:"-"`
+	SecondaryServerPort    int    `json:"-"`
+	RedundancyRequired     *bool  `json:"-"`
+	GroupName              string `json:"-"`
+	CertificateName        string `json:"-"`
+	LoginName              string `json:"-"`
+	Password               string `json:"-"`
 }
-type mpSettings struct {
-	Args        string `json:"args, omitempty"`
-	SettingType string `json:"settingType, omitempty"`
+
+type Directory struct {
+	DirectoryAuthentication    string   `json:"-"`
+	DirectoryGenericLDAP       *bool    `json:"-"`
+	DirectoryServerAddress     string   `json:"-"`
+	DirectoryServerPort        int      `json:"-"`
+	DirectoryServerCertificate string   `json:"-"`
+	DirectoryUserContext       []string `json:"-"`
+	IloObjectDistinguishedName string   `json:"-"`
+	Password                   string   `json:"-"`
+	KerberosAuthentication     *bool    `json:"-"`
+	KerberosRealm              string   `json:"-"`
+	KerberosKDCServerAddress   string   `json:"-"`
+	KerberosKDCServerPort      int      `json:"-"`
+	KerberosKeytab             string   `json:"-"`
+}
+
+type DirectoryGroups struct {
+	GroupDN                  string `json:"-"`
+	GroupSID                 string `json:"-"`
+	UserConfigPriv           *bool  `json:"-"`
+	RemoteConsolePriv        *bool  `json:"-"`
+	VirtualMediaPriv         *bool  `json:"-"`
+	VirtualPowerAndResetPriv *bool  `json:"-"`
+	ILOConfigPriv            *bool  `json:"-"`
+}
+
+type LocalAccounts struct {
+	UserName                 string `json:"-"`
+	DisplayName              string `json:"-"`
+	Password                 string `json:"-"`
+	UserConfigPriv           *bool  `json:"-"`
+	RemoteConsolePriv        *bool  `json:"-"`
+	VirtualMediaPriv         *bool  `json:"-"`
+	VirtualPowerAndResetPriv *bool  `json:"-"`
+	ILOConfigPriv            *bool  `json:"-"`
+}
+
+type AdministratorAccount struct {
+	DeleteAdministratorAccount *bool  `json:"-"`
+	Password                   string `json:"-"`
+}
+
+type ManagementProcessors struct {
+	ComplianceControl string     `json:"-"`
+	ManageMp          bool       `json:"-"`
+	MpSetting         MpSettings `json:"-"`
+	ReapplyState      string     `json:"-"`
+}
+
+type MpSettings struct {
+	AdministratorAccount AdministratorAccount `json:"-"`
+	LocalAccounts        []LocalAccounts      `json:"-"`
+	Directory            Directory            `json:"-"`
+	DirectoryGroups      []DirectoryGroups    `json:"-"`
+	KeyManager           KeyManager           `json:"-"`
+}
+
+type MpSetting struct {
+	Args        map[string]interface{} `json:"args, omitempty"`
+	SettingType string                 `json:"settingType, omitempty"`
+}
+
+type IntManagementProcessor struct {
+	ComplianceControl string      `json:"complianceControl,omitempty"` // complianceControl
+	ManageMp          bool        `json:"manageMp,omitempty"`
+	MpSettings        []MpSetting `json:"mpSettings,omitempty"`
+	ReapplyState      string      `json:"reapplyState,omitempty"`
 }
 
 // ServerProfile - server profile object for ov
 type ServerProfile struct {
-	Affinity                   string               `json:"affinity,omitempty"`         // "affinity": "Bay",
-	AssociatedServer           utils.Nstring        `json:"associatedServer,omitempty"` // "associatedServer": null,
-	Bios                       *BiosOption          `json:"bios,omitempty"`             // "bios": {	},
-	Boot                       BootManagement       `json:"boot,omitempty"`             // "boot": { },
-	BootMode                   BootModeOption       `json:"bootMode,omitempty"`         // "bootMode": {},
-	Category                   string               `json:"category,omitempty"`         // "category": "server-profiles",
-	ConnectionSettings         ConnectionSettings   `json:"connectionSettings,omitempty"`
-	Created                    string               `json:"created,omitempty"`                    // "created": "20150831T154835.250Z",
-	Description                string               `json:"description,omitempty"`                // "description": "Docker Machine Bay 16",
-	ETAG                       string               `json:"eTag,omitempty"`                       // "eTag": "1441036118675/8"
-	EnclosureBay               int                  `json:"enclosureBay,omitempty"`               // "enclosureBay": 16,
-	EnclosureGroupURI          utils.Nstring        `json:"enclosureGroupUri,omitempty"`          // "enclosureGroupUri": "/rest/enclosure-groups/56ad0069-8362-42fd-b4e3-f5c5a69af039",
-	EnclosureURI               utils.Nstring        `json:"enclosureUri,omitempty"`               // "enclosureUri": "/rest/enclosures/092SN51207RR",
-	Firmware                   FirmwareOption       `json:"firmware,omitempty"`                   // "firmware": { },
-	HideUnusedFlexNics         bool                 `json:"hideUnusedFlexNics"`                   // "hideUnusedFlexNics": false,
-	InProgress                 bool                 `json:"inProgress,omitempty"`                 // "inProgress": false,
-	InitialScopeUris           []utils.Nstring      `json:"initialScopeUris,omitempty"`           // "initialScopeUris":[],
-	IscsiInitiatorName         string               `json:"iscsiInitiatorName,omitempty"`         //When iscsiInitatorNameType is set to UserDefined
-	IscsiInitiatorNameType     string               `json:"iscsiInitiatorNameType,omitempty"`     //When set to UserDefined, the value of iscsiInitatorName is used as provided
-	LocalStorage               LocalStorageOptions  `json:"localStorage,omitempty"`               // "localStorage": {},
-	MACType                    string               `json:"macType,omitempty"`                    // "macType": "Physical",
-	ManagementProcessor        *ManagementProcessor `json:"managementProcessor,omitempty"`        //
-	Modified                   string               `json:"modified,omitempty"`                   // "modified": "20150902T175611.657Z",
-	Name                       string               `json:"name,omitempty"`                       // "name": "Server_Profile_scs79",
-	OSDeploymentSettings       OSDeploymentSettings `json:"osDeploymentSettings,omitempty"`       // "osDeploymentSettings": {...},
-	ProfileUUID                utils.Nstring        `json:"profileUUID,omitempty"`                //The automatically generated 36-byte Universally Unique ID of the server profile.
-	RefreshState               string               `json:"refreshState,omitempty"`               //Current refresh State of this Server Profile
-	SanStorage                 SanStorageOptions    `json:"sanStorage,omitempty"`                 // "sanStorage": {},
-	ScopesUri                  utils.Nstring        `json:"scopesUri,omitempty"`                  // "scopesUri": "/rest/scopes/resources/rest/server-profiles/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
-	SerialNumber               utils.Nstring        `json:"serialNumber,omitempty"`               // "serialNumber": "2M25090RMW",
-	SerialNumberType           string               `json:"serialNumberType,omitempty"`           // "serialNumberType": "Physical",
-	ServerHardwareReapplyState string               `json:"serverHardwareReapplyState,omitempty"` //Current reapply state of the server that is associated with this server profile
-	ServerHardwareTypeURI      utils.Nstring        `json:"serverHardwareTypeUri,omitempty"`      // "serverHardwareTypeUri": "/rest/server-hardware-types/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
-	ServerHardwareURI          utils.Nstring        `json:"serverHardwareUri,omitempty"`          // "serverHardwareUri": "/rest/server-hardware/30373237-3132-4D32-3235-303930524D57",
-	ServerProfileDescription   string               `json:"serverProfileDescription,omitempty"`   // "serverProfileDescription":
-	ServerProfileTemplateURI   utils.Nstring        `json:"serverProfileTemplateUri,omitempty"`   // undocmented option
-	ServiceManager             string               `json:"serviceManager,omitempty"`             //Name of a service manager that is designated owner of the profile
-	State                      string               `json:"state,omitempty"`                      // "state": "Normal",
-	Status                     string               `json:"status,omitempty"`                     // "status": "Critical",
-	TaskURI                    utils.Nstring        `json:"taskUri,omitempty"`                    // "taskUri": "/rest/tasks/6F0DF438-7D30-41A2-A36D-62AB866BC7E8",
-	TemplateCompliance         string               `json:"templateCompliance,omitempty"`         // v2 Compliant, NonCompliant, Unknown
-	Type                       string               `json:"type,omitempty"`                       // "type": "ServerProfileV4",
-	URI                        utils.Nstring        `json:"uri,omitempty"`                        // "uri": "/rest/server-profiles/9979b3a4-646a-4c3e-bca6-80ca0b403a93",
-	UUID                       utils.Nstring        `json:"uuid,omitempty"`                       // "uuid": "30373237-3132-4D32-3235-303930524D57",
-	WWNType                    string               `json:"wwnType,omitempty"`                    // "wwnType": "Physical",
+	Affinity                   string                 `json:"affinity,omitempty"`         // "affinity": "Bay",
+	AssociatedServer           utils.Nstring          `json:"associatedServer,omitempty"` // "associatedServer": null,
+	Bios                       *BiosOption            `json:"bios,omitempty"`             // "bios": {	},
+	Boot                       BootManagement         `json:"boot,omitempty"`             // "boot": { },
+	BootMode                   BootModeOption         `json:"bootMode,omitempty"`         // "bootMode": {},
+	Category                   string                 `json:"category,omitempty"`         // "category": "server-profiles",
+	ConnectionSettings         ConnectionSettings     `json:"connectionSettings,omitempty"`
+	Created                    string                 `json:"created,omitempty"`                    // "created": "20150831T154835.250Z",
+	Description                string                 `json:"description,omitempty"`                // "description": "Docker Machine Bay 16",
+	ETAG                       string                 `json:"eTag,omitempty"`                       // "eTag": "1441036118675/8"
+	EnclosureBay               int                    `json:"enclosureBay,omitempty"`               // "enclosureBay": 16,
+	EnclosureGroupURI          utils.Nstring          `json:"enclosureGroupUri,omitempty"`          // "enclosureGroupUri": "/rest/enclosure-groups/56ad0069-8362-42fd-b4e3-f5c5a69af039",
+	EnclosureURI               utils.Nstring          `json:"enclosureUri,omitempty"`               // "enclosureUri": "/rest/enclosures/092SN51207RR",
+	Firmware                   FirmwareOption         `json:"firmware,omitempty"`                   // "firmware": { },
+	HideUnusedFlexNics         bool                   `json:"hideUnusedFlexNics"`                   // "hideUnusedFlexNics": false,
+	InProgress                 bool                   `json:"inProgress,omitempty"`                 // "inProgress": false,
+	InitialScopeUris           []utils.Nstring        `json:"initialScopeUris,omitempty"`           // "initialScopeUris":[],
+	IscsiInitiatorName         string                 `json:"iscsiInitiatorName,omitempty"`         //When iscsiInitatorNameType is set to UserDefined
+	IscsiInitiatorNameType     string                 `json:"iscsiInitiatorNameType,omitempty"`     //When set to UserDefined, the value of iscsiInitatorName is used as provided
+	LocalStorage               LocalStorageOptions    `json:"localStorage,omitempty"`               // "localStorage": {},
+	MACType                    string                 `json:"macType,omitempty"`                    // "macType": "Physical",
+	ManagementProcessors       ManagementProcessors   `json:"-"`                                    //
+	ManagementProcessor        IntManagementProcessor `json:"managementProcessor,omitempty"`        //
+	Modified                   string                 `json:"modified,omitempty"`                   // "modified": "20150902T175611.657Z",
+	Name                       string                 `json:"name,omitempty"`                       // "name": "Server_Profile_scs79",
+	OSDeploymentSettings       OSDeploymentSettings   `json:"osDeploymentSettings,omitempty"`       // "osDeploymentSettings": {...},
+	ProfileUUID                utils.Nstring          `json:"profileUUID,omitempty"`                //The automatically generated 36-byte Universally Unique ID of the server profile.
+	RefreshState               string                 `json:"refreshState,omitempty"`               //Current refresh State of this Server Profile
+	SanStorage                 SanStorageOptions      `json:"sanStorage,omitempty"`                 // "sanStorage": {},
+	ScopesUri                  utils.Nstring          `json:"scopesUri,omitempty"`                  // "scopesUri": "/rest/scopes/resources/rest/server-profiles/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
+	SerialNumber               utils.Nstring          `json:"serialNumber,omitempty"`               // "serialNumber": "2M25090RMW",
+	SerialNumberType           string                 `json:"serialNumberType,omitempty"`           // "serialNumberType": "Physical",
+	ServerHardwareReapplyState string                 `json:"serverHardwareReapplyState,omitempty"` //Current reapply state of the server that is associated with this server profile
+	ServerHardwareTypeURI      utils.Nstring          `json:"serverHardwareTypeUri,omitempty"`      // "serverHardwareTypeUri": "/rest/server-hardware-types/DB7726F7-F601-4EA8-B4A6-D1EE1B32C07C",
+	ServerHardwareURI          utils.Nstring          `json:"serverHardwareUri,omitempty"`          // "serverHardwareUri": "/rest/server-hardware/30373237-3132-4D32-3235-303930524D57",
+	ServerProfileDescription   string                 `json:"serverProfileDescription,omitempty"`   // "serverProfileDescription":
+	ServerProfileTemplateURI   utils.Nstring          `json:"serverProfileTemplateUri,omitempty"`   // undocmented option
+	ServiceManager             string                 `json:"serviceManager,omitempty"`             //Name of a service manager that is designated owner of the profile
+	State                      string                 `json:"state,omitempty"`                      // "state": "Normal",
+	Status                     string                 `json:"status,omitempty"`                     // "status": "Critical",
+	TaskURI                    utils.Nstring          `json:"taskUri,omitempty"`                    // "taskUri": "/rest/tasks/6F0DF438-7D30-41A2-A36D-62AB866BC7E8",
+	TemplateCompliance         string                 `json:"templateCompliance,omitempty"`         // v2 Compliant, NonCompliant, Unknown
+	Type                       string                 `json:"type,omitempty"`                       // "type": "ServerProfileV4",
+	URI                        utils.Nstring          `json:"uri,omitempty"`                        // "uri": "/rest/server-profiles/9979b3a4-646a-4c3e-bca6-80ca0b403a93",
+	UUID                       utils.Nstring          `json:"uuid,omitempty"`                       // "uuid": "30373237-3132-4D32-3235-303930524D57",
+	WWNType                    string                 `json:"wwnType,omitempty"`                    // "wwnType": "Physical",
 }
 
 // GetConnectionByName gets the connection from a profile with a given name
@@ -355,6 +427,12 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 		return errors.New("Server Hardware must be powered off to assign to the server profile")
 	}
 
+	var emptyMgmtProcessorsStruct ManagementProcessors
+	if !reflect.DeepEqual(p.ManagementProcessors, emptyMgmtProcessorsStruct) {
+		mp := SetMp(p.ManagementProcessors)
+		p.ManagementProcessor = mp
+	}
+
 	data, err := c.RestAPICall(rest.POST, uri, p)
 	if err != nil {
 		t.TaskIsDone = true
@@ -519,6 +597,13 @@ func (c *OVClient) UpdateServerProfile(p ServerProfile) error {
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, p)
 	log.Debugf("task -> %+v", t)
+
+	var emptyMgmtProcessorsStruct ManagementProcessors
+	if !reflect.DeepEqual(p.ManagementProcessors, emptyMgmtProcessorsStruct) {
+		mp := SetMp(p.ManagementProcessors)
+		p.ManagementProcessor = mp
+	}
+
 	data, err := c.RestAPICall(rest.PUT, uri, p)
 	if err != nil {
 		t.TaskIsDone = true

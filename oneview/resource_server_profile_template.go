@@ -635,9 +635,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Computed: true,
 			},
 			"management_processor": {
-				Optional: true,
 				Type:     schema.TypeList,
-				MaxItems: 1,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"compliance_control": {
@@ -649,7 +648,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Optional: true,
 						},
 						"reapply_state": {
-							Type:     schema.TypeBool,
+							Type:     schema.TypeString,
 							Optional: true,
 						},
 						"mp_settings": {
@@ -657,13 +656,205 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"args": {
-										Type:     schema.TypeString,
+									"administrator_account": {
+										Type:     schema.TypeList,
 										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"delete_administrator_account": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"password": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
 									},
-									"setting_type": {
-										Type:     schema.TypeBool,
+									"directory": {
+										Type:     schema.TypeList,
+										MaxItems: 1,
 										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"directory_authentication": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"directory_generic_ldap": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"directory_server_address": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"directory_server_port": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"directory_server_certificate": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"directory_user_context": {
+													Type:     schema.TypeSet,
+													Optional: true,
+													Elem:     &schema.Schema{Type: schema.TypeString},
+													Set:      schema.HashString,
+												},
+												"ilo_distinguished_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"password": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"kerberos_authentication": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"kerberos_realm": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"kerberos_kdc_server_address": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"kerberos_kdc_server_port": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"kerberos_key_tab": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+									"key_manager": {
+										MaxItems: 1,
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"primary_server_address": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"primary_server_port": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"secondary_server_address": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"secondary_server_port": {
+													Type:     schema.TypeInt,
+													Optional: true,
+												},
+												"redundancy_required": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"group_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"certificate_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"login_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"password": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+									"directory_groups": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"group_dn": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"group_sid": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"user_config_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"remote_console_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"virtual_media_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"virtual_power_and_reset_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"ilo_config_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+											},
+										},
+									},
+									"local_accounts": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"user_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"display_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"password": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"user_config_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"remote_console_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"virtual_media_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"virtual_power_and_reset_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"ilo_config_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+											},
+										},
 									},
 								},
 							},
@@ -1084,6 +1275,125 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
+	if val, ok := d.GetOk("management_processor"); ok {
+		mps := val.([]interface{})
+		ovManagementProcessor := ov.ManagementProcessors{}
+		for _, rawMp := range mps {
+			// extracting management processor
+			mp := rawMp.(map[string]interface{})
+			// extracting MpSettings
+			ovMpSettings := ov.MpSettings{}
+			mpSettings := mp["mp_settings"].([]interface{})
+			for _, mpSettingg := range mpSettings {
+				mpSetting := mpSettingg.(map[string]interface{})
+				// extracting administrator account
+				rawAdminAcc := mpSetting["administrator_account"].([]interface{})
+				ovAdminAcc := ov.AdministratorAccount{}
+				for _, adminAccs := range rawAdminAcc {
+					adminAcc := adminAccs.(map[string]interface{})
+					ovAdminAcc = ov.AdministratorAccount{
+						DeleteAdministratorAccount: GetBoolPointer(adminAcc["delete_administrator_account"].(bool)),
+						Password:                   adminAcc["password"].(string),
+					}
+				}
+				// extracting directory
+				rawDirectory := mpSetting["directory"].([]interface{})
+				ovDirectory := ov.Directory{}
+				for _, directoryy := range rawDirectory {
+					directory := directoryy.(map[string]interface{})
+
+					directoryUserContexts := make([]string, 0)
+					for _, raw := range directory["directory_user_context"].(*schema.Set).List() {
+						directoryUserContexts = append(directoryUserContexts, raw.(string))
+					}
+
+					ovDirectory = ov.Directory{
+						DirectoryAuthentication:    directory["directory_authentication"].(string),
+						DirectoryGenericLDAP:       GetBoolPointer(directory["directory_generic_ldap"].(bool)),
+						DirectoryServerAddress:     directory["directory_server_address"].(string),
+						DirectoryServerPort:        directory["directory_server_port"].(int),
+						DirectoryServerCertificate: directory["directory_server_certificate"].(string),
+						DirectoryUserContext:       directoryUserContexts,
+						IloObjectDistinguishedName: directory["ilo_distinguished_name"].(string),
+						Password:                   directory["password"].(string),
+						KerberosAuthentication:     GetBoolPointer(directory["kerberos_authentication"].(bool)),
+						KerberosRealm:              directory["kerberos_realm"].(string),
+						KerberosKDCServerAddress:   directory["kerberos_kdc_server_address"].(string),
+						KerberosKDCServerPort:      directory["kerberos_kdc_server_port"].(int),
+						KerberosKeytab:             directory["kerberos_key_tab"].(string),
+					}
+				}
+
+				// extracting key manager
+				rawKeyManager := mpSetting["key_manager"].([]interface{})
+				ovKeyManager := ov.KeyManager{}
+				for _, keyManagerr := range rawKeyManager {
+					keyManager := keyManagerr.(map[string]interface{})
+					ovKeyManager = ov.KeyManager{
+						PrimaryServerAddress:   keyManager["primary_server_address"].(string),
+						PrimaryServerPort:      keyManager["primary_server_port"].(int),
+						SecondaryServerAddress: keyManager["secondary_server_address"].(string),
+						SecondaryServerPort:    keyManager["secondary_server_port"].(int),
+						RedundancyRequired:     GetBoolPointer(keyManager["redundancy_required"].(bool)),
+						GroupName:              keyManager["group_name"].(string),
+						CertificateName:        keyManager["certificate_name"].(string),
+						LoginName:              keyManager["login_name"].(string),
+						Password:               keyManager["password"].(string),
+					}
+				}
+
+				// extracting directory groups
+				rawDirectoryGroups := mpSetting["directory_groups"].([]interface{})
+				ovDirectoryGroups := make([]ov.DirectoryGroups, 0)
+				for _, directoryGroupp := range rawDirectoryGroups {
+					directoryGroup := directoryGroupp.(map[string]interface{})
+					ovDirectoryGroups = append(ovDirectoryGroups, ov.DirectoryGroups{
+						GroupDN:                  directoryGroup["group_dn"].(string),
+						GroupSID:                 directoryGroup["group_sid"].(string),
+						UserConfigPriv:           GetBoolPointer(directoryGroup["user_config_priv"].(bool)),
+						RemoteConsolePriv:        GetBoolPointer(directoryGroup["remote_console_priv"].(bool)),
+						VirtualMediaPriv:         GetBoolPointer(directoryGroup["virtual_media_priv"].(bool)),
+						VirtualPowerAndResetPriv: GetBoolPointer(directoryGroup["virtual_power_and_reset_priv"].(bool)),
+						ILOConfigPriv:            GetBoolPointer(directoryGroup["ilo_config_priv"].(bool)),
+					})
+				}
+
+				// extracting local accounts
+				rawLocalAccounts := mpSetting["local_accounts"].([]interface{})
+				ovLocalAccounts := make([]ov.LocalAccounts, 0)
+				for _, localAccounts := range rawLocalAccounts {
+					localAccount := localAccounts.(map[string]interface{})
+					ovLocalAccounts = append(ovLocalAccounts, ov.LocalAccounts{
+						UserName:                 localAccount["user_name"].(string),
+						DisplayName:              localAccount["display_name"].(string),
+						Password:                 localAccount["password"].(string),
+						UserConfigPriv:           GetBoolPointer(localAccount["user_config_priv"].(bool)),
+						RemoteConsolePriv:        GetBoolPointer(localAccount["remote_console_priv"].(bool)),
+						VirtualMediaPriv:         GetBoolPointer(localAccount["virtual_media_priv"].(bool)),
+						VirtualPowerAndResetPriv: GetBoolPointer(localAccount["virtual_power_and_reset_priv"].(bool)),
+						ILOConfigPriv:            GetBoolPointer(localAccount["ilo_config_priv"].(bool)),
+					})
+				}
+
+				// setting MpSettings
+				ovMpSettings = ov.MpSettings{
+					AdministratorAccount: ovAdminAcc,
+					LocalAccounts:        ovLocalAccounts,
+					Directory:            ovDirectory,
+					DirectoryGroups:      ovDirectoryGroups,
+					KeyManager:           ovKeyManager,
+				}
+			}
+
+			// setting ManagementProcessor
+			ovManagementProcessor = ov.ManagementProcessors{
+				ManageMp:  mp["manage_mp"].(bool),
+				MpSetting: ovMpSettings,
+			}
+
+		}
+		serverProfileTemplate.ManagementProcessors = ovManagementProcessor
+	}
 	if val, ok := d.GetOk("connection_settings"); ok {
 		connections := val.([]interface{})
 		for _, rawConSettings := range connections {
@@ -1599,6 +1909,220 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		d.Set("bios_option", biosOptions)
 	}
 
+	emptyManagementProcessor := ov.IntManagementProcessor{}
+	if !reflect.DeepEqual(spt.ManagementProcessor, emptyManagementProcessor) {
+		mpSettings := make([]map[string]interface{}, 0)
+		if len(spt.ManagementProcessor.MpSettings) != 0 {
+			// initializing schema variables...
+			adminAcc := make([]map[string]interface{}, 1)
+			directory := make([]map[string]interface{}, 1)
+			keyManager := make([]map[string]interface{}, 1)
+			directoryGroups := make([]map[string]interface{}, 0)
+			localAccounts := make([]map[string]interface{}, 0)
+
+			for _, val := range spt.ManagementProcessor.MpSettings {
+
+				if val.SettingType == "AdministratorAccount" {
+					// initializing 0th location...
+					adminAcc[0] = map[string]interface{}{}
+					// adding attributes if they exists...
+
+					if daa, ok := val.Args["deleteAdministratorAccount"]; ok {
+						adminAcc[0]["delete_administrator_account"] = daa
+					}
+					if pass, ok := val.Args["password"]; ok {
+						if pass != nil {
+							adminAcc[0]["password"] = pass
+						}
+					}
+				}
+
+				if val.SettingType == "Directory" {
+					// initializing 0th location...
+					directory[0] = map[string]interface{}{}
+
+					// adding attributes if they exists...
+					if dgl, ok := val.Args["directoryGenericLDAP"]; ok {
+						directory[0]["directory_generic_ldap"] = dgl
+					}
+					if dsa, ok := val.Args["directoryServerAddress"]; ok {
+						directory[0]["directory_server_address"] = dsa
+					}
+					if dsp, ok := val.Args["directoryServerPort"]; ok {
+						directory[0]["directory_server_port"] = dsp
+					}
+					if dsc, ok := val.Args["directoryServerCertificate"]; ok {
+						directory[0]["directory_server_certificate"] = dsc
+					}
+					if iodn, ok := val.Args["iloObjectDistinguishedName"]; ok {
+						directory[0]["ilo_distinguished_name"] = iodn
+					}
+					if p, ok := val.Args["password"]; ok {
+						if p != nil {
+							directory[0]["password"] = p
+						}
+					}
+					if ka, ok := val.Args["kerberosAuthentication"]; ok {
+						directory[0]["kerberos_authentication"] = ka
+					}
+					if kr, ok := val.Args["kerberosRealm"]; ok {
+						directory[0]["kerberos_realm"] = kr
+					}
+					if kksa, ok := val.Args["kerberosKDCServerAddress"]; ok {
+						directory[0]["kerberos_kdc_server_address"] = kksa
+					}
+					if kksp, ok := val.Args["kerberosKDCServerPort"]; ok {
+						directory[0]["kerberos_kdc_server_port"] = kksp
+					}
+					if kkt, ok := val.Args["kerberosKeytab"]; ok {
+						directory[0]["kerberos_key_tab"] = kkt
+					}
+					if duc, ok := val.Args["directoryUserContext"]; ok {
+						ducSet := []string{}
+						switch reflect.TypeOf(duc).Kind() {
+						case reflect.Slice:
+							s := reflect.ValueOf(duc)
+							for i := 0; i < s.Len(); i++ {
+								ducSet = append(ducSet, s.Index(i).Interface().(string))
+							}
+							directory[0]["directory_user_context"] = ducSet
+						}
+					}
+				}
+				if val.SettingType == "DirectoryGroups" {
+					if dga, ok := val.Args["directoryGroupAccounts"]; ok {
+						// dectectng type of interface value
+						switch reflect.TypeOf(dga).Kind() {
+						case reflect.Slice:
+							s := reflect.ValueOf(dga)
+							for i := 0; i < s.Len(); i++ {
+								// since slice elements will be maps converting interface to map
+								w := s.Index(i).Interface().(map[string]interface{})
+								dg := map[string]interface{}{}
+								if gd, ok := w["groupDN"]; ok {
+									dg["group_dn"] = gd
+								}
+								if gs, ok := w["groupSID"]; ok {
+									dg["group_sid"] = gs
+								}
+								if ucp, ok := w["userConfigPriv"]; ok {
+									dg["user_config_priv"] = ucp
+								}
+								if rcp, ok := w["remoteConsolePriv"]; ok {
+									dg["remote_console_priv"] = rcp
+								}
+								if vmp, ok := w["virtualMediaPriv"]; ok {
+									dg["virtual_media_priv"] = vmp
+								}
+								if vparp, ok := w["virtualPowerAndResetPriv"]; ok {
+									dg["virtual_power_and_reset_priv"] = vparp
+								}
+								if icp, ok := w["iLOConfigPriv"]; ok {
+									dg["ilo_config_priv"] = icp
+								}
+								// adding directory groups
+								directoryGroups = append(directoryGroups, dg)
+							}
+						}
+					}
+				}
+
+				if val.SettingType == "LocalAccounts" {
+					if las, ok := val.Args["localAccounts"]; ok {
+						// dectectng type of interface value
+						switch reflect.TypeOf(las).Kind() {
+						case reflect.Slice:
+							s := reflect.ValueOf(las)
+							for i := 0; i < s.Len(); i++ {
+								// since slice elements will be maps converting interface to map
+								w := s.Index(i).Interface().(map[string]interface{})
+								la := map[string]interface{}{}
+								if un, ok := w["userName"]; ok {
+									la["user_name"] = un
+								}
+								if dn, ok := w["displayName"]; ok {
+									la["display_name"] = dn
+								}
+								if p, ok := w["password"]; ok {
+									if p != nil {
+										la["password"] = p
+									}
+								}
+								if ucp, ok := w["userConfigPriv"]; ok {
+									la["user_config_priv"] = ucp
+								}
+								if rcp, ok := w["remoteConsolePriv"]; ok {
+									la["remote_console_priv"] = rcp
+								}
+								if vmp, ok := w["virtualMediaPriv"]; ok {
+									la["virtual_media_priv"] = vmp
+								}
+								if vpar, ok := w["virtualPowerAndResetPriv"]; ok {
+									la["virtual_power_and_reset_priv"] = vpar
+								}
+								if icp, ok := w["iLOConfigPriv"]; ok {
+									la["ilo_config_priv"] = icp
+								}
+								// adding local account
+								localAccounts = append(localAccounts, la)
+							}
+						}
+					}
+				}
+
+				if val.SettingType == "KeyManager" {
+					// initializing 0th location...
+					keyManager[0] = map[string]interface{}{}
+					// extratcing values if exists...
+					if psa, ok := val.Args["primaryServerAddress"]; ok {
+						keyManager[0]["primary_server_address"] = psa
+					}
+					if psp, ok := val.Args["primaryServerPort"]; ok {
+						keyManager[0]["primary_server_port"] = psp
+					}
+					if ssa, ok := val.Args["secondaryServerAddress"]; ok {
+						keyManager[0]["secondary_server_address"] = ssa
+					}
+					if ssp, ok := val.Args["secondaryServerPort"]; ok {
+						keyManager[0]["secondary_server_port"] = ssp
+					}
+					if rr, ok := val.Args["redundancyRequired"]; ok {
+						keyManager[0]["redundancy_required"] = rr
+					}
+					if gn, ok := val.Args["groupName"]; ok {
+						keyManager[0]["group_name"] = gn
+					}
+					if cn, ok := val.Args["certificateName"]; ok {
+						keyManager[0]["certificate_name"] = cn
+					}
+					if ln, ok := val.Args["loginName"]; ok {
+						keyManager[0]["login_name"] = ln
+					}
+					if p, ok := val.Args["password"]; ok {
+						keyManager[0]["password"] = p
+					}
+				}
+
+			}
+			// setting MpSettings
+			mpSettings = append(mpSettings, map[string]interface{}{
+				"administrator_account": adminAcc,
+				"directory":             directory,
+				"key_manager":           keyManager,
+				"directory_groups":      directoryGroups,
+				"local_accounts":        localAccounts,
+			})
+		}
+
+		mp := make([]map[string]interface{}, 0)
+		mp = append(mp, map[string]interface{}{
+			"compliance_control": spt.ManagementProcessor.ComplianceControl,
+			"manage_mp":          spt.ManagementProcessor.ManageMp,
+			"mp_settings":        mpSettings,
+		})
+		d.Set("management_processor", mp)
+	}
+
 	if len(spt.ConnectionSettings.Connections) != 0 {
 		// Get connections
 		connections := make([]map[string]interface{}, 0, len(spt.ConnectionSettings.Connections))
@@ -1899,6 +2423,124 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		return err
 	}
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
+
+	if d.HasChange("management_processor") {
+		val := d.Get("management_processor")
+		mps := val.([]interface{})
+		ovManagementProcessor := ov.ManagementProcessors{}
+		for _, rawMp := range mps {
+			// extracting management processor
+			mp := rawMp.(map[string]interface{})
+			// extracting MpSettings
+			ovMpSettings := ov.MpSettings{}
+			mpSettings := mp["mp_settings"].([]interface{})
+			for _, mpSettingg := range mpSettings {
+				mpSetting := mpSettingg.(map[string]interface{})
+				// extracting administrator account
+				rawAdminAcc := mpSetting["administrator_account"].([]interface{})
+				ovAdminAcc := ov.AdministratorAccount{}
+				for _, adminAccs := range rawAdminAcc {
+					adminAcc := adminAccs.(map[string]interface{})
+					ovAdminAcc = ov.AdministratorAccount{
+						DeleteAdministratorAccount: GetBoolPointer(adminAcc["delete_administrator_account"].(bool)),
+						Password:                   adminAcc["password"].(string),
+					}
+				}
+				// extracting directory
+				rawDirectory := mpSetting["directory"].([]interface{})
+				ovDirectory := ov.Directory{}
+				for _, directoryy := range rawDirectory {
+					directory := directoryy.(map[string]interface{})
+
+					directoryUserContexts := make([]string, 0)
+					for _, raw := range directory["directory_user_context"].(*schema.Set).List() {
+						directoryUserContexts = append(directoryUserContexts, raw.(string))
+					}
+
+					ovDirectory = ov.Directory{
+						DirectoryAuthentication:    directory["directory_authentication"].(string),
+						DirectoryGenericLDAP:       GetBoolPointer(directory["directory_generic_ldap"].(bool)),
+						DirectoryServerAddress:     directory["directory_server_address"].(string),
+						DirectoryServerPort:        directory["directory_server_port"].(int),
+						DirectoryServerCertificate: directory["directory_server_certificate"].(string),
+						DirectoryUserContext:       directoryUserContexts,
+						IloObjectDistinguishedName: directory["ilo_distinguished_name"].(string),
+						Password:                   directory["password"].(string),
+						KerberosAuthentication:     GetBoolPointer(directory["kerberos_authentication"].(bool)),
+						KerberosRealm:              directory["kerberos_realm"].(string),
+						KerberosKDCServerAddress:   directory["kerberos_kdc_server_address"].(string),
+						KerberosKDCServerPort:      directory["kerberos_kdc_server_port"].(int),
+						KerberosKeytab:             directory["kerberos_key_tab"].(string),
+					}
+				}
+
+				// extracting key manager
+				rawKeyManager := mpSetting["key_manager"].([]interface{})
+				ovKeyManager := ov.KeyManager{}
+				for _, keyManagerr := range rawKeyManager {
+					keyManager := keyManagerr.(map[string]interface{})
+					ovKeyManager = ov.KeyManager{
+						PrimaryServerAddress:   keyManager["primary_server_address"].(string),
+						PrimaryServerPort:      keyManager["primary_server_port"].(int),
+						SecondaryServerAddress: keyManager["secondary_server_address"].(string),
+						SecondaryServerPort:    keyManager["secondary_server_port"].(int),
+						RedundancyRequired:     GetBoolPointer(keyManager["redundancy_required"].(bool)),
+						GroupName:              keyManager["group_name"].(string),
+						CertificateName:        keyManager["certificate_name"].(string),
+						LoginName:              keyManager["login_name"].(string),
+						Password:               keyManager["password"].(string),
+					}
+				}
+
+				// extracting directory groups
+				rawDirectoryGroups := mpSetting["directory_groups"].([]interface{})
+				ovDirectoryGroups := make([]ov.DirectoryGroups, 0)
+				for _, directoryGroupp := range rawDirectoryGroups {
+					directoryGroup := directoryGroupp.(map[string]interface{})
+					ovDirectoryGroups = append(ovDirectoryGroups, ov.DirectoryGroups{
+						GroupDN:                  directoryGroup["group_dn"].(string),
+						GroupSID:                 directoryGroup["group_sid"].(string),
+						UserConfigPriv:           GetBoolPointer(directoryGroup["user_config_priv"].(bool)),
+						RemoteConsolePriv:        GetBoolPointer(directoryGroup["remote_console_priv"].(bool)),
+						VirtualMediaPriv:         GetBoolPointer(directoryGroup["virtual_media_priv"].(bool)),
+						VirtualPowerAndResetPriv: GetBoolPointer(directoryGroup["virtual_power_and_reset_priv"].(bool)),
+						ILOConfigPriv:            GetBoolPointer(directoryGroup["ilo_config_priv"].(bool)),
+					})
+				}
+
+				// extracting local accounts
+				rawLocalAccounts := mpSetting["local_accounts"].([]interface{})
+				ovLocalAccounts := make([]ov.LocalAccounts, 0)
+				for _, localAccounts := range rawLocalAccounts {
+					localAccount := localAccounts.(map[string]interface{})
+					ovLocalAccounts = append(ovLocalAccounts, ov.LocalAccounts{
+						UserName:                 localAccount["user_name"].(string),
+						DisplayName:              localAccount["display_name"].(string),
+						Password:                 localAccount["password"].(string),
+						UserConfigPriv:           GetBoolPointer(localAccount["user_config_priv"].(bool)),
+						RemoteConsolePriv:        GetBoolPointer(localAccount["remote_console_priv"].(bool)),
+						VirtualMediaPriv:         GetBoolPointer(localAccount["virtual_media_priv"].(bool)),
+						VirtualPowerAndResetPriv: GetBoolPointer(localAccount["virtual_power_and_reset_priv"].(bool)),
+						ILOConfigPriv:            GetBoolPointer(localAccount["ilo_config_priv"].(bool)),
+					})
+				}
+
+				ovMpSettings = ov.MpSettings{
+					AdministratorAccount: ovAdminAcc,
+					LocalAccounts:        ovLocalAccounts,
+					Directory:            ovDirectory,
+					DirectoryGroups:      ovDirectoryGroups,
+					KeyManager:           ovKeyManager,
+				}
+			}
+			ovManagementProcessor = ov.ManagementProcessors{
+				ManageMp:  mp["manage_mp"].(bool),
+				MpSetting: ovMpSettings,
+			}
+
+		}
+		serverProfileTemplate.ManagementProcessors = ovManagementProcessor
+	}
 
 	if val, ok := d.GetOk("connection_settings"); ok {
 		connections := val.([]interface{})

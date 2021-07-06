@@ -20,6 +20,8 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/liboneview"
 	"github.com/HewlettPackard/oneview-golang/rest"
@@ -118,6 +120,131 @@ func (c *OVClient) GetProfileTemplates(start string, count string, filter string
 	return profiles, nil
 }
 
+// IsZeroOfUnderlyingType returns true if a value is initialized.
+func IsZeroOfUnderlyingType(x interface{}) bool {
+	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
+}
+
+// SetMp maps ManagementProcessors to IntManagementProcessor struct.
+func SetMp(mp ManagementProcessors) IntManagementProcessor {
+	mps := make([]MpSetting, 0)
+	var emptyMpSettings MpSettings
+	if !reflect.DeepEqual(mp.MpSetting, emptyMpSettings) {
+		var emptyAdminAcc AdministratorAccount
+		if mp.MpSetting.AdministratorAccount != emptyAdminAcc {
+			args := make(map[string]interface{})
+			v := reflect.ValueOf(mp.MpSetting.AdministratorAccount)
+			typeOfS := v.Type()
+			// iterate through Administrative Account Fields
+			for i := 0; i < v.NumField(); i++ {
+				// only adds fields that are initialized in order to bypass adding default/uninitialized values.
+				if !IsZeroOfUnderlyingType(v.Field(i).Interface()) {
+					args[strings.ToLower(string(typeOfS.Field(i).Name[0]))+typeOfS.Field(i).Name[1:]] = v.Field(i).Interface()
+				}
+			}
+			mps = append(mps, MpSetting{
+				SettingType: "AdministratorAccount",
+				Args:        args,
+			})
+		}
+		var emptyDirectory Directory
+		if !reflect.DeepEqual(mp.MpSetting.AdministratorAccount, emptyDirectory) {
+			args := make(map[string]interface{})
+			v := reflect.ValueOf(mp.MpSetting.Directory)
+			typeOfS := v.Type()
+			// iterate through Directory Fields.
+			for i := 0; i < v.NumField(); i++ {
+				// only adds fields that are initialized in order to bypass adding default/uninitialized values.
+				if !IsZeroOfUnderlyingType(v.Field(i).Interface()) {
+					args[strings.ToLower(string(typeOfS.Field(i).Name[0]))+typeOfS.Field(i).Name[1:]] = v.Field(i).Interface()
+				}
+			}
+			mps = append(mps, MpSetting{
+				SettingType: "Directory",
+				Args:        args,
+			})
+		}
+
+		var emptyKeyManager KeyManager
+		if !reflect.DeepEqual(mp.MpSetting.KeyManager, emptyKeyManager) {
+			args := make(map[string]interface{})
+			v := reflect.ValueOf(mp.MpSetting.KeyManager)
+			typeOfS := v.Type()
+			// iterate through KeyManager Fields
+			for i := 0; i < v.NumField(); i++ {
+				// only adds fields that are initialized in order to bypass adding default/uninitialized values.
+				if !IsZeroOfUnderlyingType(v.Field(i).Interface()) {
+					args[strings.ToLower(string(typeOfS.Field(i).Name[0]))+typeOfS.Field(i).Name[1:]] = v.Field(i).Interface()
+				}
+			}
+			mps = append(mps, MpSetting{
+				SettingType: "KeyManager",
+				Args:        args,
+			})
+		}
+
+		if len(mp.MpSetting.DirectoryGroups) > 0 {
+			var ags []interface{}
+			// iterate through Directory Groups
+			for _, i := range mp.MpSetting.DirectoryGroups {
+				v := reflect.ValueOf(i)
+				typeOfS := v.Type()
+				arg := make(map[string]interface{})
+				// iterate through Directory Group fields.
+				for j := 0; j < v.NumField(); j++ {
+					// only adds fields that are initialized in order to bypass adding default/uninitialized values.
+					if !IsZeroOfUnderlyingType(v.Field(j).Interface()) {
+						arg[strings.ToLower(string(typeOfS.Field(j).Name[0]))+typeOfS.Field(j).Name[1:]] = v.Field(j).Interface()
+					}
+				}
+				ags = append(ags, arg)
+			}
+			args := map[string]interface{}{
+				"directoryGroupAccounts": ags,
+			}
+			mps = append(mps, MpSetting{
+				SettingType: "DirectoryGroups",
+				Args:        args,
+			})
+
+		}
+
+		if len(mp.MpSetting.LocalAccounts) > 0 {
+			var ags []interface{}
+			// iterate through localAccounts
+			for _, i := range mp.MpSetting.LocalAccounts {
+				v := reflect.ValueOf(i)
+				typeOfS := v.Type()
+				arg := make(map[string]interface{})
+				// iterate through fields in local accounts
+				for j := 0; j < v.NumField(); j++ {
+					// only adds fields that are initialized in order to bypass adding default/uninitialized values.
+					if !IsZeroOfUnderlyingType(v.Field(j).Interface()) {
+						arg[strings.ToLower(string(typeOfS.Field(j).Name[0]))+typeOfS.Field(j).Name[1:]] = v.Field(j).Interface()
+					}
+				}
+				ags = append(ags, arg)
+			}
+
+			args := map[string]interface{}{
+				"localAccounts": ags,
+			}
+
+			mps = append(mps, MpSetting{
+				SettingType: "LocalAccounts",
+				Args:        args,
+			})
+		}
+	}
+	result := IntManagementProcessor{
+		ComplianceControl: mp.ComplianceControl,
+		ManageMp:          mp.ManageMp,
+		MpSettings:        mps,
+		ReapplyState:      mp.ReapplyState,
+	}
+	return result
+}
+
 func (c *OVClient) CreateProfileTemplate(serverProfileTemplate ServerProfile) error {
 	log.Infof("Initializing creation of server profile template for %s.", serverProfileTemplate.Name)
 	var (
@@ -132,6 +259,13 @@ func (c *OVClient) CreateProfileTemplate(serverProfileTemplate ServerProfile) er
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, serverProfileTemplate)
 	log.Debugf("task -> %+v", t)
+
+	var emptyMgmtProcessorsStruct ManagementProcessors
+	if !reflect.DeepEqual(serverProfileTemplate.ManagementProcessors, emptyMgmtProcessorsStruct) {
+		mp := SetMp(serverProfileTemplate.ManagementProcessors)
+		serverProfileTemplate.ManagementProcessor = mp
+	}
+
 	data, err := c.RestAPICall(rest.POST, uri, serverProfileTemplate)
 
 	if err != nil {
@@ -206,6 +340,13 @@ func (c *OVClient) UpdateProfileTemplate(serverProfileTemplate ServerProfile) er
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, serverProfileTemplate)
 	log.Debugf("task -> %+v", t)
+
+	var emptyMgmtProcessorsStruct ManagementProcessors
+	if !reflect.DeepEqual(serverProfileTemplate.ManagementProcessors, emptyMgmtProcessorsStruct) {
+		mp := SetMp(serverProfileTemplate.ManagementProcessors)
+		serverProfileTemplate.ManagementProcessor = mp
+	}
+
 	data, err := c.RestAPICall(rest.PUT, uri, serverProfileTemplate)
 	if err != nil {
 		t.TaskIsDone = true
