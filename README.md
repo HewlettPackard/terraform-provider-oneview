@@ -2,10 +2,10 @@
 
 ## Build Status 
 
-OV Version | 6.10 | 6.00 | 5.60 | 5.50 | 5.40 |
-| ------------- |:-------------:| :-------------:| :-------------:| :-------------:| :-------------:| 
-SDK Version/Tag | [v6.1.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.1.0-11) | [v6.0.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-11) | [v1.7.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-11) | [v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) |
-Build Status | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://github.com/HewlettPackard/terraform-provider-oneview/runs/2399849127) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/638624391) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds/759023377) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds)|
+OV Version | 6.20 | 6.10 | 6.00 | 5.60 | 5.50 | 5.40 |
+| ------------- |:-------------:| :-------------:| :-------------:| :-------------:| :-------------:|  :-------------:| 
+SDK Version/Tag | [v6.2.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.2.0-11) | [v6.1.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.1.0-11) | [v6.0.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-11) | [v1.7.0-11](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-11) | [v1.6.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.6.0) | [v1.5.0](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.5.0) |
+Build Status | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/990549483) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://github.com/HewlettPackard/terraform-provider-oneview/runs/2399849127) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/638624391) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds/759023377) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds) | [![Build status](https://action-badges.now.sh/JasonEtco/action-badges)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds)|
 
 ## Introduction
 
@@ -17,7 +17,7 @@ You can find the latest supported HPE OneView Terraform Provider SDK [here](http
 
 ## What's New
 
-HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 2800 (OneView v6.10)
+HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 3000 (OneView v6.20)
 
 Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
 
@@ -161,7 +161,7 @@ $ terraform apply
 ```
 Note: Only a single terraform file (example file) should exist in the home folder to execute the above mentioned three commands. Once the resource is tested move that file to examples folder. 
 
-Note: Currently this SDK supports OneView API 2800 minimally, where we can test OneView API 2800 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
+Note: Currently this SDK supports OneView API 3000 minimally, where we can test OneView API 3000 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
 
 ## API Implementation
 
