@@ -172,6 +172,21 @@ This defaults to 'Virtual'.
     	  * `subnet_mask` - The subnet mask of the iSCSI initiator. 
     	  * `ip_address_source` - Specifies how the IPv4 parameters are to be supplied.
 
+* `management_processor` - Server management processor settings.
+	* `compliance_control` -  Defines the compliance type of template's management processor settings with the corresponding profile's Management Processor settings. Valid values are "Checked" and "Unchecked".
+	* `manage_mp` -  Indicates whether the management processor settings are configured using the server profile. Value can be 'true' or 'false'
+	* `mp_settings` - The management processor settings to be modified. Below are the attributes supported.
+		* `administrator_account` - Below attributes are supported for addministrator account.
+			* `delete_administrator_account` and `password`
+		* `directory` - Below attributes are support for directory.
+			* `directory_authentication`, `directory_generic_ldap`, `directory_server_address`, `directory_server_port`, `directory_server_certificate`, `directory_user_context`, `ilo_distinguished_name`, `password`, `kerberos_authentication`, `kerberos_realm`, `kerberos_kdc_server_address`, `kerberos_kdc_server_port`, and `kerberos_key_tab`.
+		* `key_manager` - Below attributes are supported for key manager. 
+			* `primary_server_address`, `primary_server_port`, `secondary_server_address`, `secondary_server_port`, `redundancy_required`, `group_name`, `certificate_name`, `login_name`, and `password`.
+		* `directory_groups`  - Below attributes are supported for directory groups. 
+			* `group_dn`, `group_sid`, `user_config_priv`, `remote_console_priv`, `virtual_media_priv`, `virtual_power_and_reset_priv`, and `ilo_config_priv`.
+		* `local_accounts` - Below attributes are supported for local accounts.
+			* `user_name`, `display_name`, `password`, `user_config_priv`, `remote_console_priv`, `virtual_media_priv`, `virtual_power_and_reset_priv`, and `ilo_config_priv`
+
 * `os_deployment_settings` - (Optional) OS Deployment settings applicable when deployment is invoked through a server profile.
 OS Deploymennt Stting configuration is specified below.
 
