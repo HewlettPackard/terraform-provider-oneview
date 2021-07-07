@@ -2497,7 +2497,6 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 	serverProfileTemplate.ServerHardwareTypeURI = serverHardwareType.URI
 
-	
 	if d.HasChange("management_processor") {
 		val := d.Get("management_processor")
 		mps := val.([]interface{})
@@ -2618,7 +2617,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 	if d.HasChange("connection_settings") {
 		val := d.Get("connection_settings")
-    
+
 		connections := val.([]interface{})
 		for _, rawConSettings := range connections {
 			rawConSetting := rawConSettings.(map[string]interface{})
