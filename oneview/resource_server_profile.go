@@ -2728,7 +2728,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if updateType == "put" {
-		serverProfile, err := config.ovClient.GetProfileByName(d.Get("name").(string))
+		serverProfile, err := config.ovClient.GetProfileByName(d.Id())
 
 		var serverHardware ov.ServerHardware
 		if d.HasChange("hardware_name") {
@@ -2750,6 +2750,10 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				}
 				serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 			}
+		}
+		if d.HasChange("name") {
+			val := d.Get("name")
+			serverProfile.Name = val.(string)
 		}
 
 		if d.HasChange("affinity") {
