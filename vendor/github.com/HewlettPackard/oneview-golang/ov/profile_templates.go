@@ -368,3 +368,40 @@ func (c *OVClient) UpdateProfileTemplate(serverProfileTemplate ServerProfile) er
 
 	return nil
 }
+
+func (c *OVClient) PatchServerProfileTemplate(p ServerProfile, request []Options) error {
+
+	log.Infof("Initializing update of server profile for %s.", p.Name)
+
+	var (
+		uri = p.URI.String()
+		t   *Task
+	)
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Debugf("REST : %s \n %+v\n", uri, request)
+	log.Debugf("task -> %+v", t)
+	data, err := c.RestAPICall(rest.PATCH, uri, request)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error submitting update server profile request: %s", err)
+		return err
+	}
+	log.Debugf("Response update ServerProfile Template %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

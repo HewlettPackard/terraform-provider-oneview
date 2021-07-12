@@ -113,6 +113,7 @@ func resourceEthernetNetwork() *schema.Resource {
 			},
 			"initial_scope_uris": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
