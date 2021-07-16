@@ -716,12 +716,15 @@ func dataSourceLogicalInterconnectGroup() *schema.Resource {
 func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
+	id := d.Get("name").(string)
+
+	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(id)
 
 	if err != nil || logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
+	d.SetId(id)
 
 	d.Set("name", logicalInterconnectGroup.Name)
 	d.Set("type", logicalInterconnectGroup.Type)
@@ -757,7 +760,7 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 			return err
 		}
 		if interconnectType.Name == "" {
-			return fmt.Errorf("Could not find interconnectType with URI %s", interconnectMapEntryTemplate.PermittedInterconnectTypeUri.String())
+			return fmt.Errorf("could not find interconnectType with URI %s", interconnectMapEntryTemplate.PermittedInterconnectTypeUri.String())
 		}
 		var bayNum int
 		var enclosureIndex int
