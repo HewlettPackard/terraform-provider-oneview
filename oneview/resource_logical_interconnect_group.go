@@ -105,6 +105,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"logical_port_config": {
 							Type:     schema.TypeList,
 							Optional: true,
+                                                        Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"desired_speed": {
@@ -151,7 +152,8 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"lacp_timer": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "Short",
+                                                        Computed: true,
+						//	Default:  "Short",
 						},
 						"native_network_uri": {
 							Type:     schema.TypeString,
