@@ -29,6 +29,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"ambient_temperature_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"associated_logical_interconnect_groups": {
 				Optional: true,
@@ -46,10 +47,11 @@ func resourceEnclosureGroup() *schema.Resource {
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"etag": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"enclosure_count": {
 				Type:     schema.TypeInt,
@@ -58,6 +60,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"enclosure_type_uri": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"initial_scope_uris": {
 				Optional: true,
@@ -69,7 +72,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"interconnect_bay_mapping_count": {
 				Type:     schema.TypeInt,
-				Optional: true,
+				Computed: true,
 			},
 			"interconnect_bay_mappings": {
 				Optional: true,
@@ -96,6 +99,18 @@ func resourceEnclosureGroup() *schema.Resource {
 				Optional: true,
 			},
 			"ip_range_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
+			"ipv6_addressing_mode": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"ipv6_range_uris": {
 				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
@@ -162,6 +177,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"power_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
@@ -170,14 +186,16 @@ func resourceEnclosureGroup() *schema.Resource {
 			"stacking_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -241,9 +259,6 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
 		enclosureGroup.AmbientTemperatureMode = val.(string)
 	}
-	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
-		enclosureGroup.AmbientTemperatureMode = val.(string)
-	}
 	if val, ok := d.GetOk("enclosure_count"); ok {
 		enclosureGroup.EnclosureCount = val.(int)
 	}
@@ -260,6 +275,18 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 			ipRangeUris = append(ipRangeUris, utils.Nstring(rawData.(string)))
 		}
 		enclosureGroup.IpRangeUris = ipRangeUris
+	}
+
+	if val, ok := d.GetOk("ipv6_addressing_mode"); ok {
+		enclosureGroup.Ipv6AddressingMode = val.(string)
+	}
+	if val, ok := d.GetOk("ipv6_range_uris"); ok {
+		rawIPv6RangeUris := val.(*schema.Set).List()
+		ipv6RangeUris := make([]utils.Nstring, 0)
+		for _, rawData := range rawIPv6RangeUris {
+			ipv6RangeUris = append(ipv6RangeUris, utils.Nstring(rawData.(string)))
+		}
+		enclosureGroup.Ipv6RangeUris = ipv6RangeUris
 	}
 	enclosureGroupError := config.ovClient.CreateEnclosureGroup(enclosureGroup)
 	d.SetId(d.Get("name").(string))
@@ -288,6 +315,8 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("interconnect_bay_mappings", enclosureGroup.InterconnectBayMappings)
 	d.Set("ip_addressing_mode", enclosureGroup.IpAddressingMode)
 	d.Set("ip_range_uris", enclosureGroup.IpRangeUris)
+	d.Set("ipv6_addressing_mode", enclosureGroup.Ipv6AddressingMode)
+	d.Set("ipv6_range_uris", enclosureGroup.Ipv6RangeUris)
 	d.Set("name", enclosureGroup.Name)
 
 	osdslist := make([]map[string]interface{}, 0, 1)
@@ -374,6 +403,27 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	if val, ok := d.GetOk("ip_addressing_mode"); ok {
 		enclosureGroup.IpAddressingMode = val.(string)
+	}
+
+	if val, ok := d.GetOk("ip_range_uris"); ok {
+		rawIPRangeUris := val.(*schema.Set).List()
+		ipRangeUris := make([]utils.Nstring, 0)
+		for _, rawData := range rawIPRangeUris {
+			ipRangeUris = append(ipRangeUris, utils.Nstring(rawData.(string)))
+		}
+		enclosureGroup.IpRangeUris = ipRangeUris
+	}
+
+	if val, ok := d.GetOk("ipv6_addressing_mode"); ok {
+		enclosureGroup.Ipv6AddressingMode = val.(string)
+	}
+	if val, ok := d.GetOk("ipv6_range_uris"); ok {
+		rawIPv6RangeUris := val.(*schema.Set).List()
+		ipv6RangeUris := make([]utils.Nstring, 0)
+		for _, rawData := range rawIPv6RangeUris {
+			ipv6RangeUris = append(ipv6RangeUris, utils.Nstring(rawData.(string)))
+		}
+		enclosureGroup.Ipv6RangeUris = ipv6RangeUris
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
