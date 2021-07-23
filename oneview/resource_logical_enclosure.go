@@ -34,6 +34,7 @@ func resourceLogicalEnclosure() *schema.Resource {
 			"ambient_temperature_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"delete_failed": {
 				Type:     schema.TypeBool,
@@ -82,15 +83,18 @@ func resourceLogicalEnclosure() *schema.Resource {
 
 			"enclosure_group_uri": {
 				Type:     schema.TypeString,
-				Required: true,
+				Computed: true,
+				Optional: true,
 			},
 			"enclosure_uris": {
-				Required: true,
+				Computed: true,
+				Optional: true,
 				Type:     schema.TypeList,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"firmware": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -125,6 +129,7 @@ func resourceLogicalEnclosure() *schema.Resource {
 			"ip_addressing_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"ipv4_range": {
 				Optional: true,
@@ -160,6 +165,7 @@ func resourceLogicalEnclosure() *schema.Resource {
 			},
 			"logical_interconnect_uris": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
@@ -171,10 +177,12 @@ func resourceLogicalEnclosure() *schema.Resource {
 			"power_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"scaling_state": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
@@ -183,14 +191,17 @@ func resourceLogicalEnclosure() *schema.Resource {
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"update_type": {
 				Type:     schema.TypeString,

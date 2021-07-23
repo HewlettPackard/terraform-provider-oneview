@@ -97,6 +97,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"ip_addressing_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"ip_range_uris": {
 				Optional: true,
@@ -109,6 +110,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"ipv6_addressing_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"ipv6_range_uris": {
 				Optional: true,
