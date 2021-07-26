@@ -257,3 +257,27 @@ resource "oneview_server_profile" "SP" {
   }
 }
 
+# Creation of Server Profile on DL server
+resource "oneview_server_profile" "SPWithDL" {
+  name                 = "TestSP_DL_Server"
+  hardware_name        = "172.18.31.17"
+  server_hardware_type  = "DL360 Gen10 1"
+  boot_mode {
+    manage_mode     = true
+    mode            = "UEFIOptimized"
+    pxe_boot_policy = "Auto"
+  }
+  bios_option {
+    manage_bios = true
+    overridden_settings {
+      id    = "TimeFormat"
+      value = "Utc"
+    }
+  }
+  boot_mode {
+    manage_mode     = true
+    mode            = "UEFIOptimized"
+    pxe_boot_policy = "Auto"
+  }
+}
+
