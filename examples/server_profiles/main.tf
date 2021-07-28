@@ -258,6 +258,7 @@ resource "oneview_server_profile" "SP" {
 }
 
 # Creation of Server Profile on DL server
+# Enclosure group and affinity are not supported for DL server
 resource "oneview_server_profile" "SPWithDL" {
   name                 = "TestSP_DL_Server"
   hardware_name        = "<ilo_ip>"
