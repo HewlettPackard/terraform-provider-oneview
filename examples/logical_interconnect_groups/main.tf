@@ -6,11 +6,15 @@ provider "oneview" {
   ov_apiversion = 2800
   ov_ifmatch    = "*"
 }
+/*
+resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
+}
+*/
 
 # Create Logical Interconnect Group
 resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
   type                 = "logical-interconnect-groupV8"
-  name                 = "Auto-LIG"
+  name                 = "Auto-LIG-02"
   interconnect_bay_set = 3
   enclosure_indexes    = [1, 2, 3]
   redundancy_type      = "HighlyAvailable"
@@ -60,5 +64,48 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
     name                             = "PortFlapSettings"
     consistency_checking             = "ExactMatch"
   }
+  uplink_set {
+    ethernet_network_type = "NotApplicable"
+    mode                  = "Auto"
+    name                  = "UplinkSet2" 
+    network_type          = "FibreChannel"
+    network_uris          = [
+      "/rest/fc-networks/37aae264-8fd5-4624-960d-10173bde5752",
+    ]
+
+    logical_port_config {
+        bay_num       = 3
+        desired_speed = "Auto"
+        enclosure_num = 1
+        port_num      = 68 
+        primary_port  = false
+      }
+
+    logical_port_config {
+        bay_num       = 3
+        desired_speed = "Auto"
+        enclosure_num = 1
+        port_num      = 67
+        primary_port  = false
+      }
+  }
+  uplink_set {
+     ethernet_network_type = "Tagged"
+     lacp_timer            = "Short" 
+     mode                  = "Auto" 
+     name                  = "UplinkSet1"
+     network_type          = "Ethernet" 
+     network_uris          = [
+       "/rest/ethernet-networks/64c6034a-811e-4add-b34f-68f941dab50b",
+     ] 
+
+     logical_port_config {
+          bay_num       = 3 
+          desired_speed = "Auto"
+          enclosure_num = 1 
+          port_num      = 61
+          primary_port  = false 
+       }
+   }
 }
 
