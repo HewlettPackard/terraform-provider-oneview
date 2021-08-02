@@ -1283,11 +1283,13 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
 	}
 
-	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("enclosure_group").(string))
-	if err != nil {
-		return err
-	}
+	if d.Get("enclosure_group") != ""{
+		enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("enclosure_group").(string))
+		if err != nil {
+			return err
+		}
 	serverProfileTemplate.EnclosureGroupURI = enclosureGroup.URI
+	}
 
 	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByName(d.Get("server_hardware_type").(string))
 	if err != nil {
@@ -1857,12 +1859,14 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("created", spt.Created)
 	d.Set("description", spt.Description)
 
-	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
-	if err != nil {
-		return err
+	if spt.EnclosureGroupURI != ""{
+		enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
+		if err != nil {
+			return err
+		}
+		d.Set("enclosure_group", enclosureGroup.Name)
+		d.Set("enclosure_group_uri", spt.EnclosureGroupURI)
 	}
-	d.Set("enclosure_group", enclosureGroup.Name)
-	d.Set("enclosure_group_uri", spt.EnclosureGroupURI)
 	d.Set("etag", spt.ETAG)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
 	d.Set("initial_scope_uris", spt.InitialScopeUris)

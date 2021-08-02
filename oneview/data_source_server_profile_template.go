@@ -25,6 +25,7 @@ func dataSourceServerProfileTemplate() *schema.Resource {
 			"affinity": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"boot": {
 				Type:     schema.TypeList,
@@ -1128,12 +1129,14 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	d.Set("category", spt.Category)
 	d.Set("created", spt.Created)
 	d.Set("description", spt.Description)
-	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
-	if err != nil {
-		return err
-	}
-	d.Set("enclosure_group", enclosureGroup.Name)
 	d.Set("enclosure_group_uri", spt.EnclosureGroupURI)
+	if spt.EnclosureGroupURI != "" {
+        	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
+		if err != nil {
+			return err
+		}
+		d.Set("enclosure_group", enclosureGroup.Name)
+	}	
 	d.Set("etag", spt.ETAG)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
 	d.Set("initial_scope_uris", spt.InitialScopeUris)
