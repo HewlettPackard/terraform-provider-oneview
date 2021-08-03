@@ -29,10 +29,10 @@ func resourceEnclosureGroup() *schema.Resource {
 			"ambient_temperature_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Default:  "Standard",
 			},
 			"associated_logical_interconnect_groups": {
-				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -41,8 +41,9 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"category": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "enclosure-groups",
+				Computed: true,
+				// Optional: true,
+				// Default:  "enclosure-groups",
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -56,6 +57,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"enclosure_count": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Default:  1,
 			},
 			"enclosure_type_uri": {
 				Type:     schema.TypeString,
@@ -79,15 +81,15 @@ func resourceEnclosureGroup() *schema.Resource {
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"enclosure_index": {
-							Type:     schema.TypeInt,
-							Optional: true,
-						},
+						// "enclosure_index": {
+						// 	Type:     schema.TypeInt,
+						// 	Optional: true,
+						// },
 						"interconnect_bay": {
 							Type:     schema.TypeInt,
 							Optional: true,
 						},
-						"logical_interconnect_group_uri": {
+						"logical_interconnect_group_name": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -216,10 +218,16 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 		interconnectBayMappings := make([]ov.InterconnectBayMap, 0)
 		for _, raw := range rawInterconnectBayMappings {
 			interconnectBayMappingItem := raw.(map[string]interface{})
+			logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(interconnectBayMappingItem["logical_interconnect_group_name"].(string))
+			if err != nil || logicalInterconnectGroup.URI.IsNil() {
+				d.SetId("")
+				return nil
+			}
 			interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
-				EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
+				//EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
 				InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
-				LogicalInterconnectGroupUri: utils.NewNstring(interconnectBayMappingItem["logical_interconnect_group_uri"].(string))})
+				LogicalInterconnectGroupUri: logicalInterconnectGroup.URI,
+			})
 		}
 		enclosureGroup.InterconnectBayMappings = interconnectBayMappings
 	}
@@ -321,6 +329,26 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("ipv6_range_uris", enclosureGroup.Ipv6RangeUris)
 	d.Set("name", enclosureGroup.Name)
 
+	//emptyinterconnect_bay_mappings := ov.InterconnectBayMap{}
+	//if spt.BootMode != emptyBootMode {
+	interconnectBayMap := make([]map[string]interface{}, 0, 1)
+	for i := 0; i < len(enclosureGroup.InterconnectBayMappings); i++ {
+		liguri := enclosureGroup.InterconnectBayMappings[i].LogicalInterconnectGroupUri
+
+		encLIG, err := config.ovClient.GetLogicalInterconnectGroupByUri(liguri)
+		if err != nil || encLIG.Name == "" {
+			d.SetId("")
+			return nil
+		}
+
+		interconnectBayMap = append(interconnectBayMap, map[string]interface{}{
+			//"enclosure_index":                enclosureGroup.InterconnectBayMappings[i].EnclosureIndex,
+			"interconnect_bay":                enclosureGroup.InterconnectBayMappings[i].InterconnectBay,
+			"logical_interconnect_group_name": encLIG.Name,
+		})
+	}
+	d.Set("interconnect_bay_mappings", interconnectBayMap)
+
 	osdslist := make([]map[string]interface{}, 0, 1)
 	if enclosureGroup.OsDeploymentSettings != nil {
 		dmodesettingslist := make([]map[string]interface{}, 0, 1)
@@ -361,11 +389,16 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 	interconnectBayMappings := make([]ov.InterconnectBayMap, 0)
 	for _, raw := range rawInterconnectBayMappings {
 		interconnectBayMappingItem := raw.(map[string]interface{})
-
+		logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(interconnectBayMappingItem["logical_interconnect_group_name"].(string))
+		if err != nil || logicalInterconnectGroup.URI.IsNil() {
+			d.SetId("")
+			return nil
+		}
 		interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
-			EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
+			//EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
 			InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
-			LogicalInterconnectGroupUri: utils.NewNstring(interconnectBayMappingItem["logical_interconnect_group_uri"].(string))})
+			LogicalInterconnectGroupUri: logicalInterconnectGroup.URI,
+		})
 	}
 	enclosureGroup.InterconnectBayMappings = interconnectBayMappings
 
