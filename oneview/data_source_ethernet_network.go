@@ -60,10 +60,6 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
