@@ -124,7 +124,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
       drive_write_cache = "Unmanaged"
       initialize        = true
       import_configuration = false 
-      mode                     = "RAID"
+      mode                     = "Mixed"
       predictive_spare_rebuild = "Unmanaged"
       logical_drives {
         accelerator         = "Unmanaged"
