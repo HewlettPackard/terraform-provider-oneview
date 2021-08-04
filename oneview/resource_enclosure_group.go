@@ -42,13 +42,10 @@ func resourceEnclosureGroup() *schema.Resource {
 			"category": {
 				Type:     schema.TypeString,
 				Computed: true,
-				// Optional: true,
-				// Default:  "enclosure-groups",
 			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"etag": {
 				Type:     schema.TypeString,
@@ -81,10 +78,6 @@ func resourceEnclosureGroup() *schema.Resource {
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						// "enclosure_index": {
-						// 	Type:     schema.TypeInt,
-						// 	Optional: true,
-						// },
 						"interconnect_bay": {
 							Type:     schema.TypeInt,
 							Optional: true,

@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 2800
+  ov_apiversion = 3000
   ov_ifmatch    = "*"
 }
 
@@ -24,15 +24,6 @@ variable "scope_name_1" {
   description = "Name of the Scope"
   default     = "Auto-Scope"
 }
-
-# Fetching Logical Interconnect Group
-#data "oneview_logical_interconnect_group" "logical_interconnect_group" {
-#        name = "${var.LIG_name}"
-#}
-data "oneview_logical_interconnect_group" "logical_interconnect_group" {
-  name = "Auto-LIG"
-}
-
 # Creating Enclosure Group
 resource "oneview_enclosure_group" "eg_inst" {
   name               = var.enc_grp
@@ -48,11 +39,11 @@ resource "oneview_enclosure_group" "eg_inst" {
   }
   interconnect_bay_mappings {
     interconnect_bay               = 3
-    logical_interconnect_group_uri = "/rest/logical-interconnect-groups/08cc9fdd-c831-4437-9414-ca3cfa12d292" #"${data.oneview_logical_interconnect_group.logical_interconnect_group.uri}"
+    logical_interconnect_group_name = "${var.LIG_name}"
   }
   interconnect_bay_mappings {
     interconnect_bay               = 6
-    logical_interconnect_group_uri = "/rest/logical-interconnect-groups/08cc9fdd-c831-4437-9414-ca3cfa12d292" #"${data.oneview_logical_interconnect_group.logical_interconnect_group.uri}"
+    logical_interconnect_group_name = "${var.LIG_name}"
   }
 }
 
