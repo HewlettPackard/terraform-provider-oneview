@@ -26,8 +26,7 @@ variable "scope_name_1" {
 }
 # Creating Enclosure Group
 resource "oneview_enclosure_group" "eg_inst" {
-  name               = var.enc_grp
-  description        = "Testing creation of Enclosure Group"
+  name               = var.enc_grp  
   ip_addressing_mode = "External"
   enclosure_count    = 3
   initial_scope_uris = [var.scope_name_1]

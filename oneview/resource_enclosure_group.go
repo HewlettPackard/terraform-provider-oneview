@@ -43,10 +43,6 @@ func resourceEnclosureGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"etag": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -309,7 +305,6 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("ambient_temperature_mode", enclosureGroup.AmbientTemperatureMode)
 	d.Set("associated_logical_interconnect_groups", enclosureGroup.AssociatedLogicalInterconnectGroups)
 	d.Set("category", enclosureGroup.Category)
-	d.Set("description", enclosureGroup.Description)
 	d.Set("eTag", enclosureGroup.ETAG)
 	d.Set("enclosure_count", enclosureGroup.EnclosureCount)
 	d.Set("enclosure_type_uri", enclosureGroup.EnclosureTypeUri.String())
@@ -335,7 +330,6 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 		}
 
 		interconnectBayMap = append(interconnectBayMap, map[string]interface{}{
-			//"enclosure_index":                enclosureGroup.InterconnectBayMappings[i].EnclosureIndex,
 			"interconnect_bay":                enclosureGroup.InterconnectBayMappings[i].InterconnectBay,
 			"logical_interconnect_group_name": encLIG.Name,
 		})
@@ -388,7 +382,6 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 			return nil
 		}
 		interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
-			//EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
 			InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
 			LogicalInterconnectGroupUri: logicalInterconnectGroup.URI,
 		})
@@ -412,11 +405,6 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 	if val, ok := d.GetOk("category"); ok {
 		enclosureGroup.Category = val.(string)
 	}
-
-	if val, ok := d.GetOk("description"); ok {
-		enclosureGroup.Description = utils.NewNstring(val.(string))
-	}
-
 	if val, ok := d.GetOk("etag"); ok {
 		enclosureGroup.ETAG = val.(string)
 	}
