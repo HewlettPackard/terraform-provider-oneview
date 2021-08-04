@@ -1013,7 +1013,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 			if ovUs.NetworkType == "FibreChannel" {
 				if ovUs.LacpTimer != "" {
-					return fmt.Errorf("lacp_timer cannot be set with FibreChannel network_type.")
+					return fmt.Errorf("lacp_timer cannot be set with FibreChannel network_type")
 				}
 			}
 
@@ -2105,7 +2105,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 
 				if ovUs.NetworkType == "FibreChannel" {
 					if ovUs.LacpTimer != "" {
-						return fmt.Errorf("lacp_timer cannot be set with FibreChannel network_type.")
+						return fmt.Errorf("lacp_timer cannot be set with FibreChannel network_type")
 					}
 				}
 

@@ -6,10 +6,14 @@ provider "oneview" {
   ov_apiversion = 2800
   ov_ifmatch    = "*"
 }
-/*
-resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
+
+data "oneview_ethernet_network" "eth" {
+	name = "Auto-Ethernet-1"
 }
-*/
+
+data "oneview_fc_network" "fc" {
+	name = "FC_FA"
+}
 
 # Create Logical Interconnect Group
 resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
@@ -55,22 +59,14 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
     prevent_flooding           = true
     proxy_reporting            = true
   }
-  port_flap_settings {
-    type                             = "portFlapProtection"
-    port_flap_protection_mode        = "Detect"
-    port_flap_threshold_per_interval = 2
-    detection_interval               = 20
-    no_of_samples_declare_failures   = 3
-    name                             = "PortFlapSettings"
-    consistency_checking             = "ExactMatch"
-  }
+
   uplink_set {
     ethernet_network_type = "NotApplicable"
     mode                  = "Auto"
     name                  = "UplinkSet2" 
     network_type          = "FibreChannel"
     network_uris          = [
-      "/rest/fc-networks/37aae264-8fd5-4624-960d-10173bde5752",
+      data.oneview_fc_network.fc.uri, //"/rest/fc-networks/37aae264-8fd5-4624-960d-10173bde5752",
     ]
 
     logical_port_config {
@@ -78,7 +74,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
         desired_speed = "Auto"
         enclosure_num = 1
         port_num      = 68 
-        primary_port  = false
+        primary_port  = false 
       }
 
     logical_port_config {
@@ -96,7 +92,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
      name                  = "UplinkSet1"
      network_type          = "Ethernet" 
      network_uris          = [
-       "/rest/ethernet-networks/64c6034a-811e-4add-b34f-68f941dab50b",
+       data.oneview_ethernet_network.eth.uri, //"/rest/ethernet-networks/64c6034a-811e-4add-b34f-68f941dab50b",
      ] 
 
      logical_port_config {
@@ -108,4 +104,3 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
        }
    }
 }
-
