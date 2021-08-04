@@ -12,7 +12,6 @@
 package oneview
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -88,13 +87,11 @@ func resourceLogicalEnclosure() *schema.Resource {
 			},
 			"enclosure_uris": {
 				Computed: true,
-				Optional: true,
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"firmware": {
 				Optional: true,
-				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -164,7 +161,6 @@ func resourceLogicalEnclosure() *schema.Resource {
 				},
 			},
 			"logical_interconnect_uris": {
-				Optional: true,
 				Computed: true,
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
@@ -181,7 +177,6 @@ func resourceLogicalEnclosure() *schema.Resource {
 			},
 			"scaling_state": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"scopes_uri": {
@@ -190,17 +185,14 @@ func resourceLogicalEnclosure() *schema.Resource {
 			},
 			"status": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"update_type": {
@@ -217,15 +209,6 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		Name:              d.Get("name").(string),
 		EnclosureGroupUri: utils.NewNstring(d.Get("enclosure_group_uri").(string)),
 	}
-	enclosureSetCount := d.Get("enclosure_uris.#").(int)
-	enclosureUris := make([]utils.Nstring, enclosureSetCount)
-	for i := 0; i < enclosureSetCount; i++ {
-		enclosureSetPrefix := fmt.Sprintf("enclosure_uris.%d", i)
-		if val, ok := d.GetOk(enclosureSetPrefix); ok {
-			enclosureUris[i] = utils.NewNstring(val.(string))
-		}
-	}
-	logicalEnclosure.EnclosureUris = enclosureUris
 
 	firmwareList := d.Get("firmware").(*schema.Set).List()
 	for _, raw := range firmwareList {
@@ -403,15 +386,7 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 		logicalEnclosure.DeploymentManagerSettings = &deploymentManagerSettings
 	}
-	enclosureSetCount := d.Get("enclosure_uris.#").(int)
-	enclosureUris := make([]utils.Nstring, enclosureSetCount)
-	for i := 0; i < enclosureSetCount; i++ {
-		enclosureSetPrefix := fmt.Sprintf("enclosure_uris.%d", i)
-		if val, ok := d.GetOk(enclosureSetPrefix); ok {
-			enclosureUris[i] = utils.NewNstring(val.(string))
-		}
-	}
-	logicalEnclosure.EnclosureUris = enclosureUris
+
 	firmwareList := d.Get("firmware").(*schema.Set).List()
 	for _, raw := range firmwareList {
 		firmware := raw.(map[string]interface{})

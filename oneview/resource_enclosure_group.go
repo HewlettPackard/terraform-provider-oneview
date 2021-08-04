@@ -340,7 +340,9 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	if enclosureGroup.OsDeploymentSettings != nil {
 		dmodesettingslist := make([]map[string]interface{}, 0, 1)
 
-		if &enclosureGroup.OsDeploymentSettings.DeploymentModeSettings != nil {
+		dpempty := ov.DeploymentModeSetting{}
+
+		if enclosureGroup.OsDeploymentSettings.DeploymentModeSettings != dpempty {
 			dmodesettingslist = append(dmodesettingslist, map[string]interface{}{
 				"deployment_mode":        enclosureGroup.OsDeploymentSettings.DeploymentModeSettings.DeploymentMode,
 				"deployment_network_uri": enclosureGroup.OsDeploymentSettings.DeploymentModeSettings.DeploymentNetworkUri,
