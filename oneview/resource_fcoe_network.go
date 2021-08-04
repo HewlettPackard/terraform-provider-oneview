@@ -54,10 +54,6 @@ func resourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -148,7 +144,6 @@ func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("fabricuri", fcoeNet.FabricUri.String())
 	d.Set("etag", fcoeNet.ETAG)
 	d.Set("managedsanuri", fcoeNet.ManagedSanUri)
-	d.Set("description", fcoeNet.Description)
 	d.Set("scopesuri", fcoeNet.ScopesUri.String())
 	d.Set("initial_scope_uris", fcoeNet.InitialScopeUris)
 	return nil

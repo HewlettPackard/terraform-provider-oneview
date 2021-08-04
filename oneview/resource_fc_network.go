@@ -12,6 +12,9 @@
 package oneview
 
 import (
+	"encoding/json"
+	"io/ioutil"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -60,10 +63,6 @@ func resourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "fc-networkV2",
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -120,7 +119,6 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		ManagedSanURI:           utils.NewNstring(d.Get("managed_san_uri").(string)),
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
 		Type:                    d.Get("type").(string),
-		Description:             utils.NewNstring(d.Get("description").(string)),
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
@@ -152,7 +150,6 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("fabric_type", fcNet.FabricType)
 	d.Set("link_stability_time", fcNet.LinkStabilityTime)
 	d.Set("auto_login_redistribution", fcNet.AutoLoginRedistribution)
-	d.Set("description", fcNet.Description.String())
 	d.Set("type", fcNet.Type)
 	d.Set("uri", fcNet.URI.String())
 	d.Set("connection_template_uri", fcNet.ConnectionTemplateUri.String())
@@ -164,8 +161,17 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("created", fcNet.Created)
 	d.Set("modified", fcNet.Modified)
 	d.Set("etag", fcNet.ETAG)
-	d.Set("scopeuri", fcNet.ScopesUri.String())
-	d.Set("initial_scope_uris", fcNet.InitialScopeUris)
+	d.Set("scopesuri", fcNet.ScopesUri.String())
+	//d.Set("initial_scope_uris", fcNet.InitialScopeUris)
+	initialscopeuris := make([]string, 0, len(fcNet.InitialScopeUris))
+	for _, initialscopeuri := range fcNet.InitialScopeUris {
+		initialscopeuris = append(initialscopeuris, initialscopeuri.String())
+	}
+
+	file, _ := json.MarshalIndent(fcNet, "", " ")
+	_ = ioutil.WriteFile("isu.json", file, 0644)
+
+	d.Set("initial_scope_uris", initialscopeuris)
 	return nil
 }
 
@@ -181,7 +187,6 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
 		Type:                    d.Get("type").(string),
 		ConnectionTemplateUri:   utils.NewNstring(d.Get("connection_template_uri").(string)),
-		Description:             utils.NewNstring(d.Get("description").(string)),
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)
