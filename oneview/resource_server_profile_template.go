@@ -141,13 +141,13 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"connections": {
 							Optional: true,
 							Computed: true,
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"boot": {
 										Optional: true,
 										Computed: true,
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"boot_vlan_id": {
@@ -163,7 +163,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Optional: true,
 												},
 												"boot_target": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Resource{
@@ -180,7 +180,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 													},
 												},
 												"iscsi": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Resource{
@@ -243,7 +243,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Optional: true,
 												},
 												"targets": {
-													Type:     schema.TypeList,
+													Type:     schema.TypeSet,
 													Optional: true,
 													Computed: true,
 													Elem: &schema.Resource{
@@ -268,11 +268,11 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"id": {
 										Type:     schema.TypeInt,
-										Optional: true,
+										Computed: true,
 									},
 
 									"ipv4": {
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										Optional: true,
 										Computed: true,
 										Elem: &schema.Resource{
@@ -306,7 +306,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"managed": {
 										Type:     schema.TypeBool,
-										Computed: true,
+										Optional: true,
+										Default:  true,
 									},
 									"name": {
 										Type:     schema.TypeString,
@@ -334,67 +335,67 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"allocated_mbps": {
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-									"allocated_vfs": {
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
+									// "allocated_mbps": {
+									// 	Type:     schema.TypeInt,
+									// 	Computed: true,
+									// },
+									// "allocated_vfs": {
+									// 	Type:     schema.TypeInt,
+									// 	Computed: true,
+									// },
 
 									"requested_vfs": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"state": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"status": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"wwnn": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"wwpn": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"wwpn_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
+									// "state": {
+									// 	Type:     schema.TypeString,
+									// 	Computed: true,
+									// },
+									// "status": {
+									// 	Type:     schema.TypeString,
+									// 	Computed: true,
+									// },
+									// "wwnn": {
+									// 	Type:     schema.TypeString,
+									// 	Optional: true,
+									// },
+									// "wwpn": {
+									// 	Type:     schema.TypeString,
+									// 	Optional: true,
+									// },
+									// "wwpn_type": {
+									// 	Type:     schema.TypeString,
+									// 	Optional: true,
+									// },
 
-									"interconnect_port": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"interconnect_uri": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
+									// "interconnect_port": {
+									// 	Type:     schema.TypeString,
+									// 	Optional: true,
+									// },
+									// "interconnect_uri": {
+									// 	Type:     schema.TypeString,
+									// 	Computed: true,
+									// },
 
-									"mac": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"mac_type": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
+									// "mac": {
+									// 	Type:     schema.TypeString,
+									// 	Optional: true,
+									// },
+									// "mac_type": {
+									// 	Type:     schema.TypeString,
+									// 	Optional: true,
+									// },
 
-									"maximum_mbps": {
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
+									// "maximum_mbps": {
+									// 	Type:     schema.TypeInt,
+									// 	Computed: true,
+									// },
 
-									"private_vlan_port_type": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
+									// "private_vlan_port_type": {
+									// 	Type:     schema.TypeString,
+									// 	Computed: true,
+									// },
 								},
 							},
 						},
@@ -1414,17 +1415,17 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		connections := val.([]interface{})
 		for _, rawConSettings := range connections {
 			rawConSetting := rawConSettings.(map[string]interface{})
-			rawNetwork := rawConSetting["connections"].([]interface{})
+			rawNetwork := rawConSetting["connections"].(*schema.Set).List()
 			networks := make([]ov.Connection, 0)
 			for _, rawNet := range rawNetwork {
 				rawNetworkItem := rawNet.(map[string]interface{})
 				bootOptions := ov.BootOption{}
 				if rawNetworkItem["boot"] != nil {
-					rawBoots := rawNetworkItem["boot"].([]interface{})
+					rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
 					for _, rawBoot := range rawBoots {
 						bootItem := rawBoot.(map[string]interface{})
 						bootTargets := []ov.BootTarget{}
-						rawBootTargets := bootItem["boot_target"].([]interface{})
+						rawBootTargets := bootItem["boot_target"].(*schema.Set).List()
 						if rawBootTargets != nil {
 							for _, rawBootTarget := range rawBootTargets {
 								bootTarget := rawBootTarget.(map[string]interface{})
@@ -1436,7 +1437,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 						}
 						iscsi := ov.BootIscsi{}
 						if bootItem["iscsi"] != nil {
-							rawIscsis := bootItem["iscsi"].([]interface{})
+							rawIscsis := bootItem["iscsi"].(*schema.Set).List()
 							for _, rawIscsi := range rawIscsis {
 								rawIscsiItem := rawIscsi.(map[string]interface{})
 								iscsi = ov.BootIscsi{
@@ -1464,7 +1465,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 				ipv4 := ov.Ipv4Option{}
 				if rawNetworkItem["ipv4"] != nil {
-					rawIpv4s := rawNetworkItem["ipv4"].([]interface{})
+					rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
 					for _, rawIpv4 := range rawIpv4s {
 						rawIpv4Item := rawIpv4.(map[string]interface{})
 						ipv4 = ov.Ipv4Option{
@@ -2617,21 +2618,21 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	if d.HasChange("connection_settings") {
 		val := d.Get("connection_settings")
 
-		connections := val.([]interface{})
+		connections := val.(*schema.Set).List()
 		for _, rawConSettings := range connections {
 			rawConSetting := rawConSettings.(map[string]interface{})
-			rawNetwork := rawConSetting["connections"].([]interface{})
+			rawNetwork := rawConSetting["connections"].(*schema.Set).List()
 			networks := make([]ov.Connection, 0)
 			for _, rawNet := range rawNetwork {
 				rawNetworkItem := rawNet.(map[string]interface{})
 				bootOptions := ov.BootOption{}
 				if rawNetworkItem["boot"] != nil {
-					rawBoots := rawNetworkItem["boot"].([]interface{})
+					rawBoots := rawNetworkItem["boot"].(*schema.Set).List()
 					for _, rawBoot := range rawBoots {
 						bootItem := rawBoot.(map[string]interface{})
 
 						bootTargets := []ov.BootTarget{}
-						rawBootTargets := bootItem["boot_target"].([]interface{})
+						rawBootTargets := bootItem["boot_target"].(*schema.Set).List()
 						if rawBootTargets != nil {
 							for _, rawBootTarget := range rawBootTargets {
 								bootTarget := rawBootTarget.(map[string]interface{})
@@ -2650,7 +2651,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 						iscsi := ov.BootIscsi{}
 						if bootItem["iscsi"] != nil {
-							rawIscsis := bootItem["iscsi"].([]interface{})
+							rawIscsis := bootItem["iscsi"].(*schema.Set).List()
 							for _, rawIscsi := range rawIscsis {
 								rawIscsiItem := rawIscsi.(map[string]interface{})
 								iscsi = ov.BootIscsi{
@@ -2679,7 +2680,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 				ipv4 := ov.Ipv4Option{}
 				if rawNetworkItem["ipv4"] != nil {
-					rawIpv4s := rawNetworkItem["ipv4"].([]interface{})
+					rawIpv4s := rawNetworkItem["ipv4"].(*schema.Set).List()
 					for _, rawIpv4 := range rawIpv4s {
 						rawIpv4Item := rawIpv4.(map[string]interface{})
 						ipv4 = ov.Ipv4Option{
@@ -2709,7 +2710,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					continue
 				}
 				networks = append(networks, network)
-				if len(rawNetworkItem["boot"].([]interface{})) != 0 {
+				if len(rawNetworkItem["boot"].(*schema.Set).List()) != 0 {
 					networks[len(networks)-1].Boot = &bootOptions
 				}
 

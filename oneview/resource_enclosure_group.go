@@ -29,10 +29,9 @@ func resourceEnclosureGroup() *schema.Resource {
 			"ambient_temperature_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Standard",
 			},
 			"associated_logical_interconnect_groups": {
-				Computed: true,
+				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -41,28 +40,24 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"category": {
 				Type:     schema.TypeString,
-				Computed: true,
-				// Optional: true,
-				// Default:  "enclosure-groups",
+				Optional: true,
+				Default:  "enclosure-groups",
 			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"etag": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"enclosure_count": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				Default:  1,
 			},
 			"enclosure_type_uri": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"initial_scope_uris": {
 				Optional: true,
@@ -74,22 +69,22 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"interconnect_bay_mapping_count": {
 				Type:     schema.TypeInt,
-				Computed: true,
+				Optional: true,
 			},
 			"interconnect_bay_mappings": {
 				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						// "enclosure_index": {
-						// 	Type:     schema.TypeInt,
-						// 	Optional: true,
-						// },
+						"enclosure_index": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
 						"interconnect_bay": {
 							Type:     schema.TypeInt,
 							Optional: true,
 						},
-						"logical_interconnect_group_name": {
+						"logical_interconnect_group_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -99,22 +94,8 @@ func resourceEnclosureGroup() *schema.Resource {
 			"ip_addressing_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"ip_range_uris": {
-				Optional: true,
-				Type:     schema.TypeSet,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-				Set: schema.HashString,
-			},
-			"ipv6_addressing_mode": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-			"ipv6_range_uris": {
 				Optional: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
@@ -181,7 +162,6 @@ func resourceEnclosureGroup() *schema.Resource {
 			"power_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
@@ -190,16 +170,14 @@ func resourceEnclosureGroup() *schema.Resource {
 			"stacking_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Optional: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -218,16 +196,10 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 		interconnectBayMappings := make([]ov.InterconnectBayMap, 0)
 		for _, raw := range rawInterconnectBayMappings {
 			interconnectBayMappingItem := raw.(map[string]interface{})
-			logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(interconnectBayMappingItem["logical_interconnect_group_name"].(string))
-			if err != nil || logicalInterconnectGroup.URI.IsNil() {
-				d.SetId("")
-				return nil
-			}
 			interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
-				//EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
+				EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
 				InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
-				LogicalInterconnectGroupUri: logicalInterconnectGroup.URI,
-			})
+				LogicalInterconnectGroupUri: utils.NewNstring(interconnectBayMappingItem["logical_interconnect_group_uri"].(string))})
 		}
 		enclosureGroup.InterconnectBayMappings = interconnectBayMappings
 	}
@@ -269,6 +241,9 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
 		enclosureGroup.AmbientTemperatureMode = val.(string)
 	}
+	if val, ok := d.GetOk("ambient_temperature_mode"); ok {
+		enclosureGroup.AmbientTemperatureMode = val.(string)
+	}
 	if val, ok := d.GetOk("enclosure_count"); ok {
 		enclosureGroup.EnclosureCount = val.(int)
 	}
@@ -285,18 +260,6 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 			ipRangeUris = append(ipRangeUris, utils.Nstring(rawData.(string)))
 		}
 		enclosureGroup.IpRangeUris = ipRangeUris
-	}
-
-	if val, ok := d.GetOk("ipv6_addressing_mode"); ok {
-		enclosureGroup.Ipv6AddressingMode = val.(string)
-	}
-	if val, ok := d.GetOk("ipv6_range_uris"); ok {
-		rawIPv6RangeUris := val.(*schema.Set).List()
-		ipv6RangeUris := make([]utils.Nstring, 0)
-		for _, rawData := range rawIPv6RangeUris {
-			ipv6RangeUris = append(ipv6RangeUris, utils.Nstring(rawData.(string)))
-		}
-		enclosureGroup.Ipv6RangeUris = ipv6RangeUris
 	}
 	enclosureGroupError := config.ovClient.CreateEnclosureGroup(enclosureGroup)
 	d.SetId(d.Get("name").(string))
@@ -325,29 +288,7 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("interconnect_bay_mappings", enclosureGroup.InterconnectBayMappings)
 	d.Set("ip_addressing_mode", enclosureGroup.IpAddressingMode)
 	d.Set("ip_range_uris", enclosureGroup.IpRangeUris)
-	d.Set("ipv6_addressing_mode", enclosureGroup.Ipv6AddressingMode)
-	d.Set("ipv6_range_uris", enclosureGroup.Ipv6RangeUris)
 	d.Set("name", enclosureGroup.Name)
-
-	//emptyinterconnect_bay_mappings := ov.InterconnectBayMap{}
-	//if spt.BootMode != emptyBootMode {
-	interconnectBayMap := make([]map[string]interface{}, 0, 1)
-	for i := 0; i < len(enclosureGroup.InterconnectBayMappings); i++ {
-		liguri := enclosureGroup.InterconnectBayMappings[i].LogicalInterconnectGroupUri
-
-		encLIG, err := config.ovClient.GetLogicalInterconnectGroupByUri(liguri)
-		if err != nil || encLIG.Name == "" {
-			d.SetId("")
-			return nil
-		}
-
-		interconnectBayMap = append(interconnectBayMap, map[string]interface{}{
-			//"enclosure_index":                enclosureGroup.InterconnectBayMappings[i].EnclosureIndex,
-			"interconnect_bay":                enclosureGroup.InterconnectBayMappings[i].InterconnectBay,
-			"logical_interconnect_group_name": encLIG.Name,
-		})
-	}
-	d.Set("interconnect_bay_mappings", interconnectBayMap)
 
 	osdslist := make([]map[string]interface{}, 0, 1)
 	if enclosureGroup.OsDeploymentSettings != nil {
@@ -389,16 +330,11 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 	interconnectBayMappings := make([]ov.InterconnectBayMap, 0)
 	for _, raw := range rawInterconnectBayMappings {
 		interconnectBayMappingItem := raw.(map[string]interface{})
-		logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(interconnectBayMappingItem["logical_interconnect_group_name"].(string))
-		if err != nil || logicalInterconnectGroup.URI.IsNil() {
-			d.SetId("")
-			return nil
-		}
+
 		interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
-			//EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
+			EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
 			InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
-			LogicalInterconnectGroupUri: logicalInterconnectGroup.URI,
-		})
+			LogicalInterconnectGroupUri: utils.NewNstring(interconnectBayMappingItem["logical_interconnect_group_uri"].(string))})
 	}
 	enclosureGroup.InterconnectBayMappings = interconnectBayMappings
 
@@ -438,27 +374,6 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 
 	if val, ok := d.GetOk("ip_addressing_mode"); ok {
 		enclosureGroup.IpAddressingMode = val.(string)
-	}
-
-	if val, ok := d.GetOk("ip_range_uris"); ok {
-		rawIPRangeUris := val.(*schema.Set).List()
-		ipRangeUris := make([]utils.Nstring, 0)
-		for _, rawData := range rawIPRangeUris {
-			ipRangeUris = append(ipRangeUris, utils.Nstring(rawData.(string)))
-		}
-		enclosureGroup.IpRangeUris = ipRangeUris
-	}
-
-	if val, ok := d.GetOk("ipv6_addressing_mode"); ok {
-		enclosureGroup.Ipv6AddressingMode = val.(string)
-	}
-	if val, ok := d.GetOk("ipv6_range_uris"); ok {
-		rawIPv6RangeUris := val.(*schema.Set).List()
-		ipv6RangeUris := make([]utils.Nstring, 0)
-		for _, rawData := range rawIPv6RangeUris {
-			ipv6RangeUris = append(ipv6RangeUris, utils.Nstring(rawData.(string)))
-		}
-		enclosureGroup.Ipv6RangeUris = ipv6RangeUris
 	}
 
 	if val, ok := d.GetOk("initial_scope_uris"); ok {

@@ -109,7 +109,6 @@ func resourceEthernetNetwork() *schema.Resource {
 			},
 			"subnet_uri": {
 				Optional: true,
-				Computed: true,
 				Type:     schema.TypeString,
 			},
 			"initial_scope_uris": {
