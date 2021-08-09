@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -35,7 +37,6 @@ func resourceEthernetNetwork() *schema.Resource {
 			"vlan_id": {
 				Type:     schema.TypeInt,
 				Required: true,
-				ForceNew: true,
 			},
 			"purpose": {
 				Type:     schema.TypeString,
@@ -54,8 +55,7 @@ func resourceEthernetNetwork() *schema.Resource {
 			},
 			"ethernet_network_type": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "Tagged",
+				Required: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -196,6 +196,10 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 		SmartLink:             d.Get("smart_link").(bool),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
 		Type:                  d.Get("type").(string),
+	}
+
+	if d.HasChange("vlan_id") {
+		return fmt.Errorf("vlan Id can not be changed")
 	}
 
 	err := config.ovClient.UpdateEthernetNetwork(newENet)
