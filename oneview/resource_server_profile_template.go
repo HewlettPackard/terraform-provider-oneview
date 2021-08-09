@@ -1278,6 +1278,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		WWNType:            d.Get("wwn_type").(string),
 		MACType:            d.Get("mac_type").(string),
 		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
+		Description:        d.Get("description").(string),
 	}
 
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("enclosure_group").(string))
@@ -2481,6 +2482,10 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	if d.HasChange("hide_unused_flex_nics") {
 		val := d.Get("hide_unused_flex_nics")
 		serverProfileTemplate.HideUnusedFlexNics = val.(bool)
+	}
+	if d.HasChange("description") {
+		val := d.Get("description")
+		serverProfileTemplate.Description = val.(string)
 	}
 
 	val := d.Get("enclosure_group")
