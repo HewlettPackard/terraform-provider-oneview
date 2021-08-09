@@ -12,8 +12,7 @@
 package oneview
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"fmt"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -37,9 +36,7 @@ func resourceFCNetwork() *schema.Resource {
 			},
 			"fabric_type": {
 				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Default:  "FabricAttach",
+				Required: true,
 			},
 			"link_stability_time": {
 				Type:     schema.TypeInt,
@@ -167,10 +164,6 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	for _, initialscopeuri := range fcNet.InitialScopeUris {
 		initialscopeuris = append(initialscopeuris, initialscopeuri.String())
 	}
-
-	file, _ := json.MarshalIndent(fcNet, "", " ")
-	_ = ioutil.WriteFile("isu.json", file, 0644)
-
 	d.Set("initial_scope_uris", initialscopeuris)
 	return nil
 }
@@ -187,6 +180,10 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		AutoLoginRedistribution: d.Get("auto_login_redistribution").(bool),
 		Type:                    d.Get("type").(string),
 		ConnectionTemplateUri:   utils.NewNstring(d.Get("connection_template_uri").(string)),
+	}
+
+	if d.HasChange("fabric_type") {
+		return fmt.Errorf("Fabric Type can not be changed")
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)
