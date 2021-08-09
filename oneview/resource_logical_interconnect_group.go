@@ -29,7 +29,6 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
@@ -85,7 +84,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 			},
 			"uplink_set": {
 				Optional: true,
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"network_type": {
@@ -103,7 +102,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Required: true,
 						},
 						"logical_port_config": {
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -113,12 +112,8 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 										Default:  "Auto",
 									},
 									"port_num": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeInt,
 										Required: true,
-										Elem:     &schema.Schema{Type: schema.TypeInt},
-										Set: func(a interface{}) int {
-											return a.(int)
-										},
 									},
 									"bay_num": {
 										Type:     schema.TypeInt,
@@ -151,7 +146,6 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"lacp_timer": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "Short",
 						},
 						"native_network_uri": {
 							Type:     schema.TypeString,
@@ -1002,57 +996,60 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	}
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
-	uplinkSetCount := d.Get("uplink_set.#").(int)
-	uplinkSets := make([]ov.UplinkSets, 0)
-	for i := 0; i < uplinkSetCount; i++ {
-		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
-		uplinkSet := ov.UplinkSets{}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".name"); ok {
-			uplinkSet.Name = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".network_type"); ok {
-			uplinkSet.NetworkType = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".ethernet_network_type"); ok {
-			uplinkSet.EthernetNetworkType = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".mode"); ok {
-			uplinkSet.Mode = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".lacp_timer"); ok {
-			uplinkSet.LacpTimer = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".native_network_uri"); ok {
-			uplinkSet.NativeNetworkUri = utils.NewNstring(val.(string))
-		}
+	//Creating uplinkSets
+	if val, ok := d.GetOk("uplink_set"); ok {
+		uss := val.(*schema.Set).List()
+		ovUss := []ov.UplinkSets{}
+		for _, rawUs := range uss {
+			us := rawUs.(map[string]interface{})
+			ovUs := ov.UplinkSets{
+				EthernetNetworkType: us["ethernet_network_type"].(string),
+				LacpTimer:           us["lacp_timer"].(string),
+				Mode:                us["mode"].(string),
+				Name:                us["name"].(string),
+				NativeNetworkUri:    utils.Nstring(us["native_network_uri"].(string)),
+				NetworkType:         us["network_type"].(string),
+			}
 
-		logicalPortCount := d.Get(uplinkSetPrefix + ".logical_port_config.#").(int)
-		logicalPorts := make([]ov.LogicalPortConfigInfo, 0)
-		for i := 0; i < logicalPortCount; i++ {
-			logicalPortPrefix := fmt.Sprintf(uplinkSetPrefix+".logical_port_config.%d", i)
-			rawPortLocations := d.Get(logicalPortPrefix + ".port_num").(*schema.Set).List()
-			for _, raw := range rawPortLocations {
-				logicalPort := ov.LogicalPortConfigInfo{}
-
-				if val, ok := d.GetOk(logicalPortPrefix + ".desired_speed"); ok {
-					logicalPort.DesiredSpeed = val.(string)
+			if ovUs.NetworkType == "FibreChannel" {
+				if ovUs.LacpTimer != "" {
+					return fmt.Errorf("lacp_timer cannot be set with FibreChannel network_type")
 				}
+			}
+
+			rawNetUris := us["network_uris"].(*schema.Set).List()
+			netUris := make([]utils.Nstring, 0)
+			for _, raw := range rawNetUris {
+				netUris = append(netUris, utils.NewNstring(raw.(string)))
+			}
+			ovUs.NetworkUris = netUris
+
+			rawLogicalPortConfigs := us["logical_port_config"].(*schema.Set).List()
+			ovLogicalPortConfigs := make([]ov.LogicalPortConfigInfo, 0)
+
+			for _, rawLogicalPortConfig := range rawLogicalPortConfigs {
+
+				logicalPortConfig := rawLogicalPortConfig.(map[string]interface{})
+
+				logicalPort := ov.LogicalPortConfigInfo{}
+				logicalPort.DesiredSpeed = logicalPortConfig["desired_speed"].(string)
 
 				locationEntries := make([]ov.LocationEntry, 0)
 				enclosureLocation := ov.LocationEntry{
-					RelativeValue: d.Get(logicalPortPrefix + ".enclosure_num").(int),
+					RelativeValue: logicalPortConfig["enclosure_num"].(int),
 					Type:          "Enclosure",
 				}
+
 				locationEntries = append(locationEntries, enclosureLocation)
 
 				bayLocation := ov.LocationEntry{
-					RelativeValue: d.Get(logicalPortPrefix + ".bay_num").(int),
+					RelativeValue: logicalPortConfig["bay_num"].(int),
 					Type:          "Bay",
 				}
 				locationEntries = append(locationEntries, bayLocation)
 
 				portLocation := ov.LocationEntry{
-					RelativeValue: raw.(int),
+					RelativeValue: logicalPortConfig["port_num"].(int),
 					Type:          "Port",
 				}
 				locationEntries = append(locationEntries, portLocation)
@@ -1062,28 +1059,18 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 				}
 
 				logicalPort.LogicalLocation = logicalLocation
-				if _, ok := d.GetOk(logicalPortPrefix + ".primary_port"); ok {
-					if uplinkSet.PrimaryPort == nil {
-						uplinkSet.PrimaryPort = &logicalLocation
+				if logicalPortConfig["primary_port"] == true {
+					if ovUs.PrimaryPort == nil {
+						ovUs.PrimaryPort = &logicalLocation
 					}
 				}
-
-				logicalPorts = append(logicalPorts, logicalPort)
+				ovLogicalPortConfigs = append(ovLogicalPortConfigs, logicalPort)
 			}
-
+			ovUs.LogicalPortConfigInfos = ovLogicalPortConfigs
+			ovUss = append(ovUss, ovUs)
 		}
-		uplinkSet.LogicalPortConfigInfos = logicalPorts
-
-		rawNetUris := d.Get(uplinkSetPrefix + ".network_uris").(*schema.Set).List()
-		netUris := make([]utils.Nstring, 0)
-		for _, raw := range rawNetUris {
-			netUris = append(netUris, utils.NewNstring(raw.(string)))
-		}
-		uplinkSet.NetworkUris = netUris
-
-		uplinkSets = append(uplinkSets, uplinkSet)
+		lig.UplinkSets = ovUss
 	}
-	lig.UplinkSets = uplinkSets
 
 	sflowConfigurationPrefix := fmt.Sprintf("sflow_configuration.0")
 	sflowConfiguration := ov.SflowConfiguration{}
@@ -1551,6 +1538,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		}
 		lig.QosConfiguration = &ovQos
 	}
+
 	ligError := config.ovClient.CreateLogicalInterconnectGroup(lig)
 	d.SetId(d.Get("name").(string))
 	if ligError != nil {
@@ -1720,110 +1708,78 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	d.Set("interconnect_map_entry_template", interconnectMapEntryTemplates)
 
-	uplinkSets := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.UplinkSets))
-	for i, uplinkSet := range logicalInterconnectGroup.UplinkSets {
+	//Reading UplinkSets
+	emptyUplinkSets := []ov.UplinkSets{}
+	if !reflect.DeepEqual(logicalInterconnectGroup.UplinkSets, emptyUplinkSets) {
+		uplinkSets := make([]map[string]interface{}, 0)
+		if len(logicalInterconnectGroup.UplinkSets) != 0 {
+			for i, uplinkSet := range logicalInterconnectGroup.UplinkSets {
 
-		primaryPortEnclosure := 0
-		primaryPortBay := 0
-		primaryPortPort := 0
-
-		if uplinkSet.PrimaryPort != nil {
-			for _, primaryPortLocation := range uplinkSet.PrimaryPort.LocationEntries {
-				if primaryPortLocation.Type == "Bay" {
-					primaryPortBay = primaryPortLocation.RelativeValue
-				}
-				if primaryPortLocation.Type == "Enclosure" {
-					primaryPortEnclosure = primaryPortLocation.RelativeValue
-				}
-				if primaryPortLocation.Type == "Port" {
-					primaryPortPort = primaryPortLocation.RelativeValue
-				}
-			}
-		}
-
-		logicalPortConfigs := make([]map[string]interface{}, 0, len(uplinkSet.LogicalPortConfigInfos))
-		for _, logicalPortConfigInfo := range uplinkSet.LogicalPortConfigInfos {
-			portEnclosure := 0
-			portBay := 0
-			portPort := 0
-			primaryPort := false
-			for _, portLocation := range logicalPortConfigInfo.LogicalLocation.LocationEntries {
-				if portLocation.Type == "Bay" {
-					portBay = portLocation.RelativeValue
-				}
-				if portLocation.Type == "Enclosure" {
-					portEnclosure = portLocation.RelativeValue
-				}
-				if portLocation.Type == "Port" {
-					portPort = portLocation.RelativeValue
-				}
-			}
-			if primaryPortEnclosure == portEnclosure && primaryPortBay == portBay && primaryPortPort == portPort {
-				primaryPort = true
-			}
-
-			portPorts := make([]interface{}, 0)
-			portPorts = append(portPorts, portPort)
-
-			included := false
-			for j, portConfig := range logicalPortConfigs {
-				if portConfig["bay_num"] == portBay && portConfig["enclosure_num"] == portEnclosure {
-					included = true
-					portSet := logicalPortConfigs[j]["port_num"].(*schema.Set)
-					portSet.Add(portPort)
-				}
-			}
-
-			if included == false {
-				logicalPortConfigs = append(logicalPortConfigs, map[string]interface{}{
-					"desired_speed": logicalPortConfigInfo.DesiredSpeed,
-					"primary_port":  primaryPort,
-					"port_num":      schema.NewSet(func(a interface{}) int { return a.(int) }, portPorts),
-					"bay_num":       portBay,
-					"enclosure_num": portEnclosure,
+				uplinkSets = append(uplinkSets, map[string]interface{}{
+					"network_type":          uplinkSet.NetworkType,
+					"ethernet_network_type": uplinkSet.EthernetNetworkType,
+					"name":                  uplinkSet.Name,
+					"mode":                  uplinkSet.Mode,
+					"lacp_timer":            uplinkSet.LacpTimer,
 				})
-			}
-		}
 
-		//Oneview returns an unordered list so order it to match the configuration file
-		logicalPortCount := d.Get("uplink_set." + strconv.Itoa(i) + ".logical_port_config.#").(int)
-		oneviewLogicalPortCount := len(logicalPortConfigs)
-		for j := 0; j < logicalPortCount; j++ {
-			currBay := d.Get("uplink_set." + strconv.Itoa(i) + ".logical_port_config." + strconv.Itoa(j) + ".bay_num").(int)
-			for k := 0; k < oneviewLogicalPortCount; k++ {
-				if currBay == logicalPortConfigs[k]["bay_num"] && j <= k {
-					logicalPortConfigs[j], logicalPortConfigs[k] = logicalPortConfigs[k], logicalPortConfigs[j]
+				if uplinkSet.NativeNetworkUri.String() != "null" {
+					uplinkSets[i]["native_network_uri"] = uplinkSet.NativeNetworkUri.String()
 				}
-			}
-		}
 
-		networkUris := make([]interface{}, len(uplinkSet.NetworkUris))
-		for i, networkUri := range uplinkSet.NetworkUris {
-			networkUris[i] = networkUri.String()
-		}
+				// Collecting primary location details
+				primaryPortEnclosure := 0
+				primaryPortBay := 0
+				primaryPortPort := 0
+				if uplinkSet.PrimaryPort != nil {
+					for _, primaryPortLocation := range uplinkSet.PrimaryPort.LocationEntries {
+						if primaryPortLocation.Type == "Bay" {
+							primaryPortBay = primaryPortLocation.RelativeValue
+						}
+						if primaryPortLocation.Type == "Enclosure" {
+							primaryPortEnclosure = primaryPortLocation.RelativeValue
+						}
+						if primaryPortLocation.Type == "Port" {
+							primaryPortPort = primaryPortLocation.RelativeValue
+						}
+					}
+				}
 
-		uplinkSets = append(uplinkSets, map[string]interface{}{
-			"network_type":          uplinkSet.NetworkType,
-			"ethernet_network_type": uplinkSet.EthernetNetworkType,
-			"name":                  uplinkSet.Name,
-			"mode":                  uplinkSet.Mode,
-			"lacp_timer":            uplinkSet.LacpTimer,
-			"native_network_uri":    uplinkSet.NativeNetworkUri,
-			"logical_port_config":   logicalPortConfigs,
-			"network_uris":          schema.NewSet(schema.HashString, networkUris),
-		})
-	}
-	uplinkCount := d.Get("uplink_set.#").(int)
-	oneviewUplinkCount := len(uplinkSets)
-	for i := 0; i < uplinkCount; i++ {
-		currUplinkName := d.Get("uplink_set." + strconv.Itoa(i) + ".name").(string)
-		for j := 0; j < oneviewUplinkCount; j++ {
-			if currUplinkName == uplinkSets[j]["name"] && i <= j {
-				uplinkSets[i], uplinkSets[j] = uplinkSets[j], uplinkSets[i]
+				// Reading Network Uris
+				TfnetworkUris := make([]string, 0)
+				for _, networkUri := range uplinkSet.NetworkUris {
+					TfnetworkUris = append(TfnetworkUris, networkUri.String())
+				}
+				uplinkSets[i]["network_uris"] = TfnetworkUris
+
+				logicalPortConfigInfo := make([]map[string]interface{}, 0)
+				for j, logicalPortConfig := range uplinkSet.LogicalPortConfigInfos {
+					// iterating through all the local enteries
+					logicalPortConfigInfo = append(logicalPortConfigInfo, map[string]interface{}{})
+					for _, location := range logicalPortConfig.LogicalLocation.LocationEntries {
+
+						if location.Type == "Port" {
+							logicalPortConfigInfo[j]["port_num"] = location.RelativeValue
+						}
+						if location.Type == "Enclosure" {
+							logicalPortConfigInfo[j]["enclosure_num"] = location.RelativeValue
+						}
+						if location.Type == "Bay" {
+							logicalPortConfigInfo[j]["bay_num"] = location.RelativeValue
+						}
+
+						if primaryPortEnclosure == logicalPortConfigInfo[j]["enclosure_num"] && primaryPortBay == logicalPortConfigInfo[j]["bay_num"] && primaryPortPort == logicalPortConfigInfo[j]["port_num"] {
+							logicalPortConfigInfo[j]["primary_port"] = true
+						}
+
+						logicalPortConfigInfo[j]["desired_speed"] = logicalPortConfig.DesiredSpeed
+					}
+				}
+				uplinkSets[i]["logical_port_config"] = logicalPortConfigInfo
 			}
+			d.Set("uplink_set", uplinkSets)
 		}
 	}
-	d.Set("uplink_set", uplinkSets)
 
 	internalNetworkUris := make([]interface{}, len(logicalInterconnectGroup.InternalNetworkUris))
 	for i, internalNetworkUri := range logicalInterconnectGroup.InternalNetworkUris {
@@ -2132,88 +2088,82 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	}
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
-	uplinkSetCount := d.Get("uplink_set.#").(int)
-	uplinkSets := make([]ov.UplinkSets, 0)
-	for i := 0; i < uplinkSetCount; i++ {
-		uplinkSetPrefix := fmt.Sprintf("uplink_set.%d", i)
-		uplinkSet := ov.UplinkSets{}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".name"); ok {
-			uplinkSet.Name = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".network_type"); ok {
-			uplinkSet.NetworkType = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".ethernet_network_type"); ok {
-			uplinkSet.EthernetNetworkType = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".mode"); ok {
-			uplinkSet.Mode = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".lacp_timer"); ok {
-			uplinkSet.LacpTimer = val.(string)
-		}
-		if val, ok := d.GetOk(uplinkSetPrefix + ".native_network_uri"); ok {
-			uplinkSet.NativeNetworkUri = utils.NewNstring(val.(string))
-		}
-
-		logicalPortCount := d.Get(uplinkSetPrefix + ".logical_port_config.#").(int)
-		logicalPorts := make([]ov.LogicalPortConfigInfo, 0)
-		for i := 0; i < logicalPortCount; i++ {
-			logicalPortPrefix := fmt.Sprintf(uplinkSetPrefix+".logical_port_config.%d", i)
-			rawPortLocations := d.Get(logicalPortPrefix + ".port_num").(*schema.Set).List()
-			for _, raw := range rawPortLocations {
-				logicalPort := ov.LogicalPortConfigInfo{}
-
-				if val, ok := d.GetOk(logicalPortPrefix + ".desired_speed"); ok {
-					logicalPort.DesiredSpeed = val.(string)
+	if ok := d.HasChange("uplink_set"); ok {
+		if val, ok := d.GetOk("uplink_set"); ok {
+			uss := val.(*schema.Set).List()
+			ovUss := []ov.UplinkSets{}
+			for _, rawUs := range uss {
+				us := rawUs.(map[string]interface{})
+				ovUs := ov.UplinkSets{
+					EthernetNetworkType: us["ethernet_network_type"].(string),
+					LacpTimer:           us["lacp_timer"].(string),
+					Mode:                us["mode"].(string),
+					Name:                us["name"].(string),
+					NativeNetworkUri:    utils.Nstring(us["native_network_uri"].(string)),
+					NetworkType:         us["network_type"].(string),
 				}
 
-				locationEntries := make([]ov.LocationEntry, 0)
-				enclosureLocation := ov.LocationEntry{
-					RelativeValue: d.Get(logicalPortPrefix + ".enclosure_num").(int),
-					Type:          "Enclosure",
-				}
-				locationEntries = append(locationEntries, enclosureLocation)
-
-				bayLocation := ov.LocationEntry{
-					RelativeValue: d.Get(logicalPortPrefix + ".bay_num").(int),
-					Type:          "Bay",
-				}
-				locationEntries = append(locationEntries, bayLocation)
-
-				portLocation := ov.LocationEntry{
-					RelativeValue: raw.(int),
-					Type:          "Port",
-				}
-				locationEntries = append(locationEntries, portLocation)
-
-				logicalLocation := ov.LogicalLocation{
-					LocationEntries: locationEntries,
-				}
-
-				logicalPort.LogicalLocation = logicalLocation
-				if _, ok := d.GetOk(logicalPortPrefix + ".primary_port"); ok {
-					if uplinkSet.PrimaryPort == nil {
-						uplinkSet.PrimaryPort = &logicalLocation
+				if ovUs.NetworkType == "FibreChannel" {
+					if ovUs.LacpTimer != "" {
+						return fmt.Errorf("lacp_timer cannot be set with FibreChannel network_type")
 					}
 				}
 
-				logicalPorts = append(logicalPorts, logicalPort)
+				rawNetUris := us["network_uris"].(*schema.Set).List()
+				netUris := make([]utils.Nstring, 0)
+				for _, raw := range rawNetUris {
+					netUris = append(netUris, utils.NewNstring(raw.(string)))
+				}
+				ovUs.NetworkUris = netUris
+
+				rawLogicalPortConfigs := us["logical_port_config"].(*schema.Set).List()
+				ovLogicalPortConfigs := make([]ov.LogicalPortConfigInfo, 0)
+
+				for _, rawLogicalPortConfig := range rawLogicalPortConfigs {
+
+					logicalPortConfig := rawLogicalPortConfig.(map[string]interface{})
+
+					logicalPort := ov.LogicalPortConfigInfo{}
+					logicalPort.DesiredSpeed = logicalPortConfig["desired_speed"].(string)
+
+					locationEntries := make([]ov.LocationEntry, 0)
+					enclosureLocation := ov.LocationEntry{
+						RelativeValue: logicalPortConfig["enclosure_num"].(int),
+						Type:          "Enclosure",
+					}
+
+					locationEntries = append(locationEntries, enclosureLocation)
+
+					bayLocation := ov.LocationEntry{
+						RelativeValue: logicalPortConfig["bay_num"].(int),
+						Type:          "Bay",
+					}
+					locationEntries = append(locationEntries, bayLocation)
+
+					portLocation := ov.LocationEntry{
+						RelativeValue: logicalPortConfig["port_num"].(int),
+						Type:          "Port",
+					}
+					locationEntries = append(locationEntries, portLocation)
+
+					logicalLocation := ov.LogicalLocation{
+						LocationEntries: locationEntries,
+					}
+
+					logicalPort.LogicalLocation = logicalLocation
+					if logicalPortConfig["primary_port"] == true {
+						if ovUs.PrimaryPort == nil {
+							ovUs.PrimaryPort = &logicalLocation
+						}
+					}
+					ovLogicalPortConfigs = append(ovLogicalPortConfigs, logicalPort)
+				}
+				ovUs.LogicalPortConfigInfos = ovLogicalPortConfigs
+				ovUss = append(ovUss, ovUs)
 			}
-
+			lig.UplinkSets = ovUss
 		}
-		uplinkSet.LogicalPortConfigInfos = logicalPorts
-
-		rawNetUris := d.Get(uplinkSetPrefix + ".network_uris").(*schema.Set).List()
-		netUris := make([]utils.Nstring, 0)
-		for _, raw := range rawNetUris {
-			netUris = append(netUris, utils.NewNstring(raw.(string)))
-		}
-		uplinkSet.NetworkUris = netUris
-
-		uplinkSets = append(uplinkSets, uplinkSet)
 	}
-	lig.UplinkSets = uplinkSets
 
 	rawInternalNetUris := d.Get("internal_network_uris").(*schema.Set).List()
 	internalNetUris := make([]utils.Nstring, len(rawInternalNetUris))

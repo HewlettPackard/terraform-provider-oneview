@@ -82,16 +82,16 @@ func resourceLogicalEnclosure() *schema.Resource {
 
 			"enclosure_group_uri": {
 				Type:     schema.TypeString,
-				Computed: true,
 				Optional: true,
 			},
 			"enclosure_uris": {
-				Computed: true,
+				Required: true,
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"firmware": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -182,6 +182,7 @@ func resourceLogicalEnclosure() *schema.Resource {
 			"scopes_uri": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
@@ -210,6 +211,15 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		EnclosureGroupUri: utils.NewNstring(d.Get("enclosure_group_uri").(string)),
 	}
 
+	if val, ok := d.GetOk("enclosure_uris"); ok {
+		rawenclosureuris := val.(*schema.Set).List()
+		enclosureUris := make([]utils.Nstring, len(rawenclosureuris))
+		for i, rawData := range rawenclosureuris {
+
+			enclosureUris[i] = utils.Nstring(rawData.(string))
+		}
+		logicalEnclosure.EnclosureUris = enclosureUris
+	}
 	firmwareList := d.Get("firmware").(*schema.Set).List()
 	for _, raw := range firmwareList {
 		firmware := raw.(map[string]interface{})
@@ -220,7 +230,6 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		logicalEnclosure.Firmware = &logicalEnclosureFirmware
 	}
 	logicalEnclosureError := config.ovClient.CreateLogicalEnclosure(logicalEnclosure)
-
 	d.SetId(d.Get("name").(string))
 	if logicalEnclosureError != nil {
 		d.SetId("")
@@ -269,16 +278,20 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("description", logicalEnclosure.Description)
 	d.Set("enclosure_group_uri", logicalEnclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_uris", logicalEnclosure.EnclosureUris)
-	logicalEnclosureFirmware := make([]map[string]interface{}, 0, 1)
-	logicalEnclosureFirmware = append(logicalEnclosureFirmware, map[string]interface{}{
-		"firmware_baseline_uri":                            logicalEnclosure.Firmware.FirmwareBaselineUri,
-		"firmware_update_on":                               logicalEnclosure.Firmware.FirmwareUpdateOn,
-		"force_install_firmware":                           logicalEnclosure.Firmware.ForceInstallFirmware,
-		"logical_interconnect_update_mode":                 logicalEnclosure.Firmware.LogicalInterconnectUpdateMode,
-		"update_firmware_on_unmanaged_interconnect":        logicalEnclosure.Firmware.UpdateFirmwareOnUnmanagedInterconnect,
-		"validate_if_li_firmware_update_is_non_disruptive": logicalEnclosure.Firmware.ValidateIfLIFirmwareUpdateIsNonDisruptive,
-	})
-	d.Set("firmware", logicalEnclosureFirmware)
+
+	if logicalEnclosure.Firmware != nil {
+		logicalEnclosureFirmware := make([]map[string]interface{}, 0, 1)
+		logicalEnclosureFirmware = append(logicalEnclosureFirmware, map[string]interface{}{
+			"firmware_baseline_uri":                            logicalEnclosure.Firmware.FirmwareBaselineUri,
+			"firmware_update_on":                               logicalEnclosure.Firmware.FirmwareUpdateOn,
+			"force_install_firmware":                           logicalEnclosure.Firmware.ForceInstallFirmware,
+			"logical_interconnect_update_mode":                 logicalEnclosure.Firmware.LogicalInterconnectUpdateMode,
+			"update_firmware_on_unmanaged_interconnect":        logicalEnclosure.Firmware.UpdateFirmwareOnUnmanagedInterconnect,
+			"validate_if_li_firmware_update_is_non_disruptive": logicalEnclosure.Firmware.ValidateIfLIFirmwareUpdateIsNonDisruptive,
+		})
+		d.Set("firmware", logicalEnclosureFirmware)
+	}
+
 	d.Set("ip_addressing_mode", logicalEnclosure.IpAddressingMode)
 	logicalEnclosureIpv4Ranges := make([]map[string]interface{}, 0, len(logicalEnclosure.Ipv4Ranges))
 	for _, logicalEnclosureIpv4Range := range logicalEnclosure.Ipv4Ranges {
