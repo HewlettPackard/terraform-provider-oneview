@@ -113,7 +113,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"os_deployment_settings": {
 				Type:     schema.TypeSet,
@@ -170,7 +170,7 @@ func resourceEnclosureGroup() *schema.Resource {
 			"power_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Default:  "BasicPowerMode",
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
@@ -183,7 +183,6 @@ func resourceEnclosureGroup() *schema.Resource {
 			},
 			"status": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"type": {
