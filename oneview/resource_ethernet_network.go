@@ -116,6 +116,10 @@ func resourceEthernetNetwork() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
+				//Initial scope uris is never set in the resource so it should not be checked for diff
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return true
+				},
 			},
 		},
 	}
@@ -178,7 +182,6 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("etag", eNet.ETAG)
 	d.Set("scopesuri", eNet.ScopesUri.String())
 	d.Set("subnet_uri", eNet.SubnetUri.String())
-	d.Set("initial_scope_uris", eNet.InitialScopeUris)
 
 	return nil
 }

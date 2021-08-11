@@ -101,6 +101,10 @@ func resourceFCNetwork() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
+				//Initial scope uris is never set in the resource so it should not be checked for diff
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return true
+				},
 			},
 		},
 	}
@@ -159,12 +163,7 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("modified", fcNet.Modified)
 	d.Set("etag", fcNet.ETAG)
 	d.Set("scopesuri", fcNet.ScopesUri.String())
-	//d.Set("initial_scope_uris", fcNet.InitialScopeUris)
-	initialscopeuris := make([]string, 0, len(fcNet.InitialScopeUris))
-	for _, initialscopeuri := range fcNet.InitialScopeUris {
-		initialscopeuris = append(initialscopeuris, initialscopeuri.String())
-	}
-	d.Set("initial_scope_uris", initialscopeuris)
+
 	return nil
 }
 
