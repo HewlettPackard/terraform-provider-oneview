@@ -307,7 +307,6 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("eTag", enclosureGroup.ETAG)
 	d.Set("enclosure_count", enclosureGroup.EnclosureCount)
 	d.Set("enclosure_type_uri", enclosureGroup.EnclosureTypeUri.String())
-	d.Set("initial_scope_uris", enclosureGroup.InitialScopeUris)
 	d.Set("interconnect_bay_mapping_count", enclosureGroup.InterconnectBayMappingCount)
 	d.Set("interconnect_bay_mappings", enclosureGroup.InterconnectBayMappings)
 	d.Set("ip_addressing_mode", enclosureGroup.IpAddressingMode)
