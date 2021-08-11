@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 data "oneview_ethernet_network" "ethernetnetworks1" {
-  name = "TestNetwork_1"
+  name = "mgmt_untagged"
 }
 
 data "oneview_ethernet_network" "ethernetnetworks2" {
@@ -16,83 +16,12 @@ data "oneview_ethernet_network" "ethernetnetworks2" {
 }
 
 data "oneview_scope" "scope" {
-  name = "Auto-Scope"
+  name = "test"
 }
-
-# Creating Server Profile Template with Management Settings
-resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
-  name                 = "TestServerProfileTemplate_with_local_storage"
-  type                 = "ServerProfileTemplateV8"
-  enclosure_group      = "Auto-EG"
-  server_hardware_type = "SY 480 Gen9 1"
-  bios_option {
-    manage_bios = true
-    overridden_settings {
-      id    = "TimeFormat"
-      value = "Utc"
-    }
-  }
-  boot {
-    manage_boot		= true
-    boot_order		= ["HardDisk"]
-  }
-  boot_mode {
-    manage_mode     = true
-    mode            = "UEFIOptimized"
-    pxe_boot_policy = "Auto"
-  }
-
-  management_processor{
-    manage_mp	=	true
-    mp_settings {
-      local_accounts {
-        user_name = "test_UserNamei-Update"
-        display_name = "test_DisplayName"
-        password = "test_password"
-        user_config_priv = true
-        remote_console_priv = true
-        virtual_media_priv = true
-        virtual_power_and_reset_priv = true
-        ilo_config_priv = true
-      }
-      directory {
-	directory_authentication = "defaultSchema"
-	directory_generic_ldap = false
-	directory_server_address = "ldap.example.com"
-	directory_server_port	= 636
-	directory_server_certificate = "-----BEGIN CERTIFICATE-----\nMIIBozCCAQwCCQCWGqL41Y6YKTANBgkqhkiG9w0BAQUFADAWMRQwEgYDVQQDEwtD\nb21tb24gTmFtZTAeFw0xNzA3MTQxOTQzMjZaFw0xODA3MTQxOTQzMjZaMBYxFDAS\nBgNVBAMTC0NvbW1vbiBOYW1lMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCf\nCNTrU4AZF044Rtu8jiGR6Ce1u9K6GJE+60VCau2y4A2z5B5kKA2XnyP+2JpLRRA8\n8PjEyVJuL1fJomGF74L305j6ucetXZGcEy26XNyKFOtsBeoHtjkISYNTMxikjvC1\nXHctTYds0D6Q6u7igkN9ew8ngn61LInFqb6dLm+CmQIDAQABMA0GCSqGSIb3DQEB\nBQUAA4GBAFVOQ8zXFNHdXVa045onbkx8pgM2zK5VQ69YFtlAymFDWaS7a5M+96JW\n2c3001GDGZcW6fGqW+PEyu3COImRlEhEHaZKs511I7RfckMzZ3s7wPrQrC8WQLqI\ntiZtCWfUX7tto7YDdmfol7bHiaSbrLUv4H/B7iS9FGemA+nrghCK\n-----END CERTIFICATE-----"
-	directory_user_context = ["OU=US,OU=Users,OU=Accounts,dc=Subdomain,dc=example,dc=com", "ou=People,o=example.com" ]
-	ilo_distinguished_name = "service"
-	password = "test_password"
-	kerberos_authentication = false
-      }
-      directory_groups {
-	group_dn = "ilos.example.com,ou=Groups,o=example.com"
-	group_sid = "S-1-5-12"
-	user_config_priv = false
-	remote_console_priv = true
-	virtual_media_priv = true
-	virtual_power_and_reset_priv = true
-	ilo_config_priv = true
-      }
-      key_manager {
-	primary_server_address = "192.0.2.91"
-	primary_server_port = 9000
-	secondary_server_address = "192.0.2.92"
-	secondary_server_port = 9000
-	redundancy_required = true
-	group_name = "GRP"
-	certificate_name = "Local CA"
-	login_name = "deployment"
-	password = "test_password"
-      }
-      administrator_account {
-	delete_administrator_account = false
-	password = "test_password"
-      }
-    }
-  }
+/*
+resource "oneview_server_profile_template" "spt"{
 }
+*/
 
 /*
 # Creates server profile template with local storage
@@ -118,6 +47,8 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
     mode            = "UEFIOptimized"
     pxe_boot_policy = "Auto"
   }
+
+
   local_storage {
     controller {
       device_slot       = "Embedded"
@@ -136,27 +67,44 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
       }
     }
   }
+
+
   connection_settings {
+//    compliance_control = "CheckedMinimum"
     manage_connections = true
-    compliance_control = "CheckedMinimum"
     connections {
-      id             = 1
+      id             = 134
       name           = "Management-01"
-      isolated_trunk = false
       managed        = true
       function_type  = "Ethernet"
       network_uri    = data.oneview_ethernet_network.ethernetnetworks1.uri
-      port_id        = "Auto"
+      isolated_trunk = false 
+      port_id        = "Auto" 
       requested_mbps = "2500"
       boot {
         priority           = "Primary"
         ethernet_boot_type = "PXE"
       }
     }
+    connections {
+      id             = 135
+      name           = "Management-02"
+      managed        = true
+      function_type  = "FibreChannel"
+      network_uri    = "/rest/fc-networks/37aae264-8fd5-4624-960d-10173bde5752"
+      isolated_trunk = false 
+      requested_mbps = "2500"
+      port_id        = "Mezz 3:1-b"
+      requested_vfs  = ""
+      boot {
+        priority           = "Primary"
+	boot_volume_source = "UserDefined"
+      }
+    }
   }
 }
 */
-	
+
 /*
 # Creates server profile template with OS deployment settings
 resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
@@ -338,5 +286,95 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
     }
   }
 }
-
 */
+
+
+# Creating Server Profile Template with Management Settings
+resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
+  name                 = "TestServerProfileTemplate_with_mp_settings"
+  type                 = "ServerProfileTemplateV8"
+  enclosure_group      = "EG"
+  server_hardware_type = "SY 480 Gen9 1"
+  bios_option {
+    manage_bios = true
+    overridden_settings {
+      id    = "TimeFormat"
+      value = "Utc"
+    }
+  }
+  boot {
+    manage_boot		= true
+    boot_order		= ["HardDisk"]
+  }
+  boot_mode {
+    manage_mode     = true
+    mode            = "UEFIOptimized"
+    pxe_boot_policy = "Auto"
+  }
+
+  management_processor{
+    manage_mp	=	true
+    mp_settings {
+/*      local_accounts {
+        user_name = "test_UserNamei-Update"
+        display_name = "test_DisplayName"
+        password = "test_password"
+        user_config_priv = true
+        remote_console_priv = true
+        virtual_media_priv = true
+        virtual_power_and_reset_priv = true
+        ilo_config_priv = true
+      }*/
+      local_accounts {
+        user_name = "test_UserName"
+        display_name = "test_Disp"
+        password = "test_password_101"
+        user_config_priv = true
+        remote_console_priv = true
+        virtual_media_priv = true
+        virtual_power_and_reset_priv = true
+        ilo_config_priv = true
+      }
+
+
+      directory {
+	directory_authentication = "defaultSchema"
+	directory_generic_ldap = false
+	directory_server_address = "ldap.example.com"
+	directory_server_port	= 636
+	directory_server_certificate = "-----BEGIN CERTIFICATE-----\nMIIBozCCAQwCCQCWGqL41Y6YKTANBgkqhkiG9w0BAQUFADAWMRQwEgYDVQQDEwtD\nb21tb24gTmFtZTAeFw0xNzA3MTQxOTQzMjZaFw0xODA3MTQxOTQzMjZaMBYxFDAS\nBgNVBAMTC0NvbW1vbiBOYW1lMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCf\nCNTrU4AZF044Rtu8jiGR6Ce1u9K6GJE+60VCau2y4A2z5B5kKA2XnyP+2JpLRRA8\n8PjEyVJuL1fJomGF74L305j6ucetXZGcEy26XNyKFOtsBeoHtjkISYNTMxikjvC1\nXHctTYds0D6Q6u7igkN9ew8ngn61LInFqb6dLm+CmQIDAQABMA0GCSqGSIb3DQEB\nBQUAA4GBAFVOQ8zXFNHdXVa045onbkx8pgM2zK5VQ69YFtlAymFDWaS7a5M+96JW\n2c3001GDGZcW6fGqW+PEyu3COImRlEhEHaZKs511I7RfckMzZ3s7wPrQrC8WQLqI\ntiZtCWfUX7tto7YDdmfol7bHiaSbrLUv4H/B7iS9FGemA+nrghCK\n-----END CERTIFICATE-----"
+	directory_user_context = ["OU=US,OU=Users,OU=Accounts,dc=Subdomain,dc=example,dc=com", "ou=People,o=example.com" ]
+	ilo_distinguished_name = "service"
+	password = "test_password"
+	kerberos_authentication = false
+      }
+      directory_groups {
+	group_dn = "ilos.example.com,ou=Groups,o=example.com"
+	group_sid = "S-1-5-12"
+	user_config_priv = false
+	remote_console_priv = true
+	virtual_media_priv = true
+	virtual_power_and_reset_priv = true
+	ilo_config_priv = true
+      }
+/*
+      key_manager {
+	primary_server_address = "192.0.2.91"
+	primary_server_port = 9000
+	secondary_server_address = "192.0.2.92"
+	secondary_server_port = 9000
+	redundancy_required = true
+	group_name = "GRP"
+	certificate_name = "Local CA"
+	login_name = "deployment"
+	password = "test_password"
+      }
+      administrator_account {
+	delete_administrator_account = false
+	password = "test_password"
+      }
+*/
+    }
+  }
+}
+
