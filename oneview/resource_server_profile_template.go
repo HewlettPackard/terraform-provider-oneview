@@ -12,7 +12,9 @@
 package oneview
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"reflect"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -21,6 +23,7 @@ import (
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
+
 	return &schema.Resource{
 		Create: resourceServerProfileTemplateCreate,
 		Read:   resourceServerProfileTemplateRead,
@@ -36,6 +39,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+
 			"bios_option": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -128,7 +132,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 
 			"connection_settings": {
 				Optional: true,
-				Computed: true,
 				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -136,18 +139,16 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Computed: true,
 						},
 						"connections": {
 							Optional: true,
-							Computed: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"boot": {
 										Optional: true,
-										Computed: true,
-										Type:     schema.TypeSet,
+										//Computed: true,
+										Type: schema.TypeSet,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"boot_vlan_id": {
@@ -165,7 +166,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"boot_target": {
 													Type:     schema.TypeSet,
 													Optional: true,
-													Computed: true,
+													//Computed: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"array_wwpn": {
@@ -182,7 +183,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"iscsi": {
 													Type:     schema.TypeSet,
 													Optional: true,
-													Computed: true,
+													//Computed: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"chap_level": {
@@ -245,7 +246,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"targets": {
 													Type:     schema.TypeSet,
 													Optional: true,
-													Computed: true,
+													//Computed: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"array_wwpn": {
@@ -268,13 +269,13 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"id": {
 										Type:     schema.TypeInt,
-										Computed: true,
+										Optional: true,
 									},
 
 									"ipv4": {
 										Type:     schema.TypeSet,
 										Optional: true,
-										Computed: true,
+										//Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"gateway": {
@@ -315,7 +316,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"network_name": {
 										Type:     schema.TypeString,
-										Computed: true,
+										Optional: true,
 									},
 									"network_uri": {
 										Type:     schema.TypeString,
@@ -324,81 +325,41 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"port_id": {
 										Type:     schema.TypeString,
 										Optional: true,
-										DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-											if new == "Auto" {
-												return true
-											}
-											return false
-										},
+										Computed: true,
+										// DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+										// 	// t := time.Now()
+										// 	// filenameN := t.String() + "new.json"
+										// 	// file1, _ := json.MarshalIndent(new, "", " ")
+										// 	// _ = ioutil.WriteFile(filenameN, file1, 0644)
+										// 	// filenameO := t.String() + "old.json"
+										// 	// file2, _ := json.MarshalIndent(old, "", " ")
+										// 	// _ = ioutil.WriteFile(filenameO, file2, 0644)
+										// 	// 	// value, _ := d.GetOk("port_id")
+										// 	// 	// filevalue := t.String() + "value.json"
+										// 	// 	// file3, _ := json.MarshalIndent(value, "", " ")
+										// 	// 	// _ = ioutil.WriteFile(filevalue, file3, 0644)
+										// 	// 	return true
+
+										// 	if new == "Auto" {
+										// 		return true
+										// 	}
+										// 	return new == old
+										// },
 									},
+
 									"requested_mbps": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									// "allocated_mbps": {
-									// 	Type:     schema.TypeInt,
-									// 	Computed: true,
-									// },
-									// "allocated_vfs": {
-									// 	Type:     schema.TypeInt,
-									// 	Computed: true,
-									// },
 
 									"requested_vfs": {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									// "state": {
-									// 	Type:     schema.TypeString,
-									// 	Computed: true,
-									// },
-									// "status": {
-									// 	Type:     schema.TypeString,
-									// 	Computed: true,
-									// },
-									// "wwnn": {
-									// 	Type:     schema.TypeString,
-									// 	Optional: true,
-									// },
-									// "wwpn": {
-									// 	Type:     schema.TypeString,
-									// 	Optional: true,
-									// },
-									// "wwpn_type": {
-									// 	Type:     schema.TypeString,
-									// 	Optional: true,
-									// },
-
-									// "interconnect_port": {
-									// 	Type:     schema.TypeString,
-									// 	Optional: true,
-									// },
-									// "interconnect_uri": {
-									// 	Type:     schema.TypeString,
-									// 	Computed: true,
-									// },
-
-									// "mac": {
-									// 	Type:     schema.TypeString,
-									// 	Optional: true,
-									// },
-									// "mac_type": {
-									// 	Type:     schema.TypeString,
-									// 	Optional: true,
-									// },
-
-									// "maximum_mbps": {
-									// 	Type:     schema.TypeInt,
-									// 	Computed: true,
-									// },
-
-									// "private_vlan_port_type": {
-									// 	Type:     schema.TypeString,
-									// 	Computed: true,
-									// },
 								},
 							},
 						},
+
 						"manage_connections": {
 							Type:     schema.TypeBool,
 							Optional: true,
@@ -492,6 +453,9 @@ func resourceServerProfileTemplate() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return true
+				},
 			},
 			"iscsi_initiator_name_type": {
 				Type:     schema.TypeString,
@@ -1264,6 +1228,13 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Computed: true,
 			},
 		},
+		CustomizeDiff: func(diff *schema.ResourceDiff, meta interface{}) error {
+			if diff.HasChange("port_id") {
+				return diff.SetNewComputed("port_id")
+			}
+
+			return nil
+		},
 	}
 }
 
@@ -1840,6 +1811,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		return sptError
 	}
 	return resourceServerProfileTemplateRead(d, meta)
+	//return nil
 }
 
 func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{}) error {
@@ -1854,6 +1826,11 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("category", spt.Category)
 	d.Set("created", spt.Created)
 	d.Set("description", spt.Description)
+
+	uri := d.Get("uri").(string)
+
+	file, _ := json.MarshalIndent(uri, "", " ")
+	_ = ioutil.WriteFile("uri.json", file, 0644)
 
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
 	if err != nil {
@@ -2205,28 +2182,33 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			}
 			// Gets Connection Body
 			connections = append(connections, map[string]interface{}{
-				"allocated_mbps":         connection.AllocatedMbps,
-				"allocated_vfs":          connection.Connectionv200.AllocatedVFs,
-				"boot":                   connectionBoot,
-				"function_type":          connection.FunctionType,
-				"id":                     connection.ID,
-				"interconnect_uri":       connection.InterconnectURI.String(),
-				"ipv4":                   connectionIpv4,
-				"isolated_trunk":         connection.IsolatedTrunk,
-				"lag_name":               connection.LagName,
-				"mac_type":               connection.MacType,
-				"managed":                connection.Managed,
-				"maximum_mbps":           connection.MaximumMbps,
-				"name":                   connection.Name,
-				"network_name":           connection.NetworkName,
-				"network_uri":            connection.NetworkURI,
-				"port_id":                connection.PortID,
-				"private_vlan_port_type": connection.PrivateVlanPortType,
-				"requested_mbps":         connection.RequestedMbps,
-				"state":                  connection.State,
-				"status":                 connection.Status,
+				//"allocated_mbps":         connection.AllocatedMbps,
+				//"allocated_vfs":          connection.Connectionv200.AllocatedVFs,
+				"boot":          connectionBoot,
+				"function_type": connection.FunctionType,
+				"id":            connection.ID,
+				//"interconnect_uri":       connection.InterconnectURI.String(),
+				"ipv4":           connectionIpv4,
+				"isolated_trunk": connection.IsolatedTrunk,
+				"lag_name":       connection.LagName,
+				//"mac_type":               connection.MacType,
+				"managed": connection.Managed,
+				//"maximum_mbps":           connection.MaximumMbps,
+				"name":         connection.Name,
+				"network_name": connection.NetworkName,
+				"network_uri":  connection.NetworkURI.String(),
+				"port_id":      connection.PortID,
+				//"private_vlan_port_type": connection.PrivateVlanPortType,
+				"requested_mbps": connection.RequestedMbps,
+				"requested_vfs":  connection.RequestedVFs,
+				//"state":                  connection.State,
+				//"status":                 connection.Status,
 			})
 		}
+
+		file, _ := json.MarshalIndent(connections, "", " ")
+		_ = ioutil.WriteFile("cn.json", file, 0644)
+
 		// Connection Settings
 		connectionSettings := make([]map[string]interface{}, 0, 1)
 		connectionSettings = append(connectionSettings, map[string]interface{}{
@@ -2234,6 +2216,9 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			"compliance_control": spt.ConnectionSettings.ComplianceControl,
 			"connections":        connections,
 		})
+
+		file, _ = json.MarshalIndent(connectionSettings, "", " ")
+		_ = ioutil.WriteFile("cns.json", file, 0644)
 		d.Set("connection_settings", connectionSettings)
 	}
 
