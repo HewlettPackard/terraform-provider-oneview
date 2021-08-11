@@ -315,8 +315,6 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("ipv6_range_uris", enclosureGroup.Ipv6RangeUris)
 	d.Set("name", enclosureGroup.Name)
 
-	//emptyinterconnect_bay_mappings := ov.InterconnectBayMap{}
-	//if spt.BootMode != emptyBootMode {
 	interconnectBayMap := make([]map[string]interface{}, 0, 1)
 	for i := 0; i < len(enclosureGroup.InterconnectBayMappings); i++ {
 		liguri := enclosureGroup.InterconnectBayMappings[i].LogicalInterconnectGroupUri
