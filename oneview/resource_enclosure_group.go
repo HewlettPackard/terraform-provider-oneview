@@ -64,6 +64,10 @@ func resourceEnclosureGroup() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
+				//Initial scope uris is never set in the resource so it should not be checked for diff
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return true
+				},
 			},
 			"interconnect_bay_mapping_count": {
 				Type:     schema.TypeInt,
@@ -118,13 +122,11 @@ func resourceEnclosureGroup() *schema.Resource {
 			"os_deployment_settings": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_os_deployment": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Computed: true,
 						},
 						"deployment_mode_settings": {
 							Type:     schema.TypeSet,
@@ -134,12 +136,10 @@ func resourceEnclosureGroup() *schema.Resource {
 									"deployment_mode": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Computed: true,
 									},
 									"deployment_network_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Computed: true,
 									},
 								},
 							},
@@ -201,9 +201,9 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 	enclosureGroup := ov.EnclosureGroup{
 		Name: d.Get("name").(string),
 	}
+	interconnectBayMappings := make([]ov.InterconnectBayMap, 0)
 	if val, ok := d.GetOk("interconnect_bay_mappings"); ok {
 		rawInterconnectBayMappings := val.(*schema.Set).List()
-		interconnectBayMappings := make([]ov.InterconnectBayMap, 0)
 		for _, raw := range rawInterconnectBayMappings {
 			interconnectBayMappingItem := raw.(map[string]interface{})
 			logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(interconnectBayMappingItem["logical_interconnect_group_name"].(string))
@@ -212,13 +212,13 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 				return nil
 			}
 			interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
-				//EnclosureIndex:              interconnectBayMappingItem["enclosure_index"].(int),
 				InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
 				LogicalInterconnectGroupUri: logicalInterconnectGroup.URI,
 			})
 		}
-		enclosureGroup.InterconnectBayMappings = interconnectBayMappings
 	}
+	enclosureGroup.InterconnectBayMappings = interconnectBayMappings
+
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawinitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawinitialScopeUris))
