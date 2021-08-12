@@ -453,9 +453,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
 			},
 			"iscsi_initiator_name_type": {
 				Type:     schema.TypeString,
@@ -1827,11 +1824,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("created", spt.Created)
 	d.Set("description", spt.Description)
 
-	uri := d.Get("uri").(string)
-
-	file, _ := json.MarshalIndent(uri, "", " ")
-	_ = ioutil.WriteFile("uri.json", file, 0644)
-
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
 	if err != nil {
 		return err
@@ -1840,7 +1832,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("enclosure_group_uri", spt.EnclosureGroupURI)
 	d.Set("etag", spt.ETAG)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
-	d.Set("initial_scope_uris", spt.InitialScopeUris)
 	d.Set("iscsi_initiator_name", spt.IscsiInitiatorName)
 	d.Set("iscsi_initiator_name_type", spt.IscsiInitiatorNameType)
 	d.Set("mac_type", spt.MACType)
@@ -2608,7 +2599,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	if d.HasChange("connection_settings") {
 		val := d.Get("connection_settings")
 
-		connections := val.(*schema.Set).List()
+		connections := val.([]interface{}) //(*schema.Set).List()
 		for _, rawConSettings := range connections {
 			rawConSetting := rawConSettings.(map[string]interface{})
 			rawNetwork := rawConSetting["connections"].(*schema.Set).List()
@@ -2782,13 +2773,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.Bios = &biosOption
 	}
 	if d.HasChange("initial_scope_uris") {
-		val := d.Get("initial_scope_uris")
-		initialScopeUrisOrder := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
-		for i, raw := range initialScopeUrisOrder {
-			initialScopeUris[i] = utils.Nstring(raw.(string))
-		}
-		serverProfileTemplate.InitialScopeUris = initialScopeUris
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
 
 	// Get firmware details
