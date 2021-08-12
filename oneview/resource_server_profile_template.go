@@ -12,9 +12,7 @@
 package oneview
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"reflect"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -1239,14 +1237,15 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	config := meta.(*Config)
 
 	serverProfileTemplate := ov.ServerProfile{
-		Name:               d.Get("name").(string),
-		Type:               d.Get("type").(string),
-		Affinity:           d.Get("affinity").(string),
-		SerialNumberType:   d.Get("serial_number_type").(string),
-		WWNType:            d.Get("wwn_type").(string),
-		MACType:            d.Get("mac_type").(string),
-		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
-		Description:        d.Get("description").(string),
+		Name:                     d.Get("name").(string),
+		Type:                     d.Get("type").(string),
+		Affinity:                 d.Get("affinity").(string),
+		SerialNumberType:         d.Get("serial_number_type").(string),
+		WWNType:                  d.Get("wwn_type").(string),
+		MACType:                  d.Get("mac_type").(string),
+		HideUnusedFlexNics:       d.Get("hide_unused_flex_nics").(bool),
+		Description:              d.Get("description").(string),
+		ServerProfileDescription: d.Get("server_profile_description").(string),
 	}
 
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("enclosure_group").(string))
@@ -1823,6 +1822,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("category", spt.Category)
 	d.Set("created", spt.Created)
 	d.Set("description", spt.Description)
+	d.Set("server_profile_description", spt.ServerProfileDescription)
 
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
 	if err != nil {
@@ -2197,9 +2197,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			})
 		}
 
-		file, _ := json.MarshalIndent(connections, "", " ")
-		_ = ioutil.WriteFile("cn.json", file, 0644)
-
 		// Connection Settings
 		connectionSettings := make([]map[string]interface{}, 0, 1)
 		connectionSettings = append(connectionSettings, map[string]interface{}{
@@ -2207,9 +2204,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			"compliance_control": spt.ConnectionSettings.ComplianceControl,
 			"connections":        connections,
 		})
-
-		file, _ = json.MarshalIndent(connectionSettings, "", " ")
-		_ = ioutil.WriteFile("cns.json", file, 0644)
 		d.Set("connection_settings", connectionSettings)
 	}
 
@@ -2462,6 +2456,10 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	if d.HasChange("description") {
 		val := d.Get("description")
 		serverProfileTemplate.Description = val.(string)
+	}
+	if d.HasChange("server_profile_description") {
+		val := d.Get("server_profile_description")
+		serverProfileTemplate.ServerProfileDescription = val.(string)
 	}
 
 	val := d.Get("enclosure_group")
