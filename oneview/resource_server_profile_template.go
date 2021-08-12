@@ -21,8 +21,8 @@ import (
 	"reflect"
 	"strconv"
 
-	"encoding/json"
-	"io/ioutil"
+//	"encoding/json"
+//	"io/ioutil"
 )
 
 func ConSetNewComputed(d *schema.ResourceDiff, _ interface{}) error {
@@ -731,7 +731,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"administrator_account": {
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										MaxItems: 1,
 										Optional: true,
 										Elem: &schema.Resource{
@@ -744,18 +744,12 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Type:      schema.TypeString,
 													Optional:  true,
 													Sensitive: true,
-													DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-														if _, ok := d.GetOk("uri"); ok {
-															return true
-														}
-														return false
-													},
 												},
 											},
 										},
 									},
 									"directory": {
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										MaxItems: 1,
 										Optional: true,
 										Elem: &schema.Resource{
@@ -794,12 +788,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Type:      schema.TypeString,
 													Optional:  true,
 													Sensitive: true,
-													DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-														if _, ok := d.GetOk("uri"); ok {
-															return true
-														}
-														return false
-													},
 												},
 												"kerberos_authentication": {
 													Type:     schema.TypeBool,
@@ -826,7 +814,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"key_manager": {
 										MaxItems: 1,
-										Type:     schema.TypeList,
+										Type:     schema.TypeSet,
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -866,12 +854,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Type:      schema.TypeString,
 													Optional:  true,
 													Sensitive: true,
-													DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-														if _, ok := d.GetOk("uri"); ok {
-															return true
-														}
-														return false
-													},
 												},
 											},
 										},
@@ -1385,19 +1367,16 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				mpSetting := mpSettingg.(map[string]interface{})
 				// extracting administrator account
 				ovAdminAcc := ov.AdministratorAccount{}
-				if mpSetting["administrator_account"] != nil {
-					rawAdminAcc := mpSetting["administrator_account"].([]interface{}) //(*schema.Set).List()//([]interface{})
-					for _, adminAccs := range rawAdminAcc {
-						adminAcc := adminAccs.(map[string]interface{})
-						ovAdminAcc = ov.AdministratorAccount{
-							DeleteAdministratorAccount: GetBoolPointer(adminAcc["delete_administrator_account"].(bool)),
-							Password:                   adminAcc["password"].(string),
-						}
+				rawAdminAcc := mpSetting["administrator_account"].(*schema.Set).List()
+				for _, adminAccs := range rawAdminAcc {
+					adminAcc := adminAccs.(map[string]interface{})
+					ovAdminAcc = ov.AdministratorAccount{
+						DeleteAdministratorAccount: GetBoolPointer(adminAcc["delete_administrator_account"].(bool)),
+						Password:                   adminAcc["password"].(string),
 					}
-					ovMpSettings.AdministratorAccount = ovAdminAcc
 				}
 				// extracting directory
-				rawDirectory := mpSetting["directory"].([]interface{})
+				rawDirectory := mpSetting["directory"].(*schema.Set).List()
 				ovDirectory := ov.Directory{}
 				for _, directoryy := range rawDirectory {
 					directory := directoryy.(map[string]interface{})
@@ -1425,7 +1404,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				}
 
 				// extracting key manager
-				rawKeyManager := mpSetting["key_manager"].([]interface{})
+				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()
 				ovKeyManager := ov.KeyManager{}
 				for _, keyManagerr := range rawKeyManager {
 					keyManager := keyManagerr.(map[string]interface{})
@@ -1443,7 +1422,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				}
 
 				// extracting directory groups
-				rawDirectoryGroups := mpSetting["directory_groups"].(*schema.Set).List() //([]interface{})
+				rawDirectoryGroups := mpSetting["directory_groups"].(*schema.Set).List()
 				ovDirectoryGroups := make([]ov.DirectoryGroups, 0)
 				for _, directoryGroupp := range rawDirectoryGroups {
 					directoryGroup := directoryGroupp.(map[string]interface{})
@@ -1459,7 +1438,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				}
 
 				// extracting local accounts
-				rawLocalAccounts := mpSetting["local_accounts"].(*schema.Set).List() //([]interface{})
+				rawLocalAccounts := mpSetting["local_accounts"].(*schema.Set).List()
 				ovLocalAccounts := make([]ov.LocalAccounts, 0)
 				for _, localAccounts := range rawLocalAccounts {
 					localAccount := localAccounts.(map[string]interface{})
@@ -1477,32 +1456,27 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 				// setting MpSettings
 				ovMpSettings = ov.MpSettings{
-//					AdministratorAccount: ovAdminAcc,
+					AdministratorAccount: ovAdminAcc,
 					LocalAccounts:        ovLocalAccounts,
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
 				}
 			}
-
 			// setting ManagementProcessor
 			ovManagementProcessor = ov.ManagementProcessors{
 				ManageMp:  mp["manage_mp"].(bool),
 				MpSetting: ovMpSettings,
 			}
-
 		}
 		serverProfileTemplate.ManagementProcessors = ovManagementProcessor
-//		file, _ := json.MarshalIndent(ovManagementProcessor, "", " ")
-//		_ = ioutil.WriteFile("test.json", file, 0644)
-
 	}
 
 
 
 
 	if val, ok := d.GetOk("connection_settings"); ok {
-		connections := val.([]interface{}) //(*schema.Set).List()
+		connections := val.([]interface{})
 		for _, rawConSettings := range connections {
 			rawConSetting := rawConSettings.(map[string]interface{})
 			rawNetwork := rawConSetting["connections"].(*schema.Set).List()
@@ -1511,7 +1485,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				rawNetworkItem := rawNet.(map[string]interface{})
 				bootOptions := ov.BootOption{}
 				if rawNetworkItem["boot"] != nil {
-					rawBoots := rawNetworkItem["boot"].([]interface{}) //.(*schema.Set).List()
+					rawBoots := rawNetworkItem["boot"].([]interface{})
 					for _, rawBoot := range rawBoots {
 						bootItem := rawBoot.(map[string]interface{})
 						bootTargets := []ov.BootTarget{}
@@ -1527,7 +1501,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 						}
 						iscsi := ov.BootIscsi{}
 						if bootItem["iscsi"] != nil {
-							rawIscsis := bootItem["iscsi"].([]interface{}) //(*schema.Set).List()
+							rawIscsis := bootItem["iscsi"].([]interface{})
 							for _, rawIscsi := range rawIscsis {
 								rawIscsiItem := rawIscsi.(map[string]interface{})
 								iscsi = ov.BootIscsi{
@@ -1539,13 +1513,9 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 								}
 							}
 						}
-						/*						bootOptionV3 := ov.BootOptionV3{
-													BootVlanId: strconv.Itoa(bootItem["boot_vlan_id"].(string)),
-												}
-						*/
+
 						bootOptions = ov.BootOption{
 							Priority: bootItem["priority"].(string),
-							//							BootOptionV3:     bootOptionV3,
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
@@ -1567,7 +1537,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 				ipv4 := ov.Ipv4Option{}
 				if rawNetworkItem["ipv4"] != nil {
-					rawIpv4s := rawNetworkItem["ipv4"].([]interface{}) //(*schema.Set).List()
+					rawIpv4s := rawNetworkItem["ipv4"].([]interface{})
 					for _, rawIpv4 := range rawIpv4s {
 						rawIpv4Item := rawIpv4.(map[string]interface{})
 						ipv4 = ov.Ipv4Option{
@@ -1584,7 +1554,6 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					IsolatedTrunk: rawNetworkItem["isolated_trunk"].(bool),
 					LagName:       rawNetworkItem["lag_name"].(string),
 					Managed:       rawNetworkItem["managed"].(bool),
-					//					NetworkName:   rawNetworkItem["network_name"].(string),
 					FunctionType:  rawNetworkItem["function_type"].(string),
 					NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
 					PortID:        rawNetworkItem["port_id"].(string),
@@ -1662,7 +1631,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	}
 
 	if _, ok := d.GetOk("firmware"); ok {
-		rawFirmware := d.Get("firmware").([]interface{}) //(*schema.Set).List()
+		rawFirmware := d.Get("firmware").([]interface{})
 		firmware := ov.FirmwareOption{}
 		for _, raw := range rawFirmware {
 			firmwareItem := raw.(map[string]interface{})
@@ -1943,6 +1912,18 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	return resourceServerProfileTemplateRead(d, meta)
 }
 
+
+// flattens management processor 
+func flattenMp(d *schema.ResourceData) (map[string]interface{}){
+	if val, ok := d.GetOk("management_processor"); ok {
+		valn := val.([]interface{})
+		vall := valn[0].(map[string]interface{})
+		valmp := vall["mp_settings"].([]interface{})
+		return valmp[0].(map[string]interface{})
+	}
+	return nil
+}
+
 func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
@@ -2043,71 +2024,85 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		mpSettings := make([]map[string]interface{}, 0)
 		if len(spt.ManagementProcessor.MpSettings) != 0 {
 			// initializing schema variables...
-			adminAcc := make([]map[string]interface{}, 1)
-			directory := make([]map[string]interface{}, 1)
-			keyManager := make([]map[string]interface{}, 1)
+			adminAcc := make([]map[string]interface{}, 0)
+			directory := make([]map[string]interface{}, 0)
+			keyManager := make([]map[string]interface{}, 0)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
 
 			for _, val := range spt.ManagementProcessor.MpSettings {
 
+
+
+
+
+
 				if val.SettingType == "AdministratorAccount" {
 					// initializing 0th location...
-					adminAcc[0] = map[string]interface{}{}
+					adminAc := map[string]interface{}{}
 					// adding attributes if they exists...
 
 					if daa, ok := val.Args["deleteAdministratorAccount"]; ok {
-						adminAcc[0]["delete_administrator_account"] = daa
+						adminAc["delete_administrator_account"] = daa
 					}
 					if pass, ok := val.Args["password"]; ok {
 						if pass != nil {
-							adminAcc[0]["password"] = pass
+							adminAc["password"] = pass
 						}
 					}
+					// extracts MpSettings to re-set it
+					valmpp := flattenMp(d)
+					vals := valmpp["administrator_account"].(*schema.Set).List()
+					for _, x := range vals {
+						xx := x.(map[string]interface{})
+						adminAc["password"] = xx["password"]
+					}
+					adminAcc = append(adminAcc, adminAc)
+
 				}
 
 				if val.SettingType == "Directory" {
 					// initializing 0th location...
-					directory[0] = map[string]interface{}{}
+					directoryy := map[string]interface{}{}
 
 					// adding attributes if they exists...
 					if dgl, ok := val.Args["directoryAuthentication"]; ok {
-						directory[0]["directory_authentication"] = dgl
+						directoryy["directory_authentication"] = dgl
 					}
 					if dgl, ok := val.Args["directoryGenericLDAP"]; ok {
-						directory[0]["directory_generic_ldap"] = dgl
+						directoryy["directory_generic_ldap"] = dgl
 					}
 					if dsa, ok := val.Args["directoryServerAddress"]; ok {
-						directory[0]["directory_server_address"] = dsa
+						directoryy["directory_server_address"] = dsa
 					}
 					if dsp, ok := val.Args["directoryServerPort"]; ok {
-						directory[0]["directory_server_port"] = dsp
+						directoryy["directory_server_port"] = dsp
 					}
 					if dsc, ok := val.Args["directoryServerCertificate"]; ok {
-						directory[0]["directory_server_certificate"] = dsc
+						directoryy["directory_server_certificate"] = dsc
 					}
 					if iodn, ok := val.Args["iloObjectDistinguishedName"]; ok {
-						directory[0]["ilo_distinguished_name"] = iodn
+						directoryy["ilo_distinguished_name"] = iodn
 					}
 					if p, ok := val.Args["password"]; ok {
 						if p != nil {
-							directory[0]["password"] = p
+							directoryy["password"] = p
 						}
 					}
 					if ka, ok := val.Args["kerberosAuthentication"]; ok {
-						directory[0]["kerberos_authentication"] = ka
+						directoryy["kerberos_authentication"] = ka
 					}
 					if kr, ok := val.Args["kerberosRealm"]; ok {
-						directory[0]["kerberos_realm"] = kr
+						directoryy["kerberos_realm"] = kr
 					}
 					if kksa, ok := val.Args["kerberosKDCServerAddress"]; ok {
-						directory[0]["kerberos_kdc_server_address"] = kksa
+						directoryy["kerberos_kdc_server_address"] = kksa
 					}
 					if kksp, ok := val.Args["kerberosKDCServerPort"]; ok {
-						directory[0]["kerberos_kdc_server_port"] = kksp
+						directoryy["kerberos_kdc_server_port"] = kksp
 					}
 					if kkt, ok := val.Args["kerberosKeytab"]; ok {
-						directory[0]["kerberos_key_tab"] = kkt
+						directoryy["kerberos_key_tab"] = kkt
 					}
 					if duc, ok := val.Args["directoryUserContext"]; ok {
 						ducSet := []string{}
@@ -2117,9 +2112,18 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 							for i := 0; i < s.Len(); i++ {
 								ducSet = append(ducSet, s.Index(i).Interface().(string))
 							}
-							directory[0]["directory_user_context"] = ducSet
+							directoryy["directory_user_context"] = ducSet
 						}
 					}
+					// extracts MpSettings to re-set it
+					valmpp := flattenMp(d)
+					vals := valmpp["directory"].(*schema.Set).List()
+					for _, x := range vals {
+						xx := x.(map[string]interface{})
+						directoryy["password"] = xx["password"]
+					}
+					directory = append(directory, directoryy)
+
 				}
 				if val.SettingType == "DirectoryGroups" {
 					if dga, ok := val.Args["directoryGroupAccounts"]; ok {
@@ -2199,10 +2203,8 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 								localAccounts = append(localAccounts, la)
 							}
 
-							val := d.Get("management_processor").([]interface{})
-							vall := val[0].(map[string]interface{})
-							valmp := vall["mp_settings"].([]interface{})
-							valmpp := valmp[0].(map[string]interface{})
+							// extracts MpSettings to re-set it
+							valmpp := flattenMp(d)
 							vals := valmpp["local_accounts"].(*schema.Set).List()
 							for i, x := range vals {
 								xx := x.(map[string]interface{})
@@ -2214,35 +2216,44 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 
 				if val.SettingType == "KeyManager" {
 					// initializing 0th location...
-					keyManager[0] = map[string]interface{}{}
+					keyManagerr := map[string]interface{}{}
 					// extratcing values if exists...
 					if psa, ok := val.Args["primaryServerAddress"]; ok {
-						keyManager[0]["primary_server_address"] = psa
+						keyManagerr["primary_server_address"] = psa
 					}
 					if psp, ok := val.Args["primaryServerPort"]; ok {
-						keyManager[0]["primary_server_port"] = psp
+						keyManagerr["primary_server_port"] = psp
 					}
 					if ssa, ok := val.Args["secondaryServerAddress"]; ok {
-						keyManager[0]["secondary_server_address"] = ssa
+						keyManagerr["secondary_server_address"] = ssa
 					}
 					if ssp, ok := val.Args["secondaryServerPort"]; ok {
-						keyManager[0]["secondary_server_port"] = ssp
+						keyManagerr["secondary_server_port"] = ssp
 					}
 					if rr, ok := val.Args["redundancyRequired"]; ok {
-						keyManager[0]["redundancy_required"] = rr
+						keyManagerr["redundancy_required"] = rr
 					}
 					if gn, ok := val.Args["groupName"]; ok {
-						keyManager[0]["group_name"] = gn
+						keyManagerr["group_name"] = gn
 					}
 					if cn, ok := val.Args["certificateName"]; ok {
-						keyManager[0]["certificate_name"] = cn
+						keyManagerr["certificate_name"] = cn
 					}
 					if ln, ok := val.Args["loginName"]; ok {
-						keyManager[0]["login_name"] = ln
+						keyManagerr["login_name"] = ln
 					}
 					if p, ok := val.Args["password"]; ok {
-						keyManager[0]["password"] = p
+						keyManagerr["password"] = p
 					}
+					// extracts MpSettings to re-set it
+					valmpp := flattenMp(d)
+					vals := valmpp["key_manager"].(*schema.Set).List()
+					for _, x := range vals {
+						xx := x.(map[string]interface{})
+						keyManagerr["password"] = xx["password"]
+					}
+					keyManager = append(keyManager, keyManagerr)
+
 				}
 
 			}
@@ -2264,9 +2275,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		})
 		d.Set("management_processor", mp)
 	}
-	//	uri := d.Get("uri")
-	//	file, _ := json.MarshalIndent(uri, "", " ")
-	//      _ = ioutil.WriteFile("uri.json", file, 0644)
+
 
 	if len(spt.ConnectionSettings.Connections) != 0 {
 		// Get connections
@@ -2304,7 +2313,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					"boot_volume_source": connection.Boot.BootVolumeSource,
 					"iscsi":              iscsi,
 					"boot_target":        bootTargets,
-					//					"boot_vlan_id":	      strconv.Itoa(connection.Boot.BootOptionV3.BootVlanId),
 				})
 				if connection.Boot.BootOptionV3.BootVlanId != 0 {
 					connectionBoot[0]["boot_vlan_id"] = strconv.Itoa(connection.Boot.BootOptionV3.BootVlanId)
@@ -2322,32 +2330,21 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			}
 			// Gets Connection Body
 			connections = append(connections, map[string]interface{}{
-				//				"allocated_mbps":         connection.AllocatedMbps,
-				//				"allocated_vfs":          connection.Connectionv200.AllocatedVFs,
 				"boot":          connectionBoot,
 				"function_type": connection.FunctionType,
 				"id":            connection.ID,
-				//				"interconnect_uri":       connection.InterconnectURI.String(),
 				"ipv4":           connectionIpv4,
 				"isolated_trunk": connection.IsolatedTrunk,
 				"lag_name":       connection.LagName,
 				"mac_type":       connection.MacType,
 				"managed":        connection.Managed,
-				//				"maximum_mbps":           connection.MaximumMbps,
 				"name":         connection.Name,
 				"network_name": connection.NetworkName,
 				"network_uri":  connection.NetworkURI,
-				"port_id":      "Auto", // connection.PortID,
-				//				"private_vlan_port_type": connection.PrivateVlanPortType,
+				"port_id":      connection.PortID,
 				"requested_mbps": connection.RequestedMbps,
-				//				"state":                  connection.State,
-				//				"status":                 connection.Status,
 			})
 		}
-
-		/*		file, _ := json.MarshalIndent(connections, "", " ")
-				_ = ioutil.WriteFile("test.json", file, 0644)
-		*/
 
 		// Connection Settings
 		connectionSettings := make([]map[string]interface{}, 0, 1)
@@ -2633,7 +2630,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			for _, mpSettingg := range mpSettings {
 				mpSetting := mpSettingg.(map[string]interface{})
 				// extracting administrator account
-				rawAdminAcc := mpSetting["administrator_account"].([]interface{}) //(*schema.Set).List()//([]interface{})
+				rawAdminAcc := mpSetting["administrator_account"].(*schema.Set).List()
 				ovAdminAcc := ov.AdministratorAccount{}
 				for _, adminAccs := range rawAdminAcc {
 					adminAcc := adminAccs.(map[string]interface{})
@@ -2643,7 +2640,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					}
 				}
 				// extracting directory
-				rawDirectory := mpSetting["directory"].([]interface{})
+				rawDirectory := mpSetting["directory"].(*schema.Set).List()
 				ovDirectory := ov.Directory{}
 				for _, directoryy := range rawDirectory {
 					directory := directoryy.(map[string]interface{})
@@ -2671,7 +2668,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				}
 
 				// extracting key manager
-				rawKeyManager := mpSetting["key_manager"].([]interface{})
+				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()//([]interface{})
 				ovKeyManager := ov.KeyManager{}
 				for _, keyManagerr := range rawKeyManager {
 					keyManager := keyManagerr.(map[string]interface{})

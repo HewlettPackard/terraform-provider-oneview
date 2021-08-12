@@ -21,9 +21,9 @@ data "oneview_scope" "scope" {
 /*
 resource "oneview_server_profile_template" "spt"{
 }
-*/
 
-/*
+
+
 # Creates server profile template with local storage
 resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorage" {
   name                 = "TestServerProfileTemplate_with_local_storage"
@@ -70,7 +70,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
 
 
   connection_settings {
-//    compliance_control = "CheckedMinimum"
+    compliance_control = "CheckedMinimum"
     manage_connections = true
     connections {
       id             = 134
@@ -94,7 +94,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
       network_uri    = "/rest/fc-networks/37aae264-8fd5-4624-960d-10173bde5752"
       isolated_trunk = false 
       requested_mbps = "2500"
-      port_id        = "Mezz 3:1-b"
+      port_id        = "Auto"
       requested_vfs  = ""
       boot {
         priority           = "Primary"
@@ -318,13 +318,13 @@ resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
 /*      local_accounts {
         user_name = "test_UserNamei-Update"
         display_name = "test_DisplayName"
-        password = "test_password"
+        password = "test_password1010"
         user_config_priv = true
         remote_console_priv = true
         virtual_media_priv = true
         virtual_power_and_reset_priv = true
         ilo_config_priv = true
-      }*/
+      }
       local_accounts {
         user_name = "test_UserName"
         display_name = "test_Disp"
@@ -335,7 +335,7 @@ resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
         virtual_power_and_reset_priv = true
         ilo_config_priv = true
       }
-
+*/
 
       directory {
 	directory_authentication = "defaultSchema"
@@ -357,7 +357,7 @@ resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
 	virtual_power_and_reset_priv = true
 	ilo_config_priv = true
       }
-/*
+
       key_manager {
 	primary_server_address = "192.0.2.91"
 	primary_server_port = 9000
@@ -369,6 +369,7 @@ resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
 	login_name = "deployment"
 	password = "test_password"
       }
+/*
       administrator_account {
 	delete_administrator_account = false
 	password = "test_password"
