@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 #### Major Changes
 1. Extended support to Server Profile resource on DL Server.
+2. Extended support to Server Profile Template resource on DL Server.
 
 # [v6.2.0-13]
 
