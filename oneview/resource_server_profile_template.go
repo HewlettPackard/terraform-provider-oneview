@@ -2487,7 +2487,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		val := d.Get("hide_unused_flex_nics")
 		serverProfileTemplate.HideUnusedFlexNics = val.(bool)
 	}
-	if d.Get("enclosure_group") != ""{
+	if d.Get("enclosure_group") != "" {
 		val := d.Get("enclosure_group")
 		enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(val.(string))
 		if err != nil {
