@@ -90,7 +90,6 @@ func resourceFCNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"scopesuri": {
-				Optional: true,
 				Type:     schema.TypeString,
 				Computed: true,
 			},

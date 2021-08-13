@@ -37,7 +37,7 @@ func resourceLogicalEnclosure() *schema.Resource {
 			},
 			"delete_failed": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"deployment_manager_settings": {
 				Optional: true,
@@ -181,7 +181,6 @@ func resourceLogicalEnclosure() *schema.Resource {
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"status": {
@@ -275,7 +274,6 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 		})
 	}
 	d.Set("deployment_manager_settings", dpmsList)
-	d.Set("description", logicalEnclosure.Description)
 	d.Set("enclosure_group_uri", logicalEnclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_uris", logicalEnclosure.EnclosureUris)
 
@@ -367,11 +365,7 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 		logicalEnclosure.PowerMode = val.(string)
 	}
 	if val, ok := d.GetOk("scaling_state"); ok {
-		logicalEnclosure.PowerMode = val.(string)
-	}
-
-	if val, ok := d.GetOk("scopes_uri"); ok {
-		logicalEnclosure.ScopesUri = utils.NewNstring(val.(string))
+		logicalEnclosure.ScalingState = val.(string)
 	}
 
 	if val, ok := d.GetOk("enclosure_group_uri"); ok {

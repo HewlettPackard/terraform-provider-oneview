@@ -491,10 +491,6 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 		enclosureGroup.PowerMode = val.(string)
 	}
 
-	if val, ok := d.GetOk("scopes_uri"); ok {
-		enclosureGroup.ScopesUri = utils.NewNstring(val.(string))
-	}
-
 	err := config.ovClient.UpdateEnclosureGroup(enclosureGroup)
 	if err != nil {
 		return err
