@@ -191,7 +191,7 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	}
 	d.SetId(d.Id())
 	d.Set("configuration_state", d.Get("configuration_state").(string))
-	d.Set("host_name", servHard.Hostname)
+	d.Set("host_name", d.Get("configuration_state").(string))
 	d.Set("force", servHard.Force)
 	d.Set("licensing_intent", servHard.LicensingIntent)
 	d.Set("maintenance_mode", servHard.MaintenanceMode)
@@ -212,7 +212,7 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("mp_firmware_version", servHard.MpFirwareVersion)
 	d.Set("mp_dns_name", servHard.MpDnsName)
 	d.Set("uid_state", servHard.UidState)
-	d.Set("user_name", servHard.Username)
+	d.Set("username", d.Get("username").(string))
 
 	return nil
 }
@@ -227,20 +227,23 @@ func resourceServerHardwareUpdate(d *schema.ResourceData, meta interface{}) erro
 			return err
 		}
 
-	} else if d.HasChange("maintenance_mode") {
+	}
+	if d.HasChange("maintenance_mode") {
 		err := config.ovClient.SetMaintenanceMode(d.Id(), d.Get("maintenance_mode").(string))
 		if err != nil {
 			d.SetId("")
 			return err
 		}
 
-	} else if d.HasChange("uid_state") {
+	}
+	if d.HasChange("uid_state") {
 		err := config.ovClient.SetUidState(d.Id(), d.Get("uid_state").(string))
 		if err != nil {
 			d.SetId("")
 			return err
 		}
-	} else if d.HasChange("server_power_state") {
+	}
+	if d.HasChange("server_power_state") {
 		powerMap := make(map[string]interface{})
 		powerStates := d.Get("server_power_state").([]interface{})
 		for _, powerState := range powerStates {
@@ -257,7 +260,8 @@ func resourceServerHardwareUpdate(d *schema.ResourceData, meta interface{}) erro
 			d.SetId("")
 			return err
 		}
-	} else if d.HasChange("username") || d.HasChange("password") || d.HasChange("configuration_state") {
+	}
+	if d.HasChange("username") || d.HasChange("password") || d.HasChange("configuration_state") {
 		return errors.New("Fields like username, password and configuration_state cannot be changed")
 	}
 	d.SetId(d.Id())
@@ -266,5 +270,5 @@ func resourceServerHardwareUpdate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceServerHardwareDelete(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	return errors.New("Server hardware delete Operation is not supported.")
 }
