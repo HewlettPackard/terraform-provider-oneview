@@ -48,10 +48,7 @@ func dataSourceFCNetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
+
 			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -102,7 +99,6 @@ func dataSourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("fabric_type", fcNet.FabricType)
 	d.Set("link_stability_time", fcNet.LinkStabilityTime)
 	d.Set("auto_login_redistribution", fcNet.AutoLoginRedistribution)
-	d.Set("description", fcNet.Description.String())
 	d.Set("type", fcNet.Type)
 	d.Set("uri", fcNet.URI.String())
 	d.Set("connection_template_uri", fcNet.ConnectionTemplateUri.String())

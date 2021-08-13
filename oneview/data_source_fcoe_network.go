@@ -40,10 +40,6 @@ func dataSourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"uri": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -97,7 +93,6 @@ func dataSourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", fcoeNet.Name)
 	d.Set("fabric_uri", fcoeNet.FabricUri.String())
 	d.Set("vlan_id", fcoeNet.VlanId)
-	d.Set("description", fcoeNet.Description.String())
 	d.Set("type", fcoeNet.Type)
 	d.Set("uri", fcoeNet.URI.String())
 	d.Set("connection_template_uri", fcoeNet.ConnectionTemplateUri.String())

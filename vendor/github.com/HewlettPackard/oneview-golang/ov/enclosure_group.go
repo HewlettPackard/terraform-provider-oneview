@@ -3,6 +3,7 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -22,6 +23,8 @@ type EnclosureGroup struct {
 	InterconnectBayMappings             []InterconnectBayMap `json:"interconnectBayMappings"`                // "interconnectBayMappings": [],
 	IpAddressingMode                    string               `json:"ipAddressingMode,omitempty"`             // "ipAddressingMode": "DHCP"
 	IpRangeUris                         []utils.Nstring      `json:"ipRangeUris,omitempty"`
+	Ipv6AddressingMode                  string               `json:"ipv6AddressingMode,omitempty"` // "ipAddressingMode": "DHCP"
+	Ipv6RangeUris                       []utils.Nstring      `json:"ipv6RangeUris,omitempty"`
 	Modified                            string               `json:"modified,omitempty"`             // "modified": "20150831T154835.250Z",
 	Name                                string               `json:"name,omitempty"`                 // "name": "Enclosure Group 1",
 	OsDeploymentSettings                *OsDeploymentSetting `json:"osDeploymentSettings,omitempty"` // "osDeploymentSetting": {},

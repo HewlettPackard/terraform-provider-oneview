@@ -25,11 +25,6 @@ variable "scope_name_1" {
   default     = "Auto-Scope"
 }
 
-# Fetching Logical Interconnect Group
-#data "oneview_logical_interconnect_group" "logical_interconnect_group" {
-#        name = "${var.LIG_name}"
-#}
-
 data "oneview_enclosure_group" "enclosure_group" {
   name = var.enc_grp
 }
@@ -44,11 +39,11 @@ resource "oneview_enclosure_group" "eg_inst" {
   ambient_temperature_mode = data.oneview_enclosure_group.enclosure_group.ambient_temperature_mode
   interconnect_bay_mappings {
     interconnect_bay               = 3
-    logical_interconnect_group_uri = "/rest/logical-interconnect-groups/08cc9fdd-c831-4437-9414-ca3cfa12d292" #"${data.oneview_logical_interconnect_group.logical_interconnect_group.uri}"
+    logical_interconnect_group_name = "${var.LIG_name}"
   }
   interconnect_bay_mappings {
     interconnect_bay               = 6
-    logical_interconnect_group_uri = "/rest/logical-interconnect-groups/08cc9fdd-c831-4437-9414-ca3cfa12d292" #"${data.oneview_logical_interconnect_group.logical_interconnect_group.uri}"
+    logical_interconnect_group_name = "${var.LIG_name}"
   }
   interconnect_bay_mapping_count = 2
   type                           = "EnclosureGroupV8"

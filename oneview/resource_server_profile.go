@@ -2077,11 +2077,13 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("type", serverProfile.Type)
 	d.Set("uri", serverProfile.URI.String())
 
-	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(serverProfile.EnclosureGroupURI)
-	if err != nil {
-		return err
+	if serverProfile.EnclosureGroupURI != "" {
+		enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(serverProfile.EnclosureGroupURI)
+		if err != nil {
+			return err
+		}
+		d.Set("enclosure_group", enclosureGroup.Name)
 	}
-	d.Set("enclosure_group", enclosureGroup.Name)
 
 	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByUri(serverProfile.ServerHardwareTypeURI)
 	if err != nil {

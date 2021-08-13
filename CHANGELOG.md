@@ -1,10 +1,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v6.3.0-13]
+# [v6.3.0-13] (Unreleased)
 
 ### Notes
-- logical_interconnect_group: Changed the way we provide port_num, instead of list we have to provide integer value for port_num in each logical_port_config in uplink_set.
+- This release supports API3200 minimally where we can use OneView v6.30 with this SDK.
+
+#### Major Changes
+1. Extended support to Server Profile resource on DL Server.
+2. Extended support to Server Profile Template resource on DL Server.
+3. Extended support to Server Hardware resource for DL Server.
+   - POST   /rest/server-hardware
+   - PATCH  /rest/server-hardware/{id}
+4. logical_interconnect_group: Changed the way we provide port_num, instead of list we have to provide integer value for port_num in each logical_port_config in uplink_set.
 
 # [v6.2.0-13]
 
