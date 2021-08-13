@@ -18,4 +18,11 @@ resource "oneview_fc_network" "FCNetwork" {
   type               = "fc-networkV4"
   initial_scope_uris = [data.oneview_scope.scope_obj.uri]
 }
+# Creates the fc network with  fabric type direct attach.
+# resource "oneview_fc_network" "FCNetwork" {
+#   name               = "TestFCNetwork"
+#   fabric_type        = "DirectAttach"
+#   type               = "fc-networkV4"
+#   initial_scope_uris = [data.oneview_scope.scope_obj.uri]
+# }
 

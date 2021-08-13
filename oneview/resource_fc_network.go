@@ -101,10 +101,6 @@ func resourceFCNetwork() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
-				//Initial scope uris is never set in the resource so it should not be checked for diff
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
 			},
 		},
 	}
@@ -182,7 +178,11 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if d.HasChange("fabric_type") {
-		return fmt.Errorf("Fabric Type can not be changed")
+		return fmt.Errorf("fabric type can not be changed")
+	}
+
+	if d.HasChange("initial_scope_uris") {
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)

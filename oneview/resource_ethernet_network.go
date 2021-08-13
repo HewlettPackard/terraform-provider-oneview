@@ -36,7 +36,7 @@ func resourceEthernetNetwork() *schema.Resource {
 			},
 			"vlan_id": {
 				Type:     schema.TypeInt,
-				Required: true,
+				Optional: true,
 			},
 			"purpose": {
 				Type:     schema.TypeString,
@@ -114,11 +114,6 @@ func resourceEthernetNetwork() *schema.Resource {
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
-				},
-				Set: schema.HashString,
-				//Initial scope uris is never set in the resource so it should not be checked for diff
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
 				},
 			},
 		},
@@ -203,6 +198,9 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 
 	if d.HasChange("vlan_id") {
 		return fmt.Errorf("vlan Id can not be changed")
+	}
+	if d.HasChange("initial_scope_uris") {
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
 
 	err := config.ovClient.UpdateEthernetNetwork(newENet)

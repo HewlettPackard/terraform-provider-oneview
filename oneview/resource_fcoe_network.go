@@ -95,10 +95,6 @@ func resourceFCoENetwork() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
-				//Initial scope uris is never set in the resource so it should not be checked for diff
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
 			},
 		},
 	}
@@ -166,6 +162,9 @@ func resourceFCoENetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if d.HasChange("vlanid") {
 		return fmt.Errorf("vlan Id can not be changed")
+	}
+	if d.HasChange("initial_scope_uris") {
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
 
 	err := config.ovClient.UpdateFCoENetwork(newFCoENet)

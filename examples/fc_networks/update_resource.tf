@@ -9,8 +9,8 @@ provider "oneview" {
 
 # Updates the created resource with local name FCNetwork
 resource "oneview_fc_network" "FCNetwork" {
-  name = "TestFCNetwork_Renamed"
-  fabric_fabric_type = "FabricAttach"
-  type = "fc-networkV4"
+  name        = "TestFCNetwork_Renamed"
+  fabric_type = "FabricAttach"
+  type        = "fc-networkV4"
 }
 
