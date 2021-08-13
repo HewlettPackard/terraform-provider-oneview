@@ -339,6 +339,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
 */
 
 # Creating Server Profile Template with DL Server
+# Enclosure group and affinity are not supported for DL server
 resource "oneview_server_profile_template" "ServerProfileTemplateWithDLServer" {
   name                 = "TestSPT_DL_Server"
   server_hardware_type = "DL560 Gen10 1"
