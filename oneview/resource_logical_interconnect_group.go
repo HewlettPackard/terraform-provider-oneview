@@ -45,8 +45,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 			},
 			"redundancy_type": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Required: true,
 			},
 			"enclosure_indexes": {
 				Type:     schema.TypeSet,
