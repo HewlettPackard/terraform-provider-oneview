@@ -273,7 +273,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"ipv4": {
 										Type:     schema.TypeSet,
 										Optional: true,
-										//Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"gateway": {
@@ -323,26 +322,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"port_id": {
 										Type:     schema.TypeString,
 										Optional: true,
-										Computed: true,
-										// DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-										// 	// t := time.Now()
-										// 	// filenameN := t.String() + "new.json"
-										// 	// file1, _ := json.MarshalIndent(new, "", " ")
-										// 	// _ = ioutil.WriteFile(filenameN, file1, 0644)
-										// 	// filenameO := t.String() + "old.json"
-										// 	// file2, _ := json.MarshalIndent(old, "", " ")
-										// 	// _ = ioutil.WriteFile(filenameO, file2, 0644)
-										// 	// 	// value, _ := d.GetOk("port_id")
-										// 	// 	// filevalue := t.String() + "value.json"
-										// 	// 	// file3, _ := json.MarshalIndent(value, "", " ")
-										// 	// 	// _ = ioutil.WriteFile(filevalue, file3, 0644)
-										// 	// 	return true
-
-										// 	if new == "Auto" {
-										// 		return true
-										// 	}
-										// 	return new == old
-										// },
 									},
 
 									"requested_mbps": {
@@ -1222,13 +1201,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
-		},
-		CustomizeDiff: func(diff *schema.ResourceDiff, meta interface{}) error {
-			if diff.HasChange("port_id") {
-				return diff.SetNewComputed("port_id")
-			}
-
-			return nil
 		},
 	}
 }
@@ -2173,27 +2145,19 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			}
 			// Gets Connection Body
 			connections = append(connections, map[string]interface{}{
-				//"allocated_mbps":         connection.AllocatedMbps,
-				//"allocated_vfs":          connection.Connectionv200.AllocatedVFs,
-				"boot":          connectionBoot,
-				"function_type": connection.FunctionType,
-				"id":            connection.ID,
-				//"interconnect_uri":       connection.InterconnectURI.String(),
+				"boot":           connectionBoot,
+				"function_type":  connection.FunctionType,
+				"id":             connection.ID,
 				"ipv4":           connectionIpv4,
 				"isolated_trunk": connection.IsolatedTrunk,
 				"lag_name":       connection.LagName,
-				//"mac_type":               connection.MacType,
-				"managed": connection.Managed,
-				//"maximum_mbps":           connection.MaximumMbps,
-				"name":         connection.Name,
-				"network_name": connection.NetworkName,
-				"network_uri":  connection.NetworkURI.String(),
-				"port_id":      connection.PortID,
-				//"private_vlan_port_type": connection.PrivateVlanPortType,
+				"managed":        connection.Managed,
+				"name":           connection.Name,
+				"network_name":   connection.NetworkName,
+				"network_uri":    connection.NetworkURI.String(),
+				"port_id":        connection.PortID,
 				"requested_mbps": connection.RequestedMbps,
 				"requested_vfs":  connection.RequestedVFs,
-				//"state":                  connection.State,
-				//"status":                 connection.Status,
 			})
 		}
 
