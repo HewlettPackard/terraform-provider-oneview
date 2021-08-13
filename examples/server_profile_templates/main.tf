@@ -249,9 +249,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
   }
 }
 
-*/
 # Creates server profile template with san storage
-/*
 resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage" {
   name                 = "TestServerProfileTemplate_with_local_storage_san"
   type                 = "ServerProfileTemplateV8"
@@ -338,5 +336,16 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
     }
   }
 }
-
 */
+
+# Creating Server Profile Template with DL Server
+# Enclosure group and affinity are not supported for DL server
+resource "oneview_server_profile_template" "ServerProfileTemplateWithDLServer" {
+  name                 = "TestSPT_DL_Server"
+  server_hardware_type = "DL560 Gen10 1"
+  boot_mode {
+    manage_mode     = true
+    mode            = "UEFIOptimized"
+    pxe_boot_policy = "Auto"
+  }
+}
