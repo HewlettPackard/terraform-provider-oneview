@@ -17,7 +17,7 @@ import (
 
 func dataSourceServerHardware() *schema.Resource {
 	return &schema.Resource{
-		Read: resourceServerHardwareRead,
+		Read: dataSourceServerHardwareRead,
 
 		Schema: map[string]*schema.Schema{
 			"location_uri": {
@@ -80,7 +80,7 @@ func dataSourceServerHardware() *schema.Resource {
 	}
 }
 
-func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	servHard, err := config.ovClient.GetServerHardwareByName(d.Get("name").(string))
