@@ -8,9 +8,11 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 #### Major Changes
 1. Extended support to Server Profile resource on DL Server.
-2. Extended support to Server Hardware resource for DL Server.
+2. Extended support to Server Profile Template resource on DL Server.
+3. Extended support to Server Hardware resource for DL Server.
    - POST   /rest/server-hardware/discovery
    - PATCH  /rest/server-hardware/{id}
+
 
 # [v6.2.0-13]
 

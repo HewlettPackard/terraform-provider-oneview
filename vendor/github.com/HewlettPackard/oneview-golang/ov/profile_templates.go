@@ -148,7 +148,7 @@ func SetMp(mp ManagementProcessors) IntManagementProcessor {
 			})
 		}
 		var emptyDirectory Directory
-		if !reflect.DeepEqual(mp.MpSetting.AdministratorAccount, emptyDirectory) {
+		if !reflect.DeepEqual(mp.MpSetting.Directory, emptyDirectory) {
 			args := make(map[string]interface{})
 			v := reflect.ValueOf(mp.MpSetting.Directory)
 			typeOfS := v.Type()
@@ -161,6 +161,24 @@ func SetMp(mp ManagementProcessors) IntManagementProcessor {
 			}
 			mps = append(mps, MpSetting{
 				SettingType: "Directory",
+				Args:        args,
+			})
+		}
+
+		var emptyHostname HostName
+		if !reflect.DeepEqual(mp.MpSetting.HostName, emptyHostname) {
+			args := make(map[string]interface{})
+			v := reflect.ValueOf(mp.MpSetting.HostName)
+			typeOfS := v.Type()
+			// iterate through HostName Fields.
+			for i := 0; i < v.NumField(); i++ {
+				// only adds fields that are initialized in order to bypass adding default/uninitialized values.
+				if !IsZeroOfUnderlyingType(v.Field(i).Interface()) {
+					args[strings.ToLower(string(typeOfS.Field(i).Name[0]))+typeOfS.Field(i).Name[1:]] = v.Field(i).Interface()
+				}
+			}
+			mps = append(mps, MpSetting{
+				SettingType: "Hostname",
 				Args:        args,
 			})
 		}
