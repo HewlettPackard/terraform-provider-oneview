@@ -11,7 +11,7 @@ provider "oneview" {
 // Licensing can be OneView or OneviewNoiLO for Managed
 resource "oneview_server_hardware" "sh" {
   configuration_state = "Managed"
-  mp_hosts_and_ranges   = ["<serverIp>"]
+  hostname = "<serverIp>"
   username = "dcs"
   password = "dcs"
   licensing_intent = "OneView"

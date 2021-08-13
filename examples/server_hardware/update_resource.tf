@@ -11,22 +11,21 @@ provider "oneview" {
 // it can be Usb, Network, Hdd, Cdrom, Normal
 // values are case sensive for Idempotency
 resource "oneview_server_hardware" "sh" {
-  one_time_boot = "HDD"
+  one_time_boot = "Usb"
 }
 
 //Enables or Disables maintenance mode
 /*resource "oneview_server_hardware" "sh" {
   maintenance_mode = "true"
-}*/
+}
 
 // Turn On or Off Uid Light
-
-/*resource "oneview_server_hardware" "sh" {
+resource "oneview_server_hardware" "sh" {
   uid_state = "On"
-}*/
+}
 
 //Updates Power State of the server hardware
-/*resource "oneview_server_hardware" "sh" {
+resource "oneview_server_hardware" "sh" {
   server_power_state {
         power_state = "Off"
         power_control = "MomentaryPress"

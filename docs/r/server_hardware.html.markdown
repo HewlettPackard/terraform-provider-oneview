@@ -15,7 +15,7 @@ Use this source to create/update Server Hardware.
 ```hcl
 resource "oneview_server_hardware" "sh" {
   configuration_state = "Managed"
-  mp_hosts_and_ranges   = ["<serverIp>"]
+  hostname   = "<serverIp>"
   username = "dcs"
   password = "dcs"
   licensing_intent = "OneView"
@@ -25,7 +25,7 @@ resource "oneview_server_hardware" "sh" {
 
 ## Argument Reference
 
-* `mp_hosts_and_ranges` - (Required) Set of IP addresses, host names, and/or IPv4 address ranges of rack mount servers' iLO management processors.
+* `hostname` - (Required)IP address or host name of a rack mount server's iLO management processor.
 * `username` -  (Required) iLO user account login name with Administrator User Accounts privilege.
 * `password` - (Required) The password for the specified username.
 * `licensing_intent` - (Required) The type of product license to assign to the server hardware.

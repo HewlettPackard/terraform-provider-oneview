@@ -12,11 +12,9 @@
 package oneview
 
 import (
-	"encoding/json"
+	"errors"
 	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"io/ioutil"
 )
 
 func resourceServerHardware() *schema.Resource {
@@ -45,7 +43,7 @@ func resourceServerHardware() *schema.Resource {
 				Computed: true,
 				Optional: true,
 			},
-			"host_name": {
+			"hostname": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
@@ -163,26 +161,21 @@ func resourceServerHardware() *schema.Resource {
 func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	hosts := d.Get("mp_hosts_and_ranges").(*schema.Set).List()
-
-	hostList := make([]utils.Nstring, len(hosts))
-	for i, raw := range hosts {
-		hostList[i] = utils.Nstring(raw.(string))
-	}
 	hardware := ov.ServerHardware{
-		MpHostsAndRanges:   hostList,
+		Hostname:           d.Get("hostname").(string),
 		Username:           d.Get("username").(string),
 		Password:           d.Get("password").(string),
 		Force:              d.Get("force").(bool),
 		LicensingIntent:    d.Get("licensing_intent").(string),
 		ConfigurationState: d.Get("configuration_state").(string),
 	}
-	err := config.ovClient.AddMultipleRackServers(hardware)
+	err := config.ovClient.AddRackServer(hardware)
 	if err != nil {
 		d.SetId("")
 		return err
 	}
-	sh, err := config.ovClient.GetServerHardwareByName("172.18.31.20")
+
+	sh, _ := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))
 
 	d.SetId(sh.UUID.String())
 	return resourceServerHardwareRead(d, meta)
@@ -191,7 +184,7 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	servHard, err := config.ovClient.GetServerHardwareByName("172.18.31.20")
+	servHard, err := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))
 	if err != nil || servHard.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -247,7 +240,7 @@ func resourceServerHardwareUpdate(d *schema.ResourceData, meta interface{}) erro
 			d.SetId("")
 			return err
 		}
-	} else {
+	} else if d.HasChange("server_power_state") {
 		powerMap := make(map[string]interface{})
 		powerStates := d.Get("server_power_state").([]interface{})
 		for _, powerState := range powerStates {
@@ -259,14 +252,13 @@ func resourceServerHardwareUpdate(d *schema.ResourceData, meta interface{}) erro
 			"powerControl": powerMap["power_control"],
 		}
 
-		file, _ := json.MarshalIndent(powerInput, "", " ")
-		_ = ioutil.WriteFile("test.json", file, 0644)
-
 		err := config.ovClient.SetPowerState(d.Id(), powerInput)
 		if err != nil {
 			d.SetId("")
 			return err
 		}
+	} else if d.HasChange("username") || d.HasChange("password") || d.HasChange("configuration_state") {
+		return errors.New("Fields like username, password and configuration_state cannot be changed")
 	}
 	d.SetId(d.Id())
 
