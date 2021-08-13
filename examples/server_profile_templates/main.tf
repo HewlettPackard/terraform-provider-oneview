@@ -7,22 +7,77 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-data "oneview_ethernet_network" "ethernetnetworks1" {
+data "oneview_ethernet_network" "ethernetNetwork" {
   name = "mgmt_untagged"
 }
 
-data "oneview_ethernet_network" "ethernetnetworks2" {
-  name = "iscsi_nw"
+data "oneview_fc_network" "fcNetwork" {
+  name = "FC_FA"
 }
 
 data "oneview_scope" "scope" {
   name = "test"
 }
 /*
-resource "oneview_server_profile_template" "spt"{
+# Creates server profile template with connections
+resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections" {
+  name                 = "TestServerProfileTemplate_with_connections"
+  type                 = "ServerProfileTemplateV8"
+  enclosure_group      = "EG"
+  server_hardware_type = "SY 480 Gen9 1"
+  initial_scope_uris   = [data.oneview_scope.scope.uri]
+  bios_option {
+    manage_bios = true
+    overridden_settings {
+      id    = "TimeFormat"
+      value = "Utc"
+    }
+  }
+  boot {
+    manage_boot		= true
+    boot_order		= ["HardDisk"]
+  }
+  boot_mode {
+    manage_mode     = true
+    mode            = "UEFIOptimized"
+    pxe_boot_policy = "Auto"
+  }
+
+  connection_settings {
+    compliance_control = "CheckedMinimum"
+    manage_connections = true
+    connections {
+      id             = 134
+      name           = "Management-01"
+      managed        = true
+      function_type  = "Ethernet"
+      network_uri    = data.oneview_ethernet_network.ethernetNetwork.uri
+      isolated_trunk = false 
+      port_id        = "Auto" 
+      requested_mbps = "2500"
+      boot {
+        priority           = "Primary"
+        ethernet_boot_type = "PXE"
+      }
+    }
+    connections {
+      id             = 135
+      name           = "Management-02"
+      managed        = true
+      function_type  = "FibreChannel"
+      network_uri    = data.oneview_fc_network.fcNetwork.uri
+      isolated_trunk = false  
+      requested_mbps = "2500"
+      port_id        = "Auto"
+      requested_vfs  = ""
+      boot {
+        priority           = "Primary"
+	boot_volume_source = "UserDefined"
+      }
+    }
+  }
 }
-
-
+*/
 
 # Creates server profile template with local storage
 resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorage" {
@@ -67,43 +122,8 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
       }
     }
   }
-
-
-  connection_settings {
-    compliance_control = "CheckedMinimum"
-    manage_connections = true
-    connections {
-      id             = 134
-      name           = "Management-01"
-      managed        = true
-      function_type  = "Ethernet"
-      network_uri    = data.oneview_ethernet_network.ethernetnetworks1.uri
-      isolated_trunk = false 
-      port_id        = "Auto" 
-      requested_mbps = "2500"
-      boot {
-        priority           = "Primary"
-        ethernet_boot_type = "PXE"
-      }
-    }
-    connections {
-      id             = 135
-      name           = "Management-02"
-      managed        = true
-      function_type  = "FibreChannel"
-      network_uri    = "/rest/fc-networks/37aae264-8fd5-4624-960d-10173bde5752"
-      isolated_trunk = false 
-      requested_mbps = "2500"
-      port_id        = "Auto"
-      requested_vfs  = ""
-      boot {
-        priority           = "Primary"
-	boot_volume_source = "UserDefined"
-      }
-    }
-  }
 }
-*/
+
 
 /*
 # Creates server profile template with OS deployment settings
@@ -198,6 +218,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
 }
 
 */
+
 # Creates server profile template with san storage
 /*
 resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage" {
@@ -288,7 +309,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
 }
 */
 
-
+/*
 # Creating Server Profile Template with Management Settings
 resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
   name                 = "TestServerProfileTemplate_with_mp_settings"
@@ -315,7 +336,7 @@ resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
   management_processor{
     manage_mp	=	true
     mp_settings {
-/*      local_accounts {
+      local_accounts {
         user_name = "test_UserNamei-Update"
         display_name = "test_DisplayName"
         password = "test_password1010"
@@ -335,7 +356,6 @@ resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
         virtual_power_and_reset_priv = true
         ilo_config_priv = true
       }
-*/
 
       directory {
 	directory_authentication = "defaultSchema"
@@ -369,13 +389,14 @@ resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
 	login_name = "deployment"
 	password = "test_password"
       }
-/*
+
       administrator_account {
 	delete_administrator_account = false
 	password = "test_password"
       }
-*/
+
     }
   }
 }
+*/
 

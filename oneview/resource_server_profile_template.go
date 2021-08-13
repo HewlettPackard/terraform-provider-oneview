@@ -20,9 +20,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"reflect"
 	"strconv"
-
-//	"encoding/json"
-//	"io/ioutil"
+	//	"encoding/json"
+	//	"io/ioutil"
 )
 
 func ConSetNewComputed(d *schema.ResourceDiff, _ interface{}) error {
@@ -367,21 +366,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"port_id": {
 										Type:     schema.TypeString,
 										Optional: true,
-										/*
-											DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-												fil, _ := json.MarshalIndent(new, "", " ")
-												file := new + "_new"
-												file_old := old + "_old"
-												_ = ioutil.WriteFile(file, fil, 0644)
-												_ = ioutil.WriteFile(file_old, fil, 0644)
-												if new != "Auto" {
-													d.Set("port_id", old)
-													return true
-												}
-												return true
-
-											},
-										*/
 									},
 									"requested_mbps": {
 										Type:     schema.TypeString,
@@ -1472,9 +1456,6 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.ManagementProcessors = ovManagementProcessor
 	}
 
-
-
-
 	if val, ok := d.GetOk("connection_settings"); ok {
 		connections := val.([]interface{})
 		for _, rawConSettings := range connections {
@@ -1515,7 +1496,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 						}
 
 						bootOptions = ov.BootOption{
-							Priority: bootItem["priority"].(string),
+							Priority:         bootItem["priority"].(string),
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
@@ -1912,9 +1893,8 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	return resourceServerProfileTemplateRead(d, meta)
 }
 
-
-// flattens management processor 
-func flattenMp(d *schema.ResourceData) (map[string]interface{}){
+// flattens management processor
+func flattenMp(d *schema.ResourceData) map[string]interface{} {
 	if val, ok := d.GetOk("management_processor"); ok {
 		valn := val.([]interface{})
 		vall := valn[0].(map[string]interface{})
@@ -2031,11 +2011,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			localAccounts := make([]map[string]interface{}, 0)
 
 			for _, val := range spt.ManagementProcessor.MpSettings {
-
-
-
-
-
 
 				if val.SettingType == "AdministratorAccount" {
 					// initializing 0th location...
@@ -2276,7 +2251,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		d.Set("management_processor", mp)
 	}
 
-
 	if len(spt.ConnectionSettings.Connections) != 0 {
 		// Get connections
 		connections := make([]map[string]interface{}, 0, len(spt.ConnectionSettings.Connections))
@@ -2330,20 +2304,34 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			}
 			// Gets Connection Body
 			connections = append(connections, map[string]interface{}{
-				"boot":          connectionBoot,
-				"function_type": connection.FunctionType,
-				"id":            connection.ID,
+				"boot":           connectionBoot,
+				"function_type":  connection.FunctionType,
+				"id":             connection.ID,
 				"ipv4":           connectionIpv4,
 				"isolated_trunk": connection.IsolatedTrunk,
 				"lag_name":       connection.LagName,
 				"mac_type":       connection.MacType,
 				"managed":        connection.Managed,
-				"name":         connection.Name,
-				"network_name": connection.NetworkName,
-				"network_uri":  connection.NetworkURI,
-				"port_id":      connection.PortID,
+				"name":           connection.Name,
+				"network_name":   connection.NetworkName,
+				"network_uri":    connection.NetworkURI,
+				"port_id":        connection.PortID,
 				"requested_mbps": connection.RequestedMbps,
 			})
+		}
+
+		conSetVal := d.Get("connection_settings").([]interface{})
+		for _, rawConSet := range conSetVal {
+			conSet := rawConSet.(map[string]interface{})
+			consVal := conSet["connections"].(*schema.Set).List()
+			for i, rawConVal := range consVal {
+				con := rawConVal.(map[string]interface{})
+				if connections[i]["id"] == con["id"] {
+					if con["port_id"] == "Auto" {
+						connections[i]["port_id"] = "Auto"
+					}
+				}
+			}
 		}
 
 		// Connection Settings
@@ -2668,7 +2656,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				}
 
 				// extracting key manager
-				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()//([]interface{})
+				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List() //([]interface{})
 				ovKeyManager := ov.KeyManager{}
 				for _, keyManagerr := range rawKeyManager {
 					keyManager := keyManagerr.(map[string]interface{})
@@ -2734,9 +2722,6 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		}
 		serverProfileTemplate.ManagementProcessors = ovManagementProcessor
 	}
-
-
-
 
 	if d.HasChange("connection_settings") {
 		val := d.Get("connection_settings")
