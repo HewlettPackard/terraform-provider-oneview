@@ -48,6 +48,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"manage_bios": {
 							Type:     schema.TypeBool,
 							Required: true,
+							Default:  false,
 						},
 						"overridden_settings": {
 							Type:     schema.TypeList,
@@ -1283,12 +1284,12 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
 	}
 
-	if d.Get("enclosure_group") != ""{
+	if d.Get("enclosure_group") != "" {
 		enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("enclosure_group").(string))
 		if err != nil {
 			return err
 		}
-	serverProfileTemplate.EnclosureGroupURI = enclosureGroup.URI
+		serverProfileTemplate.EnclosureGroupURI = enclosureGroup.URI
 	}
 
 	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByName(d.Get("server_hardware_type").(string))
@@ -1859,7 +1860,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("created", spt.Created)
 	d.Set("description", spt.Description)
 
-	if spt.EnclosureGroupURI != ""{
+	if spt.EnclosureGroupURI != "" {
 		enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
 		if err != nil {
 			return err
