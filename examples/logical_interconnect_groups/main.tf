@@ -11,6 +11,7 @@ data "oneview_ethernet_network" "eth" {
 	name = "Auto-Ethernet-1"
 }
 
+
 data "oneview_fc_network" "fc" {
 	name = "FC_FA"
 }
@@ -22,6 +23,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
   interconnect_bay_set = 3
   enclosure_indexes    = [1, 2, 3]
   redundancy_type      = "HighlyAvailable"
+  downlink_speed_mode  = "UNSUPPORTED"
   interconnect_map_entry_template {
     enclosure_index        = 1
     bay_number             = 3
@@ -66,7 +68,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
     name                  = "UplinkSet2" 
     network_type          = "FibreChannel"
     network_uris          = [
-      data.oneview_fc_network.fc.uri, //"/rest/fc-networks/37aae264-8fd5-4624-960d-10173bde5752",
+      data.oneview_fc_network.fc.uri, 
     ]
 
     logical_port_config {
@@ -92,7 +94,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
      name                  = "UplinkSet1"
      network_type          = "Ethernet" 
      network_uris          = [
-       data.oneview_ethernet_network.eth.uri, //"/rest/ethernet-networks/64c6034a-811e-4add-b34f-68f941dab50b",
+	data.oneview_ethernet_network.eth.uri,
      ] 
 
      logical_port_config {

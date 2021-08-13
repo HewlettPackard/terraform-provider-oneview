@@ -46,6 +46,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 			"redundancy_type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"enclosure_indexes": {
 				Type:     schema.TypeSet,
@@ -891,7 +892,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -917,6 +918,11 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"downlink_speed_mode": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -927,6 +933,10 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	lig := ov.LogicalInterconnectGroup{
 		Name: d.Get("name").(string),
 		Type: d.Get("type").(string),
+	}
+
+	if val, ok := d.GetOk("donwlink_speed_mode"); ok {
+		lig.DownlinkSpeedMode = utils.Nstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("interconnect_bay_set"); ok {
@@ -1572,6 +1582,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("interconnect_settings.0.interconnect_utilization_alert", logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert)
 	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
 	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
+	d.Set("downlink_speed_mode", logicalInterconnectGroup.DownlinkSpeedMode.String())
 
 	if logicalInterconnectGroup.QosConfiguration != nil {
 		qosTrafficClassifiers := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.QosConfiguration.ActiveQosConfig.QosTrafficClassifiers))
@@ -2019,6 +2030,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		Name: d.Get("name").(string),
 		Type: d.Get("type").(string),
 		URI:  utils.NewNstring(d.Get("uri").(string)),
+	}
+
+	if val, ok := d.GetOk("downlink_speed_mode"); ok {
+		lig.DownlinkSpeedMode = utils.Nstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("interconnect_bay_set"); ok {
