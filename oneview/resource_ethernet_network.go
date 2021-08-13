@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -34,8 +36,7 @@ func resourceEthernetNetwork() *schema.Resource {
 			},
 			"vlan_id": {
 				Type:     schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Optional: true,
 			},
 			"purpose": {
 				Type:     schema.TypeString,
@@ -54,8 +55,7 @@ func resourceEthernetNetwork() *schema.Resource {
 			},
 			"ethernet_network_type": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "Tagged",
+				Required: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
@@ -73,10 +73,6 @@ func resourceEthernetNetwork() *schema.Resource {
 			"modified": {
 				Type:     schema.TypeString,
 				Computed: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
@@ -103,12 +99,12 @@ func resourceEthernetNetwork() *schema.Resource {
 				Computed: true,
 			},
 			"scopesuri": {
-				Optional: true,
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"subnet_uri": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeString,
 			},
 			"initial_scope_uris": {
@@ -118,7 +114,6 @@ func resourceEthernetNetwork() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Set: schema.HashString,
 			},
 		},
 	}
@@ -136,7 +131,6 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 		EthernetNetworkType: d.Get("ethernet_network_type").(string),
 		Type:                d.Get("type").(string),
 		SubnetUri:           utils.NewNstring(d.Get("subnet_uri").(string)),
-		Description:         utils.NewNstring(d.Get("description").(string)),
 	}
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawInitialScopeUris := val.(*schema.Set).List()
@@ -182,7 +176,6 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("etag", eNet.ETAG)
 	d.Set("scopesuri", eNet.ScopesUri.String())
 	d.Set("subnet_uri", eNet.SubnetUri.String())
-	d.Set("initial_scope_uris", eNet.InitialScopeUris)
 
 	return nil
 }
@@ -200,6 +193,13 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 		SmartLink:             d.Get("smart_link").(bool),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
 		Type:                  d.Get("type").(string),
+	}
+
+	if d.HasChange("vlan_id") {
+		return fmt.Errorf("vlan Id can not be changed")
+	}
+	if d.HasChange("initial_scope_uris") {
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
 
 	err := config.ovClient.UpdateEthernetNetwork(newENet)

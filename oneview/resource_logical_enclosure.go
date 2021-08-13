@@ -12,7 +12,6 @@
 package oneview
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -34,10 +33,11 @@ func resourceLogicalEnclosure() *schema.Resource {
 			"ambient_temperature_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"delete_failed": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"deployment_manager_settings": {
 				Optional: true,
@@ -82,15 +82,16 @@ func resourceLogicalEnclosure() *schema.Resource {
 
 			"enclosure_group_uri": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"enclosure_uris": {
 				Required: true,
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"firmware": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -125,6 +126,7 @@ func resourceLogicalEnclosure() *schema.Resource {
 			"ip_addressing_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"ipv4_range": {
 				Optional: true,
@@ -159,7 +161,7 @@ func resourceLogicalEnclosure() *schema.Resource {
 				},
 			},
 			"logical_interconnect_uris": {
-				Optional: true,
+				Computed: true,
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      schema.HashString,
@@ -171,26 +173,27 @@ func resourceLogicalEnclosure() *schema.Resource {
 			"power_mode": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"scaling_state": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"status": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"uri": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"update_type": {
 				Type:     schema.TypeString,
@@ -206,16 +209,16 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		Name:              d.Get("name").(string),
 		EnclosureGroupUri: utils.NewNstring(d.Get("enclosure_group_uri").(string)),
 	}
-	enclosureSetCount := d.Get("enclosure_uris.#").(int)
-	enclosureUris := make([]utils.Nstring, enclosureSetCount)
-	for i := 0; i < enclosureSetCount; i++ {
-		enclosureSetPrefix := fmt.Sprintf("enclosure_uris.%d", i)
-		if val, ok := d.GetOk(enclosureSetPrefix); ok {
-			enclosureUris[i] = utils.NewNstring(val.(string))
-		}
-	}
-	logicalEnclosure.EnclosureUris = enclosureUris
 
+	if val, ok := d.GetOk("enclosure_uris"); ok {
+		rawenclosureuris := val.(*schema.Set).List()
+		enclosureUris := make([]utils.Nstring, len(rawenclosureuris))
+		for i, rawData := range rawenclosureuris {
+
+			enclosureUris[i] = utils.Nstring(rawData.(string))
+		}
+		logicalEnclosure.EnclosureUris = enclosureUris
+	}
 	firmwareList := d.Get("firmware").(*schema.Set).List()
 	for _, raw := range firmwareList {
 		firmware := raw.(map[string]interface{})
@@ -226,7 +229,6 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		logicalEnclosure.Firmware = &logicalEnclosureFirmware
 	}
 	logicalEnclosureError := config.ovClient.CreateLogicalEnclosure(logicalEnclosure)
-
 	d.SetId(d.Get("name").(string))
 	if logicalEnclosureError != nil {
 		d.SetId("")
@@ -272,19 +274,22 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 		})
 	}
 	d.Set("deployment_manager_settings", dpmsList)
-	d.Set("description", logicalEnclosure.Description)
 	d.Set("enclosure_group_uri", logicalEnclosure.EnclosureGroupUri.String())
 	d.Set("enclosure_uris", logicalEnclosure.EnclosureUris)
-	logicalEnclosureFirmware := make([]map[string]interface{}, 0, 1)
-	logicalEnclosureFirmware = append(logicalEnclosureFirmware, map[string]interface{}{
-		"firmware_baseline_uri":                            logicalEnclosure.Firmware.FirmwareBaselineUri,
-		"firmware_update_on":                               logicalEnclosure.Firmware.FirmwareUpdateOn,
-		"force_install_firmware":                           logicalEnclosure.Firmware.ForceInstallFirmware,
-		"logical_interconnect_update_mode":                 logicalEnclosure.Firmware.LogicalInterconnectUpdateMode,
-		"update_firmware_on_unmanaged_interconnect":        logicalEnclosure.Firmware.UpdateFirmwareOnUnmanagedInterconnect,
-		"validate_if_li_firmware_update_is_non_disruptive": logicalEnclosure.Firmware.ValidateIfLIFirmwareUpdateIsNonDisruptive,
-	})
-	d.Set("firmware", logicalEnclosureFirmware)
+
+	if logicalEnclosure.Firmware != nil {
+		logicalEnclosureFirmware := make([]map[string]interface{}, 0, 1)
+		logicalEnclosureFirmware = append(logicalEnclosureFirmware, map[string]interface{}{
+			"firmware_baseline_uri":                            logicalEnclosure.Firmware.FirmwareBaselineUri,
+			"firmware_update_on":                               logicalEnclosure.Firmware.FirmwareUpdateOn,
+			"force_install_firmware":                           logicalEnclosure.Firmware.ForceInstallFirmware,
+			"logical_interconnect_update_mode":                 logicalEnclosure.Firmware.LogicalInterconnectUpdateMode,
+			"update_firmware_on_unmanaged_interconnect":        logicalEnclosure.Firmware.UpdateFirmwareOnUnmanagedInterconnect,
+			"validate_if_li_firmware_update_is_non_disruptive": logicalEnclosure.Firmware.ValidateIfLIFirmwareUpdateIsNonDisruptive,
+		})
+		d.Set("firmware", logicalEnclosureFirmware)
+	}
+
 	d.Set("ip_addressing_mode", logicalEnclosure.IpAddressingMode)
 	logicalEnclosureIpv4Ranges := make([]map[string]interface{}, 0, len(logicalEnclosure.Ipv4Ranges))
 	for _, logicalEnclosureIpv4Range := range logicalEnclosure.Ipv4Ranges {
@@ -360,11 +365,7 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 		logicalEnclosure.PowerMode = val.(string)
 	}
 	if val, ok := d.GetOk("scaling_state"); ok {
-		logicalEnclosure.PowerMode = val.(string)
-	}
-
-	if val, ok := d.GetOk("scopes_uri"); ok {
-		logicalEnclosure.ScopesUri = utils.NewNstring(val.(string))
+		logicalEnclosure.ScalingState = val.(string)
 	}
 
 	if val, ok := d.GetOk("enclosure_group_uri"); ok {
@@ -392,15 +393,7 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 		logicalEnclosure.DeploymentManagerSettings = &deploymentManagerSettings
 	}
-	enclosureSetCount := d.Get("enclosure_uris.#").(int)
-	enclosureUris := make([]utils.Nstring, enclosureSetCount)
-	for i := 0; i < enclosureSetCount; i++ {
-		enclosureSetPrefix := fmt.Sprintf("enclosure_uris.%d", i)
-		if val, ok := d.GetOk(enclosureSetPrefix); ok {
-			enclosureUris[i] = utils.NewNstring(val.(string))
-		}
-	}
-	logicalEnclosure.EnclosureUris = enclosureUris
+
 	firmwareList := d.Get("firmware").(*schema.Set).List()
 	for _, raw := range firmwareList {
 		firmware := raw.(map[string]interface{})
