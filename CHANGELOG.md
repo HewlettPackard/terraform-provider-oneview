@@ -1,6 +1,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v6.3.0-13]
+
+### Notes
+- logical_interconnect_port: Changed the way we provide port_num, instaed of list we have to provide integer value for port_num in each logical_port_config in uplink_set.
+
 # [v6.2.0-13]
 
 ### Notes

@@ -71,6 +71,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
       data.oneview_fc_network.fc.uri, 
     ]
 
+# from OV6.3 we have changed the way we provide port_num, instaed of list we have to provide integer value for each logical_port_config
     logical_port_config {
         bay_num       = 3
         desired_speed = "Auto"
