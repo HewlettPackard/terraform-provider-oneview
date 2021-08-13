@@ -191,7 +191,7 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	}
 	d.SetId(d.Id())
 	d.Set("configuration_state", d.Get("configuration_state").(string))
-	d.Set("host_name", d.Get("configuration_state").(string))
+	d.Set("hostname", d.Get("hostname").(string))
 	d.Set("force", servHard.Force)
 	d.Set("licensing_intent", servHard.LicensingIntent)
 	d.Set("maintenance_mode", servHard.MaintenanceMode)
