@@ -29,14 +29,14 @@ resource "oneview_ethernet_network" "ethernetnetwork_2" {
   vlan_id               = 102
 }
 
-#Creating tunnel ethernet network
+# Creating tunnel ethernet network.vland id is not needed.
 # resource "oneview_ethernet_network" "ethernetnetwork_2" {
 #   name                  = "Auto-Ethernet-2"
 #   ethernet_network_type = "Tunnel"
 #   type                  = "ethernet-networkV4"
 
 # }
-
+#Creating untagged ethernet network . vland id is not needed.
 # resource "oneview_ethernet_network" "ethernetnetwork_2" {
 #   name                  = "Auto-Ethernet-2"
 #   ethernet_network_type = "Untagged"

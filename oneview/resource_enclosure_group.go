@@ -11,6 +11,8 @@
 package oneview
 
 import (
+	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -64,10 +66,6 @@ func resourceEnclosureGroup() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Set: schema.HashString,
-				//Initial scope uris is never set in the resource so it should not be checked for diff
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
 			},
 			"interconnect_bay_mapping_count": {
 				Type:     schema.TypeInt,
@@ -209,7 +207,7 @@ func resourceEnclosureGroupCreate(d *schema.ResourceData, meta interface{}) erro
 			logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(interconnectBayMappingItem["logical_interconnect_group_name"].(string))
 			if err != nil || logicalInterconnectGroup.URI.IsNil() {
 				d.SetId("")
-				return nil
+				return err
 			}
 			interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
 				InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
@@ -318,17 +316,18 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	interconnectBayMap := make([]map[string]interface{}, 0, 1)
 	for i := 0; i < len(enclosureGroup.InterconnectBayMappings); i++ {
 		liguri := enclosureGroup.InterconnectBayMappings[i].LogicalInterconnectGroupUri
-
-		encLIG, err := config.ovClient.GetLogicalInterconnectGroupByUri(liguri)
-		if err != nil || encLIG.Name == "" {
-			d.SetId("")
-			return nil
+		if !liguri.IsNil() {
+			encLIG, err := config.ovClient.GetLogicalInterconnectGroupByUri(liguri)
+			if err != nil || encLIG.Name == "" {
+				d.SetId("")
+				return err
+			}
+			interconnectBayMap = append(interconnectBayMap, map[string]interface{}{
+				"interconnect_bay":                enclosureGroup.InterconnectBayMappings[i].InterconnectBay,
+				"logical_interconnect_group_name": encLIG.Name,
+			})
 		}
 
-		interconnectBayMap = append(interconnectBayMap, map[string]interface{}{
-			"interconnect_bay":                enclosureGroup.InterconnectBayMappings[i].InterconnectBay,
-			"logical_interconnect_group_name": encLIG.Name,
-		})
 	}
 	d.Set("interconnect_bay_mappings", interconnectBayMap)
 
@@ -377,7 +376,7 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 		logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(interconnectBayMappingItem["logical_interconnect_group_name"].(string))
 		if err != nil || logicalInterconnectGroup.URI.IsNil() {
 			d.SetId("")
-			return nil
+			return err
 		}
 		interconnectBayMappings = append(interconnectBayMappings, ov.InterconnectBayMap{
 			InterconnectBay:             interconnectBayMappingItem["interconnect_bay"].(int),
@@ -440,16 +439,9 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 		enclosureGroup.Ipv6RangeUris = ipv6RangeUris
 	}
 
-	if val, ok := d.GetOk("initial_scope_uris"); ok {
-		rawinitialScopeUris := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, 0)
-		for i, rawData := range rawinitialScopeUris {
-			scope, _ := config.ovClient.GetScopeByName(rawData.(string))
-			initialScopeUris[i] = utils.Nstring(scope.URI)
-		}
-		enclosureGroup.InitialScopeUris = initialScopeUris
+	if d.HasChange("initial_scope_uris") {
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
-
 	if val, ok := d.GetOk("name"); ok {
 		enclosureGroup.Name = val.(string)
 	}
