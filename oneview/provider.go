@@ -135,6 +135,7 @@ func Provider() terraform.ResourceProvider {
 			"oneview_network_set":                         resourceNetworkSet(),
 			"oneview_scope":                               resourceScope(),
 			"oneview_server_certificate":                  resourceServerCertificate(),
+			"oneview_server_hardware":                     resourceServerHardware(),
 			"oneview_server_profile":                      resourceServerProfile(),
 			"oneview_server_profile_template":             resourceServerProfileTemplate(),
 			"oneview_storage_system":                      resourceStorageSystem(),

@@ -14,12 +14,14 @@ data "oneview_ethernet_network" "ethernetnetworks" {
 
 resource "oneview_ethernet_network" "ethernetnetwork_1" {
   name    = "Auto-Ethernet-1"
+  ethernet_network_type = "Tagged"
   type    = "ethernet-networkV4"
   vlan_id = 101
 }
 
 resource "oneview_ethernet_network" "ethernetnetwork_2" {
   name    = "Auto-Ethernet-2"
+  ethernet_network_type = "Tagged"
   type    = "ethernet-networkV4"
   vlan_id = 102
 }

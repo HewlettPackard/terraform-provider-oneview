@@ -7,13 +7,23 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
+data "oneview_ethernet_network" "eth" {
+	name = "Auto-Ethernet-1"
+}
+
+
+data "oneview_fc_network" "fc" {
+	name = "FC_FA"
+}
+
 # Create Logical Interconnect Group
 resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
   type                 = "logical-interconnect-groupV8"
-  name                 = "Auto-LIG"
+  name                 = "Auto-LIG-02"
   interconnect_bay_set = 3
   enclosure_indexes    = [1, 2, 3]
   redundancy_type      = "HighlyAvailable"
+  downlink_speed_mode  = "UNSUPPORTED"
   interconnect_map_entry_template {
     enclosure_index        = 1
     bay_number             = 3
@@ -51,14 +61,49 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
     prevent_flooding           = true
     proxy_reporting            = true
   }
-  port_flap_settings {
-    type                             = "portFlapProtection"
-    port_flap_protection_mode        = "Detect"
-    port_flap_threshold_per_interval = 2
-    detection_interval               = 20
-    no_of_samples_declare_failures   = 3
-    name                             = "PortFlapSettings"
-    consistency_checking             = "ExactMatch"
-  }
-}
 
+  uplink_set {
+    ethernet_network_type = "NotApplicable"
+    mode                  = "Auto"
+    name                  = "UplinkSet2" 
+    network_type          = "FibreChannel"
+    network_uris          = [
+      data.oneview_fc_network.fc.uri, 
+    ]
+
+# from OV6.3 we have changed the way we provide port_num, instaed of list we have to provide integer value for each logical_port_config
+    logical_port_config {
+        bay_num       = 3
+        desired_speed = "Auto"
+        enclosure_num = 1
+        port_num      = 68 
+        primary_port  = false 
+      }
+
+    logical_port_config {
+        bay_num       = 3
+        desired_speed = "Auto"
+        enclosure_num = 1
+        port_num      = 67
+        primary_port  = false
+      }
+  }
+  uplink_set {
+     ethernet_network_type = "Tagged"
+     lacp_timer            = "Short" 
+     mode                  = "Auto" 
+     name                  = "UplinkSet1"
+     network_type          = "Ethernet" 
+     network_uris          = [
+	data.oneview_ethernet_network.eth.uri,
+     ] 
+
+     logical_port_config {
+          bay_num       = 3 
+          desired_speed = "Auto"
+          enclosure_num = 1 
+          port_num      = 61
+          primary_port  = false 
+       }
+   }
+}

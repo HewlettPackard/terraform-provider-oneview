@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -35,7 +37,6 @@ func resourceFCoENetwork() *schema.Resource {
 			"vlanid": {
 				Type:     schema.TypeInt,
 				Required: true,
-				ForceNew: true,
 			},
 			"connectiontemplateuri": {
 				Type:     schema.TypeString,
@@ -53,10 +54,6 @@ func resourceFCoENetwork() *schema.Resource {
 			"fabricuri": {
 				Type:     schema.TypeString,
 				Computed: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
@@ -87,7 +84,6 @@ func resourceFCoENetwork() *schema.Resource {
 				Computed: true,
 			},
 			"scopesuri": {
-				Optional: true,
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -148,9 +144,7 @@ func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("fabricuri", fcoeNet.FabricUri.String())
 	d.Set("etag", fcoeNet.ETAG)
 	d.Set("managedsanuri", fcoeNet.ManagedSanUri)
-	d.Set("description", fcoeNet.Description)
 	d.Set("scopesuri", fcoeNet.ScopesUri.String())
-	d.Set("initial_scope_uris", fcoeNet.InitialScopeUris)
 	return nil
 }
 
@@ -164,6 +158,12 @@ func resourceFCoENetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		Name:                  d.Get("name").(string),
 		ConnectionTemplateUri: utils.NewNstring(d.Get("connectiontemplateuri").(string)),
 		Type:                  d.Get("type").(string),
+	}
+	if d.HasChange("vlanid") {
+		return fmt.Errorf("vlan Id can not be changed")
+	}
+	if d.HasChange("initial_scope_uris") {
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
 
 	err := config.ovClient.UpdateFCoENetwork(newFCoENet)
