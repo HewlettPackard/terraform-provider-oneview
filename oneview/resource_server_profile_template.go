@@ -49,7 +49,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"manage_bios": {
 							Type:     schema.TypeBool,
-							Required: true,
+							Optional: true,
 							Default:  false,
 						},
 						"overridden_settings": {
@@ -2422,6 +2422,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		val := d.Get("hide_unused_flex_nics")
 		serverProfileTemplate.HideUnusedFlexNics = val.(bool)
 	}
+
 	if d.HasChange("description") {
 		val := d.Get("description")
 		serverProfileTemplate.Description = val.(string)
