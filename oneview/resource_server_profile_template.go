@@ -446,10 +446,10 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "CheckedMinimum",
 						},
 						"controller": {
 							Optional: true,
-							Computed: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -471,7 +471,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"logical_drives": {
 										Optional: true,
-										Computed: true,
 										Type:     schema.TypeSet,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -522,18 +521,17 @@ func resourceServerProfileTemplate() *schema.Resource {
 								},
 							},
 						},
-						"manage_local_storage": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"initialize": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
+						// "manage_local_storage": {
+						// 	Type:     schema.TypeBool,
+						// 	Optional: true,
+						// },
+						// "initialize": {
+						// 	Type:     schema.TypeBool,
+						// 	Optional: true,
+						// },
 
 						"sas_logical_jbod": {
 							Optional: true,
-							Computed: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -1577,10 +1575,10 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				})
 			}
 			localStorage = ov.LocalStorageOptions{
-				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				Initialize:         localStorageItem["initialize"].(bool),
-				Controllers:        localStorageEmbeddedController,
-				SasLogicalJBODs:    logicalJbod,
+				ComplianceControl: localStorageItem["compliance_control"].(string),
+				//ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				Controllers:     localStorageEmbeddedController,
+				SasLogicalJBODs: logicalJbod,
 			}
 		}
 		serverProfileTemplate.LocalStorage = localStorage
@@ -2222,10 +2220,12 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		// Gets Local Storage Body
 		localStorage := make([]map[string]interface{}, 0, 1)
 		localStorage = append(localStorage, map[string]interface{}{
-			"manage_local_storage": spt.LocalStorage.ManageLocalStorage,
-			"initialize":           spt.LocalStorage.Initialize,
-			"controller":           controllers,
-			"sas_logical_jbod":     sasLogDrives,
+
+			//"manage_local_storage": spt.LocalStorage.ManageLocalStorage,
+			//"initialize":           spt.LocalStorage.Initialize,
+			"compliance_control": spt.LocalStorage.ComplianceControl,
+			"controller":         controllers,
+			"sas_logical_jbod":   sasLogDrives,
 		})
 		d.Set("local_storage", localStorage)
 	}
@@ -2839,10 +2839,11 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 			}
 			localStorage = ov.LocalStorageOptions{
-				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				Initialize:         localStorageItem["initialize"].(bool),
-				Controllers:        localStorageEmbeddedControllers,
-				SasLogicalJBODs:    logicalJbods,
+				//ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				//Initialize:         localStorageItem["initialize"].(bool),
+				ComplianceControl: localStorageItem["compliance_control"].(string),
+				Controllers:       localStorageEmbeddedControllers,
+				SasLogicalJBODs:   logicalJbods,
 			}
 		}
 		serverProfileTemplate.LocalStorage = localStorage
