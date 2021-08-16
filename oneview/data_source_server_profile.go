@@ -26,7 +26,6 @@ func dataSourceServerProfile() *schema.Resource {
 			"affinity": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "Bay",
 			},
 			"associated_server": {
 				Type:     schema.TypeString,
@@ -1445,11 +1444,13 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("description", serverProfile.Description)
 	d.Set("enclosure_group_uri", serverProfile.EnclosureGroupURI.String())
 
-	enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(serverProfile.EnclosureGroupURI)
-	if err != nil {
-		return err
+	if serverProfile.EnclosureGroupURI != "" {
+		enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(serverProfile.EnclosureGroupURI)
+		if err != nil {
+			return err
+		}
+		d.Set("enclosure_group", enclosureGroup.Name)
 	}
-	d.Set("enclosure_group", enclosureGroup.Name)
 	d.Set("etag", serverProfile.ETAG)
 
 	// Firmware

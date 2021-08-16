@@ -1,6 +1,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v6.3.0-13] (Unreleased)
+
+### Notes
+- This release supports API3200 minimally where we can use OneView v6.30 with this SDK.
+
+#### Major Changes
+1. Extended support to Server Profile resource on DL Server.
+2. Extended support to Server Profile Template resource on DL Server.
+
 # [v6.2.0-13]
 
 ### Notes

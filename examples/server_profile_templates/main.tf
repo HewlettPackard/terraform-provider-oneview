@@ -11,6 +11,10 @@ data "oneview_ethernet_network" "ethernetNetwork" {
   name = "mgmt_untagged"
 }
 
+data "oneview_ethernet_network" "ethernetnetworks2" {
+  name = "iscsi_nw"
+}
+
 data "oneview_fc_network" "fcNetwork" {
   name = "FC_FA"
 }
@@ -52,7 +56,8 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
       name           = "Management-01"
       managed        = true
       function_type  = "Ethernet"
-      network_uri    = data.oneview_ethernet_network.ethernetNetwork.uri
+      network_uri    = data.oneview_ethernet_network.
+        .uri
       isolated_trunk = false 
       port_id        = "Auto" 
       requested_mbps = "2500"
@@ -73,7 +78,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
       requested_vfs  = ""
       boot {
         priority           = "Primary"
-	boot_volume_source = "UserDefined"
+	      boot_volume_source = "UserDefined"
       }
     }
 */
@@ -149,8 +154,6 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
     mode            = "UEFIOptimized"
     pxe_boot_policy = "Auto"
   }
-
-
   local_storage {
     controller {
       device_slot       = "Embedded"
@@ -170,9 +173,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
     }
   }
 }
-*/
 
-/*
 # Creates server profile template with OS deployment settings
 resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
   name                 = "TestServerProfileTemplate_with_osds"
@@ -257,17 +258,16 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
       isolated_trunk = false
       managed        = true
       function_type  = "Ethernet"
-      network_uri    = data.oneview_ethernet_network.ethernetnetworks1.uri
+      network_uri    = data.oneview_ethernet_network.etherneNetwork.uri
       port_id        = "Auto"
       requested_mbps = "2500"
     }
   }
 }
-
 */
-
-# Creates server profile template with san storage
+  
 /*
+# Creates server profile template with san storage
 resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage" {
   name                 = "TestServerProfileTemplate_with_local_storage_san"
   type                 = "ServerProfileTemplateV8"
@@ -318,14 +318,14 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
       function_type  = "FibreChannel"
       port_id        = "Mezz 3:1-b"
       requested_mbps = 2500
-      network_uri    = "/rest/fc-networks/37aae264-8fd5-4624-960d-10173bde5752"
+      network_uri    = data.oneview_fc_network.fcNetwork.uri
     }
     connections {
       id             = 2
       name           = "Management-01"
       isolated_trunk = false     
       function_type  = "Ethernet"
-      network_uri    = data.oneview_ethernet_network.ethernetnetworks1.uri
+      network_uri    = data.oneview_ethernet_network.ethernetNetwork.uri
       port_id        = "Auto"
       requested_mbps = "2500"
       boot {
@@ -355,95 +355,17 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
   }
 }
 */
-
+  
+# Creating Server Profile Template with DL Server
+# Enclosure group and affinity are not supported for DL server
 /*
-# Creating Server Profile Template with Management Settings
-resource "oneview_server_profile_template" "SPTwithMgmtSettings" {
-  name                 = "TestServerProfileTemplate_with_mp_settings"
-  type                 = "ServerProfileTemplateV8"
-  enclosure_group      = "EG"
-  server_hardware_type = "SY 480 Gen9 1"
-  bios_option {
-    manage_bios = true
-    overridden_settings {
-      id    = "TimeFormat"
-      value = "Utc"
-    }
-  }
-  boot {
-    manage_boot		= true
-    boot_order		= ["HardDisk"]
-  }
+resource "oneview_server_profile_template" "ServerProfileTemplateWithDLServer" {
+  name                 = "TestSPT_DL_Server"
+  server_hardware_type = "DL560 Gen10 1"
   boot_mode {
     manage_mode     = true
     mode            = "UEFIOptimized"
     pxe_boot_policy = "Auto"
   }
-
-  management_processor{
-    manage_mp	=	true
-    mp_settings {
-      local_accounts {
-        user_name = "test_UserNamei-Update"
-        display_name = "test_DisplayName"
-        password = "test_password1010"
-        user_config_priv = true
-        remote_console_priv = true
-        virtual_media_priv = true
-        virtual_power_and_reset_priv = true
-        ilo_config_priv = true
-      }
-      local_accounts {
-        user_name = "test_UserName"
-        display_name = "test_Disp"
-        password = "test_password_101"
-        user_config_priv = true
-        remote_console_priv = true
-        virtual_media_priv = true
-        virtual_power_and_reset_priv = true
-        ilo_config_priv = true
-      }
-
-      directory {
-	directory_authentication = "defaultSchema"
-	directory_generic_ldap = false
-	directory_server_address = "ldap.example.com"
-	directory_server_port	= 636
-	directory_server_certificate = "-----BEGIN CERTIFICATE-----\nMIIBozCCAQwCCQCWGqL41Y6YKTANBgkqhkiG9w0BAQUFADAWMRQwEgYDVQQDEwtD\nb21tb24gTmFtZTAeFw0xNzA3MTQxOTQzMjZaFw0xODA3MTQxOTQzMjZaMBYxFDAS\nBgNVBAMTC0NvbW1vbiBOYW1lMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCf\nCNTrU4AZF044Rtu8jiGR6Ce1u9K6GJE+60VCau2y4A2z5B5kKA2XnyP+2JpLRRA8\n8PjEyVJuL1fJomGF74L305j6ucetXZGcEy26XNyKFOtsBeoHtjkISYNTMxikjvC1\nXHctTYds0D6Q6u7igkN9ew8ngn61LInFqb6dLm+CmQIDAQABMA0GCSqGSIb3DQEB\nBQUAA4GBAFVOQ8zXFNHdXVa045onbkx8pgM2zK5VQ69YFtlAymFDWaS7a5M+96JW\n2c3001GDGZcW6fGqW+PEyu3COImRlEhEHaZKs511I7RfckMzZ3s7wPrQrC8WQLqI\ntiZtCWfUX7tto7YDdmfol7bHiaSbrLUv4H/B7iS9FGemA+nrghCK\n-----END CERTIFICATE-----"
-	directory_user_context = ["OU=US,OU=Users,OU=Accounts,dc=Subdomain,dc=example,dc=com", "ou=People,o=example.com" ]
-	ilo_distinguished_name = "service"
-	password = "test_password"
-	kerberos_authentication = false
-      }
-      directory_groups {
-	group_dn = "ilos.example.com,ou=Groups,o=example.com"
-	group_sid = "S-1-5-12"
-	user_config_priv = false
-	remote_console_priv = true
-	virtual_media_priv = true
-	virtual_power_and_reset_priv = true
-	ilo_config_priv = true
-      }
-
-      key_manager {
-	primary_server_address = "192.0.2.91"
-	primary_server_port = 9000
-	secondary_server_address = "192.0.2.92"
-	secondary_server_port = 9000
-	redundancy_required = true
-	group_name = "GRP"
-	certificate_name = "Local CA"
-	login_name = "deployment"
-	password = "test_password"
-      }
-
-      administrator_account {
-	delete_administrator_account = false
-	password = "test_password"
-      }
-
-    }
-  }
 }
 */
-
