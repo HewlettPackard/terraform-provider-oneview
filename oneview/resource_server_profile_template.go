@@ -142,9 +142,11 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"connections": {
 							Optional: true,
+							Computed: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -187,7 +189,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"iscsi": {
 													Type:     schema.TypeList,
 													Optional: true,
-													//Computed: true,
+													Computed: true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"chap_level": {
@@ -1784,7 +1786,6 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		return sptError
 	}
 	return resourceServerProfileTemplateRead(d, meta)
-	//return nil
 }
 
 // flattens management processor
