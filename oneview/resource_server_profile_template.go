@@ -2288,9 +2288,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		// Gets Local Storage Body
 		localStorage := make([]map[string]interface{}, 0, 1)
 		localStorage = append(localStorage, map[string]interface{}{
-
-			//"manage_local_storage": spt.LocalStorage.ManageLocalStorage,
-			//"initialize":           spt.LocalStorage.Initialize,
 			"compliance_control": spt.LocalStorage.ComplianceControl,
 			"controller":         controllers,
 			"sas_logical_jbod":   sasLogDrives,
@@ -2884,8 +2881,6 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 			}
 			localStorage = ov.LocalStorageOptions{
-				//ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				//Initialize:         localStorageItem["initialize"].(bool),
 				ComplianceControl: localStorageItem["compliance_control"].(string),
 				Controllers:       localStorageEmbeddedControllers,
 				SasLogicalJBODs:   logicalJbods,
