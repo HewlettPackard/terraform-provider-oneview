@@ -29,8 +29,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-		CustomizeDiff: ConSetNewComputed,
-
 		Schema: map[string]*schema.Schema{
 			"affinity": {
 				Type:     schema.TypeString,
