@@ -10,6 +10,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 1. Extended support to Server Profile resource on DL Server.
 2. Extended support to Server Profile Template resource on DL Server.
 
+### Bug fixes & Enhancements:
+- [#312] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/312) Unable to apply server_profile_template (Invalid character '.)
+
 # [v6.2.0-13]
 
 ### Notes
