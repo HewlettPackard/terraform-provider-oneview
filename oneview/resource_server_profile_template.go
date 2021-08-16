@@ -135,6 +135,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"connection_settings": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
