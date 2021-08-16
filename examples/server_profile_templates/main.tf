@@ -18,7 +18,7 @@ data "oneview_fc_network" "fcNetwork" {
 data "oneview_scope" "scope" {
   name = "test"
 }
-/*
+
 # Creates server profile template with connections
 resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections" {
   name                 = "TestServerProfileTemplate_with_connections"
@@ -28,10 +28,11 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
   initial_scope_uris   = [data.oneview_scope.scope.uri]
   bios_option {
     manage_bios = true
-    overridden_settings {
+/*    overridden_settings {
       id    = "TimeFormat"
       value = "Utc"
     }
+*/
   }
   boot {
     manage_boot		= true
@@ -60,7 +61,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
         ethernet_boot_type = "PXE"
       }
     }
-    connections {
+/*    connections {
       id             = 135
       name           = "Management-02"
       managed        = true
@@ -75,10 +76,56 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
 	boot_volume_source = "UserDefined"
       }
     }
+*/
+    connections {
+      id             = 136
+      name           = "Management-03"
+      managed        = true
+      function_type  = "Ethernet"
+      network_uri    = data.oneview_ethernet_network.ethernetNetwork.uri
+      isolated_trunk = false 
+      lag_name  = ""
+      port_id        = "Mezz 3:2-a" 
+      requested_mbps = "2500"
+      boot {
+        priority           = "Secondary"
+        ethernet_boot_type = "PXE"
+      }
+    }
+
+
+ connections {
+   function_type  = "iSCSI"
+   id             = 137 
+   isolated_trunk = false
+   managed        = true 
+   network_uri    = "/rest/ethernet-networks/3d82cdf2-622f-459e-9742-3669d4d55867"
+   port_id        = "Mezz 3:2-b"
+   requested_mbps = "2500"
+
+   boot {
+     boot_volume_source = "UserDefined" 
+     priority           = "Primary"
+
+     iscsi {
+      chap_level              = "None"
+      first_boot_target_ip    = "10.0.0.0"
+      first_boot_target_port  = "3260"
+      initiator_name_source   = "ProfileInitiatorName"
+      second_boot_target_ip   = "10.0.0.1" 
+      second_boot_target_port = "3260"
+     }
+   }
+
+   ipv4 {
+     ip_address_source = "DHCP"
+   }
+}
+
   }
 }
-*/
 
+/*
 # Creates server profile template with local storage
 resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorage" {
   name                 = "TestServerProfileTemplate_with_local_storage"
@@ -123,7 +170,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
     }
   }
 }
-
+*/
 
 /*
 # Creates server profile template with OS deployment settings
