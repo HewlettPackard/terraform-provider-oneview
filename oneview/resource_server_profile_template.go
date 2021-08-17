@@ -160,7 +160,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"boot_vlan_id": {
 													Type:     schema.TypeString,
 													Optional: true,
-													Computed: true,
 												},
 												"boot_volume_source": {
 													Type:     schema.TypeString,
@@ -2216,16 +2215,22 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			})
 		}
 
-		conSetVal := d.Get("connection_settings").([]interface{})
-		for _, rawConSet := range conSetVal {
-			conSet := rawConSet.(map[string]interface{})
-			consVal := conSet["connections"].(*schema.Set).List()
-			for i, rawConVal := range consVal {
-				con := rawConVal.(map[string]interface{})
-				if len(connections) == len(consVal) {
-					if connections[i]["id"] == con["id"] {
-						if con["port_id"] == "Auto" {
-							connections[i]["port_id"] = "Auto"
+		// flatten connection settings to overwrite port_id if equals to "Auto"
+		if getVal, ok := d.GetOK("connection_settings"); ok {
+			conSetVal := getVal.([]interface{})
+			for _, rawConSet := range conSetVal {
+				conSet := rawConSet.(map[string]interface{})
+				consVal := conSet["connections"].(*schema.Set).List()
+				// iterating through connections from state
+				for i, rawConVal := range consVal {
+					con := rawConVal.(map[string]interface{})
+					// iterating through connections from refresh
+					for _, conVal := range connections {
+						if conVal["id"] == con["id"] {
+							// overrides port_id
+							if con["port_id"] == "Auto" {
+								connections[i]["port_id"] = "Auto"
+							}
 						}
 					}
 				}
@@ -2432,25 +2437,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	}
 
 	return nil
-}
-
-// IsZeroOfUnderlyingType returns true if value is null
-func isZeroOfUnderlyingType(x interface{}) bool {
-	if reflect.ValueOf(x).Kind() == reflect.Ptr {
-		return true
-	}
-	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
-}
-
-// IsStructNil return true if struct is null
-func isStructNil(x interface{}) bool {
-	v := reflect.ValueOf(x)
-	for j := 0; j < v.NumField(); j++ {
-		if !isZeroOfUnderlyingType(v.Field(j).Interface()) {
-			return true
-		}
-	}
-	return false
 }
 
 func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{}) error {
