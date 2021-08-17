@@ -2216,7 +2216,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		}
 
 		// flatten connection settings to overwrite port_id if equals to "Auto"
-		if getVal, ok := d.GetOK("connection_settings"); ok {
+		if getVal, ok := d.GetOk("connection_settings"); ok {
 			conSetVal := getVal.([]interface{})
 			for _, rawConSet := range conSetVal {
 				conSet := rawConSet.(map[string]interface{})
