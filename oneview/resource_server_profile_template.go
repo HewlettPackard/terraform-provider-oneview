@@ -13,14 +13,16 @@ package oneview
 
 import (
 	"fmt"
+	"reflect"
+	"strconv"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"reflect"
-	"strconv"
 )
 
 func resourceServerProfileTemplate() *schema.Resource {
+
 	return &schema.Resource{
 		Create: resourceServerProfileTemplateCreate,
 		Read:   resourceServerProfileTemplateRead,
@@ -35,6 +37,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+
 			"bios_option": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -48,7 +51,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"manage_bios": {
 							Type:     schema.TypeBool,
 							Required: true,
-							Default:  false,
 						},
 						"overridden_settings": {
 							Type:     schema.TypeSet,
@@ -327,6 +329,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
+
 									"requested_mbps": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -342,6 +345,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 								},
 							},
 						},
+
 						"manage_connections": {
 							Type:     schema.TypeBool,
 							Required: true,
@@ -444,10 +448,10 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "CheckedMinimum",
 						},
 						"controller": {
 							Optional: true,
-							Computed: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -469,7 +473,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"logical_drives": {
 										Optional: true,
-										Computed: true,
 										Type:     schema.TypeSet,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -520,18 +523,9 @@ func resourceServerProfileTemplate() *schema.Resource {
 								},
 							},
 						},
-						"manage_local_storage": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"initialize": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
 
 						"sas_logical_jbod": {
 							Optional: true,
-							Computed: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -1163,7 +1157,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"scopes_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Optional: true,
 			},
 			"serial_number_type": {
 				Type:     schema.TypeString,
@@ -1182,7 +1175,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"server_profile_description": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
@@ -1217,13 +1209,15 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	config := meta.(*Config)
 
 	serverProfileTemplate := ov.ServerProfile{
-		Name:               d.Get("name").(string),
-		Type:               d.Get("type").(string),
-		Affinity:           d.Get("affinity").(string),
-		SerialNumberType:   d.Get("serial_number_type").(string),
-		WWNType:            d.Get("wwn_type").(string),
-		MACType:            d.Get("mac_type").(string),
-		HideUnusedFlexNics: d.Get("hide_unused_flex_nics").(bool),
+		Name:                     d.Get("name").(string),
+		Type:                     d.Get("type").(string),
+		Affinity:                 d.Get("affinity").(string),
+		SerialNumberType:         d.Get("serial_number_type").(string),
+		WWNType:                  d.Get("wwn_type").(string),
+		MACType:                  d.Get("mac_type").(string),
+		HideUnusedFlexNics:       d.Get("hide_unused_flex_nics").(bool),
+		Description:              d.Get("description").(string),
+		ServerProfileDescription: d.Get("server_profile_description").(string),
 	}
 
 	if d.Get("enclosure_group") != "" {
@@ -1587,10 +1581,9 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				})
 			}
 			localStorage = ov.LocalStorageOptions{
-				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				Initialize:         localStorageItem["initialize"].(bool),
-				Controllers:        localStorageEmbeddedController,
-				SasLogicalJBODs:    logicalJbod,
+				ComplianceControl: localStorageItem["compliance_control"].(string),
+				Controllers:       localStorageEmbeddedController,
+				SasLogicalJBODs:   logicalJbod,
 			}
 		}
 		serverProfileTemplate.LocalStorage = localStorage
@@ -1817,6 +1810,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("category", spt.Category)
 	d.Set("created", spt.Created)
 	d.Set("description", spt.Description)
+	d.Set("server_profile_description", spt.ServerProfileDescription)
 
 	if spt.EnclosureGroupURI != "" {
 		enclosureGroup, err := config.ovClient.GetEnclosureGroupByUri(spt.EnclosureGroupURI)
@@ -1828,7 +1822,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	}
 	d.Set("etag", spt.ETAG)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
-	d.Set("initial_scope_uris", spt.InitialScopeUris)
 	d.Set("iscsi_initiator_name", spt.IscsiInitiatorName)
 	d.Set("iscsi_initiator_name_type", spt.IscsiInitiatorNameType)
 	d.Set("mac_type", spt.MACType)
@@ -2295,10 +2288,9 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		// Gets Local Storage Body
 		localStorage := make([]map[string]interface{}, 0, 1)
 		localStorage = append(localStorage, map[string]interface{}{
-			"manage_local_storage": spt.LocalStorage.ManageLocalStorage,
-			"initialize":           spt.LocalStorage.Initialize,
-			"controller":           controllers,
-			"sas_logical_jbod":     sasLogDrives,
+			"compliance_control": spt.LocalStorage.ComplianceControl,
+			"controller":         controllers,
+			"sas_logical_jbod":   sasLogDrives,
 		})
 		d.Set("local_storage", localStorage)
 	}
@@ -2495,6 +2487,16 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		val := d.Get("hide_unused_flex_nics")
 		serverProfileTemplate.HideUnusedFlexNics = val.(bool)
 	}
+
+	if d.HasChange("description") {
+		val := d.Get("description")
+		serverProfileTemplate.Description = val.(string)
+	}
+	if d.HasChange("server_profile_description") {
+		val := d.Get("server_profile_description")
+		serverProfileTemplate.ServerProfileDescription = val.(string)
+	}
+
 	if d.Get("enclosure_group") != "" {
 		val := d.Get("enclosure_group")
 		enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(val.(string))
@@ -2797,13 +2799,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		serverProfileTemplate.Bios = &biosOption
 	}
 	if d.HasChange("initial_scope_uris") {
-		val := d.Get("initial_scope_uris")
-		initialScopeUrisOrder := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
-		for i, raw := range initialScopeUrisOrder {
-			initialScopeUris[i] = utils.Nstring(raw.(string))
-		}
-		serverProfileTemplate.InitialScopeUris = initialScopeUris
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
 
 	// Get firmware details
@@ -2885,10 +2881,9 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 			}
 			localStorage = ov.LocalStorageOptions{
-				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				Initialize:         localStorageItem["initialize"].(bool),
-				Controllers:        localStorageEmbeddedControllers,
-				SasLogicalJBODs:    logicalJbods,
+				ComplianceControl: localStorageItem["compliance_control"].(string),
+				Controllers:       localStorageEmbeddedControllers,
+				SasLogicalJBODs:   logicalJbods,
 			}
 		}
 		serverProfileTemplate.LocalStorage = localStorage
