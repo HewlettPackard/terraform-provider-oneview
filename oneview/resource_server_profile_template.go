@@ -1158,7 +1158,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"scopes_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Optional: true,
 			},
 			"serial_number_type": {
 				Type:     schema.TypeString,
@@ -1177,7 +1176,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"server_profile_description": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
