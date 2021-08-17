@@ -527,16 +527,25 @@ func (c *OVClient) RefreshServerHardware(id string, hardware ServerHardware) err
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
+	t = t.NewProfileTask(c)
+	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, hardware)
 	data, err := c.RestAPICall(rest.PUT, uri, hardware)
 	if err != nil {
+		t.TaskIsDone = true
 		log.Errorf("Error while refreshing server hardware: %s", err)
 		return err
 	}
 
 	log.Debugf("Response of server hardware refresh %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
 		return err
 	}
 
@@ -554,16 +563,25 @@ func (c *OVClient) UpdateiLOFirmwareVersion(id string) error {
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
 
+	t = t.NewProfileTask(c)
+	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, nil)
 	data, err := c.RestAPICall(rest.PUT, uri, nil)
 	if err != nil {
+		t.TaskIsDone = true
 		log.Errorf("Error while updating firmware version: %s", err)
 		return err
 	}
 
 	log.Debugf("Response of firmware version update %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
 		return err
 	}
 
@@ -595,16 +613,26 @@ func (c *OVClient) PatchPowerState(id string, operation []PatchPowerData) error 
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	t = t.NewProfileTask(c)
+	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, operation)
 	data, err := c.RestAPICall(rest.PATCH, uri, operation)
 	if err != nil {
+		t.TaskIsDone = true
 		log.Errorf("Error while doing Patch: %s", err)
 		return err
 	}
 
 	log.Debugf("Response of Patch %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
 		return err
 	}
 
@@ -620,16 +648,26 @@ func (c *OVClient) Patch(id string, operation []PatchData) error {
 	// refresh login
 	c.RefreshLogin()
 	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	t = t.NewProfileTask(c)
+	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, operation)
 	data, err := c.RestAPICall(rest.PATCH, uri, operation)
 	if err != nil {
+		t.TaskIsDone = true
 		log.Errorf("Error while doing Patch: %s", err)
 		return err
 	}
 
 	log.Debugf("Response of Patch %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
 		return err
 	}
 
@@ -684,6 +722,52 @@ func (c *OVClient) SetPowerState(serverHardwareId string, powerState map[string]
 	err := c.PatchPowerState(serverHardwareId, operation)
 	if err != nil {
 		log.Errorf("Error while updating power state: %s", err)
+		return err
+	}
+
+	return nil
+}
+
+// Delete the rack server using URI
+func (c *OVClient) DeleteServerHardware(uri utils.Nstring) error {
+	var (
+		hardware ServerHardware
+		err      error
+		t        *Task
+	)
+
+	hardware, err = c.GetServerHardwareByUri(uri)
+	if err != nil {
+		return err
+	}
+
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Infof("URI:%s", hardware.URI)
+	log.Debugf("REST : %s \n %+v\n", hardware.URI, hardware)
+
+	if hardware.URI == "" {
+		t.TaskIsDone = true
+		log.Warn("Unable to post delete, no uri found.")
+		return err
+	}
+
+	data, err := c.RestAPICall(rest.DELETE, hardware.URI.String(), nil)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error submitting server hardware delete request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response delete server hardware %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
 		return err
 	}
 

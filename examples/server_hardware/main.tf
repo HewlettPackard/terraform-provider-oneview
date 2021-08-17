@@ -7,6 +7,11 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
+
+data "oneview_scope" "scope_obj" {
+  name = "Auto-Scope"
+}
+
 // Adds Rack server to the appliance
 // Licensing can be OneView or OneviewNoiLO for Managed
 resource "oneview_server_hardware" "sh" {
@@ -15,4 +20,5 @@ resource "oneview_server_hardware" "sh" {
   username = "dcs"
   password = "dcs"
   licensing_intent = "OneView"
+  initial_scope_uris = [data.oneview_scope.scope_obj.uri]
 }
