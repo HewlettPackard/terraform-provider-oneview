@@ -131,6 +131,7 @@ type ServerHardwareType struct {
 	Model               string                `json:"model,omitempty"`               // "model":"",
 	Modified            string                `json:"modified,omitempty"`            // "modified": "20150831T154835.250Z",
 	Name                string                `json:"name,omitempty"`                // "name": "ServerHardware 1",
+	Platform            string                `json:"platform,omitempty"`            // "platform": "ComputeModule",
 	PxeBootPolicies     []string              `json:"pxeBootPolicies,omitempty"`     // "pxeBootPolicies":{},
 	ServerDisplaySchema []ServerDisplaySchema `json:"serverDisplaySchema,omitempty"` // "serverDisplaySchema":{},
 	StorageCapabilities *StorageCapability    `json:"storageCapabilities,omitempty"` // "storageCapabilities":{..,},

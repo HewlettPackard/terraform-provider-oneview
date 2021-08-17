@@ -14,6 +14,7 @@ package oneview
 import (
 	"errors"
 	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -47,6 +48,14 @@ func resourceServerHardware() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
+			},
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
 			},
 			"location_uri": {
 				Type:     schema.TypeString,
@@ -169,10 +178,19 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 		LicensingIntent:    d.Get("licensing_intent").(string),
 		ConfigurationState: d.Get("configuration_state").(string),
 	}
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		rawInitialScopeUris := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
+		for i, raw := range rawInitialScopeUris {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		hardware.InitialScopeUris = initialScopeUris
+	}
+
 	err := config.ovClient.AddRackServer(hardware)
 	if err != nil {
-		d.SetId("")
-		return err
+		//d.SetId("")
+		//return err
 	}
 
 	sh, _ := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))
@@ -261,8 +279,8 @@ func resourceServerHardwareUpdate(d *schema.ResourceData, meta interface{}) erro
 			return err
 		}
 	}
-	if d.HasChange("username") || d.HasChange("password") || d.HasChange("configuration_state") {
-		return errors.New("Fields like username, password and configuration_state cannot be changed")
+	if d.HasChange("username") || d.HasChange("password") || d.HasChange("configuration_state") || d.HasChange("initial_scope_uris") {
+		return errors.New("Fields like username, password, configuration_state and initial_scope_uris cannot be changed")
 	}
 	d.SetId(d.Id())
 
@@ -270,5 +288,19 @@ func resourceServerHardwareUpdate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceServerHardwareDelete(d *schema.ResourceData, meta interface{}) error {
-	return errors.New("Server hardware delete Operation is not supported.")
+	config := meta.(*Config)
+
+	hardwareType, err := config.ovClient.GetServerHardwareTypeByUri(utils.Nstring(d.Get("server_hardware_type_uri").(string)))
+	if err != nil {
+		return err
+	}
+	if hardwareType.Platform == "RackServer" {
+		err := config.ovClient.DeleteServerHardware(utils.Nstring(d.Get("uri").(string)))
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("Server hardware delete is not supported")
+	}
+	return nil
 }

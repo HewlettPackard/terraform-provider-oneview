@@ -76,6 +76,19 @@ func testAccCheckServerHardwareExists(n string, serverHardware *ov.ServerHardwar
 }
 
 func testAccCheckServerHardwareDestroy(s *terraform.State) error {
+	config := testAccProvider.Meta().(*Config)
+	for _, rs := range s.RootModule().Resources {
+		if rs.Type != "oneview_server_hardware" {
+			continue
+		}
+
+		testSH, _ := config.ovClient.GetServerHardwareByUri(rs.Primary.ID)
+
+		if testSH.URI != "" {
+			return fmt.Errorf("Server Hardware still exists")
+		}
+	}
+
 	return nil
 }
 
