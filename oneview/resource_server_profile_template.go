@@ -50,8 +50,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"manage_bios": {
 							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
+							Required: true,
 						},
 						"overridden_settings": {
 							Type:     schema.TypeSet,
