@@ -420,7 +420,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  true,
+				Computed: true,
 			},
 			"initial_scope_uris": {
 				Type:     schema.TypeSet,
@@ -1196,6 +1196,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 
 			"uri": {
