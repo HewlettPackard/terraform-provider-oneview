@@ -189,8 +189,8 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 
 	err := config.ovClient.AddRackServer(hardware)
 	if err != nil {
-		//d.SetId("")
-		//return err
+		d.SetId("")
+		return err
 	}
 
 	sh, _ := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))

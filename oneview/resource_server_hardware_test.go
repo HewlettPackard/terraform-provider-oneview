@@ -16,6 +16,7 @@ import (
 	"testing"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
@@ -82,7 +83,7 @@ func testAccCheckServerHardwareDestroy(s *terraform.State) error {
 			continue
 		}
 
-		testSH, _ := config.ovClient.GetServerHardwareByUri(rs.Primary.ID)
+		testSH, _ := config.ovClient.GetServerHardwareByUri(utils.Nstring(rs.Primary.ID))
 
 		if testSH.URI != "" {
 			return fmt.Errorf("Server Hardware still exists")
