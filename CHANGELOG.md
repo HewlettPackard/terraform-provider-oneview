@@ -14,6 +14,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
    - PATCH  /rest/server-hardware/{id}
 4. logical_interconnect_group: Changed the way we provide port_num, instead of list we have to provide integer value for port_num in each logical_port_config in uplink_set.
 
+### Bug fixes & Enhancements:
+- [#312] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/312) Unable to apply server_profile_template (Invalid character '.)
+
 # [v6.2.0-13]
 
 ### Notes
