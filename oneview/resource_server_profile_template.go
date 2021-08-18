@@ -308,10 +308,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"managed": {
-										Type:     schema.TypeBool,
-										Optional: true,
-									},
 									"name": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -328,7 +324,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-
 									"requested_mbps": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -1424,20 +1419,25 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					}
 				}
 
+				networkv200 := ov.Connectionv200{
+					RequestedVFs: rawNetworkItem["requested_vfs"].(string),
+				}
+
 				networks = append(networks, ov.Connection{
-					ID:            rawNetworkItem["id"].(int),
-					Name:          rawNetworkItem["name"].(string),
-					IsolatedTrunk: rawNetworkItem["isolated_trunk"].(bool),
-					LagName:       rawNetworkItem["lag_name"].(string),
-					Managed:       rawNetworkItem["managed"].(bool),
-					FunctionType:  rawNetworkItem["function_type"].(string),
-					NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
-					PortID:        rawNetworkItem["port_id"].(string),
-					RequestedMbps: rawNetworkItem["requested_mbps"].(string),
-					Ipv4:          &ipv4,
-					Boot:          &bootOptions,
+					ID:             rawNetworkItem["id"].(int),
+					Name:           rawNetworkItem["name"].(string),
+					IsolatedTrunk:  rawNetworkItem["isolated_trunk"].(bool),
+					LagName:        rawNetworkItem["lag_name"].(string),
+					FunctionType:   rawNetworkItem["function_type"].(string),
+					NetworkURI:     utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+					PortID:         rawNetworkItem["port_id"].(string),
+					Connectionv200: networkv200,
+					RequestedMbps:  rawNetworkItem["requested_mbps"].(string),
+					Ipv4:           &ipv4,
+					Boot:           &bootOptions,
 				})
 			}
+
 			serverProfileTemplate.ConnectionSettings = ov.ConnectionSettings{
 				Connections:       networks,
 				ComplianceControl: rawConSetting["compliance_control"].(string),
@@ -2206,12 +2206,12 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"isolated_trunk": connection.IsolatedTrunk,
 				"lag_name":       connection.LagName,
 				"mac_type":       connection.MacType,
-				"managed":        connection.Managed,
 				"name":           connection.Name,
 				"network_name":   connection.NetworkName,
 				"network_uri":    connection.NetworkURI,
 				"port_id":        connection.PortID,
 				"requested_mbps": connection.RequestedMbps,
+				"requested_vfs":  connection.RequestedVFs,
 			})
 		}
 
@@ -2703,9 +2703,13 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					RequestedMbps: rawNetworkItem["requested_mbps"].(string),
 					IsolatedTrunk: rawNetworkItem["isolated_trunk"].(bool),
 					LagName:       rawNetworkItem["lag_name"].(string),
-					Managed:       rawNetworkItem["managed"].(bool),
 					Ipv4:          &ipv4,
 				}
+
+				networkv200 := ov.Connectionv200{
+					RequestedVFs: rawNetworkItem["requested_vfs"].(string),
+				}
+				network.Connectionv200 = networkv200
 
 				networks = append(networks, network)
 				if len(rawNetworkItem["boot"].([]interface{})) != 0 {

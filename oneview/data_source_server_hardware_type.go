@@ -44,6 +44,10 @@ func dataSourceServerHardwareType() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"platform": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"storage_capability": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -96,6 +100,7 @@ func dataSourceServerHardwareTypeRead(d *schema.ResourceData, meta interface{}) 
 	d.Set("uri", serverHardwareType.URI.String())
 	d.Set("family", serverHardwareType.Family)
 	d.Set("model", serverHardwareType.Model)
+	d.Set("platform", serverHardwareType.Platform)
 
 	controllerModes := make([]interface{}, len(serverHardwareType.StorageCapabilities.ControllerModes))
 	for i, controllerMode := range serverHardwareType.StorageCapabilities.ControllerModes {
