@@ -40,6 +40,7 @@ func resourceServerProfile() *schema.Resource {
 			"boot": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_boot": {
@@ -84,6 +85,7 @@ func resourceServerProfile() *schema.Resource {
 			"bios_option": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"manage_bios": {
@@ -379,6 +381,7 @@ func resourceServerProfile() *schema.Resource {
 			"server_hardware_type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"enclosure_group": {
 				Type:     schema.TypeString,
@@ -392,7 +395,7 @@ func resourceServerProfile() *schema.Resource {
 			"hide_unused_flex_nics": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  true,
+				Computed: true,
 			},
 			"initial_scope_uris": {
 				Type:     schema.TypeSet,
@@ -896,6 +899,7 @@ func resourceServerProfile() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"hw_filter": {
 				Type:     schema.TypeList,
@@ -1082,6 +1086,7 @@ func resourceServerProfile() *schema.Resource {
 			"management_processor": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"compliance_control": {
@@ -2073,6 +2078,12 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("public_slot_id", publicConnection.ID)
 	}
 
+	if _, ok := d.GetOk("template"); ok {
+		d.Set("template", d.Get("template").(string))
+	} else {
+		d.Set("template", serverProfile.ServerProfileTemplateURI.String())
+	}
+
 	d.Set("name", serverProfile.Name)
 	d.Set("type", serverProfile.Type)
 	d.Set("uri", serverProfile.URI.String())
@@ -2101,7 +2112,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("description", serverProfile.Description)
 	d.Set("etag", serverProfile.ETAG)
 	d.Set("in_progress", serverProfile.InProgress)
-	d.Set("initial_scope_uris", serverProfile.InitialScopeUris)
 	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName)
 	d.Set("iscsi_initiator_name_type", serverProfile.IscsiInitiatorNameType)
 	d.Set("modified", serverProfile.Modified)
@@ -2114,7 +2124,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("state", serverProfile.State)
 	d.Set("status", serverProfile.Status)
 	d.Set("task_uri", serverProfile.TaskURI.String())
-	d.Set("template", serverProfile.ServerProfileTemplateURI.String())
 	d.Set("template_compliance", serverProfile.TemplateCompliance)
 	d.Set("uuid", serverProfile.UUID.String())
 
