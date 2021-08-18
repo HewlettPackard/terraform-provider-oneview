@@ -573,12 +573,15 @@ func (c *OVClient) DeleteProfile(name string) error {
 
 		// submit delete task
 		t, err := c.SubmitDeleteProfile(profile)
-		if c.APIVersion < 1000 {
-			err = t.Wait()
-			if err != nil {
-				return err
-			}
+		if err != nil {
+			return err
 		}
+
+		err = t.Wait()
+		if err != nil {
+			return err
+		}
+		return nil
 
 		// check for task execution
 
