@@ -275,10 +275,5 @@ resource "oneview_server_profile" "SPWithDL" {
       value = "Utc"
     }
   }
-  boot_mode {
-    manage_mode     = true
-    mode            = "UEFIOptimized"
-    pxe_boot_policy = "Auto"
-  }
 }
 

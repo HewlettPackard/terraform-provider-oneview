@@ -300,7 +300,7 @@ func resourceServerHardwareDelete(d *schema.ResourceData, meta interface{}) erro
 			return err
 		}
 	} else {
-		return errors.New("Server hardware delete is not supported")
+		return errors.New("Deletion of Server hardware is only supported for Rack Servers")
 	}
 	return nil
 }
