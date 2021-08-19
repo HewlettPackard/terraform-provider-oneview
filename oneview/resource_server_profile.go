@@ -2742,6 +2742,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		serverProfile, err := config.ovClient.GetProfileByName(d.Id())
 
 		var serverHardware ov.ServerHardware
+		if d.HasChange("initial_scope_uris") {
+			return errors.New("initial_scope_uris of the server profile cannot be changed")
+		}
 		if d.HasChange("hardware_name") {
 			val := d.Get("hardware_name")
 			var err error
