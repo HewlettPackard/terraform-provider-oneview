@@ -15,7 +15,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"reflect"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -2114,8 +2113,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
-	file, _ := json.MarshalIndent(serverProfile.ServerProfileTemplateURI.String(), "", " ")
-	_ = ioutil.WriteFile("template.json", file, 0644)
 
 	d.Set("server_hardware_type", serverHardwareType.Name)
 	d.Set("affinity", serverProfile.Affinity)
@@ -2789,8 +2786,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					return err
 				}
 				serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
-				file, _ := json.MarshalIndent(serverProfile.ServerProfileTemplateURI.String(), "", " ")
-				_ = ioutil.WriteFile("templateUpdate.json", file, 0644)
 			}
 		}
 		if d.HasChange("name") {
