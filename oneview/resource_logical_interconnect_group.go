@@ -111,6 +111,10 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 										Optional: true,
 										Default:  "Auto",
 									},
+									"desired_fec_mode": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 									"port_num": {
 										Type:     schema.TypeInt,
 										Required: true,
@@ -1042,6 +1046,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 				logicalPort := ov.LogicalPortConfigInfo{}
 				logicalPort.DesiredSpeed = logicalPortConfig["desired_speed"].(string)
+				logicalPort.DesiredFecMode = logicalPortConfig["desired_fec_mode"].(string)
 
 				locationEntries := make([]ov.LocationEntry, 0)
 				enclosureLocation := ov.LocationEntry{
@@ -1783,6 +1788,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 						}
 
 						logicalPortConfigInfo[j]["desired_speed"] = logicalPortConfig.DesiredSpeed
+						logicalPortConfigInfo[j]["desired_fec_mode"] = logicalPortConfig.DesiredFecMode
 					}
 				}
 				uplinkSets[i]["logical_port_config"] = logicalPortConfigInfo
@@ -2139,6 +2145,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 
 					logicalPort := ov.LogicalPortConfigInfo{}
 					logicalPort.DesiredSpeed = logicalPortConfig["desired_speed"].(string)
+					logicalPort.DesiredFecMode = logicalPortConfig["desired_fec_mode"].(string)
 
 					locationEntries := make([]ov.LocationEntry, 0)
 					enclosureLocation := ov.LocationEntry{
