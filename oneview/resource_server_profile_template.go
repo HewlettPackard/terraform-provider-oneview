@@ -41,6 +41,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"bios_option": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -75,6 +76,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"boot": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -160,7 +162,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 												"boot_vlan_id": {
 													Type:     schema.TypeString,
 													Optional: true,
-													Computed: true,
 												},
 												"boot_volume_source": {
 													Type:     schema.TypeString,
@@ -309,10 +310,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-									"managed": {
-										Type:     schema.TypeBool,
-										Optional: true,
-									},
 									"name": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -329,7 +326,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
-
 									"requested_mbps": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -1449,20 +1445,25 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					}
 				}
 
+				networkv200 := ov.Connectionv200{
+					RequestedVFs: rawNetworkItem["requested_vfs"].(string),
+				}
+
 				networks = append(networks, ov.Connection{
-					ID:            rawNetworkItem["id"].(int),
-					Name:          rawNetworkItem["name"].(string),
-					IsolatedTrunk: rawNetworkItem["isolated_trunk"].(bool),
-					LagName:       rawNetworkItem["lag_name"].(string),
-					Managed:       rawNetworkItem["managed"].(bool),
-					FunctionType:  rawNetworkItem["function_type"].(string),
-					NetworkURI:    utils.NewNstring(rawNetworkItem["network_uri"].(string)),
-					PortID:        rawNetworkItem["port_id"].(string),
-					RequestedMbps: rawNetworkItem["requested_mbps"].(string),
-					Ipv4:          &ipv4,
-					Boot:          &bootOptions,
+					ID:             rawNetworkItem["id"].(int),
+					Name:           rawNetworkItem["name"].(string),
+					IsolatedTrunk:  rawNetworkItem["isolated_trunk"].(bool),
+					LagName:        rawNetworkItem["lag_name"].(string),
+					FunctionType:   rawNetworkItem["function_type"].(string),
+					NetworkURI:     utils.NewNstring(rawNetworkItem["network_uri"].(string)),
+					PortID:         rawNetworkItem["port_id"].(string),
+					Connectionv200: networkv200,
+					RequestedMbps:  rawNetworkItem["requested_mbps"].(string),
+					Ipv4:           &ipv4,
+					Boot:           &bootOptions,
 				})
 			}
+
 			serverProfileTemplate.ConnectionSettings = ov.ConnectionSettings{
 				Connections:       networks,
 				ComplianceControl: rawConSetting["compliance_control"].(string),
@@ -2241,25 +2242,31 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"isolated_trunk": connection.IsolatedTrunk,
 				"lag_name":       connection.LagName,
 				"mac_type":       connection.MacType,
-				"managed":        connection.Managed,
 				"name":           connection.Name,
 				"network_name":   connection.NetworkName,
 				"network_uri":    connection.NetworkURI,
 				"port_id":        connection.PortID,
 				"requested_mbps": connection.RequestedMbps,
+				"requested_vfs":  connection.RequestedVFs,
 			})
 		}
 
-		conSetVal := d.Get("connection_settings").([]interface{})
-		for _, rawConSet := range conSetVal {
-			conSet := rawConSet.(map[string]interface{})
-			consVal := conSet["connections"].(*schema.Set).List()
-			for i, rawConVal := range consVal {
-				con := rawConVal.(map[string]interface{})
-				if len(connections) == len(consVal) {
-					if connections[i]["id"] == con["id"] {
-						if con["port_id"] == "Auto" {
-							connections[i]["port_id"] = "Auto"
+		// flatten connection settings to overwrite port_id if equals to "Auto"
+		if getVal, ok := d.GetOk("connection_settings"); ok {
+			conSetVal := getVal.([]interface{})
+			for _, rawConSet := range conSetVal {
+				conSet := rawConSet.(map[string]interface{})
+				consVal := conSet["connections"].(*schema.Set).List()
+				// iterating through connections from state
+				for i, rawConVal := range consVal {
+					con := rawConVal.(map[string]interface{})
+					// iterating through connections from refresh
+					for _, conVal := range connections {
+						if conVal["id"] == con["id"] {
+							// overrides port_id
+							if con["port_id"] == "Auto" {
+								connections[i]["port_id"] = "Auto"
+							}
 						}
 					}
 				}
@@ -2466,25 +2473,6 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	}
 
 	return nil
-}
-
-// IsZeroOfUnderlyingType returns true if value is null
-func isZeroOfUnderlyingType(x interface{}) bool {
-	if reflect.ValueOf(x).Kind() == reflect.Ptr {
-		return true
-	}
-	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
-}
-
-// IsStructNil return true if struct is null
-func isStructNil(x interface{}) bool {
-	v := reflect.ValueOf(x)
-	for j := 0; j < v.NumField(); j++ {
-		if !isZeroOfUnderlyingType(v.Field(j).Interface()) {
-			return true
-		}
-	}
-	return false
 }
 
 func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -2762,9 +2750,13 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					RequestedMbps: rawNetworkItem["requested_mbps"].(string),
 					IsolatedTrunk: rawNetworkItem["isolated_trunk"].(bool),
 					LagName:       rawNetworkItem["lag_name"].(string),
-					Managed:       rawNetworkItem["managed"].(bool),
 					Ipv4:          &ipv4,
 				}
+
+				networkv200 := ov.Connectionv200{
+					RequestedVFs: rawNetworkItem["requested_vfs"].(string),
+				}
+				network.Connectionv200 = networkv200
 
 				networks = append(networks, network)
 				if len(rawNetworkItem["boot"].([]interface{})) != 0 {

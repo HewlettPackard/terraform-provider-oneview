@@ -3,6 +3,7 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -20,6 +21,7 @@ type LogicalEnclosure struct {
 	EnclosureUris             []utils.Nstring            `json:"enclosureUris,omitempty"`             // "enclosureUris":""
 	Enclosures                map[string]Enclosures      `json:"enclosures,omitempty"`                // "enclosures":"[]",
 	Firmware                  *LogicalEnclosureFirmware  `json:"firmware,omitempty"`                  // "firmware":"",
+	InitialScopeUris          []utils.Nstring            `json:"initialScopeUris,omitempty"`          // "initialScopUris":
 	IpAddressingMode          string                     `json:"ipAddressingMode,omitempty"`          // "ipAddressingMode":"DHCP",
 	Ipv4Ranges                []Ipv4Ranges               `json:"ipv4Ranges,omitempty"`                //"ipv4Ranges":"[]"
 	LogicalInterconnectUris   []utils.Nstring            `json:"logicalInterconnectUris,omitempty"`   //"logicalInterconnectUris":"[]",

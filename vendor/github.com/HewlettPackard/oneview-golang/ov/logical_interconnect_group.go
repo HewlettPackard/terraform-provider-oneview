@@ -447,6 +447,7 @@ type NetworkLite struct {
 }
 type LogicalPortConfigInfo struct {
 	DesiredSpeed    string          `json:"desiredSpeed,omitempty"`    // "desiredSpeed": "Auto",
+	DesiredFecMode  string          `json:"desiredFecMode,omitempty"`  // "desiredFecMode": "Auto",
 	LogicalLocation LogicalLocation `json:"logicalLocation,omitempty"` // "logicalLocation": {...},
 }
 
