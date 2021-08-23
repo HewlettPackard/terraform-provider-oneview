@@ -1390,6 +1390,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 		serverProfile = serverProfileByTemplate
 		serverProfile.ServerProfileTemplateURI = serverProfileByTemplate.URI
+		serverProfile.Description = serverProfileByTemplate.ServerProfileDescription
 		serverProfile.ConnectionSettings = ov.ConnectionSettings{
 			Connections: serverProfile.ConnectionSettings.Connections,
 		}
@@ -2762,6 +2763,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				if err != nil || serverProfileTemplate.URI.IsNil() {
 					return err
 				}
+				serverProfile.Description = serverProfileTemplate.ServerProfileDescription
 				serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
 			}
 		}
