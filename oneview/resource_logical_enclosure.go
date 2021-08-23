@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -122,6 +123,14 @@ func resourceLogicalEnclosure() *schema.Resource {
 					},
 				},
 			},
+			"initial_scope_uris": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 
 			"ip_addressing_mode": {
 				Type:     schema.TypeString,
@@ -228,6 +237,16 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		}
 		logicalEnclosure.Firmware = &logicalEnclosureFirmware
 	}
+
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		initialScopeUrisOrder := val.(*schema.Set).List()
+		initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
+		for i, raw := range initialScopeUrisOrder {
+			initialScopeUris[i] = utils.Nstring(raw.(string))
+		}
+		logicalEnclosure.InitialScopeUris = initialScopeUris
+	}
+
 	logicalEnclosureError := config.ovClient.CreateLogicalEnclosure(logicalEnclosure)
 	d.SetId(d.Get("name").(string))
 	if logicalEnclosureError != nil {
@@ -406,6 +425,9 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 			ValidateIfLIFirmwareUpdateIsNonDisruptive: firmware["validate_if_li_firmware_update_is_non_disruptive"].(bool),
 		}
 		logicalEnclosure.Firmware = &logicalEnclosureFirmware
+	}
+	if d.HasChange("initial_scope_uris") {
+		return fmt.Errorf("Initial scope uri can not be updated")
 	}
 	ipv4rangesList := d.Get("ipv4_range").(*schema.Set).List()
 	ipv4rangesCollect := make([]ov.Ipv4Ranges, 0)

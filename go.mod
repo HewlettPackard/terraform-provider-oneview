@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/HewlettPackard/oneview-golang v6.2.1-0.20210823134724-994a622d4c74+incompatible
+
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/docker/machine v0.16.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
