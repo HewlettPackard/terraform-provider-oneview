@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#312] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/312) Unable to apply server_profile_template (Invalid character '.)
 - [#366] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/366) Server Profiles - Terraform doesn't wait for deletion to complete
 - [#369] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/369) Server Profile Template and Server Profile description are not set
+- [#371] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed 
 
 
 # [v6.2.0-13]

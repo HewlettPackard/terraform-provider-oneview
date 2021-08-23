@@ -192,6 +192,8 @@ Logical Port Config supports the followings:
 
 * `desired_speed` - (Optional) The port speed you prefer it to use. Defaults to Auto.
 
+* `desired_fec_mode` - (Optional)  The desire FEC mode of logical port.
+
 
 ## Attributes Reference
 

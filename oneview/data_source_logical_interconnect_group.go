@@ -93,6 +93,10 @@ func dataSourceLogicalInterconnectGroup() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
+									"desired_fec_mode": {
+										Type:     schema.TypeString,
+										Computed: true,
+									},
 									"port_num": {
 										Type:     schema.TypeSet,
 										Computed: true,
@@ -837,11 +841,12 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 
 			if included == false {
 				logicalPortConfigs = append(logicalPortConfigs, map[string]interface{}{
-					"desired_speed": logicalPortConfigInfo.DesiredSpeed,
-					"primary_port":  primaryPort,
-					"port_num":      schema.NewSet(func(a interface{}) int { return a.(int) }, portPorts),
-					"bay_num":       portBay,
-					"enclosure_num": portEnclosure,
+					"desired_speed":    logicalPortConfigInfo.DesiredSpeed,
+					"desired_fec_mode": logicalPortConfigInfo.DesiredFecMode,
+					"primary_port":     primaryPort,
+					"port_num":         schema.NewSet(func(a interface{}) int { return a.(int) }, portPorts),
+					"bay_num":          portBay,
+					"enclosure_num":    portEnclosure,
 				})
 			}
 		}
