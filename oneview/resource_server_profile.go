@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -131,11 +132,6 @@ func resourceServerProfile() *schema.Resource {
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"compliance_control": {
-							Type:     schema.TypeString,
-							Optional: true,
 							Computed: true,
 						},
 						"connections": {
@@ -466,14 +462,6 @@ func resourceServerProfile() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"manage_local_storage": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-						"initialize": {
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
 						"controller": {
 							Computed: true,
 							Optional: true,
@@ -519,8 +507,9 @@ func resourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"drive_number": {
-													Type:     schema.TypeInt,
-													Optional: true,
+													Type: schema.TypeInt,
+													//													Optional: true,
+													Computed: true,
 												},
 												"drive_technology": {
 													Type:     schema.TypeString,
@@ -535,11 +524,11 @@ func resourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"num_spare_drives": {
-													Type:     schema.TypeInt,
+													Type:     schema.TypeString,
 													Optional: true,
 												},
 												"sas_logical_jbod_id": {
-													Type:     schema.TypeInt,
+													Type:     schema.TypeString,
 													Optional: true,
 												},
 												"raid_level": {
@@ -1082,11 +1071,13 @@ func resourceServerProfile() *schema.Resource {
 			"management_processor": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"manage_mp": {
 							Type:     schema.TypeBool,
@@ -1095,15 +1086,18 @@ func resourceServerProfile() *schema.Resource {
 						"reapply_state": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"mp_settings": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Computed: true,
+							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"administrator_account": {
 										Type:     schema.TypeList,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"delete_administrator_account": {
@@ -1111,8 +1105,9 @@ func resourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"password": {
-													Type:     schema.TypeString,
-													Optional: true,
+													Type:      schema.TypeString,
+													Optional:  true,
+													Sensitive: true,
 												},
 											},
 										},
@@ -1121,11 +1116,13 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeList,
 										MaxItems: 1,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"directory_authentication": {
 													Type:     schema.TypeString,
 													Optional: true,
+													Computed: true,
 												},
 												"directory_generic_ldap": {
 													Type:     schema.TypeBool,
@@ -1184,6 +1181,7 @@ func resourceServerProfile() *schema.Resource {
 										MaxItems: 1,
 										Type:     schema.TypeList,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"primary_server_address": {
@@ -1483,7 +1481,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			mp := rawMp.(map[string]interface{})
 			// extracting MpSettings
 			ovMpSettings := ov.MpSettings{}
-			mpSettings := mp["mp_settings"].(*schema.Set).List()
+			mpSettings := mp["mp_settings"].([]interface{})
 			for _, mpSettingg := range mpSettings {
 				mpSetting := mpSettingg.(map[string]interface{})
 				// extracting administrator account
@@ -1796,16 +1794,27 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				for _, rawLogicalDrive := range rawLogicalDrives {
 					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
 					boot := logicalDrivesItem["bootable"].(bool)
-					logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
+
+					ld := ov.LogicalDriveV3{
 						Bootable:          &boot,
 						RaidLevel:         logicalDrivesItem["raid_level"].(string),
 						Accelerator:       logicalDrivesItem["accelerator"].(string),
 						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 						Name:              logicalDrivesItem["name"].(string),
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-						SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
-					})
+						////						NumSpareDrives:    numSpareDrives,
+						//						SasLogicalJBODId:  sasLogicalJbodId,
+					}
+					if val := logicalDrivesItem["sas_logical_jbod_id"].(string); val != "" {
+						val, _ := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
+						ld.SasLogicalJBODId = val
+					}
+					if val := logicalDrivesItem["num_spare_drives"].(string); val != "" {
+						val, _ := strconv.Atoi(logicalDrivesItem["num_spare_drives"].(string))
+						ld.NumSpareDrives = val
+					}
+
+					logicalDrives = append(logicalDrives, ld)
 				}
 				init := controllerData["initialize"].(bool)
 				localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
@@ -1839,10 +1848,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				})
 			}
 			localStorage = ov.LocalStorageOptions{
-				ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				Initialize:         localStorageItem["initialize"].(bool),
-				Controllers:        localStorageEmbeddedController,
-				SasLogicalJBODs:    logicalJbod,
+				//	ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+				//	Initialize:         localStorageItem["initialize"].(bool),
+				Controllers:     localStorageEmbeddedController,
+				SasLogicalJBODs: logicalJbod,
 			}
 		}
 		serverProfile.LocalStorage = localStorage
@@ -2123,9 +2132,9 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		mpSettings := make([]map[string]interface{}, 0)
 		if len(serverProfile.ManagementProcessor.MpSettings) != 0 {
 			// initializing schema variables...
-			adminAcc := make([]map[string]interface{}, 1)
-			directory := make([]map[string]interface{}, 1)
-			keyManager := make([]map[string]interface{}, 1)
+			adminAcc := make([]map[string]interface{}, 0)
+			directory := make([]map[string]interface{}, 0)
+			keyManager := make([]map[string]interface{}, 0)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
 
@@ -2133,58 +2142,68 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 
 				if val.SettingType == "AdministratorAccount" {
 					// initializing 0th location...
-					adminAcc[0] = map[string]interface{}{}
+					adminAc := map[string]interface{}{}
 					// adding attributes if they exists...
 
 					if daa, ok := val.Args["deleteAdministratorAccount"]; ok {
-						adminAcc[0]["delete_administrator_account"] = daa
+						adminAc["delete_administrator_account"] = daa
 					}
 					if pass, ok := val.Args["password"]; ok {
 						if pass != nil {
-							adminAcc[0]["password"] = pass
+							adminAc["password"] = pass
 						}
 					}
+					// extracts MpSettings to re-set it
+					valmpp := flattenMp(d)
+					if valmpp != nil {
+						vals := valmpp["administrator_account"].([]interface{})
+						for _, x := range vals {
+							xx := x.(map[string]interface{})
+							adminAc["password"] = xx["password"]
+						}
+					}
+					adminAcc = append(adminAcc, adminAc)
 				}
 
 				if val.SettingType == "Directory" {
 					// initializing 0th location...
-					directory[0] = map[string]interface{}{}
+					directoryy := map[string]interface{}{}
 
 					// adding attributes if they exists...
 					if dgl, ok := val.Args["directoryGenericLDAP"]; ok {
-						directory[0]["directory_generic_ldap"] = dgl
+						directoryy["directory_generic_ldap"] = dgl
 					}
 					if dsa, ok := val.Args["directoryServerAddress"]; ok {
-						directory[0]["directory_server_address"] = dsa
+						directoryy["directory_server_address"] = dsa
 					}
 					if dsp, ok := val.Args["directoryServerPort"]; ok {
-						directory[0]["directory_server_port"] = dsp
+						directoryy["directory_server_port"] = dsp
 					}
 					if dsc, ok := val.Args["directoryServerCertificate"]; ok {
-						directory[0]["directory_server_certificate"] = dsc
+						directoryy["directory_server_certificate"] = dsc
 					}
 					if iodn, ok := val.Args["iloObjectDistinguishedName"]; ok {
-						directory[0]["ilo_distinguished_name"] = iodn
+						directoryy["ilo_distinguished_name"] = iodn
 					}
 					if p, ok := val.Args["password"]; ok {
 						if p != nil {
-							directory[0]["password"] = p
+							directoryy["password"] = p
 						}
 					}
 					if ka, ok := val.Args["kerberosAuthentication"]; ok {
-						directory[0]["kerberos_authentication"] = ka
+						directoryy["kerberos_authentication"] = ka
 					}
 					if kr, ok := val.Args["kerberosRealm"]; ok {
-						directory[0]["kerberos_realm"] = kr
+						directoryy["kerberos_realm"] = kr
 					}
 					if kksa, ok := val.Args["kerberosKDCServerAddress"]; ok {
-						directory[0]["kerberos_kdc_server_address"] = kksa
+						directoryy["kerberos_kdc_server_address"] = kksa
 					}
 					if kksp, ok := val.Args["kerberosKDCServerPort"]; ok {
-						directory[0]["kerberos_kdc_server_port"] = kksp
+						directoryy["kerberos_kdc_server_port"] = kksp
 					}
 					if kkt, ok := val.Args["kerberosKeytab"]; ok {
-						directory[0]["kerberos_key_tab"] = kkt
+						directoryy["kerberos_key_tab"] = kkt
 					}
 					if duc, ok := val.Args["directoryUserContext"]; ok {
 						ducSet := []string{}
@@ -2194,10 +2213,21 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 							for i := 0; i < s.Len(); i++ {
 								ducSet = append(ducSet, s.Index(i).Interface().(string))
 							}
-							directory[0]["directory_user_context"] = ducSet
+							directoryy["directory_user_context"] = ducSet
 						}
 					}
+					// extracts MpSettings to re-set it
+					valmpp := flattenMp(d)
+					if valmpp != nil {
+						vals := valmpp["directory"].([]interface{})
+						for _, x := range vals {
+							xx := x.(map[string]interface{})
+							directoryy["password"] = xx["password"]
+						}
+					}
+					directory = append(directory, directoryy)
 				}
+
 				if val.SettingType == "DirectoryGroups" {
 					if dga, ok := val.Args["directoryGroupAccounts"]; ok {
 						// dectectng type of interface value
@@ -2275,41 +2305,62 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 								// adding local account
 								localAccounts = append(localAccounts, la)
 							}
+							// extracts MpSettings to re-set it
+							valmpp := flattenMp(d)
+							if valmpp != nil {
+								vals := valmpp["local_accounts"].(*schema.Set).List()
+								for i, x := range vals {
+									xx := x.(map[string]interface{})
+									localAccounts[i]["password"] = xx["password"]
+								}
+							}
 						}
 					}
 				}
 
 				if val.SettingType == "KeyManager" {
 					// initializing 0th location...
-					keyManager[0] = map[string]interface{}{}
+					keyManagerr := map[string]interface{}{}
 					// extratcing values if exists...
 					if psa, ok := val.Args["primaryServerAddress"]; ok {
-						keyManager[0]["primary_server_address"] = psa
+						keyManagerr["primary_server_address"] = psa
 					}
 					if psp, ok := val.Args["primaryServerPort"]; ok {
-						keyManager[0]["primary_server_port"] = psp
+						keyManagerr["primary_server_port"] = psp
 					}
 					if ssa, ok := val.Args["secondaryServerAddress"]; ok {
-						keyManager[0]["secondary_server_address"] = ssa
+						keyManagerr["secondary_server_address"] = ssa
 					}
 					if ssp, ok := val.Args["secondaryServerPort"]; ok {
-						keyManager[0]["secondary_server_port"] = ssp
+						keyManagerr["secondary_server_port"] = ssp
 					}
 					if rr, ok := val.Args["redundancyRequired"]; ok {
-						keyManager[0]["redundancy_required"] = rr
+						keyManagerr["redundancy_required"] = rr
 					}
 					if gn, ok := val.Args["groupName"]; ok {
-						keyManager[0]["group_name"] = gn
+						keyManagerr["group_name"] = gn
 					}
 					if cn, ok := val.Args["certificateName"]; ok {
-						keyManager[0]["certificate_name"] = cn
+						keyManagerr["certificate_name"] = cn
 					}
 					if ln, ok := val.Args["loginName"]; ok {
-						keyManager[0]["login_name"] = ln
+						keyManagerr["login_name"] = ln
 					}
 					if p, ok := val.Args["password"]; ok {
-						keyManager[0]["password"] = p
+						keyManagerr["password"] = p
 					}
+
+					// extracts MpSettings to re-set it
+					valmpp := flattenMp(d)
+					if valmpp != nil {
+						vals := valmpp["key_manager"].([]interface{})
+						for _, x := range vals {
+							xx := x.(map[string]interface{})
+							keyManagerr["password"] = xx["password"]
+						}
+					}
+					keyManager = append(keyManager, keyManagerr)
+
 				}
 
 			}
@@ -2415,7 +2466,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		connectionSettings := make([]map[string]interface{}, 0, 1)
 		connectionSettings = append(connectionSettings, map[string]interface{}{
 			"manage_connections": serverProfile.ConnectionSettings.ManageConnections,
-			"compliance_control": serverProfile.ConnectionSettings.ComplianceControl,
 			"reapply_state":      serverProfile.ConnectionSettings.ReapplyState,
 			"connections":        connections,
 		})
@@ -2476,17 +2526,25 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		for i := 0; i < len(serverProfile.LocalStorage.Controllers); i++ {
 			logicalDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.Controllers[i].LogicalDrives))
 			for j := 0; j < len(serverProfile.LocalStorage.Controllers[i].LogicalDrives); j++ {
-				logicalDrives = append(logicalDrives, map[string]interface{}{
+
+				ld := map[string]interface{}{
 					"bootable":            serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 					"accelerator":         serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
 					"drive_number":        serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveNumber,
 					"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
 					"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 					"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
-					"num_spare_drives":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
-					"sas_logical_jbod_id": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
-					"raid_level":          serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
-				})
+					//					"num_spare_drives":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
+					"raid_level": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
+				}
+				if val := serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId; val != 0 {
+					ld["sas_logical_jbod_id"] = strconv.Itoa(val)
+				}
+				if val := serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives; val != 0 {
+					ld["num_spare_drives"] = strconv.Itoa(val)
+				}
+
+				logicalDrives = append(logicalDrives, ld)
 			}
 			controllers = append(controllers, map[string]interface{}{
 				"device_slot":              serverProfile.LocalStorage.Controllers[i].DeviceSlot,
@@ -2517,11 +2575,11 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			})
 		}
 		localStorage = append(localStorage, map[string]interface{}{
-			"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
-			"initialize":           serverProfile.LocalStorage.Initialize,
-			"controller":           controllers,
-			"reapply_state":        serverProfile.LocalStorage.ReapplyState,
-			"sas_logical_jbod":     sasLogDrives,
+			//		"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
+			//		"initialize":           serverProfile.LocalStorage.Initialize,
+			"controller":       controllers,
+			"reapply_state":    serverProfile.LocalStorage.ReapplyState,
+			"sas_logical_jbod": sasLogDrives,
 		})
 		d.Set("local_storage", localStorage)
 
@@ -2865,7 +2923,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				mp := rawMp.(map[string]interface{})
 				// extracting MpSettings
 				ovMpSettings := ov.MpSettings{}
-				mpSettings := mp["mp_settings"].(*schema.Set).List()
+				mpSettings := mp["mp_settings"].([]interface{})
 				for _, mpSettingg := range mpSettings {
 					mpSetting := mpSettingg.(map[string]interface{})
 					// extracting administrator account
@@ -3210,6 +3268,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					for _, rawLogicalDrive := range rawLogicalDrives {
 						logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
 						boot := logicalDrivesItem["bootable"].(bool)
+						//						sasLogicalJbodId, er := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
+						//						numSpeareDrives, er := strconv.Atoi(logicalDrivesItem["num_spare_drives"].(string))
+
 						logicalDrive := ov.LogicalDriveV3{
 							Bootable:          &boot,
 							RaidLevel:         logicalDrivesItem["raid_level"].(string),
@@ -3218,13 +3279,16 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 							Name:              logicalDrivesItem["name"].(string),
 							NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-							NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-							SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
+							//							NumSpareDrives:    numSpeareDrives,
+							//							SasLogicalJBODId:  sasLogicalJbodId,
 						}
-						// checks if all elements are empty
-						// skip if empty
-						if !IsStructNil(logicalDrive) {
-							continue
+						if val := logicalDrivesItem["sas_logical_jbod_id"].(string); val != "" {
+							val, _ := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
+							logicalDrive.SasLogicalJBODId = val
+						}
+						if val := logicalDrivesItem["num_spare_drives"].(string); val != "" {
+							val, _ := strconv.Atoi(logicalDrivesItem["num_spare_drives"].(string))
+							logicalDrive.NumSpareDrives = val
 						}
 						logicalDrives = append(logicalDrives, logicalDrive)
 					}
@@ -3239,11 +3303,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Mode:                   controllerData["mode"].(string),
 						PredictiveSpareRebuild: controllerData["predictive_spare_rebuild"].(string),
 						LogicalDrives:          logicalDrives,
-					}
-					// checks if all elements are empty
-					// skips connection if empty
-					if !IsStructNil(localStorageEmbeddedController) {
-						continue
 					}
 					localStorageEmbeddedControllers = append(localStorageEmbeddedControllers, localStorageEmbeddedController)
 
@@ -3267,16 +3326,16 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					}
 					// checks if all elements are empty
 					// skip if empty
-					if !IsStructNil(logicalJbod) {
-						continue
-					}
+					//					if !IsStructNil(logicalJbod) {
+					//						continue
+					//					}
 					logicalJbods = append(logicalJbods, logicalJbod)
 				}
 				localStorage = ov.LocalStorageOptions{
-					ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-					Initialize:         localStorageItem["initialize"].(bool),
-					Controllers:        localStorageEmbeddedControllers,
-					SasLogicalJBODs:    logicalJbods,
+					//	ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
+					//	Initialize:         localStorageItem["initialize"].(bool),
+					Controllers:     localStorageEmbeddedControllers,
+					SasLogicalJBODs: logicalJbods,
 				}
 			}
 			serverProfile.LocalStorage = localStorage
