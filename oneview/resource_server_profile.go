@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"reflect"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -1180,6 +1181,19 @@ func resourceServerProfile() *schema.Resource {
 											},
 										},
 									},
+									"host_name": {
+										MaxItems: 1,
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"hostname": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
 									"key_manager": {
 										MaxItems: 1,
 										Type:     schema.TypeList,
@@ -1524,6 +1538,16 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					}
 				}
 
+				// extracting hostname
+				rawHostName := mpSetting["host_name"].(*schema.Set).List()
+				ovHostName := ov.ProfileHost{}
+				for _, hostMap := range rawHostName {
+					host := hostMap.(map[string]interface{})
+					ovHostName = ov.ProfileHost{
+						HostName: host["hostname"].(string),
+					}
+				}
+
 				// extracting key manager
 				rawKeyManager := mpSetting["key_manager"].([]interface{})
 				ovKeyManager := ov.KeyManager{}
@@ -1582,6 +1606,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
+					ProfileHost:          ovHostName,
 				}
 			}
 
@@ -2089,6 +2114,9 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
+	file, _ := json.MarshalIndent(serverProfile.ServerProfileTemplateURI.String(), "", " ")
+	_ = ioutil.WriteFile("template.json", file, 0644)
+
 	d.Set("server_hardware_type", serverHardwareType.Name)
 	d.Set("affinity", serverProfile.Affinity)
 	d.Set("serial_number_type", serverProfile.SerialNumberType)
@@ -2126,6 +2154,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			adminAcc := make([]map[string]interface{}, 1)
 			directory := make([]map[string]interface{}, 1)
 			keyManager := make([]map[string]interface{}, 1)
+			hostName := make([]map[string]interface{}, 1)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
 
@@ -2279,6 +2308,14 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 					}
 				}
 
+				if val.SettingType == "Hostname" {
+					hostname := map[string]interface{}{}
+					if host, ok := val.Args["hostName"]; ok {
+						hostname["host_name"] = host
+					}
+					hostName = append(hostName, hostname)
+				}
+
 				if val.SettingType == "KeyManager" {
 					// initializing 0th location...
 					keyManager[0] = map[string]interface{}{}
@@ -2320,6 +2357,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				"key_manager":           keyManager,
 				"directory_groups":      directoryGroups,
 				"local_accounts":        localAccounts,
+				"host_name":             hostName,
 			})
 		}
 
@@ -2751,6 +2789,8 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					return err
 				}
 				serverProfile.ServerProfileTemplateURI = serverProfileTemplate.URI
+				file, _ := json.MarshalIndent(serverProfile.ServerProfileTemplateURI.String(), "", " ")
+				_ = ioutil.WriteFile("templateUpdate.json", file, 0644)
 			}
 		}
 		if d.HasChange("name") {
@@ -2910,6 +2950,16 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						}
 					}
 
+					// extracting hostname
+					rawHostName := mpSetting["host_name"].(*schema.Set).List()
+					ovHostName := ov.ProfileHost{}
+					for _, hostMap := range rawHostName {
+						host := hostMap.(map[string]interface{})
+						ovHostName = ov.ProfileHost{
+							HostName: host["hostname"].(string),
+						}
+					}
+
 					// extracting key manager
 					rawKeyManager := mpSetting["key_manager"].([]interface{})
 					ovKeyManager := ov.KeyManager{}
@@ -2975,6 +3025,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Directory:            ovDirectory,
 						DirectoryGroups:      ovDirectoryGroups,
 						KeyManager:           ovKeyManager,
+						ProfileHost:          ovHostName,
 					}
 				}
 				ovManagementProcessor = ov.ManagementProcessors{

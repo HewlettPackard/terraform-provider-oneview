@@ -689,6 +689,19 @@ func resourceServerProfileTemplate() *schema.Resource {
 											},
 										},
 									},
+									"host_name": {
+										MaxItems: 1,
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"hostname": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
 									"key_manager": {
 										MaxItems: 1,
 										Type:     schema.TypeSet,
@@ -1283,6 +1296,16 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					}
 				}
 
+				// extracting hostname
+				rawHostName := mpSetting["host_name"].(*schema.Set).List()
+				ovHostName := ov.ProfileHost{}
+				for _, hostMap := range rawHostName {
+					host := hostMap.(map[string]interface{})
+					ovHostName = ov.ProfileHost{
+						HostName: host["hostname"].(string),
+					}
+				}
+
 				// extracting key manager
 				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()
 				ovKeyManager := ov.KeyManager{}
@@ -1341,6 +1364,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
+					ProfileHost:          ovHostName,
 				}
 			}
 			// setting ManagementProcessor
@@ -1905,6 +1929,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 			keyManager := make([]map[string]interface{}, 0)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
+			hostName := make([]map[string]interface{}, 0)
 
 			for _, val := range spt.ManagementProcessor.MpSettings {
 
@@ -2085,6 +2110,14 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 				}
 
+				if val.SettingType == "Hostname" {
+					hostname := map[string]interface{}{}
+					if host, ok := val.Args["hostName"]; ok {
+						hostname["host_name"] = host
+					}
+					hostName = append(hostName, hostname)
+				}
+
 				if val.SettingType == "KeyManager" {
 					// initializing 0th location...
 					keyManagerr := map[string]interface{}{}
@@ -2135,6 +2168,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"key_manager":           keyManager,
 				"directory_groups":      directoryGroups,
 				"local_accounts":        localAccounts,
+				"host_name":             hostName,
 			})
 		}
 
@@ -2563,6 +2597,16 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					}
 				}
 
+				// extracting hostname
+				rawHostName := mpSetting["host_name"].(*schema.Set).List()
+				ovHostName := ov.ProfileHost{}
+				for _, hostMap := range rawHostName {
+					host := hostMap.(map[string]interface{})
+					ovHostName = ov.ProfileHost{
+						HostName: host["hostname"].(string),
+					}
+				}
+
 				// extracting key manager
 				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()
 				ovKeyManager := ov.KeyManager{}
@@ -2620,6 +2664,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
+					ProfileHost:          ovHostName,
 				}
 			}
 			ovManagementProcessor = ov.ManagementProcessors{

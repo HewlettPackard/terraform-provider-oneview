@@ -144,8 +144,8 @@ type DirectoryGroups struct {
 	ILOConfigPriv            *bool  `json:"-"`
 }
 
-type HostName struct {
-	Hostname string `json:"-"`
+type ProfileHost struct {
+	HostName string `json:"-"`
 }
 
 type LocalAccounts struct {
@@ -177,7 +177,7 @@ type MpSettings struct {
 	Directory            Directory            `json:"-"`
 	DirectoryGroups      []DirectoryGroups    `json:"-"`
 	KeyManager           KeyManager           `json:"-"`
-	HostName             HostName             `json:"-"`
+	ProfileHost          ProfileHost          `json:"-"`
 }
 
 type MpSetting struct {
@@ -492,12 +492,12 @@ func (c *OVClient) CreateProfileFromTemplate(name string, template ServerProfile
 		new_template.Type = "ServerProfileV12"
 	}
 	new_template.ServerProfileTemplateURI = template.URI // create relationship
+	new_template.Description = template.ServerProfileDescription
 	new_template.ConnectionSettings = ConnectionSettings{
 		Connections: template.ConnectionSettings.Connections,
 	}
 	log.Debugf("new_template -> %+v", new_template)
 	new_template.ServerHardwareURI = blade.URI
-	new_template.Description += " " + name
 	new_template.Name = name
 	log.Debugf("new_template -> %+v", new_template)
 
