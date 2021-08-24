@@ -28,20 +28,22 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
   name                 = "TestServerProfileTemplate_with_connections"
   type                 = "ServerProfileTemplateV8"
   enclosure_group      = "EG"
-  server_hardware_type = "SY 480 Gen9 1"
+  server_hardware_type = "SY 480 Gen10 1"
   initial_scope_uris   = [data.oneview_scope.scope.uri]
+
   bios_option {
     manage_bios = true
-/*    overridden_settings {
+    overridden_settings {
       id    = "TimeFormat"
       value = "Utc"
     }
-*/
   }
+
   boot {
-    manage_boot		= true
-    boot_order		= ["HardDisk"]
+    manage_boot = true
+    boot_order  = ["HardDisk"]
   }
+
   boot_mode {
     manage_mode     = true
     mode            = "UEFIOptimized"
@@ -51,46 +53,47 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
   connection_settings {
     compliance_control = "CheckedMinimum"
     manage_connections = true
+
     connections {
       id             = 134
       name           = "Management-01"
-      managed        = true
       function_type  = "Ethernet"
-      network_uri    = data.oneview_ethernet_network.
-        .uri
-      isolated_trunk = false 
-      port_id        = "Auto" 
+      network_uri    = data.oneview_ethernet_network.ethernetNetwork.uri
+      isolated_trunk = false
+      port_id        = "Auto"
       requested_mbps = "2500"
+      requested_vfs  = "Auto"
       boot {
         priority           = "Primary"
         ethernet_boot_type = "PXE"
       }
     }
-/*    connections {
+
+    connections {
       id             = 135
       name           = "Management-02"
       managed        = true
       function_type  = "FibreChannel"
       network_uri    = data.oneview_fc_network.fcNetwork.uri
-      isolated_trunk = false  
+      isolated_trunk = false
       requested_mbps = "2500"
       port_id        = "Auto"
       requested_vfs  = ""
       boot {
         priority           = "Primary"
-	      boot_volume_source = "UserDefined"
+        boot_volume_source = "UserDefined"
       }
     }
-*/
+
     connections {
       id             = 136
       name           = "Management-03"
       managed        = true
       function_type  = "Ethernet"
       network_uri    = data.oneview_ethernet_network.ethernetNetwork.uri
-      isolated_trunk = false 
-      lag_name  = ""
-      port_id        = "Mezz 3:2-a" 
+      isolated_trunk = false
+      lag_name       = ""
+      port_id        = "Mezz 3:2-a"
       requested_mbps = "2500"
       boot {
         priority           = "Secondary"
@@ -98,37 +101,37 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
       }
     }
 
+    connections {
+      function_type  = "iSCSI"
+      id             = 137
+      isolated_trunk = false
+      managed        = true
+      network_uri    = "/rest/ethernet-networks/3d82cdf2-622f-459e-9742-3669d4d55867"
+      port_id        = "Mezz 3:2-b"
+      requested_mbps = "2500"
 
- connections {
-   function_type  = "iSCSI"
-   id             = 137 
-   isolated_trunk = false
-   managed        = true 
-   network_uri    = "/rest/ethernet-networks/3d82cdf2-622f-459e-9742-3669d4d55867"
-   port_id        = "Mezz 3:2-b"
-   requested_mbps = "2500"
+      boot {
+        boot_volume_source = "UserDefined"
+        priority           = "Primary"
 
-   boot {
-     boot_volume_source = "UserDefined" 
-     priority           = "Primary"
+        iscsi {
+          chap_level              = "None"
+          first_boot_target_ip    = "10.0.0.0"
+          first_boot_target_port  = "3260"
+          initiator_name_source   = "ProfileInitiatorName"
+          second_boot_target_ip   = "10.0.0.1"
+          second_boot_target_port = "3260"
+        }
+      }
 
-     iscsi {
-      chap_level              = "None"
-      first_boot_target_ip    = "10.0.0.0"
-      first_boot_target_port  = "3260"
-      initiator_name_source   = "ProfileInitiatorName"
-      second_boot_target_ip   = "10.0.0.1" 
-      second_boot_target_port = "3260"
-     }
-   }
-
-   ipv4 {
-     ip_address_source = "DHCP"
-   }
-}
+      ipv4 {
+        ip_address_source = "DHCP"
+      }
+    }
 
   }
 }
+
 
 /*
 # Creates server profile template with local storage
@@ -146,8 +149,8 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
     }
   }
   boot {
-    manage_boot		= true
-    boot_order		= ["HardDisk"]
+    manage_boot = true
+    boot_order  = ["HardDisk"]
   }
   boot_mode {
     manage_mode     = true
@@ -156,10 +159,10 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
   }
   local_storage {
     controller {
-      device_slot       = "Embedded"
-      drive_write_cache = "Unmanaged"
-      initialize        = true
-      import_configuration = false 
+      device_slot              = "Embedded"
+      drive_write_cache        = "Unmanaged"
+      initialize               = true
+      import_configuration     = false
       mode                     = "Mixed"
       predictive_spare_rebuild = "Unmanaged"
       logical_drives {
@@ -189,8 +192,8 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
     }
   }
   boot {
-    manage_boot         = true
-    boot_order          = ["HardDisk"]
+    manage_boot = true
+    boot_order  = ["HardDisk"]
   }
   boot_mode {
     manage_mode     = true
@@ -220,7 +223,6 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
       id             = 1
       name           = "Deployment Network A"
       isolated_trunk = false
-      managed        = true
       function_type  = "Ethernet"
       network_uri    = data.oneview_ethernet_network.ethernetnetworks2.uri
       port_id        = "Mezz 3:1-a"
@@ -231,14 +233,13 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
         ethernet_boot_type = "iSCSI"
       }
       ipv4 {
-        ip_address_source  = "SubnetPool"
+        ip_address_source = "SubnetPool"
       }
     }
     connections {
       id             = 2
       name           = "Deployment Network B"
       isolated_trunk = false
-      managed        = true
       function_type  = "Ethernet"
       network_uri    = data.oneview_ethernet_network.ethernetnetworks2.uri
       port_id        = "Mezz 3:2-a"
@@ -249,14 +250,13 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
         ethernet_boot_type = "iSCSI"
       }
       ipv4 {
-        ip_address_source  = "SubnetPool"
+        ip_address_source = "SubnetPool"
       }
     }
     connections {
       id             = 3
       name           = "Management-01"
       isolated_trunk = false
-      managed        = true
       function_type  = "Ethernet"
       network_uri    = data.oneview_ethernet_network.etherneNetwork.uri
       port_id        = "Auto"
@@ -264,9 +264,9 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithOSDS" {
     }
   }
 }
-*/
-  
-/*
+
+
+
 # Creates server profile template with san storage
 resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage" {
   name                 = "TestServerProfileTemplate_with_local_storage_san"
@@ -282,21 +282,21 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
     }
   }
   boot {
-    manage_boot		= true
-    boot_order		= ["HardDisk"]
+    manage_boot = true
+    boot_order  = ["HardDisk"]
   }
   boot_mode {
     manage_mode     = true
     mode            = "UEFIOptimized"
     pxe_boot_policy = "Auto"
-    secure_boot = "Unmanaged"
+    secure_boot     = "Unmanaged"
   }
   local_storage {
     controller {
-      device_slot       = "Embedded"
-      drive_write_cache = "Unmanaged"
-      initialize        = true
-      import_configuration = false 
+      device_slot              = "Embedded"
+      drive_write_cache        = "Unmanaged"
+      initialize               = true
+      import_configuration     = false
       mode                     = "RAID"
       predictive_spare_rebuild = "Unmanaged"
       logical_drives {
@@ -323,7 +323,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
     connections {
       id             = 2
       name           = "Management-01"
-      isolated_trunk = false     
+      isolated_trunk = false
       function_type  = "Ethernet"
       network_uri    = data.oneview_ethernet_network.ethernetNetwork.uri
       port_id        = "Auto"
@@ -332,17 +332,17 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
         priority           = "Primary"
         ethernet_boot_type = "PXE"
       }
-      
+
     }
-    
+
   }
-    san_storage {
+  san_storage {
     host_os_type       = "Windows 2012 / WS2012 R2"
     manage_san_storage = true
   }
   volume_attachments {
-    boot_volume_priority = "NotBootable"
-    id                   = 1    
+    boot_volume_priority      = "NotBootable"
+    id                        = 1
     lun_type                  = "Auto"
     volume_storage_system_uri = "/rest/storage-systems/TXQ1000307"
     volume_uri                = "/rest/storage-volumes/9E1C08D5-8EDF-4600-A73E-AD3A00B1ACB7"
@@ -354,11 +354,11 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
     }
   }
 }
-*/
-  
+
+
 # Creating Server Profile Template with DL Server
 # Enclosure group and affinity are not supported for DL server
-/*
+
 resource "oneview_server_profile_template" "ServerProfileTemplateWithDLServer" {
   name                 = "TestSPT_DL_Server"
   server_hardware_type = "DL560 Gen10 1"

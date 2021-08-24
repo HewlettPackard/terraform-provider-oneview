@@ -21,8 +21,6 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-
-	"io/ioutil"
 )
 
 func resourceServerProfile() *schema.Resource {
@@ -1808,8 +1806,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 						Name:              logicalDrivesItem["name"].(string),
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-						////						NumSpareDrives:    numSpareDrives,
-						//						SasLogicalJBODId:  sasLogicalJbodId,
 					}
 					if val := logicalDrivesItem["sas_logical_jbod_id"].(string); val != "" {
 						val, _ := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
@@ -1854,8 +1850,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				})
 			}
 			localStorage = ov.LocalStorageOptions{
-				//	ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-				//	Initialize:         localStorageItem["initialize"].(bool),
 				Controllers:     localStorageEmbeddedController,
 				SasLogicalJBODs: logicalJbod,
 			}
@@ -2044,6 +2038,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 func cleanupSp(sp *ov.ServerProfile) {
 
+	// Bios is a pointer value to struct, handleing for creating SP without BIOS settings.
 	if sp.Bios != nil {
 		sp.Bios.ComplianceControl = ""
 	}
@@ -2167,7 +2162,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 							adminAc["password"] = pass
 						}
 					}
-					// extracts MpSettings to re-set it
+					// extracts MpSettings to re-set password
 					valmpp := flattenMp(d)
 					if valmpp != nil {
 						vals := valmpp["administrator_account"].([]interface{})
@@ -2230,7 +2225,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 							directoryy["directory_user_context"] = ducSet
 						}
 					}
-					// extracts MpSettings to re-set it
+					// extracts MpSettings to reset password
 					valmpp := flattenMp(d)
 					if valmpp != nil {
 						vals := valmpp["directory"].([]interface{})
@@ -2319,7 +2314,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 								// adding local account
 								localAccounts = append(localAccounts, la)
 							}
-							// extracts MpSettings to re-set it
+							// extracts MpSettings to re-set the password
 							valmpp := flattenMp(d)
 							if valmpp != nil {
 								vals := valmpp["local_accounts"].(*schema.Set).List()
@@ -2568,8 +2563,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 					"drive_technology":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
 					"name":                serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 					"num_physical_drives": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
-					//					"num_spare_drives":    serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
-					"raid_level": serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
+					"raid_level":          serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
 				}
 				if val := serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId; val != 0 {
 					ld["sas_logical_jbod_id"] = strconv.Itoa(val)
@@ -2609,8 +2603,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			})
 		}
 		localStorage = append(localStorage, map[string]interface{}{
-			//		"manage_local_storage": serverProfile.LocalStorage.ManageLocalStorage,
-			//		"initialize":           serverProfile.LocalStorage.Initialize,
 			"controller":       controllers,
 			"reapply_state":    serverProfile.LocalStorage.ReapplyState,
 			"sas_logical_jbod": sasLogDrives,
@@ -2756,42 +2748,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("volume_attachments", volumeAttachments)
 	return nil
 }
-
-/*
-// IsZeroOfUnderlyingType returns true if value is null
-func IsZeroOfUnderlyingType(x interface{}) bool {
-	if reflect.ValueOf(x).Kind() == reflect.Ptr {
-		return true
-	}
-	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
-}
-
-// IsStructNil return true if struct is empty
-func IsStructNil(x interface{}) bool {
-	v := reflect.ValueOf(x)
-	for j := 0; j < v.NumField(); j++ {
-		if !IsZeroOfUnderlyingType(v.Field(j).Interface()) {
-			return true
-		}
-	}
-	return false
-}
-
-// IfMapIsNotNil return true if map is map is not empty
-func IfMapIsNotNil(x interface{}) bool {
-	val := reflect.ValueOf(x)
-	// checks if map is nil
-	if reflect.TypeOf(x).Kind() == reflect.Map {
-		vall := val.Interface().(map[string]interface{})
-		for _, v := range vall {
-			if !reflect.DeepEqual(v, reflect.Zero(reflect.TypeOf(v)).Interface()) {
-				return true
-			}
-		}
-	}
-	return false
-}
-*/
 
 func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
@@ -2971,12 +2927,10 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					ovAdminAcc := ov.AdministratorAccount{}
 					for _, adminAccs := range rawAdminAcc {
 						adminAcc := adminAccs.(map[string]interface{})
-						//						if IfMapIsNotNil(adminAcc) {
 						ovAdminAcc = ov.AdministratorAccount{
 							DeleteAdministratorAccount: GetBoolPointer(adminAcc["delete_administrator_account"].(bool)),
 							Password:                   adminAcc["password"].(string),
 						}
-						//						}
 					}
 					// extracting directory
 					rawDirectory := mpSetting["directory"].([]interface{})
@@ -3181,10 +3135,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					}
 
 					networks = append(networks, network)
-					//					if len(rawNetworkItem["boot"].([]interface{})) != 0 {
-					//						networks[len(networks)-1].Boot = &bootOptions
-					//					}
-
 				}
 				serverProfile.ConnectionSettings = ov.ConnectionSettings{
 					Connections: networks,
@@ -3283,23 +3233,20 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					for _, rawLogicalDrive := range rawLogicalDrives {
 						logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
 						boot := logicalDrivesItem["bootable"].(bool)
-						//						sasLogicalJbodId, er := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
-						//						numSpeareDrives, er := strconv.Atoi(logicalDrivesItem["num_spare_drives"].(string))
-
 						logicalDrive := ov.LogicalDriveV3{
-							Bootable:    &boot,
-							RaidLevel:   logicalDrivesItem["raid_level"].(string),
-							Accelerator: logicalDrivesItem["accelerator"].(string),
-							//							DriveNumber:       logicalDrivesItem["drive_number"].(int),
+							Bootable:          &boot,
+							RaidLevel:         logicalDrivesItem["raid_level"].(string),
+							Accelerator:       logicalDrivesItem["accelerator"].(string),
 							DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 							Name:              logicalDrivesItem["name"].(string),
 							NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-							//							NumSpareDrives:    numSpeareDrives,
-							//							SasLogicalJBODId:  sasLogicalJbodId,
 						}
+						// setting only if drive number is not taking default integer value, helpful in case of adding a local storage for first time through update operations.
 						if val, _ := logicalDrivesItem["drive_number"].(int); val != 0 {
 							logicalDrive.DriveNumber = val
 						}
+
+						// adding value only if value is not empty.
 						if val := logicalDrivesItem["sas_logical_jbod_id"].(string); val != "" {
 							val, _ := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
 							logicalDrive.SasLogicalJBODId = val
@@ -3342,25 +3289,15 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Persistent:        sasLogicalJbodData["persistent"].(bool),
 						SasLogicalJBODUri: utils.NewNstring(sasLogicalJbodData["sas_logical_jbod_uri"].(string)),
 					}
-					// checks if all elements are empty
-					// skip if empty
-					//					if !IsStructNil(logicalJbod) {
-					//						continue
-					//					}
 					logicalJbods = append(logicalJbods, logicalJbod)
 				}
 				localStorage = ov.LocalStorageOptions{
-					//	ManageLocalStorage: localStorageItem["manage_local_storage"].(bool),
-					//	Initialize:         localStorageItem["initialize"].(bool),
 					Controllers:     localStorageEmbeddedControllers,
 					SasLogicalJBODs: logicalJbods,
 				}
 			}
 			serverProfile.LocalStorage = localStorage
 		}
-
-		file, _ := json.MarshalIndent(serverProfile.LocalStorage, "", " ")
-		_ = ioutil.WriteFile("test.json", file, 0644)
 
 		// get SAN storage data if provided
 		if d.HasChange("san_storage") {
