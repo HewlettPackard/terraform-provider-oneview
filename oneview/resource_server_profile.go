@@ -379,6 +379,7 @@ func resourceServerProfile() *schema.Resource {
 			"enclosure_group": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"affinity": {
 				Type:     schema.TypeString,
@@ -458,6 +459,7 @@ func resourceServerProfile() *schema.Resource {
 			},
 			"local_storage": {
 				Optional: true,
+				Computed: true,
 				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
