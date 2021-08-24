@@ -2037,7 +2037,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 func cleanupSp(sp *ov.ServerProfile) {
 
-	// Bios is a pointer value to struct, handleing for creating SP without BIOS settings.
+	// Bios is a pointer value to struct, handling for creating SP without BIOS settings.
 	if sp.Bios != nil {
 		sp.Bios.ComplianceControl = ""
 	}
