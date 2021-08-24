@@ -122,11 +122,6 @@ func resourceServerProfile() *schema.Resource {
 				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"manage_connections": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Computed: true,
-						},
 						"reapply_state": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -2495,9 +2490,8 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		// Connection Settings
 		connectionSettings := make([]map[string]interface{}, 0, 1)
 		connectionSettings = append(connectionSettings, map[string]interface{}{
-			"manage_connections": serverProfile.ConnectionSettings.ManageConnections,
-			"reapply_state":      serverProfile.ConnectionSettings.ReapplyState,
-			"connections":        connections,
+			"reapply_state": serverProfile.ConnectionSettings.ReapplyState,
+			"connections":   connections,
 		})
 		d.Set("connection_settings", connectionSettings)
 	}

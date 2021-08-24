@@ -62,7 +62,6 @@ resource "oneview_server_profile" "SPWithLocalStorage" {
     }
   }
   connection_settings {
-    manage_connections = true
     connections {
       id             = 1
       name           = "Management-01"
@@ -121,7 +120,6 @@ resource "oneview_server_profile" "SPWithOSDS" {
     }
   }
   connection_settings {
-    manage_connections = true
     connections {
       id             = 1
       name           = "Deployment Network A"
