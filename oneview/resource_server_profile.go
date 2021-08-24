@@ -21,6 +21,8 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+
+	"io/ioutil"
 )
 
 func resourceServerProfile() *schema.Resource {
@@ -93,17 +95,12 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeBool,
 							Required: true,
 						},
-						"consistency_state": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"reapply_state": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 						"overridden_settings": {
 							Optional: true,
-							Computed: true,
 							Type:     schema.TypeSet,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -510,8 +507,7 @@ func resourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"drive_number": {
-													Type: schema.TypeInt,
-													//													Optional: true,
+													Type:     schema.TypeInt,
 													Computed: true,
 												},
 												"drive_technology": {
@@ -1155,8 +1151,9 @@ func resourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"password": {
-													Type:     schema.TypeString,
-													Optional: true,
+													Type:      schema.TypeString,
+													Optional:  true,
+													Sensitive: true,
 												},
 												"kerberos_authentication": {
 													Type:     schema.TypeBool,
@@ -1221,8 +1218,9 @@ func resourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"password": {
-													Type:     schema.TypeString,
-													Optional: true,
+													Type:      schema.TypeString,
+													Optional:  true,
+													Sensitive: true,
 												},
 											},
 										},
@@ -1277,8 +1275,9 @@ func resourceServerProfile() *schema.Resource {
 													Optional: true,
 												},
 												"password": {
-													Type:     schema.TypeString,
-													Optional: true,
+													Type:      schema.TypeString,
+													Optional:  true,
+													Sensitive: true,
 												},
 												"user_config_priv": {
 													Type:     schema.TypeBool,
@@ -2042,7 +2041,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 }
 
 func cleanupSp(sp *ov.ServerProfile) {
-	sp.Bios.ComplianceControl = ""
+
+	if sp.Bios != nil {
+		sp.Bios.ComplianceControl = ""
+	}
 	sp.Boot.ComplianceControl = ""
 	sp.BootMode.ComplianceControl = ""
 	sp.ConnectionSettings.ComplianceControl = ""
@@ -2052,6 +2054,7 @@ func cleanupSp(sp *ov.ServerProfile) {
 	sp.OSDeploymentSettings.ComplianceControl = ""
 	sp.SanStorage.ComplianceControl = ""
 	sp.ServerProfileDescription = ""
+
 }
 
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
@@ -2471,6 +2474,27 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				"ipv4":                   connectionIpv4,
 			})
 		}
+		// flatten connection settings to overwrite port_id if equals to "Auto"
+		if getVal, ok := d.GetOk("connection_settings"); ok {
+			conSetVal := getVal.([]interface{})
+			for _, rawConSet := range conSetVal {
+				conSet := rawConSet.(map[string]interface{})
+				consVal := conSet["connections"].(*schema.Set).List()
+				// iterating through connections from state
+				for i, rawConVal := range consVal {
+					con := rawConVal.(map[string]interface{})
+					// iterating through connections from refresh
+					for _, conVal := range connections {
+						if conVal["id"] == con["id"] {
+							// overrides port_id
+							if con["port_id"] == "Auto" {
+								connections[i]["port_id"] = "Auto"
+							}
+						}
+					}
+				}
+			}
+		}
 		// Connection Settings
 		connectionSettings := make([]map[string]interface{}, 0, 1)
 		connectionSettings = append(connectionSettings, map[string]interface{}{
@@ -2520,7 +2544,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		biosOptions = append(biosOptions, map[string]interface{}{
 			"manage_bios":         serverProfile.Bios.ManageBios,
 			"reapply_state":       serverProfile.Bios.ReapplyState,
-			"consistency_state":   serverProfile.Bios.ConsistencyState,
 			"overridden_settings": overriddenSettings,
 		})
 
@@ -2732,6 +2755,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
+/*
 // IsZeroOfUnderlyingType returns true if value is null
 func IsZeroOfUnderlyingType(x interface{}) bool {
 	if reflect.ValueOf(x).Kind() == reflect.Ptr {
@@ -2765,6 +2789,7 @@ func IfMapIsNotNil(x interface{}) bool {
 	}
 	return false
 }
+*/
 
 func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
@@ -2944,12 +2969,12 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					ovAdminAcc := ov.AdministratorAccount{}
 					for _, adminAccs := range rawAdminAcc {
 						adminAcc := adminAccs.(map[string]interface{})
-						if IfMapIsNotNil(adminAcc) {
-							ovAdminAcc = ov.AdministratorAccount{
-								DeleteAdministratorAccount: GetBoolPointer(adminAcc["delete_administrator_account"].(bool)),
-								Password:                   adminAcc["password"].(string),
-							}
+						//						if IfMapIsNotNil(adminAcc) {
+						ovAdminAcc = ov.AdministratorAccount{
+							DeleteAdministratorAccount: GetBoolPointer(adminAcc["delete_administrator_account"].(bool)),
+							Password:                   adminAcc["password"].(string),
 						}
+						//						}
 					}
 					// extracting directory
 					rawDirectory := mpSetting["directory"].([]interface{})
@@ -2961,24 +2986,23 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						for _, raw := range directory["directory_user_context"].(*schema.Set).List() {
 							directoryUserContexts = append(directoryUserContexts, raw.(string))
 						}
-						if IfMapIsNotNil(directory) {
 
-							ovDirectory = ov.Directory{
-								DirectoryAuthentication:    directory["directory_authentication"].(string),
-								DirectoryGenericLDAP:       GetBoolPointer(directory["directory_generic_ldap"].(bool)),
-								DirectoryServerAddress:     directory["directory_server_address"].(string),
-								DirectoryServerPort:        directory["directory_server_port"].(int),
-								DirectoryServerCertificate: directory["directory_server_certificate"].(string),
-								DirectoryUserContext:       directoryUserContexts,
-								IloObjectDistinguishedName: directory["ilo_distinguished_name"].(string),
-								Password:                   directory["password"].(string),
-								KerberosAuthentication:     GetBoolPointer(directory["kerberos_authentication"].(bool)),
-								KerberosRealm:              directory["kerberos_realm"].(string),
-								KerberosKDCServerAddress:   directory["kerberos_kdc_server_address"].(string),
-								KerberosKDCServerPort:      directory["kerberos_kdc_server_port"].(int),
-								KerberosKeytab:             directory["kerberos_key_tab"].(string),
-							}
+						ovDirectory = ov.Directory{
+							DirectoryAuthentication:    directory["directory_authentication"].(string),
+							DirectoryGenericLDAP:       GetBoolPointer(directory["directory_generic_ldap"].(bool)),
+							DirectoryServerAddress:     directory["directory_server_address"].(string),
+							DirectoryServerPort:        directory["directory_server_port"].(int),
+							DirectoryServerCertificate: directory["directory_server_certificate"].(string),
+							DirectoryUserContext:       directoryUserContexts,
+							IloObjectDistinguishedName: directory["ilo_distinguished_name"].(string),
+							Password:                   directory["password"].(string),
+							KerberosAuthentication:     GetBoolPointer(directory["kerberos_authentication"].(bool)),
+							KerberosRealm:              directory["kerberos_realm"].(string),
+							KerberosKDCServerAddress:   directory["kerberos_kdc_server_address"].(string),
+							KerberosKDCServerPort:      directory["kerberos_kdc_server_port"].(int),
+							KerberosKeytab:             directory["kerberos_key_tab"].(string),
 						}
+
 					}
 
 					// extracting key manager
@@ -2986,19 +3010,19 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					ovKeyManager := ov.KeyManager{}
 					for _, keyManagerr := range rawKeyManager {
 						keyManager := keyManagerr.(map[string]interface{})
-						if IfMapIsNotNil(IfMapIsNotNil) {
-							ovKeyManager = ov.KeyManager{
-								PrimaryServerAddress:   keyManager["primary_server_address"].(string),
-								PrimaryServerPort:      keyManager["primary_server_port"].(int),
-								SecondaryServerAddress: keyManager["secondary_server_address"].(string),
-								SecondaryServerPort:    keyManager["secondary_server_port"].(int),
-								RedundancyRequired:     GetBoolPointer(keyManager["redundancy_required"].(bool)),
-								GroupName:              keyManager["group_name"].(string),
-								CertificateName:        keyManager["certificate_name"].(string),
-								LoginName:              keyManager["login_name"].(string),
-								Password:               keyManager["password"].(string),
-							}
+
+						ovKeyManager = ov.KeyManager{
+							PrimaryServerAddress:   keyManager["primary_server_address"].(string),
+							PrimaryServerPort:      keyManager["primary_server_port"].(int),
+							SecondaryServerAddress: keyManager["secondary_server_address"].(string),
+							SecondaryServerPort:    keyManager["secondary_server_port"].(int),
+							RedundancyRequired:     GetBoolPointer(keyManager["redundancy_required"].(bool)),
+							GroupName:              keyManager["group_name"].(string),
+							CertificateName:        keyManager["certificate_name"].(string),
+							LoginName:              keyManager["login_name"].(string),
+							Password:               keyManager["password"].(string),
 						}
+
 					}
 
 					// extracting directory groups
@@ -3006,17 +3030,17 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					ovDirectoryGroups := make([]ov.DirectoryGroups, 0)
 					for _, directoryGroupp := range rawDirectoryGroups {
 						directoryGroup := directoryGroupp.(map[string]interface{})
-						if IfMapIsNotNil(directoryGroup) {
-							ovDirectoryGroups = append(ovDirectoryGroups, ov.DirectoryGroups{
-								GroupDN:                  directoryGroup["group_dn"].(string),
-								GroupSID:                 directoryGroup["group_sid"].(string),
-								UserConfigPriv:           GetBoolPointer(directoryGroup["user_config_priv"].(bool)),
-								RemoteConsolePriv:        GetBoolPointer(directoryGroup["remote_console_priv"].(bool)),
-								VirtualMediaPriv:         GetBoolPointer(directoryGroup["virtual_media_priv"].(bool)),
-								VirtualPowerAndResetPriv: GetBoolPointer(directoryGroup["virtual_power_and_reset_priv"].(bool)),
-								ILOConfigPriv:            GetBoolPointer(directoryGroup["ilo_config_priv"].(bool)),
-							})
-						}
+
+						ovDirectoryGroups = append(ovDirectoryGroups, ov.DirectoryGroups{
+							GroupDN:                  directoryGroup["group_dn"].(string),
+							GroupSID:                 directoryGroup["group_sid"].(string),
+							UserConfigPriv:           GetBoolPointer(directoryGroup["user_config_priv"].(bool)),
+							RemoteConsolePriv:        GetBoolPointer(directoryGroup["remote_console_priv"].(bool)),
+							VirtualMediaPriv:         GetBoolPointer(directoryGroup["virtual_media_priv"].(bool)),
+							VirtualPowerAndResetPriv: GetBoolPointer(directoryGroup["virtual_power_and_reset_priv"].(bool)),
+							ILOConfigPriv:            GetBoolPointer(directoryGroup["ilo_config_priv"].(bool)),
+						})
+
 					}
 
 					// extracting local accounts
@@ -3025,19 +3049,18 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					for _, localAccounts := range rawLocalAccounts {
 						localAccount := localAccounts.(map[string]interface{})
 
-						if IfMapIsNotNil(localAccount) {
-							ovLocalAccount := ov.LocalAccounts{
-								UserName:                 localAccount["user_name"].(string),
-								DisplayName:              localAccount["display_name"].(string),
-								Password:                 localAccount["password"].(string),
-								UserConfigPriv:           GetBoolPointer(localAccount["user_config_priv"].(bool)),
-								RemoteConsolePriv:        GetBoolPointer(localAccount["remote_console_priv"].(bool)),
-								VirtualMediaPriv:         GetBoolPointer(localAccount["virtual_media_priv"].(bool)),
-								VirtualPowerAndResetPriv: GetBoolPointer(localAccount["virtual_power_and_reset_priv"].(bool)),
-								ILOConfigPriv:            GetBoolPointer(localAccount["ilo_config_priv"].(bool)),
-							}
-							ovLocalAccounts = append(ovLocalAccounts, ovLocalAccount)
+						ovLocalAccount := ov.LocalAccounts{
+							UserName:                 localAccount["user_name"].(string),
+							DisplayName:              localAccount["display_name"].(string),
+							Password:                 localAccount["password"].(string),
+							UserConfigPriv:           GetBoolPointer(localAccount["user_config_priv"].(bool)),
+							RemoteConsolePriv:        GetBoolPointer(localAccount["remote_console_priv"].(bool)),
+							VirtualMediaPriv:         GetBoolPointer(localAccount["virtual_media_priv"].(bool)),
+							VirtualPowerAndResetPriv: GetBoolPointer(localAccount["virtual_power_and_reset_priv"].(bool)),
+							ILOConfigPriv:            GetBoolPointer(localAccount["ilo_config_priv"].(bool)),
 						}
+						ovLocalAccounts = append(ovLocalAccounts, ovLocalAccount)
+
 					}
 
 					ovMpSettings = ov.MpSettings{
@@ -3080,11 +3103,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 									bootTargett := ov.BootTarget{
 										LUN:       bootTarget["lun"].(string),
 										ArrayWWPN: bootTarget["array_wwpn"].(string),
-									}
-									// checks if all elements are empty
-									// skips if empty
-									if !IsStructNil(bootTargett) {
-										continue
 									}
 									bootTargets = append(bootTargets, bootTargett)
 								}
@@ -3157,16 +3175,13 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						PortID:           rawNetworkItem["port_id"].(string),
 						RequestedMbps:    rawNetworkItem["requested_mbps"].(string),
 						Ipv4:             &ipv4,
+						Boot:             &bootOptions,
 					}
-					// checks if all elements are empty
-					// skips connection if empty
-					if !IsStructNil(network) {
-						continue
-					}
+
 					networks = append(networks, network)
-					if len(rawNetworkItem["boot"].([]interface{})) != 0 {
-						networks[len(networks)-1].Boot = &bootOptions
-					}
+					//					if len(rawNetworkItem["boot"].([]interface{})) != 0 {
+					//						networks[len(networks)-1].Boot = &bootOptions
+					//					}
 
 				}
 				serverProfile.ConnectionSettings = ov.ConnectionSettings{
@@ -3210,44 +3225,29 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			biosOption := ov.BiosOption{}
 			for _, raw := range rawBiosOption {
 				rawBiosItem := raw.(map[string]interface{})
-				if _, ok := d.GetOk("overridden_settings"); ok {
-					overriddenSettings := make([]ov.BiosSettings, 0)
-					rawOverriddenSetting := rawBiosItem["overridden_settings"].(*schema.Set).List()
-					for _, raw2 := range rawOverriddenSetting {
-						rawOverriddenSettingItem := raw2.(map[string]interface{})
-						if d.HasChanges(rawOverriddenSettingItem["id"].(string), rawOverriddenSettingItem["value"].(string)) {
-							overriddenSetting := ov.BiosSettings{
-								ID:    rawOverriddenSettingItem["id"].(string),
-								Value: rawOverriddenSettingItem["value"].(string),
-							}
-							// checks if all elements are empty
-							// skips if empty
-							if !IsStructNil(overriddenSetting) {
-								continue
-							}
-							overriddenSettings = append(overriddenSettings, overriddenSetting)
-						}
+				rawOverriddenSetting := rawBiosItem["overridden_settings"].(*schema.Set).List()
+				overriddenSettings := make([]ov.BiosSettings, 0)
+
+				for _, raw2 := range rawOverriddenSetting {
+					rawOverriddenSettingItem := raw2.(map[string]interface{})
+
+					overriddenSetting := ov.BiosSettings{
+						ID:    rawOverriddenSettingItem["id"].(string),
+						Value: rawOverriddenSettingItem["value"].(string),
 					}
-					biosOption = ov.BiosOption{
-						OverriddenSettings: overriddenSettings,
-					}
+					overriddenSettings = append(overriddenSettings, overriddenSetting)
+
 				}
+				biosOption.OverriddenSettings = overriddenSettings
 				manageBios := rawBiosItem["manage_bios"].(bool)
-				biosOption = ov.BiosOption{
-					ManageBios: &manageBios,
-				}
+				biosOption.ManageBios = &manageBios
 			}
 			serverProfile.Bios = &biosOption
 		}
 
 		if d.HasChange("initial_scope_uris") {
-			val := d.Get("initial_scope_uris")
-			initialScopeUrisOrder := val.(*schema.Set).List()
-			initialScopeUris := make([]utils.Nstring, len(initialScopeUrisOrder))
-			for i, raw := range initialScopeUrisOrder {
-				initialScopeUris[i] = utils.Nstring(raw.(string))
-			}
-			serverProfile.InitialScopeUris = initialScopeUris
+			return fmt.Errorf("Initial scope uri can not be updated")
+
 		}
 
 		// Get firmware details
@@ -3285,15 +3285,18 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						//						numSpeareDrives, er := strconv.Atoi(logicalDrivesItem["num_spare_drives"].(string))
 
 						logicalDrive := ov.LogicalDriveV3{
-							Bootable:          &boot,
-							RaidLevel:         logicalDrivesItem["raid_level"].(string),
-							Accelerator:       logicalDrivesItem["accelerator"].(string),
-							DriveNumber:       logicalDrivesItem["drive_number"].(int),
+							Bootable:    &boot,
+							RaidLevel:   logicalDrivesItem["raid_level"].(string),
+							Accelerator: logicalDrivesItem["accelerator"].(string),
+							//							DriveNumber:       logicalDrivesItem["drive_number"].(int),
 							DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 							Name:              logicalDrivesItem["name"].(string),
 							NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
 							//							NumSpareDrives:    numSpeareDrives,
 							//							SasLogicalJBODId:  sasLogicalJbodId,
+						}
+						if val, _ := logicalDrivesItem["drive_number"].(int); val != 0 {
+							logicalDrive.DriveNumber = val
 						}
 						if val := logicalDrivesItem["sas_logical_jbod_id"].(string); val != "" {
 							val, _ := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
@@ -3353,6 +3356,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			}
 			serverProfile.LocalStorage = localStorage
 		}
+
+		file, _ := json.MarshalIndent(serverProfile.LocalStorage, "", " ")
+		_ = ioutil.WriteFile("test.json", file, 0644)
 
 		// get SAN storage data if provided
 		if d.HasChange("san_storage") {
@@ -3456,11 +3462,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							Targets:        targets,
 						}
 
-						// checks if all elements are empty
-						// skips if empty
-						if !IsStructNil(storagePath) {
-							continue
-						}
 						storagePaths = append(storagePaths, storagePath)
 
 					}
@@ -3476,11 +3477,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
 					Volume:                         &volumes,
 				}
-				// checks if all elements are empty
-				// skips if empty
-				if !IsStructNil(volumeAttachment) {
-					continue
-				}
+
 				volumeAttachments = append(volumeAttachments, volumeAttachment)
 
 			}
