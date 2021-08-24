@@ -93,6 +93,10 @@ func resourceServerProfile() *schema.Resource {
 							Type:     schema.TypeBool,
 							Required: true,
 						},
+						"consistency_state": {
+							Type:     schema.TypeBool,
+							Computed: true,
+						},
 						"reapply_state": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -2534,6 +2538,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		biosOptions = append(biosOptions, map[string]interface{}{
 			"manage_bios":         serverProfile.Bios.ManageBios,
+			"consistency_state":   serverProfile.Bios.ConsistencyState,
 			"reapply_state":       serverProfile.Bios.ReapplyState,
 			"overridden_settings": overriddenSettings,
 		})
