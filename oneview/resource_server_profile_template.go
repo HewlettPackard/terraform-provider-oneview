@@ -1928,12 +1928,12 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		mpSettings := make([]map[string]interface{}, 0)
 		if len(spt.ManagementProcessor.MpSettings) != 0 {
 			// initializing schema variables...
-			adminAcc := make([]map[string]interface{}, 0)
-			directory := make([]map[string]interface{}, 0)
-			keyManager := make([]map[string]interface{}, 0)
+			adminAcc := make([]map[string]interface{}, 1)
+			directory := make([]map[string]interface{}, 1)
+			keyManager := make([]map[string]interface{}, 1)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
-			hostName := make([]map[string]interface{}, 0)
+			hostName := make([]map[string]interface{}, 1)
 
 			for _, val := range spt.ManagementProcessor.MpSettings {
 
@@ -1952,7 +1952,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["administrator_account"].(*schema.Set).List()
+					vals := valmpp["administrator_account"].([]interface{})
 					for _, x := range vals {
 						xx := x.(map[string]interface{})
 						adminAc["password"] = xx["password"]
@@ -2017,7 +2017,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["directory"].(*schema.Set).List()
+					vals := valmpp["directory"].([]interface{})
 					for _, x := range vals {
 						xx := x.(map[string]interface{})
 						directoryy["password"] = xx["password"]
@@ -2155,7 +2155,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["key_manager"].(*schema.Set).List()
+					vals := valmpp["key_manager"].([]interface{})
 					for _, x := range vals {
 						xx := x.(map[string]interface{})
 						keyManagerr["password"] = xx["password"]
