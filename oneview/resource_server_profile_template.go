@@ -2755,41 +2755,31 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 
 	if d.HasChange("bios_option") {
-		// Gets Bios Options
 		val := d.Get("bios_option")
 		rawBiosOption := val.([]interface{})
 		biosOption := ov.BiosOption{}
 		for _, raw := range rawBiosOption {
 			rawBiosItem := raw.(map[string]interface{})
-			// Gets OverRiddenSettings for Bios Options
-			if _, ok := d.GetOk("overridden_settings"); ok {
-				overriddenSettings := make([]ov.BiosSettings, 0)
-				rawoverRiddenSettings := rawBiosItem["overridden_settings"].(*schema.Set).List()
-				// Gets OverRidden Settings on overriddenSettings
+			rawOverriddenSetting := rawBiosItem["overridden_settings"].(*schema.Set).List()
+			overriddenSettings := make([]ov.BiosSettings, 0)
 
-				for _, vall := range rawoverRiddenSettings {
-					rawOverriddenSettingItem := vall.(map[string]interface{})
-					if d.HasChanges(rawOverriddenSettingItem["id"].(string), rawOverriddenSettingItem["value"].(string)) {
-						overriddenSetting := ov.BiosSettings{
-							ID:    rawOverriddenSettingItem["id"].(string),
-							Value: rawOverriddenSettingItem["value"].(string),
-						}
-						overriddenSettings = append(overriddenSettings, overriddenSetting)
-					}
+			for _, raw2 := range rawOverriddenSetting {
+				rawOverriddenSettingItem := raw2.(map[string]interface{})
+
+				overriddenSetting := ov.BiosSettings{
+					ID:    rawOverriddenSettingItem["id"].(string),
+					Value: rawOverriddenSettingItem["value"].(string),
 				}
-				biosOption = ov.BiosOption{
-					OverriddenSettings: overriddenSettings,
-				}
+				overriddenSettings = append(overriddenSettings, overriddenSetting)
+
 			}
-			// Gets Bios Options with OverRidden Settings on biosOption
+			biosOption.OverriddenSettings = overriddenSettings
 			manageBios := rawBiosItem["manage_bios"].(bool)
-			biosOption = ov.BiosOption{
-				ManageBios: &manageBios,
-			}
+			biosOption.ManageBios = &manageBios
 		}
-		// Applies biosOption to Payload
 		serverProfileTemplate.Bios = &biosOption
 	}
+
 	if d.HasChange("initial_scope_uris") {
 		return fmt.Errorf("Initial scope uri can not be updated")
 	}
