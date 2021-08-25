@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Bug fixes & Enhancements:
 - [#295](https://github.com/HewlettPackard/terraform-provider-oneview/issues/295) server profile update in-place
 - [#312](https://github.com/HewlettPackard/terraform-provider-oneview/issues/312) Unable to apply server_profile_template (Invalid character '.)
+- [#360](https://github.com/HewlettPackard/terraform-provider-oneview/issues/360) Server Profile Template / Server Profile : iLO Settings --> Cannot set iLO Hostname
 - [#366](https://github.com/HewlettPackard/terraform-provider-oneview/issues/366) Server Profiles - Terraform doesn't wait for deletion to complete
 - [#369](https://github.com/HewlettPackard/terraform-provider-oneview/issues/369) Server Profile Template and Server Profile description are not set
 - [#370](https://github.com/HewlettPackard/terraform-provider-oneview/issues/370) Create Server Profile from Template

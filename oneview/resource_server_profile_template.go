@@ -579,7 +579,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"management_processor": {
 				Type:     schema.TypeList,
 				Computed: true,
-				MaxItems: 1,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -598,15 +597,16 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Computed: true,
 						},
 						"mp_settings": {
-							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
+							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"administrator_account": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										MaxItems: 1,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"delete_administrator_account": {
@@ -622,9 +622,10 @@ func resourceServerProfileTemplate() *schema.Resource {
 										},
 									},
 									"directory": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										MaxItems: 1,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"directory_authentication": {
@@ -685,10 +686,25 @@ func resourceServerProfileTemplate() *schema.Resource {
 											},
 										},
 									},
+									"ilo_host_name": {
+										MaxItems: 1,
+										Type:     schema.TypeList,
+										Optional: true,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"hostname": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
 									"key_manager": {
 										MaxItems: 1,
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"primary_server_address": {
@@ -1243,7 +1259,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				mpSetting := mpSettingg.(map[string]interface{})
 				// extracting administrator account
 				ovAdminAcc := ov.AdministratorAccount{}
-				rawAdminAcc := mpSetting["administrator_account"].(*schema.Set).List()
+				rawAdminAcc := mpSetting["administrator_account"].([]interface{})
 				for _, adminAccs := range rawAdminAcc {
 					adminAcc := adminAccs.(map[string]interface{})
 					ovAdminAcc = ov.AdministratorAccount{
@@ -1252,7 +1268,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					}
 				}
 				// extracting directory
-				rawDirectory := mpSetting["directory"].(*schema.Set).List()
+				rawDirectory := mpSetting["directory"].([]interface{})
 				ovDirectory := ov.Directory{}
 				for _, directoryy := range rawDirectory {
 					directory := directoryy.(map[string]interface{})
@@ -1279,8 +1295,18 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					}
 				}
 
+				// extracting hostname
+				rawHostName := mpSetting["ilo_host_name"].([]interface{})
+				ovHostName := ov.IloHostName{}
+				for _, hostMap := range rawHostName {
+					host := hostMap.(map[string]interface{})
+					ovHostName = ov.IloHostName{
+						HostName: host["hostname"].(string),
+					}
+				}
+
 				// extracting key manager
-				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()
+				rawKeyManager := mpSetting["key_manager"].([]interface{})
 				ovKeyManager := ov.KeyManager{}
 				for _, keyManagerr := range rawKeyManager {
 					keyManager := keyManagerr.(map[string]interface{})
@@ -1337,6 +1363,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
+					IloHostName:          ovHostName,
 				}
 			}
 			// setting ManagementProcessor
@@ -1901,11 +1928,12 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		mpSettings := make([]map[string]interface{}, 0)
 		if len(spt.ManagementProcessor.MpSettings) != 0 {
 			// initializing schema variables...
-			adminAcc := make([]map[string]interface{}, 0)
-			directory := make([]map[string]interface{}, 0)
-			keyManager := make([]map[string]interface{}, 0)
+			adminAcc := make([]map[string]interface{}, 1)
+			directory := make([]map[string]interface{}, 1)
+			keyManager := make([]map[string]interface{}, 1)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
+			hostName := make([]map[string]interface{}, 1)
 
 			for _, val := range spt.ManagementProcessor.MpSettings {
 
@@ -1924,7 +1952,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["administrator_account"].(*schema.Set).List()
+					vals := valmpp["administrator_account"].([]interface{})
 					for _, x := range vals {
 						xx := x.(map[string]interface{})
 						adminAc["password"] = xx["password"]
@@ -1989,7 +2017,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["directory"].(*schema.Set).List()
+					vals := valmpp["directory"].([]interface{})
 					for _, x := range vals {
 						xx := x.(map[string]interface{})
 						directoryy["password"] = xx["password"]
@@ -2086,6 +2114,14 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 				}
 
+				if val.SettingType == "Hostname" {
+					hostname := map[string]interface{}{}
+					if host, ok := val.Args["hostName"]; ok {
+						hostname["ilo_host_name"] = host
+					}
+					hostName = append(hostName, hostname)
+				}
+
 				if val.SettingType == "KeyManager" {
 					// initializing 0th location...
 					keyManagerr := map[string]interface{}{}
@@ -2119,7 +2155,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["key_manager"].(*schema.Set).List()
+					vals := valmpp["key_manager"].([]interface{})
 					for _, x := range vals {
 						xx := x.(map[string]interface{})
 						keyManagerr["password"] = xx["password"]
@@ -2136,6 +2172,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"key_manager":           keyManager,
 				"directory_groups":      directoryGroups,
 				"local_accounts":        localAccounts,
+				"ilo_host_name":         hostName,
 			})
 		}
 
@@ -2514,7 +2551,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			for _, mpSettingg := range mpSettings {
 				mpSetting := mpSettingg.(map[string]interface{})
 				// extracting administrator account
-				rawAdminAcc := mpSetting["administrator_account"].(*schema.Set).List()
+				rawAdminAcc := mpSetting["administrator_account"].([]interface{})
 				ovAdminAcc := ov.AdministratorAccount{}
 				for _, adminAccs := range rawAdminAcc {
 					adminAcc := adminAccs.(map[string]interface{})
@@ -2524,7 +2561,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					}
 				}
 				// extracting directory
-				rawDirectory := mpSetting["directory"].(*schema.Set).List()
+				rawDirectory := mpSetting["directory"].([]interface{})
 				ovDirectory := ov.Directory{}
 				for _, directoryy := range rawDirectory {
 					directory := directoryy.(map[string]interface{})
@@ -2551,8 +2588,18 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					}
 				}
 
+				// extracting hostname
+				rawHostName := mpSetting["ilo_host_name"].([]interface{})
+				ovHostName := ov.IloHostName{}
+				for _, hostMap := range rawHostName {
+					host := hostMap.(map[string]interface{})
+					ovHostName = ov.IloHostName{
+						HostName: host["hostname"].(string),
+					}
+				}
+
 				// extracting key manager
-				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()
+				rawKeyManager := mpSetting["key_manager"].([]interface{})
 				ovKeyManager := ov.KeyManager{}
 				for _, keyManagerr := range rawKeyManager {
 					keyManager := keyManagerr.(map[string]interface{})
@@ -2608,6 +2655,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
+					IloHostName:          ovHostName,
 				}
 			}
 			ovManagementProcessor = ov.ManagementProcessors{

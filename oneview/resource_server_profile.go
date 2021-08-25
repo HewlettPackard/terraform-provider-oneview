@@ -1177,6 +1177,20 @@ func resourceServerProfile() *schema.Resource {
 											},
 										},
 									},
+									"ilo_host_name": {
+										MaxItems: 1,
+										Type:     schema.TypeList,
+										Optional: true,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"hostname": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
 									"key_manager": {
 										MaxItems: 1,
 										Type:     schema.TypeList,
@@ -1525,6 +1539,16 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					}
 				}
 
+				// extracting ilo hostname
+				rawHostName := mpSetting["ilo_host_name"].([]interface{})
+				ovHostName := ov.IloHostName{}
+				for _, hostMap := range rawHostName {
+					host := hostMap.(map[string]interface{})
+					ovHostName = ov.IloHostName{
+						HostName: host["hostname"].(string),
+					}
+				}
+
 				// extracting key manager
 				rawKeyManager := mpSetting["key_manager"].([]interface{})
 				ovKeyManager := ov.KeyManager{}
@@ -1583,6 +1607,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
+					IloHostName:          ovHostName,
 				}
 			}
 
@@ -2108,6 +2133,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
+
 	d.Set("server_hardware_type", serverHardwareType.Name)
 	d.Set("affinity", serverProfile.Affinity)
 	d.Set("serial_number_type", serverProfile.SerialNumberType)
@@ -2140,9 +2166,10 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		mpSettings := make([]map[string]interface{}, 0)
 		if len(serverProfile.ManagementProcessor.MpSettings) != 0 {
 			// initializing schema variables...
-			adminAcc := make([]map[string]interface{}, 0)
-			directory := make([]map[string]interface{}, 0)
-			keyManager := make([]map[string]interface{}, 0)
+			adminAcc := make([]map[string]interface{}, 1)
+			directory := make([]map[string]interface{}, 1)
+			keyManager := make([]map[string]interface{}, 1)
+			hostName := make([]map[string]interface{}, 1)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
 
@@ -2326,6 +2353,14 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 					}
 				}
 
+				if val.SettingType == "Hostname" {
+					hostname := map[string]interface{}{}
+					if host, ok := val.Args["hostName"]; ok {
+						hostname["ilo_host_name"] = host
+					}
+					hostName = append(hostName, hostname)
+				}
+
 				if val.SettingType == "KeyManager" {
 					// initializing 0th location...
 					keyManagerr := map[string]interface{}{}
@@ -2379,6 +2414,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				"key_manager":           keyManager,
 				"directory_groups":      directoryGroups,
 				"local_accounts":        localAccounts,
+				"ilo_host_name":         hostName,
 			})
 		}
 
@@ -2960,6 +2996,16 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 					}
 
+					// extracting ilo hostname
+					rawHostName := mpSetting["ilo_host_name"].([]interface{})
+					ovHostName := ov.IloHostName{}
+					for _, hostMap := range rawHostName {
+						host := hostMap.(map[string]interface{})
+						ovHostName = ov.IloHostName{
+							HostName: host["hostname"].(string),
+						}
+					}
+
 					// extracting key manager
 					rawKeyManager := mpSetting["key_manager"].([]interface{})
 					ovKeyManager := ov.KeyManager{}
@@ -3024,6 +3070,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						Directory:            ovDirectory,
 						DirectoryGroups:      ovDirectoryGroups,
 						KeyManager:           ovKeyManager,
+						IloHostName:          ovHostName,
 					}
 				}
 				ovManagementProcessor = ov.ManagementProcessors{
