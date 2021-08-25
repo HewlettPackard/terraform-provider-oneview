@@ -579,7 +579,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 			"management_processor": {
 				Type:     schema.TypeList,
 				Computed: true,
-				MaxItems: 1,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -598,15 +597,16 @@ func resourceServerProfileTemplate() *schema.Resource {
 							Computed: true,
 						},
 						"mp_settings": {
-							Optional: true,
 							Type:     schema.TypeList,
-							MaxItems: 1,
+							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"administrator_account": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										MaxItems: 1,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"delete_administrator_account": {
@@ -622,9 +622,10 @@ func resourceServerProfileTemplate() *schema.Resource {
 										},
 									},
 									"directory": {
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										MaxItems: 1,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"directory_authentication": {
@@ -685,10 +686,11 @@ func resourceServerProfileTemplate() *schema.Resource {
 											},
 										},
 									},
-									"host_name": {
+									"ilo_host_name": {
 										MaxItems: 1,
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"hostname": {
@@ -700,8 +702,9 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"key_manager": {
 										MaxItems: 1,
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"primary_server_address": {
@@ -1256,7 +1259,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				mpSetting := mpSettingg.(map[string]interface{})
 				// extracting administrator account
 				ovAdminAcc := ov.AdministratorAccount{}
-				rawAdminAcc := mpSetting["administrator_account"].(*schema.Set).List()
+				rawAdminAcc := mpSetting["administrator_account"].([]interface{})
 				for _, adminAccs := range rawAdminAcc {
 					adminAcc := adminAccs.(map[string]interface{})
 					ovAdminAcc = ov.AdministratorAccount{
@@ -1265,7 +1268,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					}
 				}
 				// extracting directory
-				rawDirectory := mpSetting["directory"].(*schema.Set).List()
+				rawDirectory := mpSetting["directory"].([]interface{})
 				ovDirectory := ov.Directory{}
 				for _, directoryy := range rawDirectory {
 					directory := directoryy.(map[string]interface{})
@@ -1293,17 +1296,17 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 				}
 
 				// extracting hostname
-				rawHostName := mpSetting["host_name"].(*schema.Set).List()
-				ovHostName := ov.ProfileHost{}
+				rawHostName := mpSetting["ilo_host_name"].([]interface{})
+				ovHostName := ov.IloHostName{}
 				for _, hostMap := range rawHostName {
 					host := hostMap.(map[string]interface{})
-					ovHostName = ov.ProfileHost{
+					ovHostName = ov.IloHostName{
 						HostName: host["hostname"].(string),
 					}
 				}
 
 				// extracting key manager
-				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()
+				rawKeyManager := mpSetting["key_manager"].([]interface{})
 				ovKeyManager := ov.KeyManager{}
 				for _, keyManagerr := range rawKeyManager {
 					keyManager := keyManagerr.(map[string]interface{})
@@ -1360,7 +1363,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
-					ProfileHost:          ovHostName,
+					IloHostName:          ovHostName,
 				}
 			}
 			// setting ManagementProcessor
@@ -2114,7 +2117,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				if val.SettingType == "Hostname" {
 					hostname := map[string]interface{}{}
 					if host, ok := val.Args["hostName"]; ok {
-						hostname["host_name"] = host
+						hostname["ilo_host_name"] = host
 					}
 					hostName = append(hostName, hostname)
 				}
@@ -2169,7 +2172,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"key_manager":           keyManager,
 				"directory_groups":      directoryGroups,
 				"local_accounts":        localAccounts,
-				"host_name":             hostName,
+				"ilo_host_name":         hostName,
 			})
 		}
 
@@ -2548,7 +2551,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 			for _, mpSettingg := range mpSettings {
 				mpSetting := mpSettingg.(map[string]interface{})
 				// extracting administrator account
-				rawAdminAcc := mpSetting["administrator_account"].(*schema.Set).List()
+				rawAdminAcc := mpSetting["administrator_account"].([]interface{})
 				ovAdminAcc := ov.AdministratorAccount{}
 				for _, adminAccs := range rawAdminAcc {
 					adminAcc := adminAccs.(map[string]interface{})
@@ -2558,7 +2561,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					}
 				}
 				// extracting directory
-				rawDirectory := mpSetting["directory"].(*schema.Set).List()
+				rawDirectory := mpSetting["directory"].([]interface{})
 				ovDirectory := ov.Directory{}
 				for _, directoryy := range rawDirectory {
 					directory := directoryy.(map[string]interface{})
@@ -2586,17 +2589,17 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 				}
 
 				// extracting hostname
-				rawHostName := mpSetting["host_name"].(*schema.Set).List()
-				ovHostName := ov.ProfileHost{}
+				rawHostName := mpSetting["ilo_host_name"].([]interface{})
+				ovHostName := ov.IloHostName{}
 				for _, hostMap := range rawHostName {
 					host := hostMap.(map[string]interface{})
-					ovHostName = ov.ProfileHost{
+					ovHostName = ov.IloHostName{
 						HostName: host["hostname"].(string),
 					}
 				}
 
 				// extracting key manager
-				rawKeyManager := mpSetting["key_manager"].(*schema.Set).List()
+				rawKeyManager := mpSetting["key_manager"].([]interface{})
 				ovKeyManager := ov.KeyManager{}
 				for _, keyManagerr := range rawKeyManager {
 					keyManager := keyManagerr.(map[string]interface{})
@@ -2652,7 +2655,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 					Directory:            ovDirectory,
 					DirectoryGroups:      ovDirectoryGroups,
 					KeyManager:           ovKeyManager,
-					ProfileHost:          ovHostName,
+					IloHostName:          ovHostName,
 				}
 			}
 			ovManagementProcessor = ov.ManagementProcessors{
@@ -2800,41 +2803,31 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	}
 
 	if d.HasChange("bios_option") {
-		// Gets Bios Options
 		val := d.Get("bios_option")
 		rawBiosOption := val.([]interface{})
 		biosOption := ov.BiosOption{}
 		for _, raw := range rawBiosOption {
 			rawBiosItem := raw.(map[string]interface{})
-			// Gets OverRiddenSettings for Bios Options
-			if _, ok := d.GetOk("overridden_settings"); ok {
-				overriddenSettings := make([]ov.BiosSettings, 0)
-				rawoverRiddenSettings := rawBiosItem["overridden_settings"].(*schema.Set).List()
-				// Gets OverRidden Settings on overriddenSettings
+			rawOverriddenSetting := rawBiosItem["overridden_settings"].(*schema.Set).List()
+			overriddenSettings := make([]ov.BiosSettings, 0)
 
-				for _, vall := range rawoverRiddenSettings {
-					rawOverriddenSettingItem := vall.(map[string]interface{})
-					if d.HasChanges(rawOverriddenSettingItem["id"].(string), rawOverriddenSettingItem["value"].(string)) {
-						overriddenSetting := ov.BiosSettings{
-							ID:    rawOverriddenSettingItem["id"].(string),
-							Value: rawOverriddenSettingItem["value"].(string),
-						}
-						overriddenSettings = append(overriddenSettings, overriddenSetting)
-					}
+			for _, raw2 := range rawOverriddenSetting {
+				rawOverriddenSettingItem := raw2.(map[string]interface{})
+
+				overriddenSetting := ov.BiosSettings{
+					ID:    rawOverriddenSettingItem["id"].(string),
+					Value: rawOverriddenSettingItem["value"].(string),
 				}
-				biosOption = ov.BiosOption{
-					OverriddenSettings: overriddenSettings,
-				}
+				overriddenSettings = append(overriddenSettings, overriddenSetting)
+
 			}
-			// Gets Bios Options with OverRidden Settings on biosOption
+			biosOption.OverriddenSettings = overriddenSettings
 			manageBios := rawBiosItem["manage_bios"].(bool)
-			biosOption = ov.BiosOption{
-				ManageBios: &manageBios,
-			}
+			biosOption.ManageBios = &manageBios
 		}
-		// Applies biosOption to Payload
 		serverProfileTemplate.Bios = &biosOption
 	}
+
 	if d.HasChange("initial_scope_uris") {
 		return fmt.Errorf("Initial scope uri can not be updated")
 	}

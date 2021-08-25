@@ -159,7 +159,6 @@ The following arguments are supported:
     *  `lag_name` - The link aggregation group name for a server profile connection. 
     *  `mac` - The MAC address that is currently programmed on the FlexNic. 
     *  `mac_type` - Specifies the type of MAC address to be programmed into the IO Devices. 
-    *  `managed` - Indicates whether the connection is capable of Virtual Connect functionality and managed by OneView. 
     *  `maximum_mbps` - Maximum transmit throughput (mbps) allowed on this connection.
     *  `network_name` - The name of the network or network set to be connected. 
     *  `private_vlan_port_type` - Private Vlan port type.This is a read only field

@@ -10,6 +10,7 @@ description: |-
 
 Creates a logical interconnect group.
 
+Note: Instead of providing list of port nums, from terraform-oneview-provider v6.3 we need to provide single port_num for each logical_port_config block.
 ## Example Usage
 
 ```js
@@ -45,7 +46,11 @@ resource "oneview_logical_interconnect_group" "default" {
     network_uris = ["${oneview_ethernet_network.test.1.uri}"]
     logical_port_config {
       bay_num = 4
-      port_num = [20,21]
+      port_num = 20
+    }
+    logical_port_config {
+      bay_num = 4
+      port_num = 21
     }
   }
 }
@@ -184,13 +189,15 @@ Logical Port Config supports the followings:
 
 * `bay_num` - (Required) The bay number to use. 
 
-* `port_num` - (Required) The set of port numbers to use.
+* `port_num` - (Required) The single port number to use.
 
 * `enclosure_num` - (Optional) The enclosure to use. Defaults to 1.
 
 * `primary_port` - (Optional) The Ethernet primary failover port. Defaults to false.
 
 * `desired_speed` - (Optional) The port speed you prefer it to use. Defaults to Auto.
+
+* `desired_fec_mode` - (Optional)  The desire FEC mode of logical port.
 
 
 ## Attributes Reference

@@ -13,13 +13,16 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
    - POST   /rest/server-hardware
    - PATCH  /rest/server-hardware/{id}
    - DELETE /rest/server-hardware/{id}
-4. logical_interconnect_group: Changed the way we provide port_num, instead of list we have to provide integer value for port_num in each logical_port_config in uplink_set.
+4. logical_interconnect_group: Changed the implementation for providing port_num attribute. Instead of mentioning all ports in a list, we have to provide each logical_port_config block with with a specific port_num inside a uplink_set block. Please refer [example files](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/examples/logical_interconnect_groups/main.tf) and [docs](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/logical_interconnect_group.html.markdown) for more details.
 
 ### Bug fixes & Enhancements:
-- [#312] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/312) Unable to apply server_profile_template (Invalid character '.)
-- [#360] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/360) Server Profile Template / Server Profile : iLO Settings --> Cannot set iLO Hostname
-- [#366] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/366) Server Profiles - Terraform doesn't wait for deletion to complete
-- [#369] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/369) Server Profile Template and Server Profile description are not set
+- [#295](https://github.com/HewlettPackard/terraform-provider-oneview/issues/295) server profile update in-place
+- [#312](https://github.com/HewlettPackard/terraform-provider-oneview/issues/312) Unable to apply server_profile_template (Invalid character '.)
+- [#360](https://github.com/HewlettPackard/terraform-provider-oneview/issues/360) Server Profile Template / Server Profile : iLO Settings --> Cannot set iLO Hostname
+- [#366](https://github.com/HewlettPackard/terraform-provider-oneview/issues/366) Server Profiles - Terraform doesn't wait for deletion to complete
+- [#369](https://github.com/HewlettPackard/terraform-provider-oneview/issues/369) Server Profile Template and Server Profile description are not set
+- [#370](https://github.com/HewlettPackard/terraform-provider-oneview/issues/370) Create Server Profile from Template
+- [#371](https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed 
 
 # [v6.2.0-13]
 

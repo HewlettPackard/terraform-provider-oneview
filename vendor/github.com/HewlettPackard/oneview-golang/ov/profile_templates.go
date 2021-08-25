@@ -165,12 +165,12 @@ func SetMp(mp ManagementProcessors) IntManagementProcessor {
 			})
 		}
 
-		var emptyHostname ProfileHost
-		if !reflect.DeepEqual(mp.MpSetting.ProfileHost, emptyHostname) {
+		var emptyHostname IloHostName
+		if !reflect.DeepEqual(mp.MpSetting.IloHostName, emptyHostname) {
 			args := make(map[string]interface{})
-			v := reflect.ValueOf(mp.MpSetting.ProfileHost)
+			v := reflect.ValueOf(mp.MpSetting.IloHostName)
 			typeOfS := v.Type()
-			// iterate through ProfileHost Fields.
+			// iterate through IloHostName Fields.
 			for i := 0; i < v.NumField(); i++ {
 				// only adds fields that are initialized in order to bypass adding default/uninitialized values.
 				if !IsZeroOfUnderlyingType(v.Field(i).Interface()) {
