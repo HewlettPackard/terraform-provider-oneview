@@ -938,7 +938,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		Type: d.Get("type").(string),
 	}
 
-	if val, ok := d.GetOk("donwlink_speed_mode"); ok {
+	if val, ok := d.GetOk("downlink_speed_mode"); ok {
 		lig.DownlinkSpeedMode = utils.Nstring(val.(string))
 	}
 
