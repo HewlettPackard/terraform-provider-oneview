@@ -102,7 +102,7 @@ func resourceConnectionTemplates() *schema.Resource {
 func resourceConnectionTemplatesRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	id := d.Id()
-	cTemplate, err := config.ovClient.GetConnectionTemplateByName(id)
+	cTemplate, err := config.ovClient.GetConnectionTemplateByURI(utils.Nstring(id))
 	if err != nil || cTemplate.URI.IsNil() {
 		d.SetId("")
 		return nil

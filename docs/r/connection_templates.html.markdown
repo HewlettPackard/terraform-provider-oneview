@@ -19,13 +19,13 @@ resource "oneview_connection_templates" "default" {
 ```
 ## Terraform Command to import
 
-	terraform import oneview_connection_templates.default <connection-template-name>
+	terraform import oneview_connection_templates.default <connection-template-uri>
 
 ## Argument Reference
 
 The following arguments are supported: 
 
-* `connection-template-name` - (Required) A unique name for the resource as per the appliance.
+* `uri` - (Required) A unique uri for the resource as per the appliance.
 
 - - -
 description: |-
@@ -52,7 +52,7 @@ resource "oneview_connection_templates" "default" {
 
 The following arguments are supported: 
 
-* `name` - (Optional) The new name for the connection template.
+* `uri` - (Required) The uri for the connection template.
 
 * `maximumbandwidth` - (Required) The maximum bandwidth of a network connection, expressed in Mbps.
 

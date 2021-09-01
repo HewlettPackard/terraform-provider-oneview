@@ -18,13 +18,24 @@ data "oneview_connection_templates" "test" {
 }
 
 output "oneview_connection_templates_value" {
- value = "${data.oneview_connection_templates.test.uri}"
+ value = data.oneview_connection_templates.test.uri
+}
+```
+
+```hcl
+data "oneview_connection_templates" "testingViaUri" {
+ uri = "/rest/connection-templates/defaultConnectionTemplate" 
+}
+
+output "oneview_connection_templates_value" {
+ value = data.oneview_connection_templates.test.uri
 }
 ```
 
 ## Argument Reference
 
-* `name` - (Required) The name of the connection template.
+* `name` - The name of the connection template.
+* `uri` - The URI of the resource.
 
 ## Attributes Reference
 

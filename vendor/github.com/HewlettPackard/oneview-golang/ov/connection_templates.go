@@ -130,6 +130,27 @@ func (c *OVClient) UpdateConnectionTemplate(id string, conntemplate ConnectionTe
 	return template, nil
 }
 
+// GetConnectionTemplateByURI - get a connection template from a uri
+func (c *OVClient) GetConnectionTemplateByURI(uri utils.Nstring) (ConnectionTemplate, error) {
+	var (
+		template ConnectionTemplate
+	)
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.GET, uri.String(), nil)
+	if err != nil {
+		return template, err
+	}
+
+	log.Debugf("GetConnectionTemplateByURI %s", data)
+	if err := json.Unmarshal([]byte(data), &template); err != nil {
+		return template, err
+	}
+	return template, nil
+}
+
 func (c *OVClient) GetDefaultConnectionTemplate() (ConnectionTemplate, error) {
 	var (
 		uri               = "/rest/connection-templates/defaultConnectionTemplate"
