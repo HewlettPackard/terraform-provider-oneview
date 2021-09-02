@@ -19,9 +19,9 @@ output "oneview_connection_template_value" {
 
 # Gets connection template data from uri
 data "oneview_connection_templates" "connectionTemplatesURI" {
- uri = data.oneview_connection_templates.connectionTemplates.uri
+  uri = data.oneview_connection_templates.connectionTemplates.uri
 }
 
 output "oneview_connection_template_valueURI" {
-  value = data.oneview_connection_templates.connectionTemplates.name
+  value = data.oneview_connection_templates.connectionTemplatesURI.name
 }

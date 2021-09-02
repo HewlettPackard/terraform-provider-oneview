@@ -126,7 +126,7 @@ func resourceConnectionTemplatesUpdate(d *schema.ResourceData, meta interface{})
 
 	updateOptions, err := config.ovClient.GetConnectionTemplateByURI(utils.Nstring(d.Get("uri").(string)))
 	if err != nil {
-		return fmt.Errorf("encountered error while fetching the connection template: ", err)
+		return fmt.Errorf("encountered error while fetching the connection template: %s", err)
 	}
 
 	if d.HasChange("name") {

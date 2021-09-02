@@ -28,7 +28,7 @@ data "oneview_connection_templates" "testingViaUri" {
 }
 
 output "oneview_connection_templates_value" {
- value = data.oneview_connection_templates.test.uri
+ value = data.oneview_connection_templates.testingViaUri.uri
 }
 ```
 
