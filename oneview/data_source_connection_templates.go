@@ -61,6 +61,7 @@ func dataSourceConnectionTemplates() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
@@ -90,6 +91,8 @@ func dataSourceConnectionTemplatesRead(d *schema.ResourceData, meta interface{})
 		cTemplate ov.ConnectionTemplate
 		err       error
 	)
+
+	// reads connection template via uri or name
 	if name, ok := d.Get("name").(string); ok {
 		cTemplate, err = config.ovClient.GetConnectionTemplateByName(name)
 	} else if uri, ok := d.Get("uri").(string); ok {

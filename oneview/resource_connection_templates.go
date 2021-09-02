@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -47,27 +48,22 @@ func resourceConnectionTemplates() *schema.Resource {
 			},
 			"category": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"created": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"modified": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"etag": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"name": {
@@ -77,7 +73,6 @@ func resourceConnectionTemplates() *schema.Resource {
 			},
 			"state": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"uri": {
@@ -87,12 +82,10 @@ func resourceConnectionTemplates() *schema.Resource {
 			},
 			"status": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 		},
@@ -130,34 +123,33 @@ func resourceConnectionTemplatesRead(d *schema.ResourceData, meta interface{}) e
 
 func resourceConnectionTemplatesUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	updateOptions := ov.ConnectionTemplate{
-		Name:        d.Get("name").(string),
-		Type:        d.Get("type").(string),
-		Category:    d.Get("category").(string),
-		Description: utils.NewNstring(d.Get("description").(string)),
-		ETAG:        d.Get("etag").(string),
-		Modified:    d.Get("modified").(string),
-		State:       d.Get("state").(string),
-		Status:      d.Get("status").(string),
-		URI:         utils.NewNstring(d.Get("uri").(string)),
-		Created:     d.Get("created").(string),
+
+	updateOptions, err := config.ovClient.GetConnectionTemplateByURI(utils.Nstring(d.Get("uri").(string)))
+	if err != nil {
+		return fmt.Errorf("encountered error while fetching the connection template: ", err)
 	}
 
-	rawBandwidthOptions := d.Get("bandwidth").(*schema.Set).List()
-	for _, val := range rawBandwidthOptions {
-		rawval := val.(map[string]interface{})
-		BandwidthOptions := ov.BandwidthType{
-			MaximumBandwidth: rawval["maximum_bandwidth"].(int),
-			TypicalBandwidth: rawval["typical_bandwidth"].(int),
-		}
-		updateOptions.Bandwidth = BandwidthOptions
+	if d.HasChange("name") {
+		updateOptions.Name = d.Get("name").(string)
 	}
-	uri := strings.Split(updateOptions.URI.String(), "/")[3]
-	template, err := config.ovClient.UpdateConnectionTemplate(uri, updateOptions)
+
+	if d.HasChange("bandwidth") {
+		rawBandwidthOptions := d.Get("bandwidth").(*schema.Set).List()
+		for _, val := range rawBandwidthOptions {
+			rawval := val.(map[string]interface{})
+			BandwidthOptions := ov.BandwidthType{
+				MaximumBandwidth: rawval["maximum_bandwidth"].(int),
+				TypicalBandwidth: rawval["typical_bandwidth"].(int),
+			}
+			updateOptions.Bandwidth = BandwidthOptions
+		}
+	}
+	id := strings.Split(updateOptions.URI.String(), "/")[3]
+	template, err := config.ovClient.UpdateConnectionTemplate(id, updateOptions)
 	if err != nil {
 		return err
 	}
-	d.SetId(template.Name)
+	d.SetId(template.URI.String())
 
 	return resourceConnectionTemplatesRead(d, meta)
 }
