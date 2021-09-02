@@ -1533,6 +1533,7 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		for _, raw := range rawFirmware {
 			firmwareItem := raw.(map[string]interface{})
 			firmware = ov.FirmwareOption{
+				ComplianceControl:      firmwareItem["compliance_control"].(string),
 				ForceInstallFirmware:   firmwareItem["force_install_firmware"].(bool),
 				FirmwareBaselineUri:    utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
 				ManageFirmware:         firmwareItem["manage_firmware"].(bool),
@@ -2844,6 +2845,7 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		for _, raw := range rawFirmware {
 			firmwareItem := raw.(map[string]interface{})
 			firmware = ov.FirmwareOption{
+				ComplianceControl:      firmwareItem["compliance_control"].(string),
 				ForceInstallFirmware:   firmwareItem["force_install_firmware"].(bool),
 				FirmwareBaselineUri:    utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
 				ManageFirmware:         firmwareItem["manage_firmware"].(bool),
