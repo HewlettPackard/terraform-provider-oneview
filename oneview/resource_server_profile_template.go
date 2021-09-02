@@ -1920,6 +1920,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		firmware = append(firmware, map[string]interface{}{
 			"compliance_control":       spt.Firmware.ComplianceControl,
 			"firmware_baseline_uri":    spt.Firmware.FirmwareBaselineUri,
+			"force_install_firmware":   spt.Firmware.ForceInstallFirmware,
 			"manage_firmware":          spt.Firmware.ManageFirmware,
 			"firmware_install_type":    spt.Firmware.FirmwareInstallType,
 			"firmware_activation_type": spt.Firmware.FirmwareActivationType,
