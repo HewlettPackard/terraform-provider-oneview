@@ -240,6 +240,15 @@ In addition to the arguments listed above, the following computed attributes are
     	  * `ip_address` - The IPv4 address of the iSCSI initiator. When creating a connection, if ipAddressSource is DHCP, then this must be omitted.
     	  * `subnet_mask` - The subnet mask of the iSCSI initiator. 
     	  * `ip_address_source` - Specifies how the IPv4 parameters are to be supplied.
+* `firmware` - Defines and enables firmware baseline management.
+	* `consistency_state` - Consistency state of the firmware component.
+	* `force_install_firmware` - Force installation of firmware even if same or newer version is installed. Value can be 'true' or 'false'.
+	* `firmware_baseline_uri` - Identifies the firmware baseline to be applied to the server hardware.
+	* `firmware_activation_type` - Specifies when the applied Service Pack for ProLiant (SPP) will be activated.
+	* `manage_firmware` - Indicates that the server firmware should be configured on the server profiles created from the template. Value can be 'true' or 'false'.
+	* `firmware_install_type` - Force installation of firmware even if same or newer version is installed. Value can be 'true' or 'false'.
+	* `firmwareScheduleDateTime` -  Identifies the date and time the Service Pack for Proliant (SPP) will be activated.
+	* `reapply_state` - Current reapply state of the firmware component.
 * `management_processor` - Server management processor settings.
 	* `compliance_control` -  Defines the compliance type of template's management processor settings with the corresponding profile's Management Processor settings. Valid values are "Checked" and "Unchecked".
 	* `manage_mp` -  Indicates whether the management processor settings are configured using the server profile. Value can be 'true' or 'false'
