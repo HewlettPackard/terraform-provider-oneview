@@ -379,18 +379,22 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"firmware_activation_type": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"firmware_baseline_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"firmware_install_type": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"force_install_firmware": {
 							Type:     schema.TypeBool,
@@ -400,18 +404,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 						"manage_firmware": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Computed: true,
-						},
-						"consistency_state": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"firmware_schedule_date_time": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"reapply_state": {
-							Type:     schema.TypeString,
 							Computed: true,
 						},
 					},
@@ -1541,12 +1533,11 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 		for _, raw := range rawFirmware {
 			firmwareItem := raw.(map[string]interface{})
 			firmware = ov.FirmwareOption{
-				ForceInstallFirmware:     firmwareItem["force_install_firmware"].(bool),
-				FirmwareBaselineUri:      utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
-				ManageFirmware:           firmwareItem["manage_firmware"].(bool),
-				FirmwareInstallType:      firmwareItem["firmware_install_type"].(string),
-				FirmwareActivationType:   firmwareItem["firmware_activation_type"].(string),
-				FirmwareScheduleDateTime: firmwareItem["firmware_schedule_date_time"].(string),
+				ForceInstallFirmware:   firmwareItem["force_install_firmware"].(bool),
+				FirmwareBaselineUri:    utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+				ManageFirmware:         firmwareItem["manage_firmware"].(bool),
+				FirmwareInstallType:    firmwareItem["firmware_install_type"].(string),
+				FirmwareActivationType: firmwareItem["firmware_activation_type"].(string),
 			}
 		}
 		serverProfileTemplate.Firmware = firmware
@@ -1921,6 +1912,19 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		})
 
 		d.Set("bios_option", biosOptions)
+	}
+
+	emptyFirmware := ov.FirmwareOption{}
+	if spt.Firmware != emptyFirmware {
+		firmware := make([]map[string]interface{}, 0, 1)
+		firmware = append(firmware, map[string]interface{}{
+			"compliance_control":       spt.Firmware.ComplianceControl,
+			"firmware_baseline_uri":    spt.Firmware.FirmwareBaselineUri,
+			"manage_firmware":          spt.Firmware.ManageFirmware,
+			"firmware_install_type":    spt.Firmware.FirmwareInstallType,
+			"firmware_activation_type": spt.Firmware.FirmwareActivationType,
+		})
+		d.Set("firmware", firmware)
 	}
 
 	emptyManagementProcessor := ov.IntManagementProcessor{}
@@ -2839,12 +2843,11 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 		for _, raw := range rawFirmware {
 			firmwareItem := raw.(map[string]interface{})
 			firmware = ov.FirmwareOption{
-				ForceInstallFirmware:     firmwareItem["force_install_firmware"].(bool),
-				FirmwareBaselineUri:      utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
-				ManageFirmware:           firmwareItem["manage_firmware"].(bool),
-				FirmwareInstallType:      firmwareItem["firmware_install_type"].(string),
-				FirmwareActivationType:   firmwareItem["firmware_activation_type"].(string),
-				FirmwareScheduleDateTime: firmwareItem["firmware_schedule_date_time"].(string),
+				ForceInstallFirmware:   firmwareItem["force_install_firmware"].(bool),
+				FirmwareBaselineUri:    utils.NewNstring(firmwareItem["firmware_baseline_uri"].(string)),
+				ManageFirmware:         firmwareItem["manage_firmware"].(bool),
+				FirmwareInstallType:    firmwareItem["firmware_install_type"].(string),
+				FirmwareActivationType: firmwareItem["firmware_activation_type"].(string),
 			}
 		}
 		serverProfileTemplate.Firmware = firmware

@@ -425,6 +425,7 @@ func resourceServerProfile() *schema.Resource {
 						"firmware_baseline_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"consistency_state": {
 							Type:     schema.TypeString,
@@ -433,10 +434,12 @@ func resourceServerProfile() *schema.Resource {
 						"firmware_activation_type": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"firmware_schedule_date_time": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"reapply_state": {
 							Type:     schema.TypeString,
@@ -450,6 +453,7 @@ func resourceServerProfile() *schema.Resource {
 						"firmware_install_type": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -2160,6 +2164,32 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("task_uri", serverProfile.TaskURI.String())
 	d.Set("template_compliance", serverProfile.TemplateCompliance)
 	d.Set("uuid", serverProfile.UUID.String())
+
+	emptyFirmware := ov.FirmwareOption{}
+	if serverProfile.Firmware != emptyFirmware {
+		firmware := make([]map[string]interface{}, 0, 1)
+		firmwareAttr := map[string]interface{}{}
+		firmwareAttr["consistency_state"] = serverProfile.Firmware.ConsistencyState
+		firmwareAttr["reapply_state"] = serverProfile.Firmware.ReapplyState
+		firmwareAttr["firmware_baseline_uri"] = serverProfile.Firmware.FirmwareBaselineUri
+		firmwareAttr["manage_firmware"] = serverProfile.Firmware.ManageFirmware
+		firmwareAttr["firmware_install_type"] = serverProfile.Firmware.FirmwareInstallType
+		firmwareAttr["firmware_activation_type"] = serverProfile.Firmware.FirmwareActivationType
+		firmwareAttr["firmware_schedule_date_time"] = serverProfile.Firmware.FirmwareScheduleDateTime
+
+		//flattening firmware to update force_install_firmware
+		if fw, ok := d.GetOk("firmware"); ok {
+			fwAttributes := fw.([]interface{})
+			for _, rawFwSet := range fwAttributes {
+				fwSet := rawFwSet.(map[string]interface{})
+				firmwareAttr["force_install_firmware"] = fwSet["force_install_firmware"]
+			}
+		} else {
+			firmwareAttr["force_install_firmware"] = serverProfile.Firmware.ForceInstallFirmware
+		}
+		firmware = append(firmware, firmwareAttr)
+		d.Set("firmware", firmware)
+	}
 
 	emptyManagementProcessor := ov.IntManagementProcessor{}
 	if !reflect.DeepEqual(serverProfile.ManagementProcessor, emptyManagementProcessor) {
