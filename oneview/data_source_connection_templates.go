@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -58,7 +60,8 @@ func dataSourceConnectionTemplates() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
@@ -66,6 +69,7 @@ func dataSourceConnectionTemplates() *schema.Resource {
 			},
 			"uri": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"status": {
@@ -82,8 +86,18 @@ func dataSourceConnectionTemplates() *schema.Resource {
 
 func dataSourceConnectionTemplatesRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	name := d.Get("name").(string)
-	cTemplate, err := config.ovClient.GetConnectionTemplateByName(name)
+
+	var (
+		cTemplate ov.ConnectionTemplate
+		err       error
+	)
+
+	// reads connection template via uri or name
+	if name, ok := d.Get("name").(string); ok {
+		cTemplate, err = config.ovClient.GetConnectionTemplateByName(name)
+	} else if uri, ok := d.Get("uri").(string); ok {
+		cTemplate, err = config.ovClient.GetConnectionTemplateByURI(utils.Nstring(uri))
+	}
 	if err != nil || cTemplate.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -106,6 +120,6 @@ func dataSourceConnectionTemplatesRead(d *schema.ResourceData, meta interface{})
 	})
 
 	d.Set("bandwidth", bandwidth)
-	d.SetId(name)
+	d.SetId(d.Get("uri").(string))
 	return nil
 }

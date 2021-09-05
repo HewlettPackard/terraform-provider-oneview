@@ -8,10 +8,20 @@ provider "oneview" {
 }
 
 # Testing data source
+# Gets connection template data from name
 data "oneview_connection_templates" "connectionTemplates" {
   name = "defaultConnectionTemplate"
 }
 
 output "oneview_connection_template_value" {
   value = data.oneview_connection_templates.connectionTemplates
+}
+
+# Gets connection template data from uri
+data "oneview_connection_templates" "connectionTemplatesURI" {
+  uri = data.oneview_connection_templates.connectionTemplates.uri
+}
+
+output "oneview_connection_template_valueURI" {
+  value = data.oneview_connection_templates.connectionTemplatesURI.name
 }
