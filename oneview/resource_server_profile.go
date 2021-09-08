@@ -94,7 +94,7 @@ func resourceServerProfile() *schema.Resource {
 							Required: true,
 						},
 						"consistency_state": {
-							Type:     schema.TypeBool,
+							Type:     schema.TypeString,
 							Computed: true,
 						},
 						"reapply_state": {
@@ -2592,8 +2592,9 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if serverProfile.Bios != nil {
+		// Gets Bios Option
 		biosOptions := make([]map[string]interface{}, 0, 1)
-		overriddenSettings := make([]interface{}, 0)
+		overriddenSettings := make([]map[string]interface{}, 0)
 		if len(serverProfile.Bios.OverriddenSettings) > 0 {
 			for _, overriddenSetting := range serverProfile.Bios.OverriddenSettings {
 				overriddenSettings = append(overriddenSettings, map[string]interface{}{
@@ -2603,12 +2604,11 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 		biosOptions = append(biosOptions, map[string]interface{}{
-			"manage_bios":         serverProfile.Bios.ManageBios,
+			"manage_bios":         *serverProfile.Bios.ManageBios,
 			"consistency_state":   serverProfile.Bios.ConsistencyState,
 			"reapply_state":       serverProfile.Bios.ReapplyState,
 			"overridden_settings": overriddenSettings,
 		})
-
 		d.Set("bios_option", biosOptions)
 	}
 
