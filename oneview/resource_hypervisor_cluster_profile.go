@@ -486,7 +486,6 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 			},
 			"state": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 
@@ -497,7 +496,6 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 
 			"status": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 

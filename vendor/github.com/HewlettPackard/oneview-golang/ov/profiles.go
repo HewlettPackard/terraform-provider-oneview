@@ -498,7 +498,7 @@ func (c *OVClient) CreateProfileFromTemplate(name string, template ServerProfile
 	new_template.ConnectionSettings = ConnectionSettings{
 		Connections: template.ConnectionSettings.Connections,
 	}
-	cleanup(&new_template)
+	c.Cleanup(&new_template)
 	log.Debugf("new_template -> %+v", new_template)
 	new_template.ServerHardwareURI = blade.URI
 	new_template.Name = name
@@ -508,8 +508,11 @@ func (c *OVClient) CreateProfileFromTemplate(name string, template ServerProfile
 	return err
 }
 
-func cleanup(template *ServerProfile) {
-	template.Bios.ComplianceControl = ""
+func (c *OVClient) Cleanup(template *ServerProfile) {
+	// Bios is a pointer value to struct, handling for creating SP without BIOS settings.
+	if template.Bios != nil {
+		template.Bios.ComplianceControl = ""
+	}
 	template.Boot.ComplianceControl = ""
 	template.BootMode.ComplianceControl = ""
 	template.ConnectionSettings.ComplianceControl = ""
