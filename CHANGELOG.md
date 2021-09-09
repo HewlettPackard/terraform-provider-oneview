@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#369](https://github.com/HewlettPackard/terraform-provider-oneview/issues/369) Server Profile Template and Server Profile description are not set
 - [#370](https://github.com/HewlettPackard/terraform-provider-oneview/issues/370) Create Server Profile from Template
 - [#371](https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed 
+- [#387](https://github.com/HewlettPackard/terraform-provider-oneview/issues/387) Unable to import server hardware 
 
 ### Notes
 - This release supports API3000 minimally where we can use OneView v6.20 with this SDK.

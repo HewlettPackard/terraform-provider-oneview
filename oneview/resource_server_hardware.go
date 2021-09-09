@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"errors"
+	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -77,9 +78,10 @@ func resourceServerHardware() *schema.Resource {
 				Computed: true,
 			},
 			"password": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
+				Type:      schema.TypeString,
+				Sensitive: true,
+				Computed:  true,
+				Optional:  true,
 			},
 			"power_state": {
 				Type:     schema.TypeString,
@@ -201,27 +203,35 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
+	var (
+		servHard ov.ServerHardware
+		err      error
+	)
 	config := meta.(*Config)
 	var (
 		servHard ov.ServerHardware
 		err      error
 	)
 
+  // fetching server hardware hostname incase it's added
 	if val, ok := d.GetOk("hostname"); ok {
 		servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
 	} else {
 		// for refreshing imported server hardware we would need it's name
-		/*if val, ok := d.GetOk("name"); ok {
+		if val, ok := d.GetOk("name"); ok {
 			servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
-		} else {*/
-		// for importing server hardware
-		servHard, err = config.ovClient.GetServerHardwareByName(d.Get("name").(string))
+		} else {
+			// for importing server hardware
+			servHard, err = config.ovClient.GetServerHardwareByName(d.Id())
+		}
 	}
 
 	if err != nil || servHard.URI.IsNil() {
 		d.SetId("")
-		return nil
+		return fmt.Errorf("unable to retrieve server hardware %s", err)
 	}
+
+	// setting UUID as resource Id
 	d.SetId(servHard.UUID.String())
 	d.Set("configuration_state", d.Get("configuration_state").(string))
 	d.Set("hostname", d.Get("hostname").(string))
