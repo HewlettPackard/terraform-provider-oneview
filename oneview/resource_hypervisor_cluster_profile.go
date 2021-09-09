@@ -503,7 +503,6 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 
 			"type": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 
