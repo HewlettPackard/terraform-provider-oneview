@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 2800
+  ov_apiversion = 3200
   ov_ifmatch    = "*"
 }
 
@@ -29,7 +29,7 @@ data "oneview_server_profile_template" "spt" {
 
 # Crate Hypervisor Cluster Profile
 resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile" {
-  type                   = "HypervisorClusterProfileV5"
+  type                   = "HypervisorClusterProfileV6"
   name                   = "Cluster"
   description            = "cluster profile description"
   hypervisor_type        = "Vmware"
@@ -44,6 +44,7 @@ resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile" {
   hypervisor_host_profile_template {
     server_profile_template_uri = data.oneview_server_profile_template.spt.uri
     host_prefix                 = "Cluster"
+    data_store_name_sync 	= true
     deployment_plan {
       deployment_plan_uri = "/rest/os-deployment-plans/7d680ff7-0302-470d-8c6e-68c70092efeb"
       server_password     = var.deployment_plan_password

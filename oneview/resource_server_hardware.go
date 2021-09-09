@@ -68,6 +68,7 @@ func resourceServerHardware() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"one_time_boot": {
@@ -201,13 +202,27 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 
 func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+	var (
+		servHard ov.ServerHardware
+		err      error
+	)
 
-	servHard, err := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))
+	if val, ok := d.GetOk("hostname"); ok {
+		servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
+	} else {
+		// for refreshing imported server hardware we would need it's name
+		/*if val, ok := d.GetOk("name"); ok {
+			servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
+		} else {*/
+		// for importing server hardware
+		servHard, err = config.ovClient.GetServerHardwareByName(d.Get("name").(string))
+	}
+
 	if err != nil || servHard.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
-	d.SetId(d.Id())
+	d.SetId(servHard.UUID.String())
 	d.Set("configuration_state", d.Get("configuration_state").(string))
 	d.Set("hostname", d.Get("hostname").(string))
 	d.Set("force", servHard.Force)

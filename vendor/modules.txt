@@ -6,7 +6,7 @@ cloud.google.com/go/internal/optional
 cloud.google.com/go/internal/trace
 cloud.google.com/go/internal/version
 cloud.google.com/go/storage
-# github.com/HewlettPackard/oneview-golang v6.2.1-0.20210901114836-8fdd3ecfe3f0+incompatible
+# github.com/HewlettPackard/oneview-golang v6.2.1-0.20210909055005-868e6a9fc91e+incompatible
 ## explicit
 github.com/HewlettPackard/oneview-golang/i3s
 github.com/HewlettPackard/oneview-golang/liboneview

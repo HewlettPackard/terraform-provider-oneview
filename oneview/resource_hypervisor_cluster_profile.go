@@ -89,7 +89,6 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-
 						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -105,20 +104,29 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 			"hypervisor_host_profile_template": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"data_store_name_sync": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Computed: true,
+						},
 						"deployment_manager_type": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"deployment_plan": {
 							Type:     schema.TypeList,
 							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"deployment_custom_args": {
 										Type:     schema.TypeList,
 										Optional: true,
+										Computed: true,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -126,46 +134,57 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 									"deployment_plan_description": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"deployment_plan_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"name": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"server_password": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Sensitive: true,
+										Computed: true,
 									},
 								}}},
 
 						"host_prefix": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 						"server_profile_template_uri": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Computed: true,
 						},
 					}}},
 			"host_config_policy": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"leave_host_in_maintenance": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 						"use_host_prefix_as_hostname": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 						"use_hostname_to_register": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 					}}},
 			"virtual_switch_config_policy": {
@@ -177,19 +196,23 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 						"configure_port_groups": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 						"custom_virtual_switches": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 						"manage_virtual_switches": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Computed: true,
 						},
 					}}},
 			"hypervisor_cluster_uri": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"virtual_switches": {
 				Type:     schema.TypeSet,
@@ -343,16 +366,19 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 
 			"path": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 
 			"refresh_state": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 
 			"scopes_uri": {
@@ -366,6 +392,12 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"action": {
 							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"data_store_name": {
+							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"hypervisor_cluster_volume": {
@@ -375,6 +407,7 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"action": {
 										Type:     schema.TypeString,
+										Optional: true,
 										Computed: true,
 									},
 									"in_use": {
@@ -383,10 +416,12 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 									},
 									"name": {
 										Type:     schema.TypeString,
+										Optional: true,
 										Computed: true,
 									},
 									"volume_id": {
 										Type:     schema.TypeString,
+										Optional: true,
 										Computed: true,
 									},
 								},
@@ -394,42 +429,52 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 						},
 						"lun_id": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"lun_type": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"name": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"permanent": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"protocol_type": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"provision_type": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"requested_capacity": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"storage_pool_uri": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"storage_volume_uri": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"volume_file_system_type": {
 							Type:     schema.TypeString,
+							Optional: true,
 							Computed: true,
 						},
 						"volume_source": {
@@ -442,6 +487,7 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 			"state": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 
 			"state_reason": {
@@ -452,11 +498,13 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 			"status": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 
 			"type": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 
 			"uri": {
@@ -528,6 +576,7 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 		}
 		hypCPSharedStorageVolumes := ov.SharedStorageVolumes{
 			Action:                  sharedStorageVolumes["action"].(string),
+			DataStoreName:           sharedStorageVolumes["data_store_name"].(string),
 			HypervisorClusterVolume: hypClusterVolumes,
 			LunId:                   sharedStorageVolumes["lun_id"].(string),
 			LunType:                 sharedStorageVolumes["lun_type"].(string),
@@ -736,8 +785,10 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 			}
 		}
 		/******************* deployment plan end********************/
-
+		rawDataStore := rawHostProfileTemplateItem["data_store_name_sync"].(bool)
 		hypervisorProfileTemplate = ov.HypervisorHostProfileTemplate{
+
+			DataStoreNameSync: 	   &rawDataStore,
 			DeploymentManagerType:     rawHostProfileTemplateItem["deployment_manager_type"].(string),
 			DeploymentPlan:            &deploymentPlan,
 			Hostprefix:                rawHostProfileTemplateItem["host_prefix"].(string),
@@ -827,6 +878,7 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 
 	hypCPHHPTList := make([]map[string]interface{}, 0, 1)
 	hypCPHHPTList = append(hypCPHHPTList, map[string]interface{}{
+		"data_store_name_sync":        hypCP.HypervisorHostProfileTemplate.DataStoreNameSync,
 		"deployment_manager_type":     hypCP.HypervisorHostProfileTemplate.DeploymentManagerType,
 		"deployment_plan":             dplist,
 		"host_prefix":                 hypCP.HypervisorHostProfileTemplate.Hostprefix,
@@ -933,6 +985,7 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 		})
 		sharedStorageVolumes = append(sharedStorageVolumes, map[string]interface{}{
 			"action":                    sharedStorageVolume.Action,
+			"data_store_name":           sharedStorageVolume.DataStoreName,
 			"hypervisor_Cluster_volume": hypervisorClusterVolumelist,
 			"lun_id":                    sharedStorageVolume.LunId,
 			"lun_type":                  sharedStorageVolume.LunType,
@@ -1167,8 +1220,9 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 			}
 		}
 		/******************* deployment plan end********************/
-
+		rawDataStore := rawHostProfileTemplateItem["data_store_name_sync"].(bool)
 		hypervisorProfileTemplate = ov.HypervisorHostProfileTemplate{
+			DataStoreNameSync:	   &rawDataStore,
 			DeploymentManagerType:     rawHostProfileTemplateItem["deployment_manager_type"].(string),
 			DeploymentPlan:            &deploymentPlan,
 			Hostprefix:                rawHostProfileTemplateItem["host_prefix"].(string),
