@@ -208,10 +208,6 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 		err      error
 	)
 	config := meta.(*Config)
-	var (
-		servHard ov.ServerHardware
-		err      error
-	)
 
 	// fetching server hardware hostname incase it's added
 	if val, ok := d.GetOk("hostname"); ok {

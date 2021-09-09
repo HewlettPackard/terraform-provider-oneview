@@ -25,8 +25,6 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#371](https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed 
 - [#387](https://github.com/HewlettPackard/terraform-provider-oneview/issues/387) Unable to import server hardware 
 
-### Notes
-- This release supports API3000 minimally where we can use OneView v6.20 with this SDK.
 
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
