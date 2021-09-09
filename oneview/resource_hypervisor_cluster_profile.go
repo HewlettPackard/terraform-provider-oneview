@@ -147,10 +147,10 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 										Computed: true,
 									},
 									"server_password": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Type:      schema.TypeString,
+										Optional:  true,
 										Sensitive: true,
-										Computed: true,
+										Computed:  true,
 									},
 								}}},
 
@@ -788,7 +788,7 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 		rawDataStore := rawHostProfileTemplateItem["data_store_name_sync"].(bool)
 		hypervisorProfileTemplate = ov.HypervisorHostProfileTemplate{
 
-			DataStoreNameSync: 	   &rawDataStore,
+			DataStoreNameSync:         &rawDataStore,
 			DeploymentManagerType:     rawHostProfileTemplateItem["deployment_manager_type"].(string),
 			DeploymentPlan:            &deploymentPlan,
 			Hostprefix:                rawHostProfileTemplateItem["host_prefix"].(string),
@@ -1222,7 +1222,7 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 		/******************* deployment plan end********************/
 		rawDataStore := rawHostProfileTemplateItem["data_store_name_sync"].(bool)
 		hypervisorProfileTemplate = ov.HypervisorHostProfileTemplate{
-			DataStoreNameSync:	   &rawDataStore,
+			DataStoreNameSync:         &rawDataStore,
 			DeploymentManagerType:     rawHostProfileTemplateItem["deployment_manager_type"].(string),
 			DeploymentPlan:            &deploymentPlan,
 			Hostprefix:                rawHostProfileTemplateItem["host_prefix"].(string),

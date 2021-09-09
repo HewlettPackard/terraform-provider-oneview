@@ -213,7 +213,7 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 		err      error
 	)
 
-  // fetching server hardware hostname incase it's added
+	// fetching server hardware hostname incase it's added
 	if val, ok := d.GetOk("hostname"); ok {
 		servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
 	} else {
