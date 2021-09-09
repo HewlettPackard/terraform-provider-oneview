@@ -3,10 +3,11 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
-	"strconv"
 )
 
 type HypervisorClusterProfile struct {
@@ -38,26 +39,27 @@ type HypervisorClusterProfile struct {
 }
 
 type SharedStorageVolumes struct {
-	Action                  string                  `json:"action, omitempty"`                  //"action":"",
-	HypervisorClusterVolume HypervisorClusterVolume `json:"hypervisorClusterVolume, omitempty"` //"hypervisorClusterVolume":{},
-	LunId                   string                  `json:"lunId, omitempty"`                   //"lunId":"",
-	LunType                 string                  `json:"lunType, omitempty"`                 //"lunType":"",
-	Name                    string                  `json:"name, omitempty"`                    //"name":"",
-	Permanent               bool                    `json:"permanent, omitempty"`               //"permanent":"",
-	ProtocolType            string                  `json:"protocolType, omitempty"`            //"protocolType":"",
-	ProvisionType           string                  `json:"provisionType, omitempty"`           //"provisionType":"",
-	RequestedCapacity       string                  `json:"requestedCapacity, omitempty"`       //"requestedCapacity":"",
-	StoragePoolUri          utils.Nstring           `json:"storagePoolUri, omitempty"`          //"storagePoolUri":"",
-	StorageVolumeUri        utils.Nstring           `json:"storageVolumeUri, omitempty"`        //"storageVolumeUri":"",
-	VolumeFileSystemType    string                  `json:"volumeFileSystemType, omitempty"`    //"volumeFileSystemType":"",
-	VolumeSource            string                  `json:"volumeSource, omitempty"`            //"volumeSource":"",
+	Action                  string                  `json:"action,omitempty"`                  //"action":"",
+	DataStoreName           string                  `json:"dataStoreName,omitempty"`           //"dataStoreName":""
+	HypervisorClusterVolume HypervisorClusterVolume `json:"hypervisorClusterVolume,omitempty"` //"hypervisorClusterVolume":{},
+	LunId                   string                  `json:"lunId,omitempty"`                   //"lunId":"",
+	LunType                 string                  `json:"lunType,omitempty"`                 //"lunType":"",
+	Name                    string                  `json:"name,omitempty"`                    //"name":"",
+	Permanent               bool                    `json:"permanent,omitempty"`               //"permanent":"",
+	ProtocolType            string                  `json:"protocolType,omitempty"`            //"protocolType":"",
+	ProvisionType           string                  `json:"provisionType,omitempty"`           //"provisionType":"",
+	RequestedCapacity       string                  `json:"requestedCapacity,omitempty"`       //"requestedCapacity":"",
+	StoragePoolUri          utils.Nstring           `json:"storagePoolUri,omitempty"`          //"storagePoolUri":"",
+	StorageVolumeUri        utils.Nstring           `json:"storageVolumeUri,omitempty"`        //"storageVolumeUri":"",
+	VolumeFileSystemType    string                  `json:"volumeFileSystemType,omitempty"`    //"volumeFileSystemType":"",
+	VolumeSource            string                  `json:"volumeSource,omitempty"`            //"volumeSource":"",
 }
 
 type HypervisorClusterVolume struct {
-	Action   string `json:"action, omitempty"`   //"action":"",
-	InUse    bool   `json:"inUse, omitempty"`    //"inUse":"",
-	Name     string `json:"name, omitempty"`     //"name":"",
-	VolumeId string `json:"volumeId, omitempty"` //"volumeId":"",
+	Action   string `json:"action,omitempty"`   //"action":"",
+	InUse    bool   `json:"inUse,omitempty"`    //"inUse":"",
+	Name     string `json:"name,omitempty"`     //"name":"",
+	VolumeId string `json:"volumeId,omitempty"` //"volumeId":"",
 }
 
 type HypervisorClusterSettings struct {
@@ -71,6 +73,7 @@ type HypervisorClusterSettings struct {
 }
 
 type HypervisorHostProfileTemplate struct {
+	DataStoreNameSync         *bool                      `json:"dataStoreNameSync,omitempty"`         //"dataStoreNameSync"
 	DeploymentManagerType     string                     `json:"deploymentManagerType,omitempty"`     //"deploymentManagerType":"I3S"
 	DeploymentPlan            *DeploymentPlan            `json:"deploymentPlan,omitempty"`            //"deploymentPlan":""
 	HostConfigPolicy          *HostConfigPolicy          `json:"hostConfigPolicy,omitempty"`          //"hostConfigPolicy":""
@@ -140,8 +143,8 @@ type HypervisorClusterProfileList struct {
 }
 
 type HypervisorClusterProfileCompliancePreview struct {
-	ClusterComplianceDetails               *ClusterComplianceDetails                `json:clusterComplianceDetails,omitempty"`                //"ClusterComplianceDetails":" "
-	HypervisorHostProfileComplianceDetails []HypervisorHostProfileComplianceDetails `"json:hypervisorHostProfileComplianceDetails,omitempty"` //"hypervisorHostProfileComplianceDetails":""
+	ClusterComplianceDetails               *ClusterComplianceDetails                `json:"clusterComplianceDetails,omitempty"`               //"ClusterComplianceDetails":" "
+	HypervisorHostProfileComplianceDetails []HypervisorHostProfileComplianceDetails `json:"hypervisorHostProfileComplianceDetails,omitempty"` //"hypervisorHostProfileComplianceDetails":""
 }
 
 type ClusterComplianceDetails struct {

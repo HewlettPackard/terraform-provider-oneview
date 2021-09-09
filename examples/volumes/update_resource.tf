@@ -32,7 +32,6 @@ resource "oneview_volume" "volume" {
   }
   template_name        = "RenameDemoStorageTemplate"
   template_uri         = data.oneview_storage_volume_template.st_vt.uri
-  is_permanent         = true
   name                 = "testvol"
   description          = "Test Volume"
   initial_scope_uris   = [data.oneview_scope.scope_obj.uri]

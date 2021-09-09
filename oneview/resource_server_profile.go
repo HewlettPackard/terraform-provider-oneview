@@ -2048,7 +2048,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.OSDeploymentSettings = osDeploySetting
 	}
 	//Cleaning up SP  by removing spt related fields
-	cleanupSp(&serverProfile)
+	config.ovClient.Cleanup(&serverProfile)
 
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
@@ -2062,24 +2062,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 	return resourceServerProfileRead(d, meta)
-}
-
-func cleanupSp(sp *ov.ServerProfile) {
-
-	// Bios is a pointer value to struct, handling for creating SP without BIOS settings.
-	if sp.Bios != nil {
-		sp.Bios.ComplianceControl = ""
-	}
-	sp.Boot.ComplianceControl = ""
-	sp.BootMode.ComplianceControl = ""
-	sp.ConnectionSettings.ComplianceControl = ""
-	sp.Firmware.ComplianceControl = ""
-	sp.LocalStorage.ComplianceControl = ""
-	sp.ManagementProcessor.ComplianceControl = ""
-	sp.OSDeploymentSettings.ComplianceControl = ""
-	sp.SanStorage.ComplianceControl = ""
-	sp.ServerProfileDescription = ""
-
 }
 
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {

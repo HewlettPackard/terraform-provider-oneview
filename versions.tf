@@ -3,7 +3,7 @@ terraform {
   required_providers {
     oneview = {
       source  = "hewlettpackard/oneview"
-      version = "6.2.0-13"
+      version = "6.3.0-13"
     }
   }
 }

@@ -25,6 +25,43 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#371](https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed 
 - [#387](https://github.com/HewlettPackard/terraform-provider-oneview/issues/387) Unable to import server hardware 
 
+
+### Oneview Features supported
+- Appliance SNMPv1 Trap Destinations
+- Appliance SNMPv3 Trap Destinations
+- Appliance SSH Access
+- Appliance Time and Locale Configuration
+- Connection Template
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Firmware Drivers
+- Hypervisor Manager
+- Hypervisor Cluster Profile
+- Id Pools Ipv4 Range
+- Id Pools IPv4 Subnets
+- Labels
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups
+- Network Set
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
+
 # [v6.2.0-13]
 
 ### Notes

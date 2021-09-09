@@ -3,6 +3,7 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -42,22 +43,22 @@ type VlanAttributes struct {
 }
 
 type UplinkSet struct {
+	Category                       string               `json:"category,omitempty"`                       //"category":"uplink-sets",
+	ConnectionMode                 string               `json:"connectionMode,omitempty"`                 // "connectionMode":"Auto",
+	Created                        string               `json:"created,omitempty"`                        //"created":"20150831T154835.250Z",
+	Description                    utils.Nstring        `json:"description,omitempty"`                    // "description": "Uplink-set 1",
+	Etag                           string               `json:"eTag,omitempty"`                           // "eTag": "1441036118675/8",
 	Name                           string               `json:"name,omitempty"`                           // "name": "Uplink77",
 	LogicalInterconnectURI         utils.Nstring        `json:"logicalInterconnectUri,omitempty"`         // "logicalInterconnectUri": "/rest/logical-interconnects/7769cae0-b680-435b-9b87-9b864c81657f",
 	NetworkURIs                    []utils.Nstring      `json:"networkUris,omitempty"`                    // "networkUris": "/rest/ethernet-networks/e2f0031b-52bd-4223-9ac1-d91cb519d548",
 	FcNetworkURIs                  []utils.Nstring      `json:"fcNetworkUris"`                            // "fcNetworkUris": "[]",
 	FcoeNetworkURIs                []utils.Nstring      `json:"fcoeNetworkUris"`                          // "fcoeNetworkUris": "[]",
 	PortConfigInfos                []PortConfigInfos    `json:"portConfigInfos"`                          // "portConfigInfos": "[]",
-	ConnectionMode                 string               `json:"connectionMode,omitempty"`                 // "connectionMode":"Auto",
 	NetworkType                    string               `json:"networkType,omitempty"`                    // "networkType":"Ethernet",
 	EthernetNetworkType            string               `json:"ethernetNetworkType,omitempty"`            // "ethernetNetworkType":"Tagged",
 	ManualLoginRedistributionState string               `json:"manualLoginRedistributionState,omitempty"` //"manualLoginRedistributionState":"NotSupported"
 	URI                            utils.Nstring        `json:"uri,omitempty"`                            // "uri": "/rest/uplink-sets/"e2f0031b-52bd-4223-9ac1-d91cb519d548",
 	Type                           string               `json:"type,omitempty"`                           // "type": "uplink-setV5",
-	Category                       string               `json:"category,omitempty"`                       //"category":"uplink-sets",
-	Created                        string               `json:"created,omitempty"`                        //"created":"20150831T154835.250Z",
-	Description                    utils.Nstring        `json:"description,omitempty"`                    // "description": "Uplink-set 1",
-	Etag                           string               `json:"eTag,omitempty"`                           // "eTag": "1441036118675/8",
 	Modified                       string               `json:"modified,omitempty"`                       // "modified": "20150831T154835.250Z",
 	LacpTimer                      string               `json:"lacpTimer,omitempty"`                      // "lacpTimer": "Long",
 	FcMode                         string               `json:"fcMode,omitempty"`                         // "fcMode": "TRUNK",

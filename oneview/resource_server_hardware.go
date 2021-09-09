@@ -69,6 +69,7 @@ func resourceServerHardware() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"one_time_boot": {
@@ -225,9 +226,9 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 		d.SetId("")
 		return fmt.Errorf("unable to retrieve server hardware %s", err)
 	}
+
 	// setting UUID as resource Id
 	d.SetId(servHard.UUID.String())
-
 	d.Set("configuration_state", d.Get("configuration_state").(string))
 	d.Set("hostname", d.Get("hostname").(string))
 	d.Set("force", servHard.Force)
