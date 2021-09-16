@@ -221,7 +221,7 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	// reads bandwidth from connection template
 	conTemp, err := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
 	if err != nil {
-		return fmt.Errorf("unable to fetch connection template details, ", err)
+		return fmt.Errorf("unable to fetch connection template details, %s", err)
 	}
 	bandwidth := make([]interface{}, 0)
 	bw := map[string]interface{}{}
@@ -263,7 +263,7 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 			// get connection template by uri
 			conTemp, err := config.ovClient.GetConnectionTemplateByURI(conTempURI)
 			if err != nil {
-				return fmt.Errorf("unable to retrieve connection template: ", err)
+				return fmt.Errorf("unable to retrieve connection template: %s", err)
 			}
 			// filter URI
 			id := strings.Split(conTempURI.String(), "/")[3]
@@ -275,7 +275,7 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 			conTemp.Bandwidth = BandwidthOptions
 			conTemp, err = config.ovClient.UpdateConnectionTemplate(id, conTemp)
 			if err != nil {
-				return fmt.Errorf("unable to update bandwidth: ", err)
+				return fmt.Errorf("unable to update bandwidth: %s", err)
 			}
 		}
 
