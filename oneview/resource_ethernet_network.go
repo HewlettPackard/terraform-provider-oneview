@@ -170,12 +170,12 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 			// get ethernet network by name
 			eNet, er := config.ovClient.GetEthernetNetworkByName(d.Get("name").(string))
 			if er != nil {
-				log.Print("unable to get ethernet network for connection_template_uri: %s", er)
+				log.Printf("unable to get ethernet network for connection_template_uri: %s", er)
 			}
 			// get connection template by uri
 			conTemp, er := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
 			if er != nil {
-				log.Print("unable to get connection template by uri: %s", er)
+				log.Printf("unable to get connection template by uri: %s", er)
 			}
 			if eNet.ConnectionTemplateUri.String() != "" {
 				// filter URI
@@ -188,7 +188,7 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 				conTemp.Bandwidth = BandwidthOptions
 				_, er = config.ovClient.UpdateConnectionTemplate(id, conTemp)
 				if er != nil {
-					log.Print("unable to update the connection template: %s", er)
+					log.Printf("unable to update the connection template: %s", er)
 				}
 			}
 		}
@@ -232,7 +232,7 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	// reads bandwidth from connection template
 	conTemp, err := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
 	if err != nil {
-		log.Print("unable to fetch connection template: %s", err)
+		log.Printf("unable to fetch connection template: %s", err)
 	} else {
 		bandwidth := make([]interface{}, 0)
 		bw := map[string]interface{}{}
