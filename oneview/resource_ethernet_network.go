@@ -162,6 +162,11 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	eNetError := config.ovClient.CreateEthernetNetwork(eNet)
+	if eNetError != nil {
+		d.SetId("")
+		return eNetError
+	}
+
 	// updates connection_template
 	if rawVal, ok := d.GetOk("bandwidth"); ok {
 		bandwidthVal := rawVal.([]interface{})
@@ -195,10 +200,6 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 
 	}
 	d.SetId(d.Get("name").(string))
-	if eNetError != nil {
-		d.SetId("")
-		return eNetError
-	}
 	return resourceEthernetNetworkRead(d, meta)
 }
 
