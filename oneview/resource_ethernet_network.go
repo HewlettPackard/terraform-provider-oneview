@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -141,7 +142,6 @@ func resourceEthernetNetwork() *schema.Resource {
 
 func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-
 	eNet := ov.EthernetNetwork{
 		Name:                d.Get("name").(string),
 		VlanId:              d.Get("vlan_id").(int),
@@ -168,18 +168,29 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 		for _, bandwidth := range bandwidthVal {
 			rawBandwidth := bandwidth.(map[string]interface{})
 			// get ethernet network by name
-			eNet, _ := config.ovClient.GetEthernetNetworkByName(d.Get("name").(string))
-			// get connection template by uri
-			conTemp, _ := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
-			// filter URI
-			id := strings.Split(eNet.ConnectionTemplateUri.String(), "/")[3]
-			// update the con_temp with required bandwidth
-			BandwidthOptions := ov.BandwidthType{
-				MaximumBandwidth: rawBandwidth["maximum_bandwidth"].(int),
-				TypicalBandwidth: rawBandwidth["typical_bandwidth"].(int),
+			eNet, er := config.ovClient.GetEthernetNetworkByName(d.Get("name").(string))
+			if er != nil {
+				log.Print("unable to get ethernet network for connection_template_uri: %s", er)
 			}
-			conTemp.Bandwidth = BandwidthOptions
-			_, _ = config.ovClient.UpdateConnectionTemplate(id, conTemp)
+			// get connection template by uri
+			conTemp, er := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
+			if er != nil {
+				log.Print("unable to get connection template by uri: %s", er)
+			}
+			if eNet.ConnectionTemplateUri.String() != "" {
+				// filter URI
+				id := strings.Split(eNet.ConnectionTemplateUri.String(), "/")[3]
+				// update the con_temp with required bandwidth
+				BandwidthOptions := ov.BandwidthType{
+					MaximumBandwidth: rawBandwidth["maximum_bandwidth"].(int),
+					TypicalBandwidth: rawBandwidth["typical_bandwidth"].(int),
+				}
+				conTemp.Bandwidth = BandwidthOptions
+				_, er = config.ovClient.UpdateConnectionTemplate(id, conTemp)
+				if er != nil {
+					log.Print("unable to update the connection template: %s", er)
+				}
+			}
 		}
 
 	}
@@ -221,14 +232,15 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	// reads bandwidth from connection template
 	conTemp, err := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
 	if err != nil {
-		return fmt.Errorf("unable to fetch connection template details, %s", err)
+		log.Print("unable to fetch connection template: %s", err)
+	} else {
+		bandwidth := make([]interface{}, 0)
+		bw := map[string]interface{}{}
+		bw["typical_bandwidth"] = conTemp.Bandwidth.TypicalBandwidth
+		bw["maximum_bandwidth"] = conTemp.Bandwidth.MaximumBandwidth
+		bandwidth = append(bandwidth, bw)
+		d.Set("bandwidth", bandwidth)
 	}
-	bandwidth := make([]interface{}, 0)
-	bw := map[string]interface{}{}
-	bw["typical_bandwidth"] = conTemp.Bandwidth.TypicalBandwidth
-	bw["maximum_bandwidth"] = conTemp.Bandwidth.MaximumBandwidth
-	bandwidth = append(bandwidth, bw)
-	d.Set("bandwidth", bandwidth)
 	return nil
 }
 
@@ -278,7 +290,6 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 				return fmt.Errorf("unable to update bandwidth: %s", err)
 			}
 		}
-
 	}
 
 	err := config.ovClient.UpdateEthernetNetwork(newENet)

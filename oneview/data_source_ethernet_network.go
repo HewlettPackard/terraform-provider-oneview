@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 )
 
 func dataSourceEthernetNetwork() *schema.Resource {
@@ -96,6 +97,25 @@ func dataSourceEthernetNetwork() *schema.Resource {
 				},
 				Set: schema.HashString,
 			},
+			"bandwidth": {
+				Optional: true,
+				Computed: true,
+				Type:     schema.TypeList,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"maximum_bandwidth": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Computed: true,
+						},
+						"typical_bandwidth": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Computed: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -126,6 +146,20 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("etag", eNet.ETAG)
 	d.Set("scopesuri", eNet.ScopesUri.String())
 	d.Set("initial_scope_uris", eNet.InitialScopeUris)
+
+	// reads bandwidth from connection template
+	conTemp, err := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
+	if err != nil {
+		log.Print("unable to fetch connection template: %s", err)
+	} else {
+		bandwidth := make([]interface{}, 0)
+		bw := map[string]interface{}{}
+		bw["typical_bandwidth"] = conTemp.Bandwidth.TypicalBandwidth
+		bw["maximum_bandwidth"] = conTemp.Bandwidth.MaximumBandwidth
+		bandwidth = append(bandwidth, bw)
+		d.Set("bandwidth", bandwidth)
+	}
+
 	d.SetId(name)
 	return nil
 }

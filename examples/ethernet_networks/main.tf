@@ -14,7 +14,7 @@ resource "oneview_ethernet_network" "ethernetnetwork" {
   type                  = "ethernet-networkV4"
   vlan_id               = 100
   bandwidth {
-    maximum_bandwidth = 20000
+    maximum_bandwidth = 10000
     typical_bandwidth = 1500
   }
 }
