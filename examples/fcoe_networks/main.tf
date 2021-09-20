@@ -11,11 +11,14 @@ data "oneview_scope" "scope_obj" {
   name = "Auto-Scope"
 }
 
-# Create FCOE Networks
+# Creates FCOE Network Resource with required bandwidth
 resource "oneview_fcoe_network" "FCoENetwork" {
   name               = "TestFCoENetwork_Terraform"
   type               = "fcoe-networkV4"
   vlanid             = 202
   initial_scope_uris = [data.oneview_scope.scope_obj.uri]
+  bandwidth {
+    maximum_bandwidth = 10000
+    typical_bandwidth = 1500
+  }
 }
-

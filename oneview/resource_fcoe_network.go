@@ -13,6 +13,8 @@ package oneview
 
 import (
 	"fmt"
+	"log"
+	"path"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -38,7 +40,7 @@ func resourceFCoENetwork() *schema.Resource {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"connectiontemplateuri": {
+			"connection_template_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -95,6 +97,25 @@ func resourceFCoENetwork() *schema.Resource {
 				},
 				Set: schema.HashString,
 			},
+			"bandwidth": {
+				Optional: true,
+				Computed: true,
+				Type:     schema.TypeList,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"maximum_bandwidth": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Computed: true,
+						},
+						"typical_bandwidth": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Computed: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -122,6 +143,38 @@ func resourceFCoENetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		d.SetId("")
 		return fcoeNetError
 	}
+
+	// updates connection_template
+	if rawVal, ok := d.GetOk("bandwidth"); ok {
+		bandwidthVal := rawVal.([]interface{})
+		for _, bandwidth := range bandwidthVal {
+			rawBandwidth := bandwidth.(map[string]interface{})
+			// get fcoe network by name
+			fcNet, er := config.ovClient.GetFCoENetworkByName(d.Get("name").(string))
+			if er != nil {
+				log.Printf("unable to get fcoe network for connection_template_uri: %s", er)
+			}
+			// get connection template by uri
+			conTemp, er := config.ovClient.GetConnectionTemplateByURI(fcNet.ConnectionTemplateUri)
+			if er != nil {
+				log.Printf("unable to get connection template by uri: %s", er)
+			}
+			if fcNet.ConnectionTemplateUri.String() != "" {
+				// filter URI
+				id := path.Base(fcNet.ConnectionTemplateUri.String())
+				// update the con_temp with required bandwidth
+				BandwidthOptions := ov.BandwidthType{
+					MaximumBandwidth: rawBandwidth["maximum_bandwidth"].(int),
+					TypicalBandwidth: rawBandwidth["typical_bandwidth"].(int),
+				}
+				conTemp.Bandwidth = BandwidthOptions
+				_, er = config.ovClient.UpdateConnectionTemplate(id, conTemp)
+				if er != nil {
+					log.Printf("unable to update the connection template: %s", er)
+				}
+			}
+		}
+	}
 	return resourceFCoENetworkRead(d, meta)
 }
 
@@ -137,7 +190,7 @@ func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("created", fcoeNet.Created)
 	d.Set("modified", fcoeNet.Modified)
 	d.Set("uri", fcoeNet.URI.String())
-	d.Set("connectiontemplateuri", fcoeNet.ConnectionTemplateUri.String())
+	d.Set("connection_template_uri", fcoeNet.ConnectionTemplateUri.String())
 	d.Set("status", fcoeNet.Status)
 	d.Set("category", fcoeNet.Category)
 	d.Set("state", fcoeNet.State)
@@ -145,6 +198,19 @@ func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("etag", fcoeNet.ETAG)
 	d.Set("managedsanuri", fcoeNet.ManagedSanUri)
 	d.Set("scopesuri", fcoeNet.ScopesUri.String())
+
+	// reads bandwidth from connection template
+	conTemp, err := config.ovClient.GetConnectionTemplateByURI(fcoeNet.ConnectionTemplateUri)
+	if err != nil {
+		log.Printf("unable to fetch connection template: %s", err)
+	} else {
+		bandwidth := make([]interface{}, 0)
+		bw := map[string]interface{}{}
+		bw["typical_bandwidth"] = conTemp.Bandwidth.TypicalBandwidth
+		bw["maximum_bandwidth"] = conTemp.Bandwidth.MaximumBandwidth
+		bandwidth = append(bandwidth, bw)
+		d.Set("bandwidth", bandwidth)
+	}
 	return nil
 }
 
@@ -156,7 +222,7 @@ func resourceFCoENetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 		URI:                   utils.NewNstring(d.Get("uri").(string)),
 		VlanId:                d.Get("vlanid").(int),
 		Name:                  d.Get("name").(string),
-		ConnectionTemplateUri: utils.NewNstring(d.Get("connectiontemplateuri").(string)),
+		ConnectionTemplateUri: utils.NewNstring(d.Get("connection_template_uri").(string)),
 		Type:                  d.Get("type").(string),
 	}
 	if d.HasChange("vlanid") {
@@ -164,6 +230,32 @@ func resourceFCoENetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if d.HasChange("initial_scope_uris") {
 		return fmt.Errorf("Initial scope uri can not be updated")
+	}
+
+	if d.HasChange("bandwidth") {
+		rawVal := d.Get("bandwidth")
+		bandwidthVal := rawVal.([]interface{})
+		for _, bandwidth := range bandwidthVal {
+			rawBandwidth := bandwidth.(map[string]interface{})
+			conTempURI := utils.NewNstring(d.Get("connection_template_uri").(string))
+			// get connection template by uri
+			conTemp, err := config.ovClient.GetConnectionTemplateByURI(conTempURI)
+			if err != nil {
+				return fmt.Errorf("unable to retrieve connection template: %s", err)
+			}
+			// filter URI
+			id := path.Base(conTempURI.String())
+			// update the con_temp with required bandwidth
+			BandwidthOptions := ov.BandwidthType{
+				MaximumBandwidth: rawBandwidth["maximum_bandwidth"].(int),
+				TypicalBandwidth: rawBandwidth["typical_bandwidth"].(int),
+			}
+			conTemp.Bandwidth = BandwidthOptions
+			conTemp, err = config.ovClient.UpdateConnectionTemplate(id, conTemp)
+			if err != nil {
+				return fmt.Errorf("unable to update bandwidth: %s", err)
+			}
+		}
 	}
 
 	err := config.ovClient.UpdateFCoENetwork(newFCoENet)

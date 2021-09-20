@@ -13,6 +13,8 @@ package oneview
 
 import (
 	"fmt"
+	"log"
+	"path"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -101,6 +103,25 @@ func resourceFCNetwork() *schema.Resource {
 				},
 				Set: schema.HashString,
 			},
+			"bandwidth": {
+				Optional: true,
+				Computed: true,
+				Type:     schema.TypeList,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"maximum_bandwidth": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Computed: true,
+						},
+						"typical_bandwidth": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Computed: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -131,6 +152,38 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		d.SetId("")
 		return fcNetError
 	}
+	// updates connection_template
+	if rawVal, ok := d.GetOk("bandwidth"); ok {
+		bandwidthVal := rawVal.([]interface{})
+		for _, bandwidth := range bandwidthVal {
+			rawBandwidth := bandwidth.(map[string]interface{})
+			// get ethernet network by name
+			fcNet, er := config.ovClient.GetFCNetworkByName(d.Get("name").(string))
+			if er != nil {
+				log.Printf("unable to get fc network for connection_template_uri: %s", er)
+			}
+			// get connection template by uri
+			conTemp, er := config.ovClient.GetConnectionTemplateByURI(fcNet.ConnectionTemplateUri)
+			if er != nil {
+				log.Printf("unable to get connection template by uri: %s", er)
+			}
+			if fcNet.ConnectionTemplateUri.String() != "" {
+				// filter URI
+				id := path.Base(fcNet.ConnectionTemplateUri.String())
+				// update the con_temp with required bandwidth
+				BandwidthOptions := ov.BandwidthType{
+					MaximumBandwidth: rawBandwidth["maximum_bandwidth"].(int),
+					TypicalBandwidth: rawBandwidth["typical_bandwidth"].(int),
+				}
+				conTemp.Bandwidth = BandwidthOptions
+				_, er = config.ovClient.UpdateConnectionTemplate(id, conTemp)
+				if er != nil {
+					log.Printf("unable to update the connection template: %s", er)
+				}
+			}
+		}
+	}
+
 	return resourceFCNetworkRead(d, meta)
 }
 
@@ -159,6 +212,18 @@ func resourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("etag", fcNet.ETAG)
 	d.Set("scopesuri", fcNet.ScopesUri.String())
 
+	// reads bandwidth from connection template
+	conTemp, err := config.ovClient.GetConnectionTemplateByURI(fcNet.ConnectionTemplateUri)
+	if err != nil {
+		log.Printf("unable to fetch connection template: %s", err)
+	} else {
+		bandwidth := make([]interface{}, 0)
+		bw := map[string]interface{}{}
+		bw["typical_bandwidth"] = conTemp.Bandwidth.TypicalBandwidth
+		bw["maximum_bandwidth"] = conTemp.Bandwidth.MaximumBandwidth
+		bandwidth = append(bandwidth, bw)
+		d.Set("bandwidth", bandwidth)
+	}
 	return nil
 }
 
@@ -182,6 +247,32 @@ func resourceFCNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if d.HasChange("initial_scope_uris") {
 		return fmt.Errorf("Initial scope uri can not be updated")
+	}
+
+	if d.HasChange("bandwidth") {
+		rawVal := d.Get("bandwidth")
+		bandwidthVal := rawVal.([]interface{})
+		for _, bandwidth := range bandwidthVal {
+			rawBandwidth := bandwidth.(map[string]interface{})
+			conTempURI := utils.NewNstring(d.Get("connection_template_uri").(string))
+			// get connection template by uri
+			conTemp, err := config.ovClient.GetConnectionTemplateByURI(conTempURI)
+			if err != nil {
+				return fmt.Errorf("unable to retrieve connection template: %s", err)
+			}
+			// filter URI
+			id := path.Base(conTempURI.String())
+			// update the con_temp with required bandwidth
+			BandwidthOptions := ov.BandwidthType{
+				MaximumBandwidth: rawBandwidth["maximum_bandwidth"].(int),
+				TypicalBandwidth: rawBandwidth["typical_bandwidth"].(int),
+			}
+			conTemp.Bandwidth = BandwidthOptions
+			conTemp, err = config.ovClient.UpdateConnectionTemplate(id, conTemp)
+			if err != nil {
+				return fmt.Errorf("unable to update bandwidth: %s", err)
+			}
+		}
 	}
 
 	err := config.ovClient.UpdateFcNetwork(fcNet)

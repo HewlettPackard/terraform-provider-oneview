@@ -38,6 +38,10 @@ This defaults to 30.
 evenly distributed over the Fibre Channel links,such as when an uplink that was previously down becomes available. 
 This defaults to false.
 
+* `bandwidth` - The bandwidth assigned to the connection. 
+  *  `maximum_bandwidth` - The maximum bandwidth of a network connection, expressed in Mbps.
+  *  `typical_bandwidth` - The typical bandwidth of a network connection, expressed in Mbps.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:

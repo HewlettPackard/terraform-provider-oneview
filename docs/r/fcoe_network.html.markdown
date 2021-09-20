@@ -38,6 +38,10 @@ Changing this forces a new resource
 
 * `description` - Brief description of the resource.
 
+* `bandwidth` - The bandwidth assigned to the connection. 
+  *  `maximum_bandwidth` - The maximum bandwidth of a network connection, expressed in Mbps.
+  *  `typical_bandwidth` - The typical bandwidth of a network connection, expressed in Mbps.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
