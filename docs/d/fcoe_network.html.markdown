@@ -50,3 +50,7 @@ Changing this forces a new resource.
 * `uri` - The URI of the resource.
 
 * `type` - Type of the resource.
+
+* `bandwidth` - The bandwidth assigned to the connection. 
+  *  `maximum_bandwidth` - The maximum bandwidth of a network connection, expressed in Mbps.
+  *  `typical_bandwidth` - The typical bandwidth of a network connection, expressed in Mbps.

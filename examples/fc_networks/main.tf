@@ -12,11 +12,16 @@ data "oneview_scope" "scope_obj" {
 }
 
 # Creates the fc network with name TestFCNetwork and local name FCNetwork.
+# Creates FC Network Resource with required bandwidth
 resource "oneview_fc_network" "FCNetwork" {
   name               = "TestFCNetwork"
   fabric_type        = "FabricAttach"
   type               = "fc-networkV4"
   initial_scope_uris = [data.oneview_scope.scope_obj.uri]
+  bandwidth {
+    maximum_bandwidth = 10000
+    typical_bandwidth = 1500
+  }
 }
 # Creates the fc network with  fabric type direct attach.
 # resource "oneview_fc_network" "FCNetwork" {
