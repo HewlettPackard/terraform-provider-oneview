@@ -14,7 +14,7 @@ package oneview
 import (
 	"fmt"
 	"log"
-	"strings"
+	"path"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -184,7 +184,7 @@ func resourceEthernetNetworkCreate(d *schema.ResourceData, meta interface{}) err
 			}
 			if eNet.ConnectionTemplateUri.String() != "" {
 				// filter URI
-				id := strings.Split(eNet.ConnectionTemplateUri.String(), "/")[3]
+				id := path.Base(eNet.ConnectionTemplateUri.String())
 				// update the con_temp with required bandwidth
 				BandwidthOptions := ov.BandwidthType{
 					MaximumBandwidth: rawBandwidth["maximum_bandwidth"].(int),
@@ -279,7 +279,7 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 				return fmt.Errorf("unable to retrieve connection template: %s", err)
 			}
 			// filter URI
-			id := strings.Split(conTempURI.String(), "/")[3]
+			id := path.Base(conTempURI.String())
 			// update the con_temp with required bandwidth
 			BandwidthOptions := ov.BandwidthType{
 				MaximumBandwidth: rawBandwidth["maximum_bandwidth"].(int),
