@@ -157,7 +157,7 @@ func resourceFCNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 		bandwidthVal := rawVal.([]interface{})
 		for _, bandwidth := range bandwidthVal {
 			rawBandwidth := bandwidth.(map[string]interface{})
-			// get ethernet network by name
+			// get fc network by name
 			fcNet, er := config.ovClient.GetFCNetworkByName(d.Get("name").(string))
 			if er != nil {
 				log.Printf("unable to get fc network for connection_template_uri: %s", er)
