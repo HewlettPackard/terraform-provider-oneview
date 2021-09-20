@@ -44,7 +44,9 @@ Changing this forces a new resource.
 
 * `state` - (Optional) Current state of the resource.
 
-
+* `bandwidth` - The bandwidth assigned to the connection. 
+  *  `maximum_bandwidth` - The maximum bandwidth of a network connection, expressed in Mbps.
+  *  `typical_bandwidth` - The typical bandwidth of a network connection, expressed in Mbps.
 
 ## Attributes Reference
 
