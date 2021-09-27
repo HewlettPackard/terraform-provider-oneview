@@ -2,10 +2,10 @@
 
 ## Build Status 
 
-OV Version |6.3.0|6.2.0|6.1.0|6.0.0|6.00|
-| ------------- |:-------------:| -------------:| -------------:|--------------:|--------------:|
-SDK Version/Tag  | [v6.3.0-13](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.3.0-13)|[v6.2.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.2.0-13)|[v6.1.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.1.0-13)|[v6.0.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-13)|[v6.0.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-12)| [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |
- Build Status | [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1216442369)| [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1021599071)| [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/707591356)| [![Build status](https://api.travis-ci.com/HewlettPackard/terraform-provider-oneview.svg)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds)|  [![Build status](https://api.travis-ci.com/HewlettPackard/terraform-provider-oneview.svg)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds)|
+| OV Version      |                                                                                                   6.3.0                                                                                                    |                                                                                                                                                                                                      6.2.0 |                                                                                                                                                                                                     6.1.0 |                                                                                                                                                                     6.0.0 |                                                                                                                                                                      6.00 |
+| --------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| SDK Version/Tag |                                                      [v6.3.1-13](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.3.1-13)                                                      |                                                                                                          [v6.2.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.2.0-13) |                                                                                                         [v6.1.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.1.0-13) |                                                                         [v6.0.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-13) |                                                                         [v6.0.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-12) | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |
+| Build Status    | [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1216442369) | [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1021599071) | [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/707591356) | [![Build status](https://api.travis-ci.com/HewlettPackard/terraform-provider-oneview.svg)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds) | [![Build status](https://api.travis-ci.com/HewlettPackard/terraform-provider-oneview.svg)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds) |
 ```
 Note: v6.0.0-13 onwards supports Terraform 0.13.xx
 ```
@@ -15,7 +15,7 @@ HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud 
 
 The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView and HPE Image Streamer.
 
-You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.3.0-13)
+You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.3.1-13)
 
 ## What's New
 
@@ -36,10 +36,10 @@ The light weight containerized version of the HPE OneView SDK for Terraform is a
 
 ```bash
 # Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.3.0-13-OV6.3
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.3.1-13-OV6.3
 # Run docker commands below given, which  will in turn create a sh session 
 # where you can create files, issue commands and execute the examples.
-$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.3.0-13-OV6.3 /bin/sh
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v6.3.1-13-OV6.3 /bin/sh
 ```
 
 ### Local Setup
