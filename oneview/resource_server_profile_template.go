@@ -1880,8 +1880,9 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	}
 	boot := make([]map[string]interface{}, 0, 1)
 	boot = append(boot, map[string]interface{}{
-		"manage_boot": spt.Boot.ManageBoot,
-		"boot_order":  bootOrder,
+		"manage_boot":        spt.Boot.ManageBoot,
+		"compliance_control": spt.Boot.ComplianceControl,
+		"boot_order":         bootOrder,
 	})
 	d.Set("boot", boot)
 	emptyBootMode := ov.BootModeOption{}
