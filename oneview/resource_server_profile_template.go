@@ -429,72 +429,88 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"local_storage": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Computed: true,
+				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"compliance_control": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "CheckedMinimum",
+							Computed: true,
 						},
 						"controller": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Computed: true,
+							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"device_slot": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"drive_write_cache": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"initialize": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										Computed: true,
 									},
 									"import_configuration": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										Computed: true,
 									},
 									"logical_drives": {
 										Optional: true,
-										Type:     schema.TypeSet,
+										Computed: true,
+										Type:     schema.TypeList,
+										MaxItems: 1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"accelerator": {
 													Type:     schema.TypeString,
 													Optional: true,
+													Computed: true,
 												},
 												"bootable": {
 													Type:     schema.TypeBool,
 													Optional: true,
+													Computed: true,
 												},
 												"drive_technology": {
 													Type:     schema.TypeString,
 													Optional: true,
+													Computed: true,
 												},
 												"name": {
 													Type:     schema.TypeString,
 													Optional: true,
+													Computed: true,
 												},
 												"num_physical_drives": {
 													Type:     schema.TypeInt,
 													Optional: true,
+													Computed: true,
 												},
 												"num_spare_drives": {
 													Type:     schema.TypeInt,
 													Optional: true,
+													Computed: true,
 												},
 												"raid_level": {
 													Type:     schema.TypeString,
 													Optional: true,
+													Computed: true,
 												},
 												"sas_logical_jbod_id": {
 													Type:     schema.TypeInt,
 													Optional: true,
+													Computed: true,
 												},
 											},
 										},
@@ -503,10 +519,12 @@ func resourceServerProfileTemplate() *schema.Resource {
 									"mode": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 									"predictive_spare_rebuild": {
 										Type:     schema.TypeString,
 										Optional: true,
+										Computed: true,
 									},
 								},
 							},
@@ -1545,18 +1563,18 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 	}
 
 	// Get local storage data if provided
-	if _, ok := d.GetOk("local_storage"); ok {
-		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+	if val, ok := d.GetOk("local_storage"); ok {
+		rawLocalStorage := val.([]interface{})
 		localStorage := ov.LocalStorageOptions{}
 		for _, raw := range rawLocalStorage {
 			localStorageItem := raw.(map[string]interface{})
 			// Gets Local Storage Controller body
-			rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+			rawLocalStorageController := localStorageItem["controller"].([]interface{})
 			localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
 			for _, raw2 := range rawLocalStorageController {
 				controllerData := raw2.(map[string]interface{})
 				// Gets Local Storage Controller's Logical Drives
-				rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+				rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 				logicalDrives := make([]ov.LogicalDriveV3, 0)
 				for _, rawLogicalDrive := range rawLogicalDrives {
 					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
@@ -1880,8 +1898,9 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	}
 	boot := make([]map[string]interface{}, 0, 1)
 	boot = append(boot, map[string]interface{}{
-		"manage_boot": spt.Boot.ManageBoot,
-		"boot_order":  bootOrder,
+		"manage_boot":        spt.Boot.ManageBoot,
+		"compliance_control": spt.Boot.ComplianceControl,
+		"boot_order":         bootOrder,
 	})
 	d.Set("boot", boot)
 	emptyBootMode := ov.BootModeOption{}
@@ -2247,7 +2266,7 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 				"boot":           connectionBoot,
 				"function_type":  connection.FunctionType,
 				"id":             connection.ID,
-				"ipv4":           connectionIpv4,
+				"ipv4":           connection.Ipv4,
 				"isolated_trunk": connection.IsolatedTrunk,
 				"lag_name":       connection.LagName,
 				"mac_type":       connection.MacType,
@@ -2858,15 +2877,15 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 	// Get local storage data if provided
 	if d.HasChange("local_storage") {
-		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+		rawLocalStorage := d.Get("local_storage").([]interface{})
 		localStorage := ov.LocalStorageOptions{}
 		for _, raw := range rawLocalStorage {
 			localStorageItem := raw.(map[string]interface{})
-			rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+			rawLocalStorageController := localStorageItem["controller"].([]interface{})
 			localStorageEmbeddedControllers := make([]ov.LocalStorageEmbeddedController, 0)
 			for _, raw2 := range rawLocalStorageController {
 				controllerData := raw2.(map[string]interface{})
-				rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+				rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 				logicalDrives := make([]ov.LogicalDriveV3, 0)
 				for _, rawLogicalDrive := range rawLogicalDrives {
 					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
