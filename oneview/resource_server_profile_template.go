@@ -2315,9 +2315,11 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					"name":                spt.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 					"num_physical_drives": spt.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
 					"num_spare_drives":    spt.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
-					"sas_logical_jbod_id": spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
 					"raid_level":          spt.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
 				})
+				if spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId != 0 {
+					logicalDrives[j]["sas_logical_jbod_id"] = strconv.Itoa(spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId)
+				}
 			}
 			controllers = append(controllers, map[string]interface{}{
 				"device_slot":              spt.LocalStorage.Controllers[i].DeviceSlot,
