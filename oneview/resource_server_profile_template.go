@@ -1570,14 +1570,14 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
 						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
 					})
+
 					if logicalDrivesItem["sas_logical_jbod_id"].(string) != "" {
 						val, err := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
 						if err != nil {
 							return fmt.Errorf("invalid sas_logical_jbod_id: %s", err)
 						}
-						logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
-							SasLogicalJBODId: val,
-						})
+						l := len(logicalDrives) - 1
+						logicalDrives[l].SasLogicalJBODId = val
 					}
 
 				}
@@ -2892,15 +2892,16 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
 						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
 					}
+
 					if logicalDrivesItem["sas_logical_jbod_id"].(string) != "" {
 						val, err := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
 						if err != nil {
 							return fmt.Errorf("invalid sas_logical_jbod_id: %s", err)
 						}
-						logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
-							SasLogicalJBODId: val,
-						})
+						l := len(logicalDrives) - 1
+						logicalDrives[l].SasLogicalJBODId = val
 					}
+
 					logicalDrives = append(logicalDrives, logicalDrive)
 
 				}
