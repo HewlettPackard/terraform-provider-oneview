@@ -493,7 +493,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Optional: true,
 												},
 												"sas_logical_jbod_id": {
-													Type:     schema.TypeInt,
+													Type:     schema.TypeString,
 													Optional: true,
 												},
 											},
@@ -1569,8 +1569,17 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 						Name:              logicalDrivesItem["name"].(string),
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
 						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-						SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
 					})
+
+					if logicalDrivesItem["sas_logical_jbod_id"].(string) != "" {
+						val, err := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
+						if err != nil {
+							return fmt.Errorf("invalid sas_logical_jbod_id: %s", err)
+						}
+						l := len(logicalDrives) - 1
+						logicalDrives[l].SasLogicalJBODId = val
+					}
+
 				}
 				init, _ := controllerData["initialize"].(bool)
 				localStorageEmbeddedController = append(localStorageEmbeddedController, ov.LocalStorageEmbeddedController{
@@ -2306,9 +2315,11 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					"name":                spt.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 					"num_physical_drives": spt.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
 					"num_spare_drives":    spt.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
-					"sas_logical_jbod_id": spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId,
 					"raid_level":          spt.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
 				})
+				if spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId != 0 {
+					logicalDrives[j]["sas_logical_jbod_id"] = strconv.Itoa(spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId)
+				}
 			}
 			controllers = append(controllers, map[string]interface{}{
 				"device_slot":              spt.LocalStorage.Controllers[i].DeviceSlot,
@@ -2880,8 +2891,17 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 						Name:              logicalDrivesItem["name"].(string),
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
 						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-						SasLogicalJBODId:  logicalDrivesItem["sas_logical_jbod_id"].(int),
 					}
+
+					if logicalDrivesItem["sas_logical_jbod_id"].(string) != "" {
+						val, err := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
+						if err != nil {
+							return fmt.Errorf("invalid sas_logical_jbod_id: %s", err)
+						}
+						l := len(logicalDrives) - 1
+						logicalDrives[l].SasLogicalJBODId = val
+					}
+
 					logicalDrives = append(logicalDrives, logicalDrive)
 
 				}
