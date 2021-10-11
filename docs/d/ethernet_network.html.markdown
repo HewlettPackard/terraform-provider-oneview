@@ -31,7 +31,6 @@ Changing this forces a new resource.
 - - -
 
 * `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
-It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.
 
 * `purpose` - (Optional) A description of the network's role within the logical interconnect.
   This defaults to General.
