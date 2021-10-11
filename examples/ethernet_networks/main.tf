@@ -7,18 +7,21 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
+
+
 # Creates Ethernet Network Resource with required bandwidth
-resource "oneview_ethernet_network" "ethernetnetwork" {
+resource "oneview_ethernet_network" "eth" {
   name                  = "TestEthNetwork_terraform"
   ethernet_network_type = "Tagged"
   type                  = "ethernet-networkV4"
   vlan_id               = 100
+  initial_scope_uris = ["/rest/scopes/e4ba4cd4-42e3-423f-aa8b-00665d937f2b"]
   bandwidth {
     maximum_bandwidth = 10000
     typical_bandwidth = 1500
   }
 }
-
+/*
 # Creates 2 Ethernet Network Resource
 resource "oneview_ethernet_network" "ethernetnetwork_1" {
   name                  = "Auto-Ethernet-1"
@@ -48,4 +51,4 @@ resource "oneview_ethernet_network" "ethernetnetwork_2" {
 #   type                  = "ethernet-networkV4"
 
 # }
-
+*/
