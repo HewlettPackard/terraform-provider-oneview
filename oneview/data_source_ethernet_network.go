@@ -145,7 +145,6 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("fabric_uri", eNet.FabricUri.String())
 	d.Set("etag", eNet.ETAG)
 	d.Set("scopesuri", eNet.ScopesUri.String())
-	d.Set("initial_scope_uris", eNet.InitialScopeUris)
 
 	// reads bandwidth from connection template
 	conTemp, err := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
@@ -160,6 +159,11 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 		d.Set("bandwidth", bandwidth)
 	}
 
+	// reads scopes from ethernet network
+	scopes, err := config.ovClient.GetScopeFromResource(eNet.URI.String())
+	if err == nil {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 	d.SetId(name)
 	return nil
 }

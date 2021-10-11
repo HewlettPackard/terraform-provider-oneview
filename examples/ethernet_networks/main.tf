@@ -7,7 +7,9 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-
+data "oneview_scope" "scope" {
+  name = "Auto-Scope"
+}
 
 # Creates Ethernet Network Resource with required bandwidth
 resource "oneview_ethernet_network" "eth" {
@@ -15,7 +17,7 @@ resource "oneview_ethernet_network" "eth" {
   ethernet_network_type = "Tagged"
   type                  = "ethernet-networkV4"
   vlan_id               = 100
-  initial_scope_uris = ["/rest/scopes/e4ba4cd4-42e3-423f-aa8b-00665d937f2b"]
+  initial_scope_uris    = [data.oneview_scope.scope.uri]
   bandwidth {
     maximum_bandwidth = 10000
     typical_bandwidth = 1500

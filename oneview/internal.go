@@ -5,6 +5,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 )
 
+// UpdateScopeUris - Method is exported to resources for updating resource's scope uris
 func UpdateScopeUris(meta interface{}, val []interface{}, uri string) error {
 	config := meta.(*Config)
 	rawVal := []string{}

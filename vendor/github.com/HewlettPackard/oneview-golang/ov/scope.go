@@ -288,7 +288,7 @@ func (c *OVClient) UpdateScopeForResource(scp Scope) error {
 	return nil
 }
 
-// GetScopeByUri - get scopes by uri 
+// GetScopeByUri - get scopes by uri
 func (c *OVClient) GetScopeByUri(uri string) (Scope, error) {
 	var (
 		scope Scope
