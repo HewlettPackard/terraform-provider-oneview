@@ -246,8 +246,7 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 	scopes, err := config.ovClient.GetScopeFromResource(eNet.URI.String())
 	if err != nil {
 		log.Printf("unable to fetch scopes: %s", err)
-	}
-	else {
+	} else {
 		d.Set("initial_scope_uris", scopes.ScopeUris)
 	}
 	return nil
