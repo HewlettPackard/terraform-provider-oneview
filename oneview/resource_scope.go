@@ -178,8 +178,8 @@ func resourceScopeRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("initial_scope_uris", scope.InitialScopeUris)
 	d.Set("added_resource_uris", scope.AddedResourceUris)
 	d.Set("removed_resource_uris", scope.RemovedResourceUris)
-	return nil
-	
+
+	return nil	
 }
 
 func resourceScopeUpdate(d *schema.ResourceData, meta interface{}) error {
