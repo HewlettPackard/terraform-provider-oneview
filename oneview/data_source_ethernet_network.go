@@ -149,7 +149,7 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 	// reads bandwidth from connection template
 	conTemp, err := config.ovClient.GetConnectionTemplateByURI(eNet.ConnectionTemplateUri)
 	if err != nil {
-		log.Printf("unable to fetch connection template: %s", err)
+		log.Printf("unable to fetch the connection template: %s", err)
 	} else {
 		bandwidth := make([]interface{}, 0)
 		bw := map[string]interface{}{}
@@ -163,6 +163,8 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 	scopes, err := config.ovClient.GetScopeFromResource(eNet.URI.String())
 	if err == nil {
 		d.Set("initial_scope_uris", scopes.ScopeUris)
+	} else {
+		log.Printf("unable to fetch the scope: %s", err)
 	}
 	d.SetId(name)
 	return nil
