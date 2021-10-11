@@ -12,7 +12,7 @@ data "oneview_scope" "scope" {
 }
 
 # Creates Ethernet Network Resource with required bandwidth
-resource "oneview_ethernet_network" "eth" {
+resource "oneview_ethernet_network" "ethernetnetwork" {
   name                  = "TestEthNetwork_terraform"
   ethernet_network_type = "Tagged"
   type                  = "ethernet-networkV4"
