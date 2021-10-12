@@ -2074,6 +2074,13 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
+	scopes, err := config.ovClient.GetScopeFromResource(serverProfile.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
+
 	// when server hardware is assigned
 	if serverProfile.ServerHardwareURI != "" {
 		serverHardware, err := config.ovClient.GetServerHardwareByUri(serverProfile.ServerHardwareURI)
@@ -2831,7 +2838,11 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 		var serverHardware ov.ServerHardware
 		if d.HasChange("initial_scope_uris") {
-			return errors.New("initial_scope_uris of the server profile cannot be changed")
+			val := d.Get("initial_scope_uris").(*schema.Set).List()
+			err := UpdateScopeUris(meta, val, serverProfile.URI.String())
+			if err != nil {
+				return err
+			}
 		}
 		if d.HasChange("hardware_name") {
 			val := d.Get("hardware_name")
