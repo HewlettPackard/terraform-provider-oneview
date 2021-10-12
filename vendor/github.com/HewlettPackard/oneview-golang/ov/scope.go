@@ -26,6 +26,8 @@ type Scope struct {
 	InitialScopeUris    []utils.Nstring  `json:"initialScopeUris,omitempty"`    //"initialScopeUris": "/rest/scopes/b2b2e974-743c-11e4-b50b-e7f3da28b112"
 	AddedResourceUris   []utils.Nstring  `json:"addedResourceUris,omitempty"`   //"addedResourceUris": "/rest/ethernet-networks/6d0f7c41-9d1d-4de4-92ef-21a15bb0e8d0"
 	RemovedResourceUris []utils.Nstring  `json:"removedResourceUris,omitempty"` //"removedResourceUris":"/rest/ethernet-networks/6d0f7c41-9d1d-4de4-92ef-21a15bb0e8d0"
+	ScopeUris           []string         `json:"scopeUris,omitempty"`           //"scopeUris": []
+	ResourceUri         string           `json:"resourceUri,omitempty"`         //"resourceUri": "/rest/example/7e05015d-bc6e-4201-99e6-13cd4299141f"
 }
 
 type ExtraAttributes struct {
@@ -218,4 +220,91 @@ func (c *OVClient) UpdateScope(scp Scope) error {
 	}
 
 	return nil
+}
+
+// GetScopeFromResource - get scope uris assigned from resource
+func (c *OVClient) GetScopeFromResource(uri string) (Scope, error) {
+	var (
+		scope Scope
+	)
+
+	uri = "/rest/scopes/resources" + uri
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return scope, err
+	}
+
+	log.Debugf("GetScopeFromResource %s", data)
+	if err := json.Unmarshal([]byte(data), &scope); err != nil {
+		return scope, err
+	}
+	return scope, nil
+}
+
+// UpdateScopeForResource - updates scopre uris on the resource
+func (c *OVClient) UpdateScopeForResource(scp Scope) error {
+	log.Infof("Initializing update of scope for %s.", scp.ResourceUri)
+	var (
+		t   *Task
+		uri string
+	)
+	if scp.ResourceUri != "" {
+		uri = "/rest/scopes/resources" + scp.ResourceUri
+	} else {
+		return fmt.Errorf("unable to find resourceUri")
+	}
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Debugf("REST : %s \n %+v\n", uri, scp)
+	log.Debugf("task -> %+v", t)
+	data, err := c.RestAPICall(rest.PUT, uri, scp)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error submitting update request: %s", err)
+		return err
+	}
+
+	log.Debugf("Response for the update operation %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetScopeByUri - get scopes by uri
+func (c *OVClient) GetScopeByUri(uri string) (Scope, error) {
+	var (
+		scope Scope
+	)
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	data, err := c.RestAPICall(rest.GET, uri, nil)
+	if err != nil {
+		return scope, err
+	}
+
+	log.Debugf("GetScopeByUri %s", data)
+	if err := json.Unmarshal([]byte(data), &scope); err != nil {
+		return scope, err
+	}
+	return scope, nil
 }

@@ -242,6 +242,13 @@ func resourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) error
 		bandwidth = append(bandwidth, bw)
 		d.Set("bandwidth", bandwidth)
 	}
+	// reads scopes from ethernet network
+	scopes, err := config.ovClient.GetScopeFromResource(eNet.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 	return nil
 }
 
@@ -263,8 +270,14 @@ func resourceEthernetNetworkUpdate(d *schema.ResourceData, meta interface{}) err
 	if d.HasChange("vlan_id") {
 		return fmt.Errorf("vlan Id can not be changed")
 	}
+
 	if d.HasChange("initial_scope_uris") {
-		return fmt.Errorf("Initial scope uri can not be updated")
+		// updates scopes on ethernet network
+		val := d.Get("initial_scope_uris").(*schema.Set).List()
+		err := UpdateScopeUris(meta, val, newENet.URI.String())
+		if err != nil {
+			return err
+		}
 	}
 
 	if d.HasChange("bandwidth") {
