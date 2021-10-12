@@ -77,6 +77,14 @@ func dataSourceFCoENetwork() *schema.Resource {
 				Computed: true,
 				Type:     schema.TypeString,
 			},
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 			"bandwidth": {
 				Optional: true,
 				Computed: true,
@@ -136,6 +144,14 @@ func dataSourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 		bw["maximum_bandwidth"] = conTemp.Bandwidth.MaximumBandwidth
 		bandwidth = append(bandwidth, bw)
 		d.Set("bandwidth", bandwidth)
+	}
+
+	// reads scopes from fcoe network
+	scopes, err := config.ovClient.GetScopeFromResource(fcoeNet.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
 	}
 	return nil
 }
