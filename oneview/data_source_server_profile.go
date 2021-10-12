@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"log"
 	"reflect"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
