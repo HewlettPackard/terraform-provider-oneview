@@ -42,6 +42,8 @@ This defaults to false.
   *  `maximum_bandwidth` - The maximum bandwidth of a network connection, expressed in Mbps.
   *  `typical_bandwidth` - The typical bandwidth of a network connection, expressed in Mbps.
 
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+
 ## Attributes Reference
 
 In addition to the arguments listed above, the following computed attributes are exported:
