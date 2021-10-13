@@ -11,6 +11,7 @@
 package oneview
 
 import (
+	"log"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -163,7 +164,15 @@ func dataSourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("etag", enclosureGroup.ETAG)
 	d.Set("enclosure_count", enclosureGroup.EnclosureCount)
 	d.Set("enclosure_type_uri", enclosureGroup.EnclosureTypeUri.String())
-	d.Set("initial_scope_uris", enclosureGroup.InitialScopeUris)
+
+	// reads scopes from enclosure group
+	scopes, err := config.ovClient.GetScopeFromResource(enclosureGroup.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
+
 	d.Set("interconnect_bay_mapping_count", enclosureGroup.InterconnectBayMappingCount)
 	d.Set("interconnect_bay_mappings", enclosureGroup.InterconnectBayMappings)
 	d.Set("ip_addressing_mode", enclosureGroup.IpAddressingMode)

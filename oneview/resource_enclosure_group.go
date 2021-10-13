@@ -12,6 +12,7 @@ package oneview
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -313,6 +314,14 @@ func resourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("ipv6_range_uris", enclosureGroup.Ipv6RangeUris)
 	d.Set("name", enclosureGroup.Name)
 
+	// reads scopes from enclosure group resource
+	scopes, err := config.ovClient.GetScopeFromResource(enclosureGroup.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
+
 	interconnectBayMap := make([]map[string]interface{}, 0, 1)
 	for i := 0; i < len(enclosureGroup.InterconnectBayMappings); i++ {
 		liguri := enclosureGroup.InterconnectBayMappings[i].LogicalInterconnectGroupUri
@@ -440,7 +449,12 @@ func resourceEnclosureGroupUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if d.HasChange("initial_scope_uris") {
-		return fmt.Errorf("Initial scope uri can not be updated")
+		// updates scopes on enclosure group resource
+		val := d.Get("initial_scope_uris").(*schema.Set).List()
+		err := UpdateScopeUris(meta, val, enclosureGroup.URI.String())
+		if err != nil {
+			return err
+		}
 	}
 	if val, ok := d.GetOk("name"); ok {
 		enclosureGroup.Name = val.(string)
