@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 data "oneview_scope" "scope_obj" {
-  name = "Auto-Sxope"
+  name = "Auto-Scope"
 }
 
 # Updates the created resource with local name FCNetwork and scopes
