@@ -11,7 +11,6 @@
 package oneview
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/HewlettPackard/oneview-golang/ov"

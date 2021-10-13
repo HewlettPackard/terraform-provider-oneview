@@ -12,7 +12,6 @@
 package oneview
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 
