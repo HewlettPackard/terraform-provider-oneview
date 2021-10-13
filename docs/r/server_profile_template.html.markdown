@@ -106,7 +106,8 @@ Firmware configuration is specified below.
 * `hide_unused_flex_nics` - (Optional) Hides flex nics that aren't in use.
 This defaults to true.
 
-* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned. It is only meaningful at resource creation time and is not included on resource retrieval.
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.
 
 * `local_storage` - (Optional) Local storage settings to be configured on the server.
 

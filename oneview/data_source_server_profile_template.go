@@ -15,6 +15,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"reflect"
+	"log"
 )
 
 func dataSourceServerProfileTemplate() *schema.Resource {
@@ -1140,7 +1141,15 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	}
 	d.Set("etag", spt.ETAG)
 	d.Set("hide_unused_flex_nics", spt.HideUnusedFlexNics)
-	d.Set("initial_scope_uris", spt.InitialScopeUris)
+
+	// reads scope from SPT resource
+	scopes, err := config.ovClient.GetScopeFromResource(spt.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
+
 	d.Set("iscsi_initiator_name_type", spt.IscsiInitiatorNameType)
 	d.Set("mac_type", spt.MACType)
 	d.Set("modified", spt.Modified)

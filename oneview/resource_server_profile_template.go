@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"log"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -1881,6 +1882,14 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	d.Set("uuid", spt.UUID.String())
 	d.Set("wwn_type", spt.WWNType)
 
+	// reads scope from SPT resource
+	scopes, err := config.ovClient.GetScopeFromResource(spt.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
+
 	bootOrder := make([]interface{}, 0)
 	if len(spt.Boot.Order) != 0 {
 		for _, currBoot := range spt.Boot.Order {
@@ -2502,6 +2511,15 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 	serverProfileTemplate, err := config.ovClient.GetProfileTemplateByName(d.Id())
 	if err != nil {
 		return err
+	}
+
+	if d.HasChange("initial_scope_uris") {
+		// updates scopes for SPT
+		val := d.Get("initial_scope_uris").(*schema.Set).List()
+		err := UpdateScopeUris(meta, val, serverProfileTemplate.URI.String())
+		if err != nil {
+			return err
+		}
 	}
 
 	if d.HasChange("name") {
