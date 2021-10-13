@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 )
 
 func dataSourceLogicalEnclosure() *schema.Resource {
@@ -180,6 +181,14 @@ func dataSourceLogicalEnclosure() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"initial_scope_uris": {
+				Optional: true,
+				Computed: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 	}
 }
@@ -259,5 +268,13 @@ func dataSourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("status", logicalEnclosure.Status)
 	d.Set("type", logicalEnclosure.Type)
 	d.Set("uri", logicalEnclosure.URI.String())
+
+	// gets scopes for LE
+	scopes, err := config.ovClient.GetScopeFromResource(logicalEnclosure.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 	return nil
 }

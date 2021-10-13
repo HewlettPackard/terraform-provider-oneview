@@ -89,6 +89,9 @@ The following arguments are supported:
 
 * `enclosure_group_uri` - (Required) The uri of the enclosure group. 
 
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.
+
 * `update_type` - (Required) Type of update of Logical Enclosure.
 
 	| NO |        Type of Update                          |   Update String               |
