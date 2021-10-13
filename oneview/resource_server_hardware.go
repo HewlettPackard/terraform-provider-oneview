@@ -232,6 +232,7 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	d.SetId(servHard.UUID.String())
 	d.Set("configuration_state", d.Get("configuration_state").(string))
 	d.Set("hostname", d.Get("hostname").(string))
+	//Force option is read from the configuration file
 	if val, ok := d.GetOk("force"); ok {
 		d.Set("force", val.(bool))
 	}
