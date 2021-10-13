@@ -44,7 +44,7 @@ the value needs to be [1,2,3].
 
 * `fabric_uri` - The URI of the fabric resource of which this resource is a member.
 
-* `initial_scope_uris` - A list of URIs of the scopes to which the resource shall be initially assigned.
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
 
 * `interconnect_bay_set` - Interconnect bay associated with the logical interconnect group
 
