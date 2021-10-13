@@ -46,3 +46,4 @@ output "oneview_server_hardware_value" {
 
 * `uuid` - Universally Unique ID (UUID) of the server hardware.
 
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
