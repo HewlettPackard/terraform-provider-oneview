@@ -43,6 +43,7 @@ This defaults to false.
   *  `typical_bandwidth` - The typical bandwidth of a network connection, expressed in Mbps.
 
 * `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.
 
 ## Attributes Reference
 
