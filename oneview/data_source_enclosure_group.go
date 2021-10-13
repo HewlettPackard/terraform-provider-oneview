@@ -11,8 +11,8 @@
 package oneview
 
 import (
-	"log"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 )
 
 func dataSourceEnclosureGroup() *schema.Resource {

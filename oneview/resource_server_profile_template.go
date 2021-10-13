@@ -13,9 +13,9 @@ package oneview
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"strconv"
-	"log"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
