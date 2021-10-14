@@ -1,12 +1,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v6.4.0-13]
+# [v6.4.0-13](unreleased)
 ### Notes
 - This release supports API3400 minimally where we can use OneView v6.40 with this SDK.
 
 ### Bug fixes & Enhancements:
 - [#404](https://github.com/HewlettPackard/terraform-provider-oneview/issues/404) Creating Server profile for DLs fails
+- [#416](https://github.com/HewlettPackard/terraform-provider-oneview/issues/416) server hardware resource is not idempotent 
 
 # [v6.3.1-13]
 
