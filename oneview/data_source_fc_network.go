@@ -145,5 +145,12 @@ func dataSourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("bandwidth", bandwidth)
 	}
 
+	// reads scopes from fc network
+	scopes, err := config.ovClient.GetScopeFromResource(fcNet.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 	return nil
 }

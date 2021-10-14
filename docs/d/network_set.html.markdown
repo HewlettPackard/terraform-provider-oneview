@@ -43,3 +43,5 @@ output "oneview_network_set_value" {
 * `description` - Brief description of the resource.
 
 * `network_set_type` - NetworkSet Type whose default value is "Regular".
+
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
