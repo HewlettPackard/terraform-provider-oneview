@@ -66,4 +66,4 @@ output "oneview_enclosure_group_value" {
 
 * `type` - Type of the resource.
 
-* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource is assigned. 
