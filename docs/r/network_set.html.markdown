@@ -55,5 +55,5 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `network_set_type` - NetworkSet Type whose default value is "Regular".
 
-* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be assigned.
 It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.

@@ -50,7 +50,7 @@ The enclosure group is determined when the profile template is created and canno
 *  `hide_unused_flex_nics` - (Optional) Hides flex nics that aren't in use.
   This defaults to true.
 
-* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource is assigned.
  
 * `iscsi_initiator_name_type` - When set to UserDefined, the value of iscsiInitatorName will need to be provided in the server profile. 
  

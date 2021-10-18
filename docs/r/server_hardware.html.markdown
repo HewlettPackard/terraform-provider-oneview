@@ -60,5 +60,5 @@ resource "oneview_server_hardware" "sh" {
 
 * `uuid` - Universally Unique ID (UUID) of the server hardware.
 
-* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be assigned.
 It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.
