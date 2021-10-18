@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"log"
 	"reflect"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -1468,7 +1469,14 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("firmware", firmware)
 	d.Set("hide_unused_flex_nics", serverProfile.HideUnusedFlexNics)
 	d.Set("in_progress", serverProfile.InProgress)
-	d.Set("initial_scope_uris", serverProfile.InitialScopeUris)
+
+	scopes, err := config.ovClient.GetScopeFromResource(serverProfile.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
+
 	d.Set("iscsi_initiator_name", serverProfile.IscsiInitiatorName)
 	d.Set("iscsi_initiator_name_type", serverProfile.IscsiInitiatorNameType)
 

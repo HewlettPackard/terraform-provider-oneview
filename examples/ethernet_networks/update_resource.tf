@@ -7,13 +7,19 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-# Updates the resource created from main.tf
-resource "oneview_ethernet_network" "ethernetnetwork" {
-  name    = "TestEthNetwork_terraform_Rename"
-  ethernet_network_type = "Tagged"
-  type    = "ethernet-networkV4"
-  vlan_id = 100
+data "oneview_scope" "scope" {
+  name = "Scope Test"
 }
+
+# Updates initial scope uris and name of the resource created from main.tf
+resource "oneview_ethernet_network" "ethernetnetwork" {
+  name                  = "TestEthNetwork_terraform_Rename"
+  ethernet_network_type = "Tagged"
+  initial_scope_uris    = [data.oneview_scope.scope.uri]
+  type                  = "ethernet-networkV4"
+  vlan_id               = 100
+}
+/*
 resource "oneview_ethernet_network" "ethernetnetwork_1" {
   name    = "Auto-Ethernet-1"
   ethernet_network_type = "Tagged"
@@ -27,5 +33,4 @@ resource "oneview_ethernet_network" "ethernetnetwork_2" {
   type    = "ethernet-networkV4"
   vlan_id = 102
 }
-
-
+*/
