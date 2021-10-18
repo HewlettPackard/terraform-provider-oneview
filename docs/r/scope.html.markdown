@@ -31,9 +31,11 @@ The following arguments are supported:
 
 * `Description` - (Optional) A description of the Scope.
 
-* `added_resource_uris` - (Optional)  List of resource URIs to be added when creating or editing a scope. It is never included when a scope definition is retrieved.
+* `added_resource_uris` - (Optional)  List of resource URIs to be added when creating or editing a scope. It is only meaningful at resource creation time and while updating. It is relevant during retrieval as well.
 
-* `initial_resource_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned. It is only meaningful at resource creation time and is not included on resource retrieval.
+* `removed_resource_uris` - (Optional)  List of resource URIs to be removed. It is only meaningful while updating.
+
+* `initial_resource_uris` - (Optional) A list of URIs of the scopes to which the resource is assigned. It is only meaningful at resource creation time and while updating. It is relevant during retrieval as well. 
 
 ## Attributes Reference
 

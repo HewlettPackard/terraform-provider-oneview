@@ -8,13 +8,18 @@ provider "oneview" {
 }
 
 data "oneview_ethernet_network" "ethernet_network" {
-  name = "Auto-Ethernet-2"
+  name = "iscsi_nw"
+}
+
+data "oneview_scope" "initial_scope_uri" {
+  name = "Auto-Scope"
 }
 
 resource "oneview_scope" "scope_inst" {
   name                = "TestScope"
   description         = "Testing creation of scope"
   type                = "ScopeV3"
+  initial_scope_uris  = [data.oneview_scope.initial_scope_uri.uri]
   added_resource_uris = [data.oneview_ethernet_network.ethernet_network.uri]
 }
 
