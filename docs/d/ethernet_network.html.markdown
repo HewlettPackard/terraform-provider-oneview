@@ -30,7 +30,7 @@ Changing this forces a new resource.
 
 - - -
 
-* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource is assigned.
 
 * `purpose` - (Optional) A description of the network's role within the logical interconnect.
   This defaults to General.

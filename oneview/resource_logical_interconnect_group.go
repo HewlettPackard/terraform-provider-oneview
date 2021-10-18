@@ -16,6 +16,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 	"reflect"
 	"strconv"
 )
@@ -1689,11 +1690,13 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	}
 	d.Set("enclosure_indexes", schema.NewSet(func(a interface{}) int { return a.(int) }, enclosureIndexes))
 
-	initialScopeUris := make([]interface{}, len(logicalInterconnectGroup.InitialScopeUris))
-	for i, initialScopeUriVal := range logicalInterconnectGroup.InitialScopeUris {
-		initialScopeUris[i] = initialScopeUriVal
+	// read scopes from LIG
+	scopes, err := config.ovClient.GetScopeFromResource(logicalInterconnectGroup.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
 	}
-	d.Set("initial_scope_uris", schema.NewSet(func(a interface{}) int { return a.(int) }, initialScopeUris))
 
 	interconnectMapEntryTemplates := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates))
 	for _, interconnectMapEntryTemplate := range logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates {
@@ -2058,14 +2061,13 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		lig.EnclosureIndexes = enclosureIndexes
 	}
 
-	if val, ok := d.GetOk("initial_scope_uris"); ok {
-		rawInitialScopeUris := val.(*schema.Set).List()
-		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
-		for _, raw := range rawInitialScopeUris {
-			initialScopeUri := utils.Nstring(raw.(string))
-			initialScopeUris = append(initialScopeUris, initialScopeUri)
+	if d.HasChange("initial_scope_uris") {
+		// updates scopes on LIG
+		val := d.Get("initial_scope_uris").(*schema.Set).List()
+		err := UpdateScopeUris(meta, val, lig.URI.String())
+		if err != nil {
+			return err
 		}
-		lig.InitialScopeUris = initialScopeUris
 	}
 
 	interconnectMapEntryTemplates := make([]ov.InterconnectMapEntryTemplate, 0)

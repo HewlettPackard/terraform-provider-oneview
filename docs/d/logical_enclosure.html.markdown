@@ -32,6 +32,8 @@ output "oneview_logical_enclosure_value" {
 
 * `category` - Used to identify the kind of resource.
 
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource is assigned.
+
 * `created` - Date and time when the resource is created.
 
 * `delete_failed` - Indicator that the deletion of a logical enclosure failed.

@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -751,11 +752,13 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 	}
 	d.Set("enclosure_indexes", schema.NewSet(func(a interface{}) int { return a.(int) }, enclosureIndexes))
 
-	initialScopeUris := make([]interface{}, len(logicalInterconnectGroup.InitialScopeUris))
-	for i, initialScopeUriVal := range logicalInterconnectGroup.InitialScopeUris {
-		initialScopeUris[i] = initialScopeUriVal
+	// read scopes from LIG
+	scopes, err := config.ovClient.GetScopeFromResource(logicalInterconnectGroup.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
 	}
-	d.Set("initial_scope_uris", schema.NewSet(func(a interface{}) int { return a.(int) }, initialScopeUris))
 
 	interconnectMapEntryTemplates := make([]map[string]interface{}, 0, len(logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates))
 	for _, interconnectMapEntryTemplate := range logicalInterconnectGroup.InterconnectMapTemplate.InterconnectMapEntryTemplates {

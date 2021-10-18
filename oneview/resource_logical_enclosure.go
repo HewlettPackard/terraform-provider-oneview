@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -345,6 +345,14 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("status", logicalEnclosure.Status)
 	d.Set("type", logicalEnclosure.Type)
 	d.Set("uri", logicalEnclosure.URI.String())
+	// gets scopes from LE
+	scopes, err := config.ovClient.GetScopeFromResource(logicalEnclosure.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
+
 	return nil
 }
 
@@ -427,7 +435,12 @@ func resourceLogicalEnclosureUpdate(d *schema.ResourceData, meta interface{}) er
 		logicalEnclosure.Firmware = &logicalEnclosureFirmware
 	}
 	if d.HasChange("initial_scope_uris") {
-		return fmt.Errorf("Initial scope uri can not be updated")
+		// updates scopes on LE
+		val := d.Get("initial_scope_uris").(*schema.Set).List()
+		err := UpdateScopeUris(meta, val, logicalEnclosure.URI.String())
+		if err != nil {
+			return err
+		}
 	}
 	ipv4rangesList := d.Get("ipv4_range").(*schema.Set).List()
 	ipv4rangesCollect := make([]ov.Ipv4Ranges, 0)

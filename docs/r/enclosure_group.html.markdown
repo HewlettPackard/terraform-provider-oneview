@@ -48,3 +48,6 @@ The following arguments are supported:
 In addition to the arguments listed above, the following computed attributes are exported:
 
 * `uri` - The URI of the created resource.
+
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be initially assigned.
+It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.
