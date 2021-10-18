@@ -33,6 +33,8 @@ resource "oneview_server_hardware" "sh" {
 ## Attributes Reference
 
 * `configuration_state` - Specifies the desired server state.
+  
+* `force` - Specify 'true' to force the addition of the server and take ownership away from any other manager. Use this optional flag with caution. The default is 'false'.
 
 * `maintenance_mode` - Maintenance mode of the server hardware, true or false.
 

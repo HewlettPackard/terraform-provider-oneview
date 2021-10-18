@@ -7,11 +7,16 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
+data "oneview_scope" "scope_obj" {
+  name = "Auto-Scope-Test"
+}
+
 # Updates the resource created above
 # To update uncomment the below and add the attributes to be updated
 resource "oneview_fcoe_network" "FCoENetwork" {
   name   = "TestFCoENetwork_Terraform_Renamed"
   type   = "fcoe-networkV4"
   vlanid = 202
+  initial_scope_uris = [data.oneview_scope.scope_obj.uri]
 }
 

@@ -15,6 +15,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 )
 
 func resourceNetworkSet() *schema.Resource {
@@ -176,9 +177,16 @@ func resourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 	d.Set("network_uris", networkUris)
-	d.Set("initial_scope_uris", netSet.InitialScopeUris)
 	d.Set("scopes_uri", netSet.ScopesUri)
 	d.Set("network_set_type", netSet.NetworkSetType)
+
+	// reads scopes from network set
+	scopes, err := config.ovClient.GetScopeFromResource(netSet.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 
 	return nil
 
@@ -204,6 +212,15 @@ func resourceNetworkSetUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if val, ok := d.GetOk("network_set_type"); ok {
 		newNetSet.NetworkSetType = val.(string)
+	}
+
+	if d.HasChange("initial_scope_uris") {
+		// updates scopes on network set
+		val := d.Get("initial_scope_uris").(*schema.Set).List()
+		err := UpdateScopeUris(meta, val, newNetSet.URI.String())
+		if err != nil {
+			return err
+		}
 	}
 
 	err := config.ovClient.UpdateNetworkSet(newNetSet)

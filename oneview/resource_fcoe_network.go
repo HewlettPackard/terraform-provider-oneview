@@ -211,6 +211,14 @@ func resourceFCoENetworkRead(d *schema.ResourceData, meta interface{}) error {
 		bandwidth = append(bandwidth, bw)
 		d.Set("bandwidth", bandwidth)
 	}
+
+	// reads scopes from fcoe network
+	scopes, err := config.ovClient.GetScopeFromResource(fcoeNet.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 	return nil
 }
 
@@ -255,6 +263,15 @@ func resourceFCoENetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 			if err != nil {
 				return fmt.Errorf("unable to update bandwidth: %s", err)
 			}
+		}
+	}
+
+	if d.HasChange("initial_scope_uris") {
+		// updates scopes on fcoe network
+		val := d.Get("initial_scope_uris").(*schema.Set).List()
+		err := UpdateScopeUris(meta, val, newFCoENet.URI.String())
+		if err != nil {
+			return err
 		}
 	}
 

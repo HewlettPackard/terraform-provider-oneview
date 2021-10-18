@@ -14,6 +14,7 @@ package oneview
 import (
 	"errors"
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -232,7 +233,10 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	d.SetId(servHard.UUID.String())
 	d.Set("configuration_state", d.Get("configuration_state").(string))
 	d.Set("hostname", d.Get("hostname").(string))
-	d.Set("force", servHard.Force)
+	//Force option is read from the configuration file
+	if val, ok := d.GetOk("force"); ok {
+		d.Set("force", val.(bool))
+	}
 	d.Set("licensing_intent", servHard.LicensingIntent)
 	d.Set("maintenance_mode", servHard.MaintenanceMode)
 	d.Set("name", servHard.Name)

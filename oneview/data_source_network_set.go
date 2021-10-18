@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 )
 
 func dataSourceNetworkSet() *schema.Resource {
@@ -82,6 +83,14 @@ func dataSourceNetworkSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 		},
 	}
 }
@@ -124,6 +133,13 @@ func dataSourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("network_uris", networkUris)
 	d.Set("scopes_uri", netSet.ScopesUri)
 	d.Set("network_set_type", netSet.NetworkSetType)
+
+	scopes, err := config.ovClient.GetScopeFromResource(netSet.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 
 	return nil
 

@@ -7,10 +7,15 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-# Updates the created resource with local name FCNetwork
+data "oneview_scope" "scope_obj" {
+  name = "Auto-Scope"
+}
+
+# Updates the created resource with local name FCNetwork and scopes
 resource "oneview_fc_network" "FCNetwork" {
-  name        = "TestFCNetwork_Renamed"
-  fabric_type = "FabricAttach"
-  type        = "fc-networkV4"
+  name               = "TestFCNetwork_Renamed"
+  fabric_type        = "FabricAttach"
+  type               = "fc-networkV4"
+  initial_scope_uris = [data.oneview_scope.scope_obj.uri]
 }
 
