@@ -14,11 +14,13 @@ package oneview
 import (
 	"errors"
 	"fmt"
+	"regexp"
+
+	"log"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"log"
 )
 
 func resourceServerHardware() *schema.Resource {
@@ -198,10 +200,23 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	sh, _ := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))
-
-	d.SetId(sh.UUID.String())
 	return resourceServerHardwareRead(d, meta)
+}
+
+func getServerHardwareByNameOriLOIp(c *ov.OVClient, query string) (ov.ServerHardware, error) {
+	// check for ipv4 "hostname"
+	match, _ := regexp.MatchString(`(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4})`, query)
+	if !match {
+		return c.GetServerHardwareByName(query)
+	}
+
+	filter := fmt.Sprintf("mpHostInfo.mpIpAddresses[].address == '%s'", query)
+	list, err := c.GetServerHardwareList([]string{filter}, "", "", "", "")
+
+	if list.Total > 0 {
+		return list.Members[0], err
+	}
+	return ov.ServerHardware{}, err
 }
 
 func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
@@ -213,7 +228,7 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 
 	// fetching server hardware hostname incase it's added
 	if val, ok := d.GetOk("hostname"); ok {
-		servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
+		servHard, err = getServerHardwareByNameOriLOIp(config.ovClient, val.(string))
 	} else {
 		// for refreshing imported server hardware we would need it's name
 		if val, ok := d.GetOk("name"); ok {
