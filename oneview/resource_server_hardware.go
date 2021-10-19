@@ -14,7 +14,6 @@ package oneview
 import (
 	"errors"
 	"fmt"
-	"regexp"
 
 	"log"
 
@@ -203,45 +202,46 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 	return resourceServerHardwareRead(d, meta)
 }
 
-func getServerHardwareByNameOriLOIp(c *ov.OVClient, query string) (ov.ServerHardware, error) {
-	// check for ipv4 "hostname"
-	match, _ := regexp.MatchString(`(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4})`, query)
-	if !match {
-		return c.GetServerHardwareByName(query)
-	}
-
+// getServerHardwareByiLO is used to fetch server hardware just by knowing its iLO host/ip, needed on resource creation
+func getServerHardwareByiLO(c *ov.OVClient, query string) (ov.ServerHardware, error) {
 	filter := fmt.Sprintf("mpHostInfo.mpIpAddresses[].address == '%s'", query)
-	list, err := c.GetServerHardwareList([]string{filter}, "", "", "", "")
-
+	list, err := c.GetServerHardwareList([]string{filter}, "", "", "1", "")
 	if list.Total > 0 {
-		return list.Members[0], err
+			return list.Members[0], err
 	}
+
+	filter = fmt.Sprintf("mpHostInfo.mpHostName == '%s'", query)
+	list, err = c.GetServerHardwareList([]string{filter}, "", "", "1", "")
+	if list.Total > 0 {
+			return list.Members[0], err
+	}
+
 	return ov.ServerHardware{}, err
 }
 
 func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
 	var (
-		servHard ov.ServerHardware
-		err      error
+			servHard ov.ServerHardware
+			err      error
 	)
 	config := meta.(*Config)
 
-	// fetching server hardware hostname incase it's added
+	// fetching server hardware through iLO host information
 	if val, ok := d.GetOk("hostname"); ok {
-		servHard, err = getServerHardwareByNameOriLOIp(config.ovClient, val.(string))
+			servHard, err = getServerHardwareByiLO(config.ovClient, val.(string))
 	} else {
-		// for refreshing imported server hardware we would need it's name
-		if val, ok := d.GetOk("name"); ok {
-			servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
-		} else {
-			// for importing server hardware
-			servHard, err = config.ovClient.GetServerHardwareByName(d.Id())
-		}
+			// for refreshing imported server hardware we would need it's name
+			if val, ok := d.GetOk("name"); ok {
+					servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
+			} else {
+					// for importing server hardware
+					servHard, err = config.ovClient.GetServerHardwareByUri(utils.NewNstring(d.Id()))
+			}
 	}
 
 	if err != nil || servHard.URI.IsNil() {
-		d.SetId("")
-		return fmt.Errorf("unable to retrieve server hardware %s", err)
+			d.SetId("")
+			return fmt.Errorf("unable to retrieve server hardware %s", err)
 	}
 
 	// setting UUID as resource Id
