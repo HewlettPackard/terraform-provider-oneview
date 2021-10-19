@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 data "oneview_ethernet_network" "ethernet_network" {
-  name = "iscsi_nw"
+  name = "Auto-Ethernet-2"
 }
 
 data "oneview_scope" "initial_scope_uri" {
