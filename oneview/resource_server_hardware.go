@@ -207,13 +207,13 @@ func getServerHardwareByiLO(c *ov.OVClient, query string) (ov.ServerHardware, er
 	filter := fmt.Sprintf("mpHostInfo.mpIpAddresses[].address == '%s'", query)
 	list, err := c.GetServerHardwareList([]string{filter}, "", "", "1", "")
 	if list.Total > 0 {
-			return list.Members[0], err
+		return list.Members[0], err
 	}
 
 	filter = fmt.Sprintf("mpHostInfo.mpHostName == '%s'", query)
 	list, err = c.GetServerHardwareList([]string{filter}, "", "", "1", "")
 	if list.Total > 0 {
-			return list.Members[0], err
+		return list.Members[0], err
 	}
 
 	return ov.ServerHardware{}, err
@@ -221,27 +221,27 @@ func getServerHardwareByiLO(c *ov.OVClient, query string) (ov.ServerHardware, er
 
 func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error {
 	var (
-			servHard ov.ServerHardware
-			err      error
+		servHard ov.ServerHardware
+		err      error
 	)
 	config := meta.(*Config)
 
 	// fetching server hardware through iLO host information
 	if val, ok := d.GetOk("hostname"); ok {
-			servHard, err = getServerHardwareByiLO(config.ovClient, val.(string))
+		servHard, err = getServerHardwareByiLO(config.ovClient, val.(string))
 	} else {
-			// for refreshing imported server hardware we would need it's name
-			if val, ok := d.GetOk("name"); ok {
-					servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
-			} else {
-					// for importing server hardware
-					servHard, err = config.ovClient.GetServerHardwareByUri(utils.NewNstring(d.Id()))
-			}
+		// for refreshing imported server hardware we would need it's name
+		if val, ok := d.GetOk("name"); ok {
+			servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
+		} else {
+			// for importing server hardware
+			servHard, err = config.ovClient.GetServerHardwareByUri(utils.NewNstring(d.Id()))
+		}
 	}
 
 	if err != nil || servHard.URI.IsNil() {
-			d.SetId("")
-			return fmt.Errorf("unable to retrieve server hardware %s", err)
+		d.SetId("")
+		return fmt.Errorf("unable to retrieve server hardware %s", err)
 	}
 
 	// setting UUID as resource Id
