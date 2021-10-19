@@ -17,6 +17,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"log"
+	"sort"
 )
 
 func resourceScope() *schema.Resource {
@@ -246,4 +247,31 @@ func resourceScopeDelete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	return nil
+}
+
+// readResourceUris - Method is specific to Scope Resource.
+// input parameters: Scope uri , resource Uris, type of utility i.e. AddScopeUris or RemovedScopeUris
+// returns: resource uris valid for addedResourceUris or removeResourceUris
+func readResourceUris(meta interface{}, uri string, rawVal []interface{}, utility bool) []string {
+	resourceUris := []string{}
+	config := meta.(*Config)
+	for _, resourceUri := range rawVal {
+		scopeUris, err := config.ovClient.GetScopeFromResource(resourceUri.(string))
+		if err != nil {
+			log.Printf("unable to fetch scope uris from resourceUris: %s", err)
+		} else {
+			if utility == true {
+				// adds if the scope is present in the resource - This works for AddedScopeUris
+				if sort.SearchStrings(scopeUris.ScopeUris, uri) < len(scopeUris.ScopeUris) {
+					resourceUris = append(resourceUris, resourceUri.(string))
+				}
+			} else {
+				// adds if the scope is not present in the resource - This works for RemovedScopeUris
+				if sort.SearchStrings(scopeUris.ScopeUris, uri) == len(scopeUris.ScopeUris) {
+					resourceUris = append(resourceUris, resourceUri.(string))
+				}
+			}
+		}
+	}
+	return resourceUris
 }
