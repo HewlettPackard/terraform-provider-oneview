@@ -192,8 +192,8 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 		hardware.InitialScopeUris = initialScopeUris
 	}
 
-	err := config.ovClient.AddRackServer(hardware)
-	if err != nil {
+	resource_uri, err := config.ovClient.AddRackServer(hardware)
+	if err != nil && resource_uri != "" {
 		d.SetId("")
 		return err
 	}
@@ -201,6 +201,7 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 	sh, _ := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))
 
 	d.SetId(sh.UUID.String())
+	d.Set("uri", resource_uri)
 	return resourceServerHardwareRead(d, meta)
 }
 
@@ -212,8 +213,8 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	config := meta.(*Config)
 
 	// fetching server hardware hostname incase it's added
-	if val, ok := d.GetOk("hostname"); ok {
-		servHard, err = config.ovClient.GetServerHardwareByName(val.(string))
+	if _, ok := d.GetOk("uri"); ok {
+		servHard, err = config.ovClient.GetServerHardwareByUri(utils.Nstring(d.Get("uri").(string)))
 	} else {
 		// for refreshing imported server hardware we would need it's name
 		if val, ok := d.GetOk("name"); ok {
