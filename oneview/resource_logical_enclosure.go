@@ -241,8 +241,7 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		rawFirmware := val.([]interface{})
 		for _, raw := range rawFirmware {
 			firmware := raw.(map[string]interface{})
-
-			if firmware["logical_interconnect_update_mode"] != nil || firmware["firmware_update_on"] != nil || firmware["update_firmware_on_unmanaged_interconnect"] != nil || firmware["validate_if_li_firmware_update_is_non_disruptive"] != nil {
+			if firmware["logical_interconnect_update_mode"] != "" || firmware["firmware_update_on"] != "" || firmware["update_firmware_on_unmanaged_interconnect"] != false || firmware["validate_if_li_firmware_update_is_non_disruptive"] != false {
 				return errors.New("Only firmware_baseline_uri and force_install_firmware attributes are supported during creation.")
 			}
 			logicalEnclosure.FirmwareBaselineUri = utils.NewNstring(firmware["firmware_baseline_uri"].(string))
