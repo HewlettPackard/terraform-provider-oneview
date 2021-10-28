@@ -192,8 +192,8 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 		hardware.InitialScopeUris = initialScopeUris
 	}
 
-	resource_uri, err := config.ovClient.AddRackServer(hardware)
-	if err != nil && resource_uri != "" {
+	resourceUri, err := config.ovClient.AddRackServer(hardware)
+	if err != nil && resourceUri != "" {
 		d.SetId("")
 		return err
 	}
@@ -201,7 +201,7 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 	sh, _ := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))
 
 	d.SetId(sh.UUID.String())
-	d.Set("uri", resource_uri)
+	d.Set("uri", resourceUri)
 	return resourceServerHardwareRead(d, meta)
 }
 
