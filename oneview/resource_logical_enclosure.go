@@ -257,7 +257,6 @@ func resourceLogicalEnclosureCreate(d *schema.ResourceData, meta interface{}) er
 		}
 		logicalEnclosure.InitialScopeUris = initialScopeUris
 	}
-
 	logicalEnclosureError := config.ovClient.CreateLogicalEnclosure(logicalEnclosure)
 	d.SetId(d.Get("name").(string))
 	if logicalEnclosureError != nil {
@@ -311,6 +310,7 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 	if logicalEnclosure.Firmware != nil {
 		// Gets Firmware Body
 		logicalEnclosureFirmware := make([]map[string]interface{}, 0, 1)
+
 		logicalEnclosureFirmware = append(logicalEnclosureFirmware, map[string]interface{}{
 			"firmware_baseline_uri":                            logicalEnclosure.Firmware.FirmwareBaselineUri,
 			"logical_interconnect_update_mode":                 logicalEnclosure.Firmware.LogicalInterconnectUpdateMode,
@@ -323,6 +323,7 @@ func resourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) erro
 			for _, raw := range rawFirmware {
 				firmware := raw.(map[string]interface{})
 				logicalEnclosureFirmware[0]["force_install_firmware"] = firmware["force_install_firmware"].(bool)
+				logicalEnclosureFirmware[0]["firmware_update_on"] = firmware["firmware_update_on"].(string)
 			}
 		}
 
