@@ -198,9 +198,6 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	sh, _ := config.ovClient.GetServerHardwareByName(d.Get("hostname").(string))
-
-	d.SetId(sh.UUID.String())
 	d.Set("uri", resourceURI)
 	return resourceServerHardwareRead(d, meta)
 }
