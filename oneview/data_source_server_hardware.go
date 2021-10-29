@@ -13,6 +13,7 @@ package oneview
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 )
 
 func dataSourceServerHardware() *schema.Resource {
@@ -76,6 +77,14 @@ func dataSourceServerHardware() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"initial_scope_uris": {
+				Optional: true,
+				Type:     schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Set: schema.HashString,
+			},
 		},
 	}
 }
@@ -103,6 +112,14 @@ func dataSourceServerHardwareRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("mp_ip_address", servHard.MpIpAddress)
 	d.Set("mp_firmware_version", servHard.MpFirwareVersion)
 	d.Set("mp_dns_name", servHard.MpDnsName)
+
+	// reads server hardware scopes
+	scopes, err := config.ovClient.GetScopeFromResource(servHard.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 
 	return nil
 }

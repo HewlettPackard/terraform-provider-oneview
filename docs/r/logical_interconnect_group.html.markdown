@@ -199,6 +199,9 @@ Logical Port Config supports the followings:
 
 * `desired_fec_mode` - (Optional)  The desire FEC mode of logical port.
 
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be assigned.
+It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.
+
 
 ## Attributes Reference
 

@@ -18,6 +18,7 @@ import (
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
 )
 
 func resourceServerHardware() *schema.Resource {
@@ -256,6 +257,14 @@ func resourceServerHardwareRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("mp_dns_name", servHard.MpDnsName)
 	d.Set("uid_state", servHard.UidState)
 	d.Set("username", d.Get("username").(string))
+
+	// reads server hardware scopes
+	scopes, err := config.ovClient.GetScopeFromResource(servHard.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 
 	return nil
 }

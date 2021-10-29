@@ -85,9 +85,13 @@ The following arguments are supported:
 * `validate_if_li_firmware_update_is_non_disruptive` -  User can validate whether the logical interconnect firmware update will cause disruption to the traffic that the interconnects are carrying. 
 
 * `update_type` - Type of update of Logical Enclosure.
+* `initial_scope_uris` - (Optional) A list of URIs of the scopes to which the resource shall be assigned.
+It is meaningful at resource creation time, during resource update, and it is included on resource retrieval as well.
 
-	| NO |        Type of Update                          |   Update String               |
-	|----|------------------------------------------------|-------------------------------|
-	|  1 |`UpdateLogicalEnclosure`			              |'update'                       |
-	|  2 |`UpdateFromGroupLogicalEnclosure`			      |'updateByGroup'                |
+* `update_type` - (Required) Type of update of Logical Enclosure.
+
+ | NO  | Type of Update                    | Update String   |
+ | --- | --------------------------------- | --------------- |
+ | 1   | `UpdateLogicalEnclosure`          | 'update'        |
+ | 2   | `UpdateFromGroupLogicalEnclosure` | 'updateByGroup' |
 

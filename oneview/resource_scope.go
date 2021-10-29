@@ -12,9 +12,12 @@
 package oneview
 
 import (
+	"fmt"
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"log"
+	"sort"
 )
 
 func resourceScope() *schema.Resource {
@@ -136,13 +139,8 @@ func resourceScopeCreate(d *schema.ResourceData, meta interface{}) error {
 		scope.AddedResourceUris = addedScopeUris
 	}
 
-	if val, ok := d.GetOk("removed_resource_uris"); ok {
-		rawRemovedScopeUris := val.(*schema.Set).List()
-		removedScopeUris := make([]utils.Nstring, len(rawRemovedScopeUris))
-		for i, rawData := range rawRemovedScopeUris {
-			removedScopeUris[i] = utils.Nstring(rawData.(string))
-		}
-		scope.RemovedResourceUris = removedScopeUris
+	if _, ok := d.GetOk("removed_resource_uris"); ok {
+		return fmt.Errorf("removed_resource_uris can not be added while creating scope")
 	}
 
 	err := config.ovClient.CreateScope(scope)
@@ -175,9 +173,22 @@ func resourceScopeRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("etag", scope.Etag)
 	d.Set("old_uri", scope.OldUri.String())
 	d.Set("scopes_uri", scope.ScopesUri.String())
-	d.Set("initial_scope_uris", scope.InitialScopeUris)
-	d.Set("added_resource_uris", scope.AddedResourceUris)
-	d.Set("removed_resource_uris", scope.RemovedResourceUris)
+	if val, ok := d.GetOk("added_resource_uris"); ok {
+		rawVal := val.(*schema.Set).List()
+		d.Set("added_resource_uris", readResourceUris(meta, scope.URI.String(), rawVal, true))
+	}
+	if val, ok := d.GetOk("removed_resource_uris"); ok {
+		rawVal := val.(*schema.Set).List()
+		d.Set("removed_resource_uris", readResourceUris(meta, scope.URI.String(), rawVal, false))
+	}
+
+	// reads assigned sscopes to the resource scope
+	scopes, err := config.ovClient.GetScopeFromResource(scope.URI.String())
+	if err != nil {
+		log.Printf("unable to fetch scopes: %s", err)
+	} else {
+		d.Set("initial_scope_uris", scopes.ScopeUris)
+	}
 
 	return nil
 }
@@ -210,6 +221,14 @@ func resourceScopeUpdate(d *schema.ResourceData, meta interface{}) error {
 		scope.RemovedResourceUris = removedResourceUris
 	}
 
+	if val, ok := d.GetOk("initial_scope_uris"); ok {
+		val := val.(*schema.Set).List()
+		err := UpdateScopeUris(meta, val, scope.URI.String())
+		if err != nil {
+			return err
+		}
+	}
+
 	err := config.ovClient.UpdateScope(scope)
 	if err != nil {
 		d.SetId("")
@@ -228,4 +247,31 @@ func resourceScopeDelete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	return nil
+}
+
+// readResourceUris - Method is specific to Scope Resource.
+// input parameters: Scope uri , resource Uris, type of utility i.e. AddScopeUris or RemovedScopeUris
+// returns: resource uris valid for addedResourceUris or removeResourceUris
+func readResourceUris(meta interface{}, uri string, rawVal []interface{}, utility bool) []string {
+	resourceUris := []string{}
+	config := meta.(*Config)
+	for _, resourceUri := range rawVal {
+		scopeUris, err := config.ovClient.GetScopeFromResource(resourceUri.(string))
+		if err != nil {
+			log.Printf("unable to fetch scope uris from resourceUris: %s", err)
+		} else {
+			if utility == true {
+				// adds if the scope is present in the resource - This works for AddedScopeUris
+				if sort.SearchStrings(scopeUris.ScopeUris, uri) < len(scopeUris.ScopeUris) {
+					resourceUris = append(resourceUris, resourceUri.(string))
+				}
+			} else {
+				// adds if the scope is not present in the resource - This works for RemovedScopeUris
+				if sort.SearchStrings(scopeUris.ScopeUris, uri) == len(scopeUris.ScopeUris) {
+					resourceUris = append(resourceUris, resourceUri.(string))
+				}
+			}
+		}
+	}
+	return resourceUris
 }
