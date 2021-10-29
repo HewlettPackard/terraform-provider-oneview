@@ -15,9 +15,9 @@ Creates a logical enclosure with firmware.
 ```hcl
 resource "oneview_logical_enclosure" "default" {
   name = "default-logical-enclosure"
-  enclosure_uris = ["${oneview_enclosure1.uri}", 
-                                 "${oneview_enclosure2.uri}"]
-  enclosure_group_uri = "${oneview_enclosure_group.uri}"
+  enclosure_uris = [data.oneview_enclosure1.uri,
+                                 data.oneview_enclosure2.uri]
+  enclosure_group_uri = data.oneview_enclosure_group.uri
   firmware {
 	firmware_baseline_uri = "/rest/firmware-drivers/Synergy_Custom_SPP_2021_02_01_Z7550-97110"
 	force_install_firmware = true
@@ -46,8 +46,9 @@ Update logical enclosure.
 ```js
 resource "oneview_logical_enclosure" "default" {
         name = "default-logical-enclosure"
-        enclosure_uris = ["${oneview_enclosure1.uri}", "${oneview_enclosure2.uri}"]
-        enclosure_group_uri = "${oneview_enclosure_group.uri}"
+        enclosure_uris = [data.oneview_enclosure1.uri,
+                                 data.oneview_enclosure2.uri]
+        enclosure_group_uri = data.oneview_enclosure_group.uri
         update_type = "update-type"
 	firmware {
 		firmware_baseline_uri = "/rest/firmware-drivers/SPPGen9Snap3_2015_0221_71"
