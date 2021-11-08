@@ -21,10 +21,12 @@ type LogicalEnclosure struct {
 	EnclosureUris             []utils.Nstring            `json:"enclosureUris,omitempty"`             // "enclosureUris":""
 	Enclosures                map[string]Enclosures      `json:"enclosures,omitempty"`                // "enclosures":"[]",
 	Firmware                  *LogicalEnclosureFirmware  `json:"firmware,omitempty"`                  // "firmware":"",
+	FirmwareBaselineUri       utils.Nstring              `json:"firmwareBaselineUri, omitempty"`      // "firmwareBaselineUri": "/rest/firmware-drivers/Synergy_Custom_SPP_2021_02_01_Z7550-97110",
+	ForceInstallFirmware      bool                       `json:"forceInstallFirmware, omitempty"`     // "forceInstallFirmware": true,
 	InitialScopeUris          []utils.Nstring            `json:"initialScopeUris,omitempty"`          // "initialScopUris":
 	IpAddressingMode          string                     `json:"ipAddressingMode,omitempty"`          // "ipAddressingMode":"DHCP",
-	Ipv4Ranges                []Ipv4Ranges               `json:"ipv4Ranges,omitempty"`                //"ipv4Ranges":"[]"
-	LogicalInterconnectUris   []utils.Nstring            `json:"logicalInterconnectUris,omitempty"`   //"logicalInterconnectUris":"[]",
+	Ipv4Ranges                []Ipv4Ranges               `json:"ipv4Ranges,omitempty"`                // "ipv4Ranges":"[]"
+	LogicalInterconnectUris   []utils.Nstring            `json:"logicalInterconnectUris,omitempty"`   // "logicalInterconnectUris":"[]",
 	Modified                  string                     `json:"modified,omitempty"`                  // "modified": "20150831T154835.25Z",
 	Name                      string                     `json:"name,omitempty"`                      // "name": "Ethernet Network 1",
 	PowerMode                 string                     `json:"powerMode,omitempty"`                 // "powerMode": "RedundantPowerFeed",
@@ -83,6 +85,12 @@ type Ipv4Ranges struct {
 	IpRangeUri utils.Nstring `json:"ipRangeUri,omitempty"` //"ipRangeUri":"",
 	Name       string        `json:"name,omitempty"`       //"name":"",
 	SubnetMask string        `json:"subnetMask,omitempty"` //"subnetMask":""
+}
+
+type PatchFirmware struct {
+	Op    string                    `json:"op,omitempty"`    //"op": "replace",
+	Path  string                    `json:"path,omitempty"`  //"path": "/firmware",
+	Value *LogicalEnclosureFirmware `json:"value,omitempty"` //"value": {}
 }
 
 type LogicalEnclosureFirmware struct {
@@ -353,6 +361,47 @@ func (c *OVClient) UpdateFromGroupLogicalEnclosure(logEn LogicalEnclosure) error
 	}
 
 	log.Debugf("Response updateFromGroup LogicalEnclosure %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return err
+	}
+
+	err = t.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *OVClient) UpdateLogicalEnclosureFirmware(uri string, patchData LogicalEnclosureFirmware) error {
+	var (
+		t *Task
+	)
+
+	firmwareUpdate := PatchFirmware{
+		Op:    "replace",
+		Path:  "/firmware",
+		Value: &patchData,
+	}
+
+	operation := []PatchFirmware{firmwareUpdate}
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Debugf("REST : %s \n %+v\n", uri, operation)
+	data, err := c.RestAPICall(rest.PATCH, uri, operation)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error while doing Patch: %s", err)
+		return err
+	}
+
+	log.Debugf("Response of Patch %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
