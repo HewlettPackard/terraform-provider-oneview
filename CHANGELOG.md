@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Notes
 - This release supports API3400 minimally where we can use OneView v6.40 with this SDK.
 
+#### Major Changes
+1. Added new endpoint for Logical Enclosure resource.
+  - PATCH /rest/logical-enclosure/{id}
+ 
+
 ### Bug fixes & Enhancements:
 - [#404](https://github.com/HewlettPackard/terraform-provider-oneview/issues/404) Creating Server profile for DLs fails
 - [#416](https://github.com/HewlettPackard/terraform-provider-oneview/issues/416) server hardware resource is not idempotent 

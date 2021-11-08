@@ -66,6 +66,8 @@ output "oneview_logical_enclosure_value" {
 
 * `update_firmware_on_unmanaged_interconnect` - User can indicate whether or not to update unmanaged interconnects within the logical enclosure.
 
+* `validate_if_li_firmware_update_is_non_disruptive` -  User can validate whether the logical interconnect firmware update will cause disruption to the traffic that the interconnects are carrying.
+
 * `ip_addressing_mode` - Manage IPv4 address allocation for interconnects and  device bay management processors.
 
 * `dns_servers` - A list of DNS servers for the IPv4Range.

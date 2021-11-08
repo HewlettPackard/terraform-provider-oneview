@@ -91,10 +91,6 @@ func dataSourceLogicalEnclosure() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"firmware_update_on": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"force_install_firmware": {
 							Type:     schema.TypeBool,
 							Computed: true,
@@ -235,7 +231,6 @@ func dataSourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) er
 	logicalEnclosureFirmware := make([]map[string]interface{}, 0, 1)
 	logicalEnclosureFirmware = append(logicalEnclosureFirmware, map[string]interface{}{
 		"firmware_baseline_uri":                            logicalEnclosure.Firmware.FirmwareBaselineUri,
-		"firmware_update_on":                               logicalEnclosure.Firmware.FirmwareUpdateOn,
 		"force_install_firmware":                           logicalEnclosure.Firmware.ForceInstallFirmware,
 		"logical_interconnect_update_mode":                 logicalEnclosure.Firmware.LogicalInterconnectUpdateMode,
 		"update_firmware_on_unmanaged_interconnect":        logicalEnclosure.Firmware.UpdateFirmwareOnUnmanagedInterconnect,
