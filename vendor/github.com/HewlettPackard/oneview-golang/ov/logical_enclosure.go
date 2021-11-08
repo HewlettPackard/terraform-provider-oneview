@@ -22,7 +22,7 @@ type LogicalEnclosure struct {
 	Enclosures                map[string]Enclosures      `json:"enclosures,omitempty"`                // "enclosures":"[]",
 	Firmware                  *LogicalEnclosureFirmware  `json:"firmware,omitempty"`                  // "firmware":"",
 	FirmwareBaselineUri       utils.Nstring              `json:"firmwareBaselineUri, omitempty"`      // "firmwareBaselineUri": "/rest/firmware-drivers/Synergy_Custom_SPP_2021_02_01_Z7550-97110",
-	ForceInstallFirmware      bool                       `json:"forceInstallFirmware, omitempty"`     // "forceInstallFirmware": false,
+	ForceInstallFirmware      bool                       `json:"forceInstallFirmware, omitempty"`     // "forceInstallFirmware": true,
 	InitialScopeUris          []utils.Nstring            `json:"initialScopeUris,omitempty"`          // "initialScopUris":
 	IpAddressingMode          string                     `json:"ipAddressingMode,omitempty"`          // "ipAddressingMode":"DHCP",
 	Ipv4Ranges                []Ipv4Ranges               `json:"ipv4Ranges,omitempty"`                // "ipv4Ranges":"[]"

@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Bug fixes & Enhancements:
 - [#404](https://github.com/HewlettPackard/terraform-provider-oneview/issues/404) Creating Server profile for DLs fails
 - [#416](https://github.com/HewlettPackard/terraform-provider-oneview/issues/416) server hardware resource is not idempotent 
+- [#414](https://github.com/HewlettPackard/terraform-provider-oneview/issues/414) Adding DLs servers in OneView fails 
 
 # [v6.3.1-13]
 

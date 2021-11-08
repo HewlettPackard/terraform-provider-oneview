@@ -227,7 +227,7 @@ func (s ServerHardware) GetPowerState() (PowerState, error) {
 }
 
 // Add single rack server to the appliance
-func (c *OVClient) AddRackServer(rackServer ServerHardware) error {
+func (c *OVClient) AddRackServer(rackServer ServerHardware) (utils.Nstring, error) {
 	log.Infof("Adding rack server %s.", rackServer.Hostname)
 	var (
 		uri = "/rest/server-hardware"
@@ -242,25 +242,27 @@ func (c *OVClient) AddRackServer(rackServer ServerHardware) error {
 	log.Debugf("REST : %s \n %+v\n", uri, rackServer)
 	log.Debugf("task -> %+v", t)
 	data, err := c.RestAPICall(rest.POST, uri, rackServer)
+
 	if err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error submitting new rack server addition: %s", err)
-		return err
+		return t.AssociatedRes.ResourceURI, err
 	}
 
 	log.Debugf("Response New Rackserver %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
-		return err
+		return t.AssociatedRes.ResourceURI, err
 	}
 
 	err = t.Wait()
+
 	if err != nil {
-		return err
+		return t.AssociatedRes.ResourceURI, err
 	}
 
-	return nil
+	return t.AssociatedRes.ResourceURI, nil
 }
 
 // Add multiple rack servers
