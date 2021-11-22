@@ -15,7 +15,7 @@ HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud 
 
 The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView and HPE Image Streamer.
 
-You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.3.1-13)
+You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.4.0-13)
 
 ## What's New
 
