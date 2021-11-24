@@ -13,7 +13,7 @@ package oneview
 
 import (
 	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceSNMPv3TrapDestination() *schema.Resource {
