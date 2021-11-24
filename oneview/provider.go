@@ -14,7 +14,6 @@ package oneview
 import (
 	"github.com/HewlettPackard/terraform-provider-oneview/internal/mutexkv"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 var (
@@ -22,7 +21,7 @@ var (
 	serverHardwareURIs = make(map[string]bool)
 )
 
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"ov_domain": {
