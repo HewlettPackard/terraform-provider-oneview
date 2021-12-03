@@ -148,24 +148,41 @@ func (c *OVClient) GetFirmwareBaselineById(id string) (FirmwareDrivers, error) {
 }
 
 func (c *OVClient) GetFirmwareBaselineByNameandVersion(name string) (FirmwareDrivers, error) {
+	var fwname, version string
 	fwNameVersion := strings.SplitAfter(name, ",")
-	if len(fwNameVersion) < 2 {
-		return FirmwareDrivers{}, errors.New("provide firmware name and version separated by comma")
+	if len(fwNameVersion) < 1 {
+		return FirmwareDrivers{}, errors.New("firmware name not provided")
 	}
-	fwname, version := fwNameVersion[0], fwNameVersion[1]
+	if len(fwNameVersion) == 2 {
+		fwname, version = fwNameVersion[0], fwNameVersion[1]
+	} else {
+		fwname = fwNameVersion[0]
+	}
 
 	firmwareList, err := c.GetFirmwareBaselineList("", "", "")
 
 	if firmwareList.Total > 0 {
 
 		for i := range firmwareList.Members {
-			if firmwareList.Members[i].Name != fwname && firmwareList.Members[i].Version != version {
-				continue
+			if version != "" {
+				if firmwareList.Members[i].Name != fwname && firmwareList.Members[i].Version != version {
+					continue
+				} else {
+
+					return firmwareList.Members[i], err
+
+				}
+
 			} else {
+				if firmwareList.Members[i].Name != fwname {
+					continue
+				} else {
 
-				return firmwareList.Members[i], err
+					return firmwareList.Members[i], err
 
+				}
 			}
+
 		}
 
 	}

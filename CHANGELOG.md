@@ -1,7 +1,19 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
+# [v6.5.0-13] (unreleased)
+### Notes
+- This release supports API3600 minimally where we can use OneView v6.50 with this SDK.
 
-# [v6.4.0-13](unreleased)
+#### Major Changes
+
+ 
+
+### Bug fixes & Enhancements:
+
+- [#412](https://github.com/HewlettPackard/terraform-provider-oneview/issues/412) Use firmware baseline name instead of uri - enhancement needed
+
+
+# [v6.4.0-13]
 ### Notes
 - This release supports API3400 minimally where we can use OneView v6.40 with this SDK.
 
