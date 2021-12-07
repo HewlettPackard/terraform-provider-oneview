@@ -154,7 +154,7 @@ func (c *OVClient) GetFirmwareBaselineByNameandVersion(name string) (FirmwareDri
 		return FirmwareDrivers{}, errors.New("firmware name not provided")
 	}
 	if len(fwNameVersion) == 2 {
-		fwname, version = fwNameVersion[0], fwNameVersion[1]
+		fwname, version = strings.TrimSpace(fwNameVersion[0]), strings.TrimSpace(fwNameVersion[1])
 	} else {
 		fwname = fwNameVersion[0]
 	}
