@@ -17,6 +17,8 @@ github.com/HewlettPackard/oneview-golang/rest
 github.com/HewlettPackard/oneview-golang/utils
 # github.com/agext/levenshtein v1.2.2
 github.com/agext/levenshtein
+# github.com/apparentlymart/go-cidr v1.1.0
+## explicit
 # github.com/apparentlymart/go-textseg v1.0.0
 github.com/apparentlymart/go-textseg/textseg
 # github.com/aws/aws-sdk-go v1.25.3

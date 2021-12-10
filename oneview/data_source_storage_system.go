@@ -35,7 +35,6 @@ func dataSourceStorageSystem() *schema.Resource {
 			"credentials": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"username": {

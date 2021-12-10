@@ -97,7 +97,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_name": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -162,7 +161,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_storage_pool": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -227,7 +225,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_size": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				//MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -288,7 +285,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_provisioning_type": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -353,7 +349,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_snapshot_pool": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -418,7 +413,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_data_transfer_limit": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -479,7 +473,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_is_deduplicated": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -532,7 +525,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_is_encrypted": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -585,7 +577,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_is_pinned": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -638,7 +629,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_iops_limit": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -699,7 +689,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_folder": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -764,7 +753,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_template_version": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -829,7 +817,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_performance_policy": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -894,7 +881,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_volume_set": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -959,7 +945,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_description": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -1024,7 +1009,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_is_adaptive_optimization_enabled": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -1077,7 +1061,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_is_compressed": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -1130,7 +1113,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_data_protection_level": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {
@@ -1195,7 +1177,6 @@ func dataSourceStorageVolumeTemplate() *schema.Resource {
 			"tp_is_shareable": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"meta_locked": {

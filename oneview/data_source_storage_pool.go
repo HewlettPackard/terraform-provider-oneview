@@ -75,7 +75,6 @@ func dataSourceStoragePool() *schema.Resource {
 			"storage_pool_device_specific_attributes": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"device_id": {

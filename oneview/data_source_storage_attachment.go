@@ -63,7 +63,6 @@ func dataSourceStorageAttachment() *schema.Resource {
 			"host": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {

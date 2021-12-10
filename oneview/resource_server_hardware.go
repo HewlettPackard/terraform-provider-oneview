@@ -14,9 +14,6 @@ package oneview
 import (
 	"errors"
 	"fmt"
-
-	"log"
-
 	"log"
 
 	"github.com/HewlettPackard/oneview-golang/ov"

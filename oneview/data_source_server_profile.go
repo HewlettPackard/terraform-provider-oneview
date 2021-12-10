@@ -673,7 +673,6 @@ func dataSourceServerProfile() *schema.Resource {
 									},
 									"directory": {
 										Type:     schema.TypeList,
-										MaxItems: 1,
 										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -735,7 +734,6 @@ func dataSourceServerProfile() *schema.Resource {
 										},
 									},
 									"key_manager": {
-										MaxItems: 1,
 										Type:     schema.TypeList,
 										Computed: true,
 										Elem: &schema.Resource{
