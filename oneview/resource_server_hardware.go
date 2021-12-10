@@ -15,10 +15,11 @@ import (
 	"errors"
 	"fmt"
 
+	"log"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"log"
 )
 
 func resourceServerHardware() *schema.Resource {
@@ -193,6 +194,7 @@ func resourceServerHardwareCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	resourceURI, err := config.ovClient.AddRackServer(hardware)
+
 	if err != nil && resourceURI != "" {
 		d.SetId("")
 		return err
