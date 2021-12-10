@@ -2,6 +2,8 @@ package ov
 
 import (
 	"encoding/json"
+	"errors"
+	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -143,6 +145,48 @@ func (c *OVClient) GetFirmwareBaselineById(id string) (FirmwareDrivers, error) {
 		return firmwareId, err
 	}
 	return firmwareId, nil
+}
+
+func (c *OVClient) GetFirmwareBaselineByNameandVersion(name string) (FirmwareDrivers, error) {
+	var fwname, version string
+	fwNameVersion := strings.SplitAfter(name, ",")
+	if len(fwNameVersion) < 1 {
+		return FirmwareDrivers{}, errors.New("firmware name not provided")
+	}
+	if len(fwNameVersion) == 2 {
+		fwname, version = strings.TrimSpace(fwNameVersion[0]), strings.TrimSpace(fwNameVersion[1])
+	} else {
+		fwname = fwNameVersion[0]
+	}
+
+	firmwareList, err := c.GetFirmwareBaselineList("", "", "")
+
+	if firmwareList.Total > 0 {
+
+		for i := range firmwareList.Members {
+			if version != "" {
+				if firmwareList.Members[i].Name != fwname && firmwareList.Members[i].Version != version {
+					continue
+				} else {
+
+					return firmwareList.Members[i], err
+
+				}
+
+			} else {
+				if firmwareList.Members[i].Name != fwname {
+					continue
+				} else {
+
+					return firmwareList.Members[i], err
+
+				}
+			}
+
+		}
+
+	}
+	return FirmwareDrivers{}, err
 }
 
 func (c *OVClient) CreateCustomServicePack(sp CustomServicePack, force string) error {

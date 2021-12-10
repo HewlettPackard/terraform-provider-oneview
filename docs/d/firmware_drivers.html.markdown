@@ -14,7 +14,7 @@ Use this data source to access the attributes of a firmware baseline.
 
 ```hcl
 data "oneview_firmware_drivers" "test" {
- id = "Synergy_Custom_SPP_2021_02_01_Z7550-97110"
+ id = "HPE Synergy Service Pack,SY-2021.11.01"
 }
 
 output "oneview_firmware_drivers_value" {
@@ -24,7 +24,7 @@ output "oneview_firmware_drivers_value" {
 
 ## Argument Reference
 
-* `id` - (Required) The id of the resource.
+* `id` - (Required) The name of firmware and version separated by comma. Or you can use jsut name also. For E.g. "HPE Synergy Service Pack,SY-2021.11.01"
 
 ## Attributes Reference
 
