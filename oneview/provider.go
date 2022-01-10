@@ -20,6 +20,7 @@ var (
 	ovMutexKV          = mutexkv.NewMutexKV()
 	serverHardwareURIs = make(map[string]bool)
 )
+
 // Provider returns a schema.Provider for oneview
 func Provider() *schema.Provider {
 	return &schema.Provider{
