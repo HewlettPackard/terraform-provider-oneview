@@ -5,12 +5,47 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - This release supports API3600 minimally where we can use OneView v6.50 with this SDK.
 
 #### Major Changes
-
- 
+Upgraded the plugin sdk from version 1 to version 2. 
 
 ### Bug fixes & Enhancements:
 
 - [#412](https://github.com/HewlettPackard/terraform-provider-oneview/issues/412) Use firmware baseline name instead of uri - enhancement needed
+  
+### Oneview Features supported
+- Appliance SNMPv1 Trap Destinations
+- Appliance SNMPv3 Trap Destinations
+- Appliance SSH Access
+- Appliance Time and Locale Configuration
+- Connection Template
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Firmware Drivers
+- Hypervisor Manager
+- Hypervisor Cluster Profile
+- Id Pools Ipv4 Range
+- Id Pools IPv4 Subnets
+- Labels
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups
+- Network Set
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
 
 
 # [v6.4.0-13]
