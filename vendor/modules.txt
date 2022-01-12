@@ -8,7 +8,7 @@ cloud.google.com/go/internal/trace
 cloud.google.com/go/internal/version
 # cloud.google.com/go/storage v1.10.0
 cloud.google.com/go/storage
-# github.com/HewlettPackard/oneview-golang v6.4.1-0.20211207103755-542200727968+incompatible
+# github.com/HewlettPackard/oneview-golang v6.5.0+incompatible
 ## explicit
 github.com/HewlettPackard/oneview-golang/i3s
 github.com/HewlettPackard/oneview-golang/liboneview
@@ -17,8 +17,6 @@ github.com/HewlettPackard/oneview-golang/rest
 github.com/HewlettPackard/oneview-golang/utils
 # github.com/agext/levenshtein v1.2.2
 github.com/agext/levenshtein
-# github.com/apparentlymart/go-cidr v1.1.0
-## explicit
 # github.com/apparentlymart/go-textseg v1.0.0
 github.com/apparentlymart/go-textseg/textseg
 # github.com/aws/aws-sdk-go v1.25.3
@@ -387,3 +385,5 @@ google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/emptypb
 google.golang.org/protobuf/types/known/timestamppb
 google.golang.org/protobuf/types/pluginpb
+# gopkg.in/yaml.v2 v2.2.8
+## explicit
