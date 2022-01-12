@@ -12,7 +12,7 @@
 package oneview
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceStorageSystem() *schema.Resource {
@@ -35,7 +35,6 @@ func dataSourceStorageSystem() *schema.Resource {
 			"credentials": {
 				Computed: true,
 				Type:     schema.TypeSet,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"username": {

@@ -16,8 +16,8 @@ import (
 	"testing"
 
 	"github.com/HewlettPackard/oneview-golang/i3s"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccDeploymentPlan_1(t *testing.T) {
