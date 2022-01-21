@@ -12,7 +12,7 @@ Creates a server profile template.
 
 ## Example Usage
 
-``hcl
+```hcl
 resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorage" {
   name                 = "TestServerProfileTemplate_with_local_storage"
   type                 = "ServerProfileTemplateV8"
