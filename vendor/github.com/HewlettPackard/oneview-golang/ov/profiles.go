@@ -157,6 +157,10 @@ type LocalAccounts struct {
 	VirtualMediaPriv         *bool  `json:"-"`
 	VirtualPowerAndResetPriv *bool  `json:"-"`
 	ILOConfigPriv            *bool  `json:"-"`
+	LoginPriv                *bool  `json:"-"`
+	HostBIOSConfigPriv       *bool  `json:"-"`
+	HostNICConfigPriv        *bool  `json:"-"`
+	HostStorageConfigPriv    *bool  `json:"-"`
 }
 
 type AdministratorAccount struct {
