@@ -499,7 +499,7 @@ func resourceServerProfile() *schema.Resource {
 									"logical_drives": {
 										Optional: true,
 										Computed: true,
-										Type:     schema.TypeSet,
+										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"bootable": {
@@ -1822,7 +1822,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			for _, raw2 := range rawLocalStorageController {
 				controllerData := raw2.(map[string]interface{})
 				// Gets Local Storage Controller's Logical Drives
-				rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+				//rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+				rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 				logicalDrives := make([]ov.LogicalDriveV3, 0)
 				for _, rawLogicalDrive := range rawLogicalDrives {
 					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
@@ -2050,7 +2051,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 	//Cleaning up SP  by removing spt related fields
 	config.ovClient.Cleanup(&serverProfile)
-
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
 
@@ -2066,10 +2066,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
+
 	config := meta.(*Config)
 
 	serverProfile, err := config.ovClient.GetProfileByName(d.Id())
-
 	if err != nil || serverProfile.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -2186,10 +2186,10 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		mpSettings := make([]map[string]interface{}, 0)
 		if len(serverProfile.ManagementProcessor.MpSettings) != 0 {
 			// initializing schema variables...
-			adminAcc := make([]map[string]interface{}, 1)
-			directory := make([]map[string]interface{}, 1)
-			keyManager := make([]map[string]interface{}, 1)
-			hostName := make([]map[string]interface{}, 1)
+			adminAcc := make([]map[string]interface{}, 0)
+			directory := make([]map[string]interface{}, 0)
+			keyManager := make([]map[string]interface{}, 0)
+			hostName := make([]map[string]interface{}, 0)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
 
@@ -2638,6 +2638,27 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				"predictive_spare_rebuild": serverProfile.LocalStorage.Controllers[i].PredictiveSpareRebuild,
 				"logical_drives":           logicalDrives,
 			})
+		}
+		// flatten controller to set intialize value
+		if getVal, ok := d.GetOk("local_storage"); ok {
+			localStorageVal := getVal.([]interface{})
+			for _, rawlocalStorage := range localStorageVal {
+				localStorage := rawlocalStorage.(map[string]interface{})
+				localSContVal := localStorage["controller"].(*schema.Set).List()
+				// iterating through connections from state
+				for i, rawlocalSContVal := range localSContVal {
+					lsC := rawlocalSContVal.(map[string]interface{})
+					// iterating through connections from refresh
+					//for _, lsVal := range controllers {
+					//if lsVal["id"] == ls["id"] {
+					// overrides port_id
+					if lsC["initialize"] == true {
+						controllers[i]["initialize"] = true
+					}
+					//}
+					//}
+				}
+			}
 		}
 		// Gets Sas Logical Jbod Controller Body
 		sasLogDrives := make([]map[string]interface{}, 0, len(serverProfile.LocalStorage.SasLogicalJBODs))
@@ -3298,7 +3319,8 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				localStorageEmbeddedControllers := make([]ov.LocalStorageEmbeddedController, 0)
 				for _, raw2 := range rawLocalStorageController {
 					controllerData := raw2.(map[string]interface{})
-					rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+					//rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+					rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 					logicalDrives := make([]ov.LogicalDriveV3, 0)
 					for _, rawLogicalDrive := range rawLogicalDrives {
 						logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
