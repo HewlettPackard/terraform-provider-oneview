@@ -1953,12 +1953,12 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		mpSettings := make([]map[string]interface{}, 0)
 		if len(spt.ManagementProcessor.MpSettings) != 0 {
 			// initializing schema variables...
-			adminAcc := make([]map[string]interface{}, 1)
-			directory := make([]map[string]interface{}, 1)
-			keyManager := make([]map[string]interface{}, 1)
+			adminAcc := make([]map[string]interface{}, 0)
+			directory := make([]map[string]interface{}, 0)
+			keyManager := make([]map[string]interface{}, 0)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
-			hostName := make([]map[string]interface{}, 1)
+			hostName := make([]map[string]interface{}, 0)
 
 			for _, val := range spt.ManagementProcessor.MpSettings {
 
