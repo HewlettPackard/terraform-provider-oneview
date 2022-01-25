@@ -2186,10 +2186,10 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		mpSettings := make([]map[string]interface{}, 0)
 		if len(serverProfile.ManagementProcessor.MpSettings) != 0 {
 			// initializing schema variables...
-			adminAcc := make([]map[string]interface{}, 1)
-			directory := make([]map[string]interface{}, 1)
-			keyManager := make([]map[string]interface{}, 1)
-			hostName := make([]map[string]interface{}, 1)
+			adminAcc := make([]map[string]interface{}, 0)
+			directory := make([]map[string]interface{}, 0)
+			keyManager := make([]map[string]interface{}, 0)
+			hostName := make([]map[string]interface{}, 0)
 			directoryGroups := make([]map[string]interface{}, 0)
 			localAccounts := make([]map[string]interface{}, 0)
 

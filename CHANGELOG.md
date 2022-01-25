@@ -1,5 +1,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
+# [v6.6.0-13](unreleased)
+### Notes
+- This release supports API3800 minimally where we can use OneView v6.60 with this SDK.
+
+#### Major Changes
+
+### Bug fixes & Enhancements:
+
+- [#453](https://github.com/HewlettPackard/terraform-provider-oneview/issues/453) Server profile creation with iLO configuration is throwing error after creation
+
 # [v6.5.0-13]
 ### Notes
 - This release supports API3600 minimally where we can use OneView v6.50 with this SDK.
