@@ -122,7 +122,13 @@ func (c *OVClient) GetProfileTemplates(start string, count string, filter string
 
 // IsZeroOfUnderlyingType returns true if a value is initialized.
 func IsZeroOfUnderlyingType(x interface{}) bool {
-	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
+	//attributes with false value will not be added to the post call to support Gen8 and Gen9 server.
+	bval, ok := x.(*bool)
+	if ok && !*bval {
+		return true
+	} else {
+		return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
+	}
 }
 
 // SetMp maps ManagementProcessors to IntManagementProcessor struct.
