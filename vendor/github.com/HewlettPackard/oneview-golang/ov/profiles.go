@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"reflect"
 
@@ -438,11 +439,20 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 		return errors.New("Server Hardware must be powered off to assign to the server profile")
 	}
 
+	serverType, err := c.GetServerHardwareTypeByUri(p.ServerHardwareTypeURI)
+	if err != nil {
+		log.Warnf("Error getting server hardware type %s", err)
+	}
+	serverTypeName := serverType.Name
+
 	var emptyMgmtProcessorsStruct ManagementProcessors
 	if !reflect.DeepEqual(p.ManagementProcessors, emptyMgmtProcessorsStruct) {
-		mp := SetMp(p.ManagementProcessors)
+		mp := SetMp(serverTypeName, p.ManagementProcessors)
 		p.ManagementProcessor = mp
 	}
+
+	file, _ := json.MarshalIndent(p, "", " ")
+	_ = ioutil.WriteFile("sp_create.json", file, 0644)
 
 	data, err := c.RestAPICall(rest.POST, uri, p)
 	if err != nil {
@@ -629,11 +639,20 @@ func (c *OVClient) UpdateServerProfile(p ServerProfile) error {
 	log.Debugf("REST : %s \n %+v\n", uri, p)
 	log.Debugf("task -> %+v", t)
 
+	serverType, err := c.GetServerHardwareTypeByUri(p.ServerHardwareTypeURI)
+	if err != nil {
+		log.Warnf("Error getting server hardware type %s", err)
+	}
+	serverTypeName := serverType.Name
+
 	var emptyMgmtProcessorsStruct ManagementProcessors
 	if !reflect.DeepEqual(p.ManagementProcessors, emptyMgmtProcessorsStruct) {
-		mp := SetMp(p.ManagementProcessors)
+		mp := SetMp(serverTypeName, p.ManagementProcessors)
 		p.ManagementProcessor = mp
 	}
+
+	file, _ := json.MarshalIndent(p, "", " ")
+	_ = ioutil.WriteFile("update_sp.json", file, 0644)
 
 	data, err := c.RestAPICall(rest.PUT, uri, p)
 	if err != nil {
