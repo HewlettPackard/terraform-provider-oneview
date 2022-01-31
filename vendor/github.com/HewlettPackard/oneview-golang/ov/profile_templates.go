@@ -132,7 +132,7 @@ func IsZeroOfUnderlyingType(x interface{}) bool {
 }
 
 // SetMp maps ManagementProcessors to IntManagementProcessor struct.
-func SetMp(st string, mp ManagementProcessors) IntManagementProcessor {
+func SetMp(sht string, mp ManagementProcessors) IntManagementProcessor {
 	mps := make([]MpSetting, 0)
 	var emptyMpSettings MpSettings
 	if !reflect.DeepEqual(mp.MpSetting, emptyMpSettings) {
@@ -250,8 +250,8 @@ func SetMp(st string, mp ManagementProcessors) IntManagementProcessor {
 					}
 				}
 				//Check generation of server
-				gen := st[6:11]
-				if gen != "Gen10" {
+				gen := sht[6:11]
+				if gen != "Gen10" || gen != "Gen11" {
 					delete(arg, "loginPriv")
 					delete(arg, "hostBIOSConfigPriv")
 					delete(arg, "hostNICConfigPriv")
@@ -293,15 +293,15 @@ func (c *OVClient) CreateProfileTemplate(serverProfileTemplate ServerProfile) er
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, serverProfileTemplate)
 	log.Debugf("task -> %+v", t)
-	serverType, err := c.GetServerHardwareTypeByUri(serverProfileTemplate.ServerHardwareTypeURI)
+	serverHardwareType, err := c.GetServerHardwareTypeByUri(serverProfileTemplate.ServerHardwareTypeURI)
 	if err != nil {
 		log.Warnf("Error getting server hardware type %s", err)
 	}
-	serverTypeName := serverType.Name
+	serverHardwareTypeName := serverHardwareType.Name
 
 	var emptyMgmtProcessorsStruct ManagementProcessors
 	if !reflect.DeepEqual(serverProfileTemplate.ManagementProcessors, emptyMgmtProcessorsStruct) {
-		mp := SetMp(serverTypeName, serverProfileTemplate.ManagementProcessors)
+		mp := SetMp(serverHardwareTypeName, serverProfileTemplate.ManagementProcessors)
 		serverProfileTemplate.ManagementProcessor = mp
 	}
 
