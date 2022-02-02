@@ -187,7 +187,7 @@ This defaults to 'Virtual'.
 			* `group_dn`, `group_sid`, `user_config_priv`, `remote_console_priv`, `virtual_media_priv`, `virtual_power_and_reset_priv`, and `ilo_config_priv`.
 		* `local_accounts` - Below attributes are supported for local accounts.
 			* `user_name`, `display_name`, `password`, `user_config_priv`, `remote_console_priv`, `virtual_media_priv`, `virtual_power_and_reset_priv`, and `ilo_config_priv`. 
-			*  `loginPriv`, `hostBIOSConfigPriv`, `hostNICConfigPriv`, `hostStorageConfigPriv` attributes are supported for Gen 10 onwards.
+			*  `login_priv`, `host_bios_config_priv`, `host_nic_config_priv`, `host_storage_config_priv` attributes are supported for Gen 10 onwards.
 
 * `os_deployment_settings` - (Optional) OS Deployment settings applicable when deployment is invoked through a server profile.
 OS Deploymennt Stting configuration is specified below.

@@ -264,7 +264,7 @@ In addition to the arguments listed above, the following computed attributes are
 			* `group_dn`, `group_sid`, `user_config_priv`, `remote_console_priv`, `virtual_media_priv`, `virtual_power_and_reset_priv`, and `ilo_config_priv`.
 		* `local_accounts` - Below attributes are supported for local accounts.
 			* `user_name`, `display_name`, `password`, `user_config_priv`, `remote_console_priv`, `virtual_media_priv`, `virtual_power_and_reset_priv`, and `ilo_config_priv`.
-			* `loginPriv`, `hostBIOSConfigPriv`, `hostNICConfigPriv`, `hostStorageConfigPriv` attributes are supported for Gen 10 onwards.
+			* `login_priv`, `host_bios_config_priv`, `host_nic_config_priv`, `host_storage_config_priv` attributes are supported for Gen 10 onwards.
 
 * `associated_server` - The serial number of the server hardware that the server profile is currently applied to or was most recently assigned to. This value is cleared if a different server profile is assigned to the server hardware.
 

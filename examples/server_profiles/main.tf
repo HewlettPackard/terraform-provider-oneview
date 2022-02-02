@@ -403,6 +403,12 @@ resource "oneview_server_profile" "SP" {
         virtual_media_priv           = true
         virtual_power_and_reset_priv = true
         ilo_config_priv              = true
+        ##below attrbutes are meant for gen 10 and above
+        login_priv                   = true
+        host_bios_config_priv        = true
+        host_nic_config_priv         = true
+        host_storage_config_priv     = true
+
       }
 
       key_manager {
