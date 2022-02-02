@@ -122,17 +122,11 @@ func (c *OVClient) GetProfileTemplates(start string, count string, filter string
 
 // IsZeroOfUnderlyingType returns true if a value is initialized.
 func IsZeroOfUnderlyingType(x interface{}) bool {
-	// bval, ok := x.(*bool)
-	// if ok && *bval {
-	// 	return false
-	// } else {
-
 	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
-	//}
 }
 
 // SetMp maps ManagementProcessors to IntManagementProcessor struct.
-func SetMp(sht string, mp ManagementProcessors) IntManagementProcessor {
+func SetMp(shtgen string, mp ManagementProcessors) IntManagementProcessor {
 	mps := make([]MpSetting, 0)
 	var emptyMpSettings MpSettings
 	if !reflect.DeepEqual(mp.MpSetting, emptyMpSettings) {
@@ -244,14 +238,11 @@ func SetMp(sht string, mp ManagementProcessors) IntManagementProcessor {
 				for j := 0; j < v.NumField(); j++ {
 					// only adds fields that are initialized in order to bypass adding default/uninitialized values.
 					if !IsZeroOfUnderlyingType(v.Field(j).Interface()) {
-
 						arg[strings.ToLower(string(typeOfS.Field(j).Name[0]))+typeOfS.Field(j).Name[1:]] = v.Field(j).Interface()
-
 					}
 				}
-				//Check generation of server
-				gen := sht[6:11]
-				if gen != "Gen10" || gen != "Gen11" {
+				//Check generation of server. Gen 9 and below does support some iLO attributes.
+				if shtgen != "Gen10" || shtgen != "Gen11" {
 					delete(arg, "loginPriv")
 					delete(arg, "hostBIOSConfigPriv")
 					delete(arg, "hostNICConfigPriv")
@@ -297,11 +288,11 @@ func (c *OVClient) CreateProfileTemplate(serverProfileTemplate ServerProfile) er
 	if err != nil {
 		log.Warnf("Error getting server hardware type %s", err)
 	}
-	serverHardwareTypeName := serverHardwareType.Name
+	serverHardwareTypeGen := serverHardwareType.Generation
 
 	var emptyMgmtProcessorsStruct ManagementProcessors
 	if !reflect.DeepEqual(serverProfileTemplate.ManagementProcessors, emptyMgmtProcessorsStruct) {
-		mp := SetMp(serverHardwareTypeName, serverProfileTemplate.ManagementProcessors)
+		mp := SetMp(serverHardwareTypeGen, serverProfileTemplate.ManagementProcessors)
 		serverProfileTemplate.ManagementProcessor = mp
 	}
 
@@ -390,15 +381,15 @@ func (c *OVClient) UpdateProfileTemplate(serverProfileTemplate ServerProfile) er
 	log.Debugf("REST : %s \n %+v\n", uri, serverProfileTemplate)
 	log.Debugf("task -> %+v", t)
 
-	serverType, err := c.GetServerHardwareTypeByUri(serverProfileTemplate.ServerHardwareTypeURI)
+	serverHardwareType, err := c.GetServerHardwareTypeByUri(serverProfileTemplate.ServerHardwareTypeURI)
 	if err != nil {
 		log.Warnf("Error getting server hardware type %s", err)
 	}
-	serverTypeName := serverType.Name
+	serverHardwareTypeGen := serverHardwareType.Generation
 
 	var emptyMgmtProcessorsStruct ManagementProcessors
 	if !reflect.DeepEqual(serverProfileTemplate.ManagementProcessors, emptyMgmtProcessorsStruct) {
-		mp := SetMp(serverTypeName, serverProfileTemplate.ManagementProcessors)
+		mp := SetMp(serverHardwareTypeGen, serverProfileTemplate.ManagementProcessors)
 		serverProfileTemplate.ManagementProcessor = mp
 	}
 
