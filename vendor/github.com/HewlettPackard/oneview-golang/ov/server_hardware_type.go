@@ -3,10 +3,11 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
-	"strconv"
 )
 
 type VirtualPort struct {
@@ -128,6 +129,7 @@ type ServerHardwareType struct {
 	ETAG                string                `json:"eTag,omitempty"`                // "eTag": "1441036118675/8",
 	Family              string                `json:"family,omitempty"`              // "family":"135",
 	FormFactor          string                `json:"formFactor,omitempty"`          // "formFactor":"HalfHeight",
+	Generation          string                `json:"generation,omitempty`           // "generation":"Gen10",
 	Model               string                `json:"model,omitempty"`               // "model":"",
 	Modified            string                `json:"modified,omitempty"`            // "modified": "20150831T154835.250Z",
 	Name                string                `json:"name,omitempty"`                // "name": "ServerHardware 1",

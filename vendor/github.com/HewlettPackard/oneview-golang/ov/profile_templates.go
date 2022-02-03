@@ -126,7 +126,7 @@ func IsZeroOfUnderlyingType(x interface{}) bool {
 }
 
 // SetMp maps ManagementProcessors to IntManagementProcessor struct.
-func SetMp(mp ManagementProcessors) IntManagementProcessor {
+func SetMp(shtgen string, mp ManagementProcessors) IntManagementProcessor {
 	mps := make([]MpSetting, 0)
 	var emptyMpSettings MpSettings
 	if !reflect.DeepEqual(mp.MpSetting, emptyMpSettings) {
@@ -241,7 +241,14 @@ func SetMp(mp ManagementProcessors) IntManagementProcessor {
 						arg[strings.ToLower(string(typeOfS.Field(j).Name[0]))+typeOfS.Field(j).Name[1:]] = v.Field(j).Interface()
 					}
 				}
-				ags = append(ags, arg)
+				//Check generation of server. Gen 9 and below does support some iLO attributes.
+				if shtgen != "Gen10" || shtgen != "Gen11" {
+					delete(arg, "loginPriv")
+					delete(arg, "hostBIOSConfigPriv")
+					delete(arg, "hostNICConfigPriv")
+					delete(arg, "hostStorageConfigPriv")
+					ags = append(ags, arg)
+				}
 			}
 
 			args := map[string]interface{}{
@@ -277,10 +284,15 @@ func (c *OVClient) CreateProfileTemplate(serverProfileTemplate ServerProfile) er
 	t.ResetTask()
 	log.Debugf("REST : %s \n %+v\n", uri, serverProfileTemplate)
 	log.Debugf("task -> %+v", t)
+	serverHardwareType, err := c.GetServerHardwareTypeByUri(serverProfileTemplate.ServerHardwareTypeURI)
+	if err != nil {
+		log.Warnf("Error getting server hardware type %s", err)
+	}
+	serverHardwareTypeGen := serverHardwareType.Generation
 
 	var emptyMgmtProcessorsStruct ManagementProcessors
 	if !reflect.DeepEqual(serverProfileTemplate.ManagementProcessors, emptyMgmtProcessorsStruct) {
-		mp := SetMp(serverProfileTemplate.ManagementProcessors)
+		mp := SetMp(serverHardwareTypeGen, serverProfileTemplate.ManagementProcessors)
 		serverProfileTemplate.ManagementProcessor = mp
 	}
 
@@ -369,9 +381,15 @@ func (c *OVClient) UpdateProfileTemplate(serverProfileTemplate ServerProfile) er
 	log.Debugf("REST : %s \n %+v\n", uri, serverProfileTemplate)
 	log.Debugf("task -> %+v", t)
 
+	serverHardwareType, err := c.GetServerHardwareTypeByUri(serverProfileTemplate.ServerHardwareTypeURI)
+	if err != nil {
+		log.Warnf("Error getting server hardware type %s", err)
+	}
+	serverHardwareTypeGen := serverHardwareType.Generation
+
 	var emptyMgmtProcessorsStruct ManagementProcessors
 	if !reflect.DeepEqual(serverProfileTemplate.ManagementProcessors, emptyMgmtProcessorsStruct) {
-		mp := SetMp(serverProfileTemplate.ManagementProcessors)
+		mp := SetMp(serverHardwareTypeGen, serverProfileTemplate.ManagementProcessors)
 		serverProfileTemplate.ManagementProcessor = mp
 	}
 
