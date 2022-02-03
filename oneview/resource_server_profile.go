@@ -2623,6 +2623,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				if val := serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId; val != 0 {
 					ld["sas_logical_jbod_id"] = strconv.Itoa(val)
 				}
+
 				if val := serverProfile.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives; val != 0 {
 					ld["num_spare_drives"] = strconv.Itoa(val)
 				}
@@ -2644,19 +2645,13 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 			localStorageVal := getVal.([]interface{})
 			for _, rawlocalStorage := range localStorageVal {
 				localStorage := rawlocalStorage.(map[string]interface{})
-				localSContVal := localStorage["controller"].(*schema.Set).List()
-				// iterating through connections from state
+				localSContVal := localStorage["controller"].([]interface{})
+				// iterating through controller from state
 				for i, rawlocalSContVal := range localSContVal {
 					lsC := rawlocalSContVal.(map[string]interface{})
-					// iterating through connections from refresh
-					//for _, lsVal := range controllers {
-					//if lsVal["id"] == ls["id"] {
-					// overrides port_id
 					if lsC["initialize"] == true {
 						controllers[i]["initialize"] = true
 					}
-					//}
-					//}
 				}
 			}
 		}
@@ -3319,7 +3314,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				localStorageEmbeddedControllers := make([]ov.LocalStorageEmbeddedController, 0)
 				for _, raw2 := range rawLocalStorageController {
 					controllerData := raw2.(map[string]interface{})
-					//rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
 					rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 					logicalDrives := make([]ov.LogicalDriveV3, 0)
 					for _, rawLogicalDrive := range rawLogicalDrives {
