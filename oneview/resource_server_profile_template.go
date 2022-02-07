@@ -817,6 +817,22 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Type:     schema.TypeBool,
 													Optional: true,
 												},
+												"login_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"host_bios_config_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"host_nic_config_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
+												"host_storage_config_priv": {
+													Type:     schema.TypeBool,
+													Optional: true,
+												},
 											},
 										},
 									},
@@ -1349,6 +1365,10 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 						VirtualMediaPriv:         GetBoolPointer(localAccount["virtual_media_priv"].(bool)),
 						VirtualPowerAndResetPriv: GetBoolPointer(localAccount["virtual_power_and_reset_priv"].(bool)),
 						ILOConfigPriv:            GetBoolPointer(localAccount["ilo_config_priv"].(bool)),
+						LoginPriv:                GetBoolPointer(localAccount["login_priv"].(bool)),
+						HostBIOSConfigPriv:       GetBoolPointer(localAccount["host_bios_config_priv"].(bool)),
+						HostNICConfigPriv:        GetBoolPointer(localAccount["host_nic_config_priv"].(bool)),
+						HostStorageConfigPriv:    GetBoolPointer(localAccount["host_storage_config_priv"].(bool)),
 					})
 				}
 
@@ -2127,6 +2147,18 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 								if icp, ok := w["iLOConfigPriv"]; ok {
 									la["ilo_config_priv"] = icp
 								}
+								if lp, ok := w["loginPriv"]; ok {
+									la["ilo_config_priv"] = lp
+								}
+								if hbcp, ok := w["hostBiosConfigPriv"]; ok {
+									la["ilo_config_priv"] = hbcp
+								}
+								if hncp, ok := w["hostNicConfigPriv"]; ok {
+									la["ilo_config_priv"] = hncp
+								}
+								if hscp, ok := w["hostStorageConfigPriv"]; ok {
+									la["ilo_config_priv"] = hscp
+								}
 								// adding local account
 								localAccounts = append(localAccounts, la)
 							}
@@ -2689,6 +2721,10 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 						VirtualMediaPriv:         GetBoolPointer(localAccount["virtual_media_priv"].(bool)),
 						VirtualPowerAndResetPriv: GetBoolPointer(localAccount["virtual_power_and_reset_priv"].(bool)),
 						ILOConfigPriv:            GetBoolPointer(localAccount["ilo_config_priv"].(bool)),
+						LoginPriv:                GetBoolPointer(localAccount["login_priv"].(bool)),
+						HostBIOSConfigPriv:       GetBoolPointer(localAccount["host_bios_config_priv"].(bool)),
+						HostNICConfigPriv:        GetBoolPointer(localAccount["host_nic_config_priv"].(bool)),
+						HostStorageConfigPriv:    GetBoolPointer(localAccount["host_storage_config_priv"].(bool)),
 					})
 				}
 
