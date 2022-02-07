@@ -430,7 +430,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 			},
 			"local_storage": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Computed: true,
+				Type:     schema.TypeList,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -441,7 +442,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 						},
 						"controller": {
 							Optional: true,
-							Type:     schema.TypeSet,
+							Computed: true,
+							Type:     schema.TypeList,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"device_slot": {
@@ -462,7 +464,8 @@ func resourceServerProfileTemplate() *schema.Resource {
 									},
 									"logical_drives": {
 										Optional: true,
-										Type:     schema.TypeSet,
+										Computed: true,
+										Type:     schema.TypeList,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"accelerator": {
@@ -486,7 +489,7 @@ func resourceServerProfileTemplate() *schema.Resource {
 													Optional: true,
 												},
 												"num_spare_drives": {
-													Type:     schema.TypeInt,
+													Type:     schema.TypeString,
 													Optional: true,
 												},
 												"raid_level": {
@@ -1547,39 +1550,39 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 
 	// Get local storage data if provided
 	if _, ok := d.GetOk("local_storage"); ok {
-		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+		rawLocalStorage := d.Get("local_storage").([]interface{})
 		localStorage := ov.LocalStorageOptions{}
 		for _, raw := range rawLocalStorage {
 			localStorageItem := raw.(map[string]interface{})
 			// Gets Local Storage Controller body
-			rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+			rawLocalStorageController := localStorageItem["controller"].([]interface{})
 			localStorageEmbeddedController := make([]ov.LocalStorageEmbeddedController, 0)
 			for _, raw2 := range rawLocalStorageController {
 				controllerData := raw2.(map[string]interface{})
 				// Gets Local Storage Controller's Logical Drives
-				rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+				rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 				logicalDrives := make([]ov.LogicalDriveV3, 0)
 				for _, rawLogicalDrive := range rawLogicalDrives {
 					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
 					boot := logicalDrivesItem["bootable"].(bool)
-					logicalDrives = append(logicalDrives, ov.LogicalDriveV3{
+					ld := ov.LogicalDriveV3{
 						Bootable:          &boot,
 						RaidLevel:         logicalDrivesItem["raid_level"].(string),
 						Accelerator:       logicalDrivesItem["accelerator"].(string),
 						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 						Name:              logicalDrivesItem["name"].(string),
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
-					})
-
-					if logicalDrivesItem["sas_logical_jbod_id"].(string) != "" {
-						val, err := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
-						if err != nil {
-							return fmt.Errorf("invalid sas_logical_jbod_id: %s", err)
-						}
-						l := len(logicalDrives) - 1
-						logicalDrives[l].SasLogicalJBODId = val
 					}
+					if val := logicalDrivesItem["sas_logical_jbod_id"].(string); val != "" {
+						val, _ := strconv.Atoi(logicalDrivesItem["sas_logical_jbod_id"].(string))
+						ld.SasLogicalJBODId = val
+					}
+					if val := logicalDrivesItem["num_spare_drives"].(string); val != "" {
+						val, _ := strconv.Atoi(logicalDrivesItem["num_spare_drives"].(string))
+						ld.NumSpareDrives = val
+					}
+
+					logicalDrives = append(logicalDrives, ld)
 
 				}
 				init, _ := controllerData["initialize"].(bool)
@@ -2317,18 +2320,22 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 		for i := 0; i < len(spt.LocalStorage.Controllers); i++ {
 			logicalDrives := make([]map[string]interface{}, 0, len(spt.LocalStorage.Controllers[i].LogicalDrives))
 			for j := 0; j < len(spt.LocalStorage.Controllers[i].LogicalDrives); j++ {
-				logicalDrives = append(logicalDrives, map[string]interface{}{
+				ld := map[string]interface{}{
 					"bootable":            *spt.LocalStorage.Controllers[i].LogicalDrives[j].Bootable,
 					"accelerator":         spt.LocalStorage.Controllers[i].LogicalDrives[j].Accelerator,
 					"drive_technology":    spt.LocalStorage.Controllers[i].LogicalDrives[j].DriveTechnology,
 					"name":                spt.LocalStorage.Controllers[i].LogicalDrives[j].Name,
 					"num_physical_drives": spt.LocalStorage.Controllers[i].LogicalDrives[j].NumPhysicalDrives,
-					"num_spare_drives":    spt.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives,
 					"raid_level":          spt.LocalStorage.Controllers[i].LogicalDrives[j].RaidLevel,
-				})
-				if spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId != 0 {
-					logicalDrives[j]["sas_logical_jbod_id"] = strconv.Itoa(spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId)
 				}
+				if val := spt.LocalStorage.Controllers[i].LogicalDrives[j].SasLogicalJBODId; val != 0 {
+					ld["sas_logical_jbod_id"] = strconv.Itoa(val)
+				}
+
+				if val := spt.LocalStorage.Controllers[i].LogicalDrives[j].NumSpareDrives; val != 0 {
+					ld["num_spare_drives"] = strconv.Itoa(val)
+				}
+				logicalDrives = append(logicalDrives, ld)
 			}
 			controllers = append(controllers, map[string]interface{}{
 				"device_slot":              spt.LocalStorage.Controllers[i].DeviceSlot,
@@ -2888,15 +2895,15 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 
 	// Get local storage data if provided
 	if d.HasChange("local_storage") {
-		rawLocalStorage := d.Get("local_storage").(*schema.Set).List()
+		rawLocalStorage := d.Get("local_storage").([]interface{})
 		localStorage := ov.LocalStorageOptions{}
 		for _, raw := range rawLocalStorage {
 			localStorageItem := raw.(map[string]interface{})
-			rawLocalStorageController := localStorageItem["controller"].(*schema.Set).List()
+			rawLocalStorageController := localStorageItem["controller"].([]interface{})
 			localStorageEmbeddedControllers := make([]ov.LocalStorageEmbeddedController, 0)
 			for _, raw2 := range rawLocalStorageController {
 				controllerData := raw2.(map[string]interface{})
-				rawLogicalDrives := controllerData["logical_drives"].(*schema.Set).List()
+				rawLogicalDrives := controllerData["logical_drives"].([]interface{})
 				logicalDrives := make([]ov.LogicalDriveV3, 0)
 				for _, rawLogicalDrive := range rawLogicalDrives {
 					logicalDrivesItem := rawLogicalDrive.(map[string]interface{})
@@ -2908,7 +2915,6 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 						DriveTechnology:   logicalDrivesItem["drive_technology"].(string),
 						Name:              logicalDrivesItem["name"].(string),
 						NumPhysicalDrives: logicalDrivesItem["num_physical_drives"].(int),
-						NumSpareDrives:    logicalDrivesItem["num_spare_drives"].(int),
 					}
 
 					if logicalDrivesItem["sas_logical_jbod_id"].(string) != "" {
@@ -2918,6 +2924,10 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 						}
 						l := len(logicalDrives) - 1
 						logicalDrives[l].SasLogicalJBODId = val
+					}
+					if val := logicalDrivesItem["num_spare_drives"].(string); val != "" {
+						val, _ := strconv.Atoi(logicalDrivesItem["num_spare_drives"].(string))
+						logicalDrive.NumSpareDrives = val
 					}
 
 					logicalDrives = append(logicalDrives, logicalDrive)
