@@ -242,13 +242,13 @@ func SetMp(shtgen string, mp ManagementProcessors) IntManagementProcessor {
 					}
 				}
 				//Check generation of server. Gen 9 and below does support some iLO attributes.
-				if shtgen != "Gen10" || shtgen != "Gen11" {
+				if shtgen != "Gen10" && shtgen != "Gen11" {
 					delete(arg, "loginPriv")
 					delete(arg, "hostBIOSConfigPriv")
 					delete(arg, "hostNICConfigPriv")
 					delete(arg, "hostStorageConfigPriv")
-					ags = append(ags, arg)
 				}
+				ags = append(ags, arg)
 			}
 
 			args := map[string]interface{}{

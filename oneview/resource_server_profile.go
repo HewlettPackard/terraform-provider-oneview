@@ -2378,18 +2378,19 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 									la["ilo_config_priv"] = icp
 								}
 								if lp, ok := w["loginPriv"]; ok {
-									la["ilo_config_priv"] = lp
+									la["login_priv"] = lp
 								}
 								if hbcp, ok := w["hostBiosConfigPriv"]; ok {
-									la["ilo_config_priv"] = hbcp
+									la["host_bios_config_priv"] = hbcp
 								}
 								if hncp, ok := w["hostNicConfigPriv"]; ok {
-									la["ilo_config_priv"] = hncp
+									la["host_nic_config_priv"] = hncp
 								}
 								if hscp, ok := w["hostStorageConfigPriv"]; ok {
-									la["ilo_config_priv"] = hscp
+									la["host_storage_config_priv"] = hscp
 								}
 								// adding local account
+
 								localAccounts = append(localAccounts, la)
 							}
 							// extracts MpSettings to re-set the password
