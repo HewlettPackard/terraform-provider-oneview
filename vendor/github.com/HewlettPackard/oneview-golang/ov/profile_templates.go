@@ -247,7 +247,6 @@ func SetMp(shtgen string, mp ManagementProcessors) IntManagementProcessor {
 					delete(arg, "hostBIOSConfigPriv")
 					delete(arg, "hostNICConfigPriv")
 					delete(arg, "hostStorageConfigPriv")
-
 				}
 				ags = append(ags, arg)
 			}
