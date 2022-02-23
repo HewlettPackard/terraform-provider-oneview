@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 - [#453](https://github.com/HewlettPackard/terraform-provider-oneview/issues/453) Server profile creation with iLO configuration is throwing error after creation
 - [#447](https://github.com/HewlettPackard/terraform-provider-oneview/issues/447) Cannot set all account privileges for newer ILOs
+- [#459](https://github.com/HewlettPackard/terraform-provider-oneview/issues/459) Cannot import Server Profile Template, provider crashes
 
 # [v6.5.0-13]
 ### Notes
