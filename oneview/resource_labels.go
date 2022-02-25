@@ -58,7 +58,6 @@ func resourceLabel() *schema.Resource {
 			},
 			"labels": {
 				Optional: true,
-				Computed: true,
 				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -115,7 +114,6 @@ func resourceLabelRead(d *schema.ResourceData, meta interface{}) error {
 		d.SetId("")
 		return nil
 	}
-
 	d.Set("category", label.Category)
 	d.Set("created", label.Created)
 	d.Set("etag", label.ETAG.String())

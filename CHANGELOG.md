@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Bug fixes & Enhancements:
 
+- [#451](https://github.com/HewlettPackard/terraform-provider-oneview/issues/451) Labels - Can't delete all labels assigned to a resource
 - [#453](https://github.com/HewlettPackard/terraform-provider-oneview/issues/453) Server profile creation with iLO configuration is throwing error after creation
 - [#447](https://github.com/HewlettPackard/terraform-provider-oneview/issues/447) Cannot set all account privileges for newer ILOs
 
