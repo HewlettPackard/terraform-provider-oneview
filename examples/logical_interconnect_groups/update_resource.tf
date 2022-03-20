@@ -3,7 +3,7 @@ provider "oneview" {
   ov_password   = var.password
   ov_endpoint   = var.endpoint
   ov_sslverify  = var.ssl_enabled
-  ov_apiversion = 3600
+  ov_apiversion = var.api_version
   ov_ifmatch    = "*"
 }
 
@@ -55,7 +55,7 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
     network_uris = [data.oneview_ethernet_network.eth_net.uri]
     name         = "UPlinkSet1"
     logical_port_config {
-      port_num      = [61]
+      port_num      = 61
       bay_num       = 3
       enclosure_num = 1
     }
