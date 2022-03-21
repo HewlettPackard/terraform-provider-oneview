@@ -7,7 +7,7 @@
 | SDK Version/Tag  |[v6.6.0-13](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.6.0-13)|[v6.5.0-13](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.5.0-13) | [v6.4.0-13](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.4.0-13) |[v6.3.1-13](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.3.1-13) |  [v6.2.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.2.0-13) | [v6.1.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.1.0-13) | [v6.0.0-13 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-13) | [v6.0.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v6.0.0-12)  | [v1.7.0-12 ](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v1.7.0-12) |
 |    Build Status [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1897284496) |[![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1686945274) | [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1488877220) | [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1216442369) | [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/1021599071) | [![Build status](https://github.com/HewlettPackard/terraform-provider-oneview/actions/workflows/test.yml/badge.svg)](https://github.com/HewlettPackard/terraform-provider-oneview/actions/runs/707591356) | [![Build status](https://api.travis-ci.com/HewlettPackard/terraform-provider-oneview.svg)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds) | [![Build status](https://api.travis-ci.com/HewlettPackard/terraform-provider-oneview.svg)](https://travis-ci.org/github/HewlettPackard/terraform-provider-oneview/builds) |
 ```
-Note: v6.6.0-13 onwards supports Terraform 1.xx
+Note: v6.6.0-13 onwards supports Terraform version from 0.13.xx to 1.x.x
 ```
 ## Introduction
 
@@ -66,7 +66,7 @@ $ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 - Installing Terraform
 
-	Install Terraform 0.13.x from [here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
+	Install Terraform 1.1.x from [here](https://www.terraform.io/downloads.html) and save it into `/usr/local/bin/terraform` folder (create it if it doesn't exists).
 
 
 
@@ -77,6 +77,7 @@ the terraform registry. Add the following to your terraform project
 
 ```hcl
 terraform {
+  required_version = ">= 0.13"
   required_providers {
     oneview = {
       source = "HewlettPackard/oneview"
