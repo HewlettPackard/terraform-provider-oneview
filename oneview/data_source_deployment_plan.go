@@ -114,7 +114,10 @@ func dataSourceDeploymentPlanRead(d *schema.ResourceData, meta interface{}) erro
 
 	id := d.Get("name").(string)
 	deploymentPlan, err := config.i3sClient.GetDeploymentPlanByName(id)
-	if err != nil || deploymentPlan.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if deploymentPlan.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

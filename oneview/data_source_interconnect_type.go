@@ -153,9 +153,11 @@ func dataSourceInterconnectTypeRead(d *schema.ResourceData, meta interface{}) er
 	config := meta.(*Config)
 
 	interconnectType, err := config.ovClient.GetInterconnectTypeByName(d.Get("name").(string))
-	if err != nil || interconnectType.URI.IsNil() {
+	if err != nil {
 		d.SetId("")
-
+		return err
+	} else if interconnectType.URI.IsNil() {
+		d.SetId("")
 		return nil
 	}
 	d.SetId(d.Get("name").(string))

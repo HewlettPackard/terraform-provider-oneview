@@ -58,6 +58,9 @@ func dataSourceSSHAccessRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		d.SetId("")
 		return err
+	} else if sshAccess.URI.IsNil() {
+		d.SetId("")
+		return nil
 	}
 	d.SetId(sshAccess.Type)
 	d.Set("allow_ssh_access", sshAccess.AllowSshAccess)

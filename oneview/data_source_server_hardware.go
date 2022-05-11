@@ -93,7 +93,10 @@ func dataSourceServerHardwareRead(d *schema.ResourceData, meta interface{}) erro
 	config := meta.(*Config)
 
 	servHard, err := config.ovClient.GetServerHardwareByName(d.Get("name").(string))
-	if err != nil || servHard.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if servHard.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

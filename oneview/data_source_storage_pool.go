@@ -116,7 +116,10 @@ func dataSourceStoragePoolRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	storagePool, err := config.ovClient.GetStoragePoolByName(d.Get("name").(string))
-	if err != nil || storagePool.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if storagePool.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

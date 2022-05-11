@@ -118,10 +118,8 @@ func dataSourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	storageVolume, err := config.ovClient.GetStorageVolumeByName(d.Get("name").(string))
 	if err != nil {
 		d.SetId("")
-		return nil
-	}
-
-	if storageVolume.URI.IsNil() {
+		return err
+	} else if storageVolume.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

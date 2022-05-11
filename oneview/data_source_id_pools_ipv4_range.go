@@ -166,7 +166,10 @@ func dataSourceIPv4RangesRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	id := d.Get("id").(string)
 	ipv4range, err := config.ovClient.GetIPv4RangebyId("", id)
-	if err != nil || ipv4range.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if ipv4range.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

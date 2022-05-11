@@ -48,7 +48,10 @@ func dataSourceSNMPv1TrapDestinationRead(d *schema.ResourceData, meta interface{
 	config := meta.(*Config)
 	id := d.Get("destination_id").(string)
 	snmpTrap, err := config.ovClient.GetSNMPv1TrapDestinationsById(id)
-	if err != nil || snmpTrap.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if snmpTrap.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

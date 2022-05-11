@@ -71,11 +71,13 @@ func dataSourceLabel() *schema.Resource {
 func dataSourceLabelRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	label, err := config.ovClient.GetAssignedLabels(utils.Nstring(d.Get("resource_uri").(string)))
-	if err != nil || label.Uri.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if label.Uri.IsNil() {
 		d.SetId("")
 		return nil
 	}
-
 	d.Set("category", label.Category)
 	d.Set("created", label.Created)
 	d.Set("etag", label.ETAG.String())

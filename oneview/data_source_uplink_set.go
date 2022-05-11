@@ -140,7 +140,10 @@ func dataSourceUplinkSetRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	uplinkSet, err := config.ovClient.GetUplinkSetByName(d.Get("name").(string))
-	if err != nil || uplinkSet.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if uplinkSet.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

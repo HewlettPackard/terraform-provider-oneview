@@ -124,7 +124,10 @@ func dataSourceEthernetNetworkRead(d *schema.ResourceData, meta interface{}) err
 	config := meta.(*Config)
 	name := d.Get("name").(string)
 	eNet, err := config.ovClient.GetEthernetNetworkByName(name)
-	if err != nil || eNet.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if eNet.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

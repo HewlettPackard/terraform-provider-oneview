@@ -80,6 +80,9 @@ func dataSourceTimeAndLocaleRead(d *schema.ResourceData, meta interface{}) error
 	timeLocale, err := config.ovClient.GetApplianceTimeandLocals("", "", "", "")
 	if err != nil {
 		d.SetId("")
+		return err
+	} else if timeLocale.URI.IsNil() {
+		d.SetId("")
 		return nil
 	}
 	d.Set("type", timeLocale.Type)

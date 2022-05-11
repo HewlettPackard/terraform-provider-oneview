@@ -88,7 +88,10 @@ func dataSourceServerHardwareTypeRead(d *schema.ResourceData, meta interface{}) 
 	name := d.Get("name").(string)
 
 	serverHardwareType, err := config.ovClient.GetServerHardwareTypeByName(name)
-	if err != nil || serverHardwareType.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if serverHardwareType.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

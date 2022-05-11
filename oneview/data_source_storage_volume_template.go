@@ -1237,6 +1237,9 @@ func dataSourceStorageVolumeTemplateRead(d *schema.ResourceData, meta interface{
 	template, err := config.ovClient.GetStorageVolumeTemplateByName(id)
 	if err != nil {
 		d.SetId("")
+		return err
+	} else if template.URI.IsNil() {
+		d.SetId("")
 		return nil
 	}
 

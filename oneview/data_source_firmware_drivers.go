@@ -239,10 +239,12 @@ func dataSourceFirmwareDriversRead(d *schema.ResourceData, meta interface{}) err
 	id := d.Get("id").(string)
 	firmware, err := config.ovClient.GetFirmwareBaselineByNameandVersion(id)
 
-	if err != nil || firmware.Uri.IsNil() {
-
+	if err != nil {
 		d.SetId("")
 		return err
+	} else if firmware.Uri.IsNil() {
+		d.SetId("")
+		return nil
 	}
 	d.Set("name", firmware.Name)
 	d.Set("type", firmware.Type)

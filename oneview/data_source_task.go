@@ -226,6 +226,10 @@ func dataSourceTaskRead(d *schema.ResourceData, meta interface{}) error {
 		taskList, err := config.ovClient.GetTasks(filter, "", "", "", "", "")
 		if err != nil {
 			d.SetId("")
+			return err
+		} else if taskList.URI.IsNil() {
+			d.SetId("")
+			return nil
 		}
 		for _, rawTask := range taskList.Members {
 			if rawTask.IsCancellable {

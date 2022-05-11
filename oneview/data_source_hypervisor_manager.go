@@ -168,7 +168,10 @@ func dataSourceHypervisorManagerRead(d *schema.ResourceData, meta interface{}) e
 	id := d.Get("name").(string)
 
 	hypMan, err := config.ovClient.GetHypervisorManagerByName(id)
-	if err != nil || hypMan.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if hypMan.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

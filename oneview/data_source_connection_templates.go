@@ -98,7 +98,10 @@ func dataSourceConnectionTemplatesRead(d *schema.ResourceData, meta interface{})
 	} else if uri, ok := d.Get("uri").(string); ok {
 		cTemplate, err = config.ovClient.GetConnectionTemplateByURI(utils.Nstring(uri))
 	}
-	if err != nil || cTemplate.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if cTemplate.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

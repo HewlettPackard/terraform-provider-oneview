@@ -173,7 +173,10 @@ func dataSourceStorageSystemRead(d *schema.ResourceData, meta interface{}) error
 	id := d.Get("name").(string)
 
 	storageSystem, err := config.ovClient.GetStorageSystemByName(id)
-	if err != nil || storageSystem.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if storageSystem.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
