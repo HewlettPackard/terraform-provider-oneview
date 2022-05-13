@@ -80,7 +80,10 @@ func dataSourceSNMPv3TrapDestinationRead(d *schema.ResourceData, meta interface{
 	config := meta.(*Config)
 	id := d.Get("id_field").(string)
 	snmpTrap, err := config.ovClient.GetSNMPv3TrapDestinationsById(id)
-	if err != nil || snmpTrap.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if snmpTrap.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

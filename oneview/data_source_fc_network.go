@@ -110,7 +110,10 @@ func dataSourceFCNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	id := d.Get("name").(string)
 
 	fcNet, err := config.ovClient.GetFCNetworkByName(id)
-	if err != nil || fcNet.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if fcNet.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

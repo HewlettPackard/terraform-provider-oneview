@@ -429,7 +429,10 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 	config := meta.(*Config)
 
 	hypCP, err := config.ovClient.GetHypervisorClusterProfileByName(d.Get("name").(string))
-	if err != nil || hypCP.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if hypCP.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

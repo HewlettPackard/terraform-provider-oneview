@@ -238,9 +238,11 @@ func dataSourceInterconnectsRead(d *schema.ResourceData, meta interface{}) error
 	name := d.Get("name").(string)
 
 	interconnect, err := config.ovClient.GetInterconnectByName(name)
-	if err != nil || interconnect.URI.IsNil() {
+	if err != nil {
 		d.SetId("")
-
+		return err
+	} else if interconnect.URI.IsNil() {
+		d.SetId("")
 		return nil
 	}
 

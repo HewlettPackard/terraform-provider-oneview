@@ -81,7 +81,10 @@ func dataSourceSNMPv3UserRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	username := d.Get("user_name").(string)
 	snmpUser, err := config.ovClient.GetSNMPv3UserByUserName(username)
-	if err != nil || snmpUser.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if snmpUser.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

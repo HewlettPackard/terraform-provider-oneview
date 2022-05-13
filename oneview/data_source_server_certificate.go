@@ -282,6 +282,9 @@ func dataSourceServerCertificateRead(d *schema.ResourceData, meta interface{}) e
 
 		if err != nil {
 			d.SetId("")
+			return err
+		} else if servC.URI.IsNil() {
+			d.SetId("")
 			return nil
 		}
 	} else {
@@ -289,6 +292,9 @@ func dataSourceServerCertificateRead(d *schema.ResourceData, meta interface{}) e
 		servC, err = config.ovClient.GetServerCertificateByIp(id)
 
 		if err != nil {
+			d.SetId("")
+			return err
+		} else if servC.URI.IsNil() {
 			d.SetId("")
 			return nil
 		}

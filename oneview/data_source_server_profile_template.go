@@ -1122,9 +1122,12 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 
 	spt, err := config.ovClient.GetProfileTemplateByName(name)
 
-	if err != nil || spt.URI.IsNil() {
+	if err != nil {
 		d.SetId("")
 		return err
+	} else if spt.URI.IsNil() {
+		d.SetId("")
+		return nil
 	}
 	d.Set("affinity", spt.Affinity)
 	d.Set("category", spt.Category)

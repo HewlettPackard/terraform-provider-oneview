@@ -99,7 +99,10 @@ func dataSourceNetworkSetRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
 	netSet, err := config.ovClient.GetNetworkSetByName(d.Get("name").(string))
-	if err != nil || netSet.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if netSet.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

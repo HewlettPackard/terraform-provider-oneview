@@ -128,7 +128,10 @@ func dataSourceIPv4SubnetsRead(d *schema.ResourceData, meta interface{}) error {
 		subnetId := d.Get("subnet_id").(string)
 		subnetById, err := config.ovClient.GetIPv4SubnetbyId(subnetId)
 		subnet = subnetById
-		if err != nil || subnet.URI.IsNil() {
+		if err != nil {
+			d.SetId("")
+			return err
+		} else if subnet.URI.IsNil() {
 			d.SetId("")
 			return nil
 		}
@@ -136,7 +139,10 @@ func dataSourceIPv4SubnetsRead(d *schema.ResourceData, meta interface{}) error {
 		networkId := d.Get("network_id").(string)
 		subnetByNetwork, err := config.ovClient.GetSubnetByNetworkId(networkId)
 		subnet = subnetByNetwork
-		if err != nil || subnet.URI.IsNil() {
+		if err != nil {
+			d.SetId("")
+			return err
+		} else if subnet.URI.IsNil() {
 			d.SetId("")
 			return nil
 		}

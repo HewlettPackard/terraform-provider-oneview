@@ -287,7 +287,10 @@ func dataSourceEnclosureRead(d *schema.ResourceData, meta interface{}) error {
 	id := d.Get("name").(string)
 
 	enclosure, err := config.ovClient.GetEnclosureByName(id)
-	if err != nil || enclosure.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if enclosure.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

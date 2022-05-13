@@ -195,6 +195,9 @@ func dataSourceLogicalEnclosureRead(d *schema.ResourceData, meta interface{}) er
 	logicalEnclosure, err := config.ovClient.GetLogicalEnclosureByName(d.Get("name").(string))
 	if err != nil {
 		d.SetId("")
+		return err
+	} else if logicalEnclosure.URI.IsNil() {
+		d.SetId("")
 		return nil
 	}
 	d.SetId("name")

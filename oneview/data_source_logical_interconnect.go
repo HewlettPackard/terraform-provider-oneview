@@ -345,7 +345,10 @@ func dataSourceLogicalInterconnectRead(d *schema.ResourceData, meta interface{})
 			logInt = li
 		}
 	}
-	if err != nil || logInt.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if logInt.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

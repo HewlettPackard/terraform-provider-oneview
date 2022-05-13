@@ -151,7 +151,10 @@ func dataSourceEnclosureGroup() *schema.Resource {
 func dataSourceEnclosureGroupRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	enclosureGroup, err := config.ovClient.GetEnclosureGroupByName(d.Get("name").(string))
-	if err != nil || enclosureGroup.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if enclosureGroup.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

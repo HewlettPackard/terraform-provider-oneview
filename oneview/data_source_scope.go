@@ -106,7 +106,10 @@ func dataSourceScopeRead(d *schema.ResourceData, meta interface{}) error {
 	name := d.Get("name").(string)
 
 	scope, err := config.ovClient.GetScopeByName(name)
-	if err != nil || scope.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if scope.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

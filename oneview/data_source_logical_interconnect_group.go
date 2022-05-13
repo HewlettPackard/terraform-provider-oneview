@@ -725,7 +725,10 @@ func dataSourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interfa
 
 	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(id)
 
-	if err != nil || logicalInterconnectGroup.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}

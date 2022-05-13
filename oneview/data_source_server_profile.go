@@ -1302,7 +1302,10 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 	config := meta.(*Config)
 
 	serverProfile, err := config.ovClient.GetProfileByName(d.Get("name").(string))
-	if err != nil || serverProfile.URI.IsNil() {
+	if err != nil {
+		d.SetId("")
+		return err
+	} else if serverProfile.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
