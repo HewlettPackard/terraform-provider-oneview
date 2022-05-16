@@ -21,14 +21,22 @@ You can find the latest supported HPE OneView Terraform Provider SDK [here](http
 HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 4000 (OneView v7.0)
 
 Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
-### Migration to OneView 7.0 from OneView 6.x
-With OneView 7.0 you can migrate your server hardware from OneView 6.x using migrate functionality provided in the UI. 
-With server hardware migration , corresponding server profile will also get migrated to OneView 7.0 . With OneView 7.0 the server hardware type field is not compatible with OneView 6.x. To resolve that make sure your server profile configuration is not having server hardware type field . 
-Migration scenario
-- Create server profile in OneView 6.x . Make sure configuration is not having server hardware type field.
--  Migrate the server hardware and corresponding server profile to OneView 7.0.
--  Point you terraform endpoint to OneView 7.0.
--  Run `terraform refresh` to sync the migrated resource 
+### Migration to HPE OneView 7.0 from HPE OneView 6.x ( Non-Synergy appliance )
+With HPE OneView 7.0 one can migrate your server hardware from HPE OneView 6.x using migrate functionality provided in the UI. 
+With server hardware migration , corresponding server profile will also get migrated to HPE OneView 7.0 . 
+
+#### Impact after migration
+1. Idempotency issues post migration.
+Post migration do run terraform refresh to sync with migrated resources.
+
+    Steps: 
+    -  Point your <TF_VAR_endpoint> to HPE OneView 7.0.
+    -  Run `terraform refresh` to sync with  migrated resource 
+  
+2. Idempotency issue in server profile after migration.
+With HPE OneView 7.0 the server hardware type field is not compatible with HPE OneView 6.x server hardware type. To resolve that, while creating server profile, make sure terraform configuration file is not having server hardware type field defined . 
+
+
   
 
 ## Getting Started 
