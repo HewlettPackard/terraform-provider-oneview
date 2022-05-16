@@ -22,7 +22,7 @@ HPE OneView Terraform SDK library extends support of the SDK to OneView REST API
 
 Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
 ### Migration to HPE OneView 7.0 from HPE OneView 6.x ( Non-Synergy appliance )
-With HPE OneView 7.0 one can migrate your server hardware from HPE OneView 6.x using migrate functionality provided in the UI. 
+With HPE OneView 7.0 one can migrate his/her server hardware from HPE OneView 6.x using migrate functionality provided in the UI. 
 With server hardware migration , corresponding server profile will also get migrated to HPE OneView 7.0 . 
 
 #### Impact after migration
@@ -34,7 +34,7 @@ Post migration do run terraform refresh to sync with migrated resources.
     -  Run `terraform refresh` to sync with  migrated resource 
   
 2. Idempotency issue in server profile after migration.
-With HPE OneView 7.0 the server hardware type field is not compatible with HPE OneView 6.x server hardware type. To resolve that, while creating server profile, make sure terraform configuration file is not having server hardware type field defined . 
+In HPE OneView 7.0 the server hardware type field is not compatible with HPE OneView 6.x server hardware type. To resolve that, while creating server profile, make sure terraform configuration file is not having server hardware type field defined . 
 
 
   
