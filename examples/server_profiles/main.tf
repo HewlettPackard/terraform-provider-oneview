@@ -180,8 +180,7 @@ resource "oneview_server_profile" "SP" {
   name                 = "Test-SP"
   hardware_name        = "0000A66102, bay 3"
   type                 = "ServerProfileV12"
-  enclosure_group      = "EG"
-  server_hardware_type = "SY 660 Gen9 1"
+  enclosure_group      = "EG"  
   bios_option {
     manage_bios = true
     overridden_settings {
@@ -260,8 +259,7 @@ resource "oneview_server_profile" "SP" {
 # Enclosure group and affinity are not supported for DL server
 resource "oneview_server_profile" "SPWithDL" {
   name                 = "TestSP_DL_Server"
-  hardware_name        = "<ilo_ip>"
-  server_hardware_type = "DL360 Gen10 1"
+  hardware_name        = "<ilo_ip>"  
   boot_mode {
     manage_mode     = true
     mode            = "UEFIOptimized"
@@ -281,8 +279,7 @@ resource "oneview_server_profile" "SP" {
   name                 = "SPi101"
   hardware_name        = "0000A66101, bay 1"
   type                 = "ServerProfileV12"
-  enclosure_group      = "EG"
-  server_hardware_type = "SY 480 Gen10 1"
+  enclosure_group      = "EG" 
   update_type          = "put"
 
   bios_option {
