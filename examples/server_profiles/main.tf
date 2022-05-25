@@ -78,6 +78,24 @@ resource "oneview_server_profile" "SPWithLocalStorage" {
     }
   }
 }
+#Create a Server Profile using a Server profile template
+
+# data "oneview_server_hardware" "sh" {
+#   name = "172.18.31.4"
+# }
+
+# data "oneview_server_profile_template" "spt" {
+#   name = "spt"
+# }
+
+
+# resource "oneview_server_profile" "sp_from_spt" {
+#   name                 = "sp_from_spt"
+#   hardware_name        = data.oneview_server_hardware.sh.name
+#   server_hardware_type = data.oneview_server_profile_template.spt.server_hardware_type
+#   template             = data.oneview_server_profile_template.spt.name
+#   scopes_uri           = data.oneview_scope.scope.uri
+# }
 
 /*
 # Create Server Profile with OS deployment settings
