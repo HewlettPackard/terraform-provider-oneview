@@ -3,6 +3,7 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -117,6 +118,18 @@ func (c *OVClient) GetStorageVolumeTemplateByName(name string) (StorageVolumeTem
 		sVolTemplate StorageVolumeTemplate
 	)
 	sVolTemplates, err := c.GetStorageVolumeTemplates(fmt.Sprintf("name matches '%s'", name), "name:asc", "", "")
+	if sVolTemplates.Total > 0 {
+		return sVolTemplates.Members[0], err
+	} else {
+		return sVolTemplate, err
+	}
+}
+
+func (c *OVClient) GetRootStorageVolumeTemplate() (StorageVolumeTemplate, error) {
+	var (
+		sVolTemplate StorageVolumeTemplate
+	)
+	sVolTemplates, err := c.GetStorageVolumeTemplates("isRoot = 'true'", "name:asc", "", "")
 	if sVolTemplates.Total > 0 {
 		return sVolTemplates.Members[0], err
 	} else {
