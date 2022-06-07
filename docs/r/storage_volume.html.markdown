@@ -21,8 +21,7 @@ resource "oneview_volume" "default" {
     "size"= size,
     "provisioning_type"= "provisioning-type",
   }
-  template_uri= "storage-template-uri",
-  is_permanent= true,
+  template_name= "storage-vol-template",  
 }
 ```
 
@@ -40,7 +39,7 @@ The following arguments are supported:
 
 * `provisioning_type` - (Required) Type of provisioning for the volume.
 
-* `template_uri` -(Required) The uri of storage pool.
+* `template_name` -(Optional) The name of the volume template. If not provided storage pool uri have to be provided.
 
 ---
 description: |-

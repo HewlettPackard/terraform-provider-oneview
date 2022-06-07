@@ -118,11 +118,7 @@ func resourceVolume() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"is_permanent": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
-			},
+
 			"is_shareable": {
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -199,14 +195,26 @@ func resourceVolume() *schema.Resource {
 
 func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+	var (
+		volume      ov.StorageVolume
+		volTemplate ov.StorageVolumeTemplate
+		storagePool ov.StoragePool
+		volError    error
+	)
 
-	volume := ov.StorageVolume{}
-
-	volTemplate, err1 := config.ovClient.GetStorageVolumeTemplateByName(d.Get("template_name").(string))
-	if err1 != nil {
-		return err1
-	}
 	properties := d.Get("properties").(*schema.Set).List()[0].(map[string]interface{})
+	if val, ok := d.GetOk("template_name"); ok {
+
+		volTemplate, volError = config.ovClient.GetStorageVolumeTemplateByName(val.(string))
+		if volError != nil {
+			return volError
+		}
+	} else if properties["storage_pool"] != "" {
+		volTemplate, volError = config.ovClient.GetRootStorageVolumeTemplate(properties["storage_pool"].(string))
+		if volError != nil {
+			return volError
+		}
+	}
 
 	var volumeSize int
 	var storagePoolUri utils.Nstring
@@ -218,6 +226,7 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if properties["storage_pool"] != "" {
 		storagePoolUri = utils.Nstring(properties["storage_pool"].(string))
+		storagePool.URI = storagePoolUri
 	} else {
 		storagePoolUri = utils.Nstring(volTemplate.StoragePoolUri)
 	}
@@ -237,10 +246,6 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 	volume.Properties = &volumeProperties
 	volume.TemplateURI = volTemplate.URI
 
-	if value, exist := d.GetOk("is_permanent"); exist {
-		val := value.(bool)
-		volume.IsPermanent = &val
-	}
 	if val, ok := d.GetOk("initial_scope_uris"); ok {
 		rawInitialScopeUris := val.(*schema.Set).List()
 		initialScopeUris := make([]utils.Nstring, len(rawInitialScopeUris))
@@ -291,7 +296,6 @@ func resourceVolumeRead(d *schema.ResourceData, meta interface{}) error {
 
 	d.Set("device_specific_attributes", &deviceSpecificAttributesTemplates)
 	d.Set("etag", storageVolume.ETAG)
-	d.Set("is_permanent", storageVolume.IsPermanent)
 	d.Set("is_shareable", storageVolume.IsShareable)
 	d.Set("name", storageVolume.Name)
 	d.Set("state", storageVolume.State)
@@ -313,13 +317,12 @@ func resourceVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	volume := ov.StorageVolume{}
 
-	isPermanent := d.Get("is_permanent").(bool)
 	isShareable := d.Get("is_shareable").(bool)
 
 	volume.Name = d.Get("name").(string)
 	volume.ProvisioningTypeForUpdate = d.Get("provisioning_type").(string)
 	volume.Description = utils.NewNstring(d.Get("description").(string))
-	volume.IsPermanent = &isPermanent
+
 	volume.URI = utils.NewNstring(d.Get("uri").(string))
 	volume.IsShareable = &isShareable
 
