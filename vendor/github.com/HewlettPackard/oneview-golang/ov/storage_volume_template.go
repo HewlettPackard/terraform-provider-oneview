@@ -126,6 +126,7 @@ func (c *OVClient) GetStorageVolumeTemplateByName(name string) (StorageVolumeTem
 	}
 }
 
+
 func (c *OVClient) GetRootStorageVolumeTemplate(storage_pool_uri string) (StorageVolumeTemplate, error) {
 	var (
 		sVolTemplate StorageVolumeTemplate
