@@ -3,7 +3,7 @@ module github.com/HewlettPackard/terraform-provider-oneview
 go 1.15
 
 require (
-	github.com/HewlettPackard/oneview-golang v7.0.1-0.20220607081618-f52f50603398+incompatible
+	github.com/HewlettPackard/oneview-golang v7.0.1-0.20220609055943-a75fa4b0c792+incompatible
 	github.com/docker/machine v0.16.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect

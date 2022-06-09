@@ -12,6 +12,8 @@
 package oneview
 
 import (
+	"errors"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -75,6 +77,11 @@ func resourceVolume() *schema.Resource {
 							Optional: true,
 							Computed: true,
 						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
 						"storage_pool": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -103,6 +110,10 @@ func resourceVolume() *schema.Resource {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
+						"is_shared": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
 						"is_compressed": {
 							Type:     schema.TypeBool,
 							Optional: true,
@@ -125,7 +136,7 @@ func resourceVolume() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"provisioned_capacity": {
 				Type:     schema.TypeString,
@@ -196,10 +207,11 @@ func resourceVolume() *schema.Resource {
 func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	var (
-		volume      ov.StorageVolume
-		volTemplate ov.StorageVolumeTemplate
-		storagePool ov.StoragePool
-		volError    error
+		volume         ov.StorageVolume
+		volTemplate    ov.StorageVolumeTemplate
+		storagePoolUri utils.Nstring
+		volumeSize     int
+		volError       error
 	)
 
 	properties := d.Get("properties").(*schema.Set).List()[0].(map[string]interface{})
@@ -209,31 +221,28 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 		if volError != nil {
 			return volError
 		}
+		storagePoolUri = utils.Nstring(volTemplate.StoragePoolUri)
 	} else if properties["storage_pool"] != "" {
 		volTemplate, volError = config.ovClient.GetRootStorageVolumeTemplate(properties["storage_pool"].(string))
 		if volError != nil {
 			return volError
 		}
+		storagePoolUri = utils.Nstring(properties["storage_pool"].(string))
+	} else {
+		return errors.New("neither template nor storage pool is provided")
 	}
-
-	var volumeSize int
-	var storagePoolUri utils.Nstring
 
 	if properties["size"] != 0 {
 		volumeSize = properties["size"].(int)
 	} else {
 		volumeSize = volTemplate.TemplateProperties.Size.Default
-	}
-	if properties["storage_pool"] != "" {
-		storagePoolUri = utils.Nstring(properties["storage_pool"].(string))
-		storagePool.URI = storagePoolUri
-	} else {
-		storagePoolUri = utils.Nstring(volTemplate.StoragePoolUri)
+
 	}
 
 	volumeProperties := ov.Properties{
 		Storagepool:         storagePoolUri,
-		Name:                d.Get("name").(string),
+		Name:                properties["name"].(string),
+		Description:         utils.Nstring(properties["description"].(string)),
 		Size:                volumeSize,
 		ProvisioningType:    properties["provisioning_type"].(string),
 		DataTransferLimit:   properties["data_transfer_limit"].(int),
@@ -242,6 +251,7 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 		IsEncrypted:         properties["is_encrypted"].(bool),
 		IsPinned:            properties["is_pinned"].(bool),
 		IsCompressed:        properties["is_compressed"].(bool),
+		IsShareable:         properties["is_shared"].(bool),
 	}
 	volume.Properties = &volumeProperties
 	volume.TemplateURI = volTemplate.URI
@@ -254,9 +264,8 @@ func resourceVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 		volume.InitialScopeUris = initialScopeUris
 	}
-
 	err := config.ovClient.CreateStorageVolume(volume)
-	d.SetId(d.Get("name").(string))
+	d.SetId(properties["name"].(string))
 
 	if err != nil {
 		d.SetId("")
