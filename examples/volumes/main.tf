@@ -23,18 +23,15 @@ data "oneview_storage_volume_template" "st_vt" {
 # Creates volume resource
 resource "oneview_volume" "volume" {
   properties {
-    name = "testvol3"
+    name        = "testvol3"
+    description = "Test Volume"
     /* uncomment the below two line to provide the size and storage pool uri or it will be taken from the volume template*/
     storage_pool      = data.oneview_storage_pool.st_pool.uri
     size              = 1221225472
     provisioning_type = "Thin"
     is_deduplicated   = false
   }
-
-  template_name = "Auto-VolumeTemplate"
-  //template_uri         = data.oneview_storage_volume_template.st_vt.uri
-  name                 = "testvol"
-  description          = "Test Volume"
+  template_name        = "Auto-VolumeTemplate"
   initial_scope_uris   = [data.oneview_scope.scope_obj.uri]
   provisioned_capacity = "1221225472"
 }
@@ -43,13 +40,12 @@ resource "oneview_volume" "volume" {
 # resource "oneview_volume" "volume" {
 #   properties {
 #     name              = "testvol3"
+#     description = "Test Volume with no template"
 #     storage_pool      = data.oneview_storage_pool.st_pool.uri
 #     size              = 1221225472
 #     provisioning_type = "Thin"
 #     is_deduplicated   = false
 #   }
-#   name                 = "testvolnotemplate"
-#   description          = "Test Volume with no template"
 #   initial_scope_uris   = [data.oneview_scope.scope_obj.uri]
 #   provisioned_capacity = "1221225472"
 # }
