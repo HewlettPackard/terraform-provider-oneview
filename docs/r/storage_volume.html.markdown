@@ -14,9 +14,10 @@ Creates a storage volume.
 
 ```js
 resource "oneview_volume" "default" {
-  name = "default-storage-volume"
+ 
   properties = {
     "name" = "default-storage-volume"
+    "description"= "describe volume"
     "storage_pool"= "storage-pool-uri",
     "size"= size,
     "provisioning_type"= "provisioning-type",
