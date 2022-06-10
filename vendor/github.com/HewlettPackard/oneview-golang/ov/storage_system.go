@@ -16,6 +16,7 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -356,4 +357,41 @@ func (c *OVClient) GetVolumeSets(uri utils.Nstring) (VolumeSetList, error) {
 		return volume_sets, err
 	}
 	return volume_sets, nil
+}
+
+func (c *OVClient) GeVolumeTemplatesForStorageSystem(uri utils.Nstring, filter string, sort string, start string, count string) (StorageVolumeTemplateList, error) {
+
+	var (
+		volumeTemplates StorageVolumeTemplateList
+		main_uri        = uri.String()
+		q               map[string]interface{}
+	)
+	q = make(map[string]interface{})
+	if len(filter) > 0 {
+		q["filter"] = filter
+	}
+
+	if sort != "" {
+		q["sort"] = sort
+	}
+
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+	// Setup query
+	if len(q) > 0 {
+		c.SetQueryString(q)
+	}
+
+	main_uri = main_uri + "/templates"
+	data, err := c.RestAPICall(rest.GET, main_uri, nil)
+	if err != nil {
+		log.Errorf("Error in getting volume templates: %s", err)
+		return volumeTemplates, err
+	}
+	log.Debugf("Volume Templates %s", data)
+	if err := json.Unmarshal([]byte(data), &volumeTemplates); err != nil {
+		return volumeTemplates, err
+	}
+	return volumeTemplates, nil
 }

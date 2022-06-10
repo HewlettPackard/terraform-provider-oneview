@@ -79,6 +79,7 @@ type ProvisioningParameters struct {
 
 type Properties struct {
 	Name                string        `json:"name,omitempty"`
+	Description         utils.Nstring `json:"description,omitempty"`
 	Storagepool         utils.Nstring `json:"storagePool,omitempty"`
 	Size                int           `json:"size,omitempty"`
 	ProvisioningType    string        `json:"provisioningType,omitempty"`

@@ -1,6 +1,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v7.1.0-13] (unreleased)
+### Notes
+- This release supports API4200 minimally where we can use OneView v7.10 with this SDK.
+
+#### Major Changes
+
+### Bug fixes & Enhancements:
+
+- [#451](https://github.com/HewlettPackard/terraform-provider-oneview/issues/473) Adding a volume without a volume template
+  
+
+
 # [v7.0.0-13]
 ### Notes
 - This release supports API4000 minimally where we can use OneView v7.00 with this SDK.
