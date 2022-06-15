@@ -774,10 +774,6 @@ func resourceServerProfile() *schema.Resource {
 										},
 										Set: schema.HashString,
 									},
-									"is_permanent": {
-										Type:     schema.TypeBool,
-										Optional: true,
-									},
 									"template_uri": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -1731,14 +1727,17 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 					LagName:          rawNetworkItem["lag_name"].(string),
 					MAC:              utils.NewNstring(rawNetworkItem["mac"].(string)),
 					MacType:          rawNetworkItem["mac_type"].(string),
+					WWNN:             utils.NewNstring(rawNetworkItem["wwnn"].(string)),
 					WWPN:             utils.NewNstring(rawNetworkItem["wwpn"].(string)),
 					WWPNType:         rawNetworkItem["wwpn_type"].(string),
 					NetworkURI:       utils.NewNstring(rawNetworkItem["network_uri"].(string)),
 					PortID:           rawNetworkItem["port_id"].(string),
 					Connectionv200:   connectionV200,
 					RequestedMbps:    rawNetworkItem["requested_mbps"].(string),
-					Ipv4:             &ipv4,
 				})
+				if len(rawNetworkItem["ipv4"].([]interface{})) != 0 {
+					networks[i].Ipv4 = &ipv4
+				}
 				if len(rawNetworkItem["boot"].([]interface{})) != 0 {
 					networks[i].Boot = &bootOptions
 				}
@@ -1922,14 +1921,13 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	if _, ok := d.GetOk("volume_attachments"); ok {
 		rawVolumeAttachments := d.Get("volume_attachments").(*schema.Set).List()
 		volumeAttachments := make([]ov.VolumeAttachment, 0)
-		for _, rawVolumeAttachment := range rawVolumeAttachments {
+		for i, rawVolumeAttachment := range rawVolumeAttachments {
 			volumeAttachmentItem := rawVolumeAttachment.(map[string]interface{})
 			volumes := ov.Volume{}
 			if volumeAttachmentItem["volume"] != nil {
 				rawVolume := volumeAttachmentItem["volume"].([]interface{})
 				for _, rawVol := range rawVolume {
 					volumeItem := rawVol.(map[string]interface{})
-					tempIsPermanent := volumeItem["is_permanent"].(bool)
 					properties := ov.PropertiesSP{}
 					if volumeItem["properties"] != nil {
 						rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
@@ -1970,10 +1968,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 						volumes.InitialScopeUris = initialScopeUris
 					}
 					volumes = ov.Volume{
-						IsPermanent: &tempIsPermanent,
-						Properties:  &properties,
-
 						TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
+					}
+					if !reflect.DeepEqual(properties, ov.PropertiesSP{}) {
+						volumes.Properties = &properties
 					}
 				}
 			}
@@ -2011,6 +2009,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			}
 			volumeAttachments = append(volumeAttachments, ov.VolumeAttachment{
 				ID:                             volumeAttachmentItem["id"].(int),
+				IsPermanent:                    GetBoolPointer(volumeAttachmentItem["is_permanent"].(bool)),
 				LUN:                            volumeAttachmentItem["lun"].(string),
 				LUNType:                        volumeAttachmentItem["lun_type"].(string),
 				VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
@@ -2020,8 +2019,11 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 				Status:                         volumeAttachmentItem["status"].(string),
 				StoragePaths:                   storagePaths,
 				BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-				Volume:                         &volumes,
 			})
+			if !reflect.DeepEqual(volumes, ov.Volume{}) {
+				volumeAttachments[i].Volume = &volumes
+			}
+
 		}
 		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
 	}
@@ -2825,7 +2827,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				}
 				volumes = append(volumes, map[string]interface{}{
 					"initial_scope_uris": serverProfile.SanStorage.VolumeAttachments[i].Volume.InitialScopeUris,
-					"is_permanent":       serverProfile.SanStorage.VolumeAttachments[i].Volume.IsPermanent,
 					"template_uri":       serverProfile.SanStorage.VolumeAttachments[i].Volume.TemplateUri.String(),
 					"properties":         properties,
 				})
@@ -3253,8 +3254,14 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 						NetworkURI:       utils.NewNstring(rawNetworkItem["network_uri"].(string)),
 						PortID:           rawNetworkItem["port_id"].(string),
 						RequestedMbps:    rawNetworkItem["requested_mbps"].(string),
-						Ipv4:             &ipv4,
-						Boot:             &bootOptions,
+					}
+
+					if ipv4 != (ov.Ipv4Option{}) {
+						network.Ipv4 = &ipv4
+					}
+					if !(reflect.DeepEqual(bootOptions, ov.BootOption{})) {
+						network.Boot = &bootOptions
+
 					}
 
 					networks = append(networks, network)
@@ -3446,7 +3453,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					rawVolume := volumeAttachmentItem["volume"].(*schema.Set).List()
 					for _, rawVol := range rawVolume {
 						volumeItem := rawVol.(map[string]interface{})
-						tempIsPermanent := volumeItem["is_permanent"].(bool)
 						properties := ov.PropertiesSP{}
 						if volumeItem["properties"] != nil {
 							rawVolumeProperties := volumeItem["properties"].(*schema.Set).List()
@@ -3487,9 +3493,10 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 							volumes.InitialScopeUris = initialScopeUris
 						}
 						volumes = ov.Volume{
-							IsPermanent: &tempIsPermanent,
-							Properties:  &properties,
 							TemplateUri: utils.NewNstring(volumeItem["template_uri"].(string)),
+						}
+						if !reflect.DeepEqual(properties, ov.PropertiesSP{}) {
+							volumes.Properties = &properties
 						}
 					}
 				}
@@ -3530,6 +3537,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				}
 				volumeAttachment := ov.VolumeAttachment{
 					ID:                             volumeAttachmentItem["id"].(int),
+					IsPermanent:                    GetBoolPointer(volumeAttachmentItem["is_permanent"].(bool)),
 					LUN:                            volumeAttachmentItem["lun"].(string),
 					LUNType:                        volumeAttachmentItem["lun_type"].(string),
 					VolumeURI:                      utils.NewNstring(volumeAttachmentItem["volume_uri"].(string)),
@@ -3537,7 +3545,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 					AssociatedTemplateAttachmentId: volumeAttachmentItem["associated_template_attachment_id"].(string),
 					StoragePaths:                   storagePaths,
 					BootVolumePriority:             volumeAttachmentItem["boot_volume_priority"].(string),
-					Volume:                         &volumes,
+				}
+				if !reflect.DeepEqual(volumes, ov.Volume{}) {
+					volumeAttachment.Volume = &volumes
 				}
 
 				volumeAttachments = append(volumeAttachments, volumeAttachment)

@@ -356,7 +356,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
 }
 
 
-# Creating Server Profile Template with DL Server
+## Creating Server Profile Template with DL Server
 # Enclosure group and affinity are not supported for DL server
 
 resource "oneview_server_profile_template" "ServerProfileTemplateWithDLServer" {
@@ -367,5 +367,144 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithDLServer" {
     mode            = "UEFIOptimized"
     pxe_boot_policy = "Auto"
   }
+}
+##Creates server profile template with san storage for DL server with existing volume
+resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage" {
+  name = "TestServerProfileTemplate_with_local_storage_san2"
+  type = "ServerProfileTemplateV8"
+  //enclosure_group      = "EG"
+  server_hardware_type = "DL360 Gen10"
+  initial_scope_uris   = [data.oneview_scope.scope.uri]
+  bios_option {
+    manage_bios = false
+
+  }
+  boot {
+    boot_order         = []
+    compliance_control = "Unchecked"
+    manage_boot        = false
+  }
+  boot_mode {
+    manage_mode     = true
+    mode            = "UEFIOptimized"
+    pxe_boot_policy = "Auto"
+    secure_boot     = "Unmanaged"
+  }
+
+  connection_settings {
+    manage_connections = true
+    compliance_control = "Checked"
+    connections {
+      id             = 1
+      isolated_trunk = false
+      name           = "connection1"
+      function_type  = "FibreChannel"
+      #port_id        = "Pci 1:1"
+
+      network_uri = data.oneview_fc_network.fcNetwork.uri
+    }
+  }
+  san_storage {
+    host_os_type       = "Windows 2012 / WS2012 R2"
+    manage_san_storage = true
+  }  
+  volume_attachments {
+    boot_volume_priority      = "NotBootable"
+    id                        = 1
+    is_permanent              = true
+    lun_type                  = "Auto"
+    volume_storage_system_uri = "/rest/storage-systems/TXQ1000307"
+    volume_uri                = "/rest/storage-volumes/75FE3A14-7045-47E4-A760-AEAD00718827"
+    storage_paths {
+      connection_id   = 1
+      network_uri     = "/rest/fc-networks/81f84e14-91ee-4b88-a2af-defd12add74f"
+      target_selector = "Auto"
+      is_enabled      = true
+    }
+  }
+}
+*/
+
+/*
+#Creates server profile template with san storage for DL server with new volume 
+resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage" {
+  name                 = "TestServerProfileTemplate_with_local_storage_san2"
+  type                 = "ServerProfileTemplateV8"
+  server_hardware_type = "DL360 Gen10"
+  initial_scope_uris   = [data.oneview_scope.scope.uri]
+  bios_option {
+    manage_bios = false
+
+  }
+  boot {
+    boot_order         = []
+    compliance_control = "Unchecked"
+    manage_boot        = false
+  }
+  boot_mode {
+    manage_mode     = true
+    mode            = "UEFIOptimized"
+    pxe_boot_policy = "Auto"
+    secure_boot     = "Unmanaged"
+  }
+
+  connection_settings {
+    manage_connections = true
+    compliance_control = "Checked"
+    connections {
+      id             = 1
+      isolated_trunk = false
+      name           = "connection1"
+      function_type  = "FibreChannel"
+      #port_id        = "Pci 1:1"
+
+      network_uri = data.oneview_fc_network.fcNetwork.uri
+    }
+
+  }
+  san_storage {
+    host_os_type       = "Windows 2012 / WS2012 R2"
+    manage_san_storage = true
+  }
+
+  volume_attachments {
+    associated_template_attachment_id = "1d6fe785-029e-45b7-b749-b21c2f982386"
+    boot_volume_priority              = "NotBootable"
+    id                                = 2
+    lun_type                          = "Auto"
+    volume_storage_system_uri         = "/rest/storage-systems/TXQ1000307"
+    is_permanent                      = true
+    storage_paths {
+      connection_id   = 1
+      is_enabled      = true
+      network_uri     = "/rest/fc-networks/81f84e14-91ee-4b88-a2af-defd12add74f"
+      target_selector = "Auto"
+    }
+
+    volume {
+      initial_scope_uris = []
+
+      template_uri = "/rest/storage-volume-templates/6cef2f7a-817d-4131-bf60-aeae00f971c8"
+
+      properties {
+        data_transfer_limit              = 0
+        iops_limit                       = 0
+        is_adaptive_optimization_enabled = false
+        is_compressed                    = false
+        is_data_reduction_enabled        = false
+        is_deduplicated                  = false
+        is_encrypted                     = false
+        is_pinned                        = false
+        is_shareable                     = false
+        name                             = "vol"
+        provisioning_type                = "Full"
+        size                             = 268435456
+        snapshot_pool                    = "/rest/storage-pools/FF4125AE-FC48-482B-96E9-AEA8009E91D8"
+        storage_pool                     = "/rest/storage-pools/FF4125AE-FC48-482B-96E9-AEA8009E91D8"
+        template_version                 = "1.1"
+      }
+    }
+  }
+
 }
 */

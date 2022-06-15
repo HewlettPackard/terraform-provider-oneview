@@ -83,7 +83,7 @@ type PropertiesSP struct {
 type Volume struct {
 	InitialScopeUris []utils.Nstring `json:"initialScopeUris,omitempty"` //Initial scopes for the volume.
 	IsPermanent      *bool           `json:"isPermanent,omitempty"`      //If true, indicates that the volume will persist when the profile using this volume is deleted.
-	Properties       *PropertiesSP   `json:"properties"`                 //The properties specific to a storage system family required for the creation of a storage volume.
+	Properties       *PropertiesSP   `json:"properties,omitempty"`       //The properties specific to a storage system family required for the creation of a storage volume.
 	TemplateUri      utils.Nstring   `json:"templateUri,omitempty"`      //URI of the storage volume template from which the volume will be created.
 
 }

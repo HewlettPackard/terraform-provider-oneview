@@ -9,8 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ### Bug fixes & Enhancements:
 
-- [#451](https://github.com/HewlettPackard/terraform-provider-oneview/issues/473) Adding a volume without a volume template
-  
+- [#473](https://github.com/HewlettPackard/terraform-provider-oneview/issues/473) Adding a volume without a volume template
+- [#474](https://github.com/HewlettPackard/terraform-provider-oneview/issues/474)Issue applying Connection_settings attributes when creating server templates
 
 
 # [v7.0.0-13]
