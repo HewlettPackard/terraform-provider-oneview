@@ -343,6 +343,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
   volume_attachments {
     boot_volume_priority      = "NotBootable"
     id                        = 1
+    is_permanent              = true
     lun_type                  = "Auto"
     volume_storage_system_uri = "/rest/storage-systems/TXQ1000307"
     volume_uri                = "/rest/storage-volumes/9E1C08D5-8EDF-4600-A73E-AD3A00B1ACB7"
@@ -483,9 +484,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
 
     volume {
       initial_scope_uris = []
-
       template_uri = "/rest/storage-volume-templates/6cef2f7a-817d-4131-bf60-aeae00f971c8"
-
       properties {
         name                             = "vol"
         provisioning_type                = "Full"
