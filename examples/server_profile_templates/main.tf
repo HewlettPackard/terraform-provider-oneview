@@ -487,21 +487,10 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage"
       template_uri = "/rest/storage-volume-templates/6cef2f7a-817d-4131-bf60-aeae00f971c8"
 
       properties {
-        data_transfer_limit              = 0
-        iops_limit                       = 0
-        is_adaptive_optimization_enabled = false
-        is_compressed                    = false
-        is_data_reduction_enabled        = false
-        is_deduplicated                  = false
-        is_encrypted                     = false
-        is_pinned                        = false
-        is_shareable                     = false
         name                             = "vol"
         provisioning_type                = "Full"
-        size                             = 268435456
-        snapshot_pool                    = "/rest/storage-pools/FF4125AE-FC48-482B-96E9-AEA8009E91D8"
+        size                             = 268435456        
         storage_pool                     = "/rest/storage-pools/FF4125AE-FC48-482B-96E9-AEA8009E91D8"
-        template_version                 = "1.1"
       }
     }
   }
