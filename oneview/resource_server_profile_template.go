@@ -1999,10 +1999,12 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["administrator_account"].([]interface{})
-					for _, x := range vals {
-						xx := x.(map[string]interface{})
-						adminAc["password"] = xx["password"]
+					if valmpp != nil {
+						vals := valmpp["administrator_account"].([]interface{})
+						for _, x := range vals {
+							xx := x.(map[string]interface{})
+							adminAc["password"] = xx["password"]
+						}
 					}
 					adminAcc = append(adminAcc, adminAc)
 
@@ -2064,10 +2066,12 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["directory"].([]interface{})
-					for _, x := range vals {
-						xx := x.(map[string]interface{})
-						directoryy["password"] = xx["password"]
+					if valmpp != nil {
+						vals := valmpp["directory"].([]interface{})
+						for _, x := range vals {
+							xx := x.(map[string]interface{})
+							directoryy["password"] = xx["password"]
+						}
 					}
 					directory = append(directory, directoryy)
 
@@ -2162,12 +2166,15 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 								localAccounts = append(localAccounts, la)
 							}
 
-							// extracts MpSettings to re-set it
+							//extracts MpSettings to re-set it
+
 							valmpp := flattenMp(d)
-							vals := valmpp["local_accounts"].(*schema.Set).List()
-							for i, x := range vals {
-								xx := x.(map[string]interface{})
-								localAccounts[i]["password"] = xx["password"]
+							if valmpp != nil {
+								vals := valmpp["local_accounts"].(*schema.Set).List()
+								for i, x := range vals {
+									xx := x.(map[string]interface{})
+									localAccounts[i]["password"] = xx["password"]
+								}
 							}
 						}
 					}
@@ -2214,10 +2221,12 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					}
 					// extracts MpSettings to re-set it
 					valmpp := flattenMp(d)
-					vals := valmpp["key_manager"].([]interface{})
-					for _, x := range vals {
-						xx := x.(map[string]interface{})
-						keyManagerr["password"] = xx["password"]
+					if valmpp != nil {
+						vals := valmpp["key_manager"].([]interface{})
+						for _, x := range vals {
+							xx := x.(map[string]interface{})
+							keyManagerr["password"] = xx["password"]
+						}
 					}
 					keyManager = append(keyManager, keyManagerr)
 
