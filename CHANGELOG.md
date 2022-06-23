@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 - [#473](https://github.com/HewlettPackard/terraform-provider-oneview/issues/473) Adding a volume without a volume template
 - [#474](https://github.com/HewlettPackard/terraform-provider-oneview/issues/474)Issue applying Connection_settings attributes when creating server templates
+- [#468](https://github.com/HewlettPackard/terraform-provider-oneview/issues/468) Cannot import Server Profile Template - Provider Crash
 
 
 # [v7.0.0-13]
