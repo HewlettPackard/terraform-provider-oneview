@@ -10,7 +10,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Bug fixes & Enhancements:
 
 - [#473](https://github.com/HewlettPackard/terraform-provider-oneview/issues/473) Adding a volume without a volume template
-- [#474](https://github.com/HewlettPackard/terraform-provider-oneview/issues/474)Issue applying Connection_settings attributes when creating server templates
+- [#474](https://github.com/HewlettPackard/terraform-provider-oneview/issues/474) Issue applying Connection_settings attributes when creating server templates
+- [#471](https://github.com/HewlettPackard/terraform-provider-oneview/issues/471) Assign SAN manager when adding a Fiber Channel network
 
 
 # [v7.0.0-13]
