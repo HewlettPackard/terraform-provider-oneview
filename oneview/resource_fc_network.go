@@ -57,6 +57,7 @@ func resourceFCNetwork() *schema.Resource {
 			"managed_san_uri": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"type": {
 				Type:     schema.TypeString,
