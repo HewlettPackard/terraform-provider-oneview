@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#474](https://github.com/HewlettPackard/terraform-provider-oneview/issues/474) Issue applying Connection_settings attributes when creating server templates
 - [#471](https://github.com/HewlettPackard/terraform-provider-oneview/issues/471) Assign SAN manager when adding a Fiber Channel network
 - [#468](https://github.com/HewlettPackard/terraform-provider-oneview/issues/468) Cannot import Server Profile Template - Provider Crash
+- [#462](https://github.com/HewlettPackard/terraform-provider-oneview/issues/462) SPT - Terraform doesn't detect changes when removing the iLO setting hostname
 
 
 # [v7.0.0-13]
