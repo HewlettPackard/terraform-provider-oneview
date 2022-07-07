@@ -1452,6 +1452,10 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		serverProfile.WWNType = val.(string)
 	}
 
+	if val, ok := d.GetOk("uuid"); ok {
+		serverProfile.UUID = utils.NewNstring(val.(string))
+	}
+
 	if val, ok := d.GetOk("mac_type"); ok {
 		serverProfile.MACType = val.(string)
 	}
