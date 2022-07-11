@@ -1097,7 +1097,6 @@ func resourceServerProfile() *schema.Resource {
 									"administrator_account": {
 										Type:     schema.TypeList,
 										Optional: true,
-										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"delete_administrator_account": {
@@ -1116,7 +1115,6 @@ func resourceServerProfile() *schema.Resource {
 										Type:     schema.TypeList,
 										MaxItems: 1,
 										Optional: true,
-										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"directory_authentication": {
@@ -1182,7 +1180,6 @@ func resourceServerProfile() *schema.Resource {
 										MaxItems: 1,
 										Type:     schema.TypeList,
 										Optional: true,
-										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"hostname": {
@@ -1196,7 +1193,6 @@ func resourceServerProfile() *schema.Resource {
 										MaxItems: 1,
 										Type:     schema.TypeList,
 										Optional: true,
-										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"primary_server_address": {

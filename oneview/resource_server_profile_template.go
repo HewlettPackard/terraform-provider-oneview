@@ -602,7 +602,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeList,
 										MaxItems: 1,
 										Optional: true,
-										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"delete_administrator_account": {
@@ -621,7 +620,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										Type:     schema.TypeList,
 										MaxItems: 1,
 										Optional: true,
-										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"directory_authentication": {
@@ -686,7 +684,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										MaxItems: 1,
 										Type:     schema.TypeList,
 										Optional: true,
-										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"hostname": {
@@ -700,7 +697,6 @@ func resourceServerProfileTemplate() *schema.Resource {
 										MaxItems: 1,
 										Type:     schema.TypeList,
 										Optional: true,
-										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"primary_server_address": {
@@ -1929,10 +1925,11 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 	if spt.BootMode != emptyBootMode {
 		bootMode := make([]map[string]interface{}, 0, 1)
 		bootMode = append(bootMode, map[string]interface{}{
-			"manage_mode":     spt.BootMode.ManageMode,
-			"mode":            spt.BootMode.Mode,
-			"pxe_boot_policy": spt.BootMode.PXEBootPolicy,
-			"secure_boot":     spt.BootMode.SecureBoot,
+			"compliance_control": spt.BootMode.ComplianceControl,
+			"manage_mode":        spt.BootMode.ManageMode,
+			"mode":               spt.BootMode.Mode,
+			"pxe_boot_policy":    spt.BootMode.PXEBootPolicy,
+			"secure_boot":        spt.BootMode.SecureBoot,
 		})
 		d.Set("boot_mode", bootMode)
 	}
