@@ -910,6 +910,7 @@ func resourceServerProfile() *schema.Resource {
 			"serial_number": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 			},
 			"public_mac": {
 				Type:     schema.TypeString,
@@ -1429,6 +1430,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 			return err
 		}
 		serverProfile.ServerHardwareURI = serverHardware.URI
+		serverProfile.ServerHardwareTypeURI = serverHardware.ServerHardwareTypeURI
 	}
 
 	if val, ok := d.GetOk("affinity"); ok {
@@ -1438,9 +1440,16 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	if val, ok := d.GetOk("serial_number_type"); ok {
 		serverProfile.SerialNumberType = val.(string)
 	}
+	if val, ok := d.GetOk("serial_number"); ok {
+		serverProfile.SerialNumber = utils.NewNstring(val.(string))
+	}
 
 	if val, ok := d.GetOk("wwn_type"); ok {
 		serverProfile.WWNType = val.(string)
+	}
+
+	if val, ok := d.GetOk("uuid"); ok {
+		serverProfile.UUID = utils.NewNstring(val.(string))
 	}
 
 	if val, ok := d.GetOk("mac_type"); ok {
@@ -2068,7 +2077,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	}
 	//Cleaning up SP  by removing spt related fields
 	config.ovClient.Cleanup(&serverProfile)
-
 	err := config.ovClient.SubmitNewProfile(serverProfile)
 	d.SetId(d.Get("name").(string))
 
