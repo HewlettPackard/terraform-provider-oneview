@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#471](https://github.com/HewlettPackard/terraform-provider-oneview/issues/471) Assign SAN manager when adding a Fiber Channel network
 - [#468](https://github.com/HewlettPackard/terraform-provider-oneview/issues/468) Cannot import Server Profile Template - Provider Crash
 - [#413](https://github.com/HewlettPackard/terraform-provider-oneview/issues/413) Unable to set UUID and Serial Number
+- [#462](https://github.com/HewlettPackard/terraform-provider-oneview/issues/462) SPT - Terraform doesn't detect changes when removing the iLO setting hostname
 
 
 
