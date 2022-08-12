@@ -2078,6 +2078,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 	//Cleaning up SP  by removing spt related fields
 	config.ovClient.Cleanup(&serverProfile)
 	err := config.ovClient.SubmitNewProfile(serverProfile)
+	//d.SetId(serverProfile.Name)
 	d.SetId(d.Get("name").(string))
 
 	if err != nil {
@@ -2089,6 +2090,7 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 	return resourceServerProfileRead(d, meta)
+
 }
 
 func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
