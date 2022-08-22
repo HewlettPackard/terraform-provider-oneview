@@ -2125,17 +2125,17 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	}
 
 	d.Set("interconnect_map_entry_template", interconnectMapEntryTemplates)
-	var uplink_name []string
-	if up_stat, ok := d.GetOk("uplink_set"); ok {
-		uss := up_stat.([]interface{})
+	//var uplink_name []string
+	// if up_stat, ok := d.GetOk("uplink_set"); ok {
+	// 	uss := up_stat.([]interface{})
 
-		for _, rawUs := range uss {
-			us := rawUs.(map[string]interface{})
-			uplink_name = append(uplink_name, us["name"].(string))
+	// 	for _, rawUs := range uss {
+	// 		us := rawUs.(map[string]interface{})
+	// 		uplink_name = append(uplink_name, us["name"].(string))
 
-		}
+	// 	}
 
-	}
+	// }
 
 	//Reading UplinkSets
 	emptyUplinkSets := []ov.UplinkSets{}
@@ -2227,6 +2227,9 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	}
 
 	//Oneview send the uplink set in unordered way so ordering it.
+	matchedUplinkSets := make([]map[string]interface{}, 0)
+	unmatchedUplinkSets := make([]map[string]interface{}, 0)
+
 	if val, ok := d.GetOk("uplink_set"); ok {
 		oneviewuplinksetCount := len(uplinkSets)
 
@@ -2236,15 +2239,38 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 			currName := (uss[i].(map[string]interface{}))["name"]
 			for j := 0; j < oneviewuplinksetCount; j++ {
 
-				if currName == uplinkSets[i]["name"] && i <= j { //.Name && i<=j{]
-					uplinkSets[i], uplinkSets[j] = uplinkSets[j], uplinkSets[i]
-
+				if currName == uplinkSets[j]["name"] {
+					matchedUplinkSets = append(matchedUplinkSets, uplinkSets[j])
 				}
 			}
 		}
+
+		for k := 0; k < oneviewuplinksetCount; k++ {
+
+			for l := 0; l < uplinksetCount; l++ {
+				currName := (uss[l].(map[string]interface{}))["name"]
+				if uplinkSets[k]["name"] == currName {
+					break
+				}
+				if l == uplinksetCount-1 {
+					unmatchedUplinkSets = append(unmatchedUplinkSets, uplinkSets[k])
+				}
+
+			}
+
+		}
+
 	}
 
-	d.Set("uplink_set", uplinkSets)
+	// file, _ := json.MarshalIndent(matchedUplinkSets, "", " ")
+	// _ = ioutil.WriteFile("matchedUplinkSets.json", file, 0644)
+
+	// file2, _ := json.MarshalIndent(unmatchedUplinkSets, "", " ")
+	// _ = ioutil.WriteFile("unmatchedUplinkSets.json", file2, 0644)
+
+	fullUplinkSet := append(matchedUplinkSets, unmatchedUplinkSets...)
+
+	d.Set("uplink_set", fullUplinkSet)
 
 	internalNetworkUris := make([]interface{}, len(logicalInterconnectGroup.InternalNetworkUris))
 	for i, internalNetworkUri := range logicalInterconnectGroup.InternalNetworkUris {
