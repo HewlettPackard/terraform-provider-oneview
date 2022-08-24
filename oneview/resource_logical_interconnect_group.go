@@ -12,13 +12,10 @@
 package oneview
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"reflect"
 	"strconv"
-	"time"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -1250,7 +1247,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 	//Creating uplinkSets
 	if val, ok := d.GetOk("uplink_set"); ok {
-		uss := val.([]interface{}) //(*schema.Set).List()
+		uss := val.([]interface{})
 		ovUss := []ov.UplinkSets{}
 		for _, rawUs := range uss {
 			us := rawUs.(map[string]interface{})
@@ -1496,57 +1493,6 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		telemetryConfiguration.Type = d.Get(telemetryConfigPrefix + ".type").(string)
 		lig.TelemetryConfiguration = &telemetryConfiguration
 	}
-	// //Old code
-	// snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
-	// snmpConfiguration := ov.SnmpConfiguration{}
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
-	// 	snmpConfiguration.Enabled = GetBoolPointer(val.(bool))
-	// }
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
-	// 	snmpConfiguration.V3Enabled = GetBoolPointer(val.(bool))
-	// }
-	// //if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
-	// //snmpConfiguration.ReadCommunity = val.(string)
-	// snmpConfiguration.ReadCommunity = d.Get(snmpConfigPrefix + ".read_community").(string)
-	// //}
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".system_contact"); ok {
-	// 	snmpConfiguration.SystemContact = val.(string)
-	// }
-	// rawSnmpAccess := d.Get(snmpConfigPrefix + ".snmp_access").(*schema.Set).List()
-	// snmpAccess := make([]string, len(rawSnmpAccess))
-	// for i, raw := range rawSnmpAccess {
-	// 	snmpAccess[i] = raw.(string)
-	// }
-	// snmpConfiguration.SnmpAccess = snmpAccess
-
-	// trapDestinationCount := d.Get(snmpConfigPrefix + ".trap_destination.#").(int)
-	// trapDestinations := make([]ov.TrapDestination, 0, trapDestinationCount)
-	// for i := 0; i < trapDestinationCount; i++ {
-	// 	trapDestinationPrefix := fmt.Sprintf(snmpConfigPrefix+".trap_destination.%d", i)
-
-	// 	rawEnetTrapCategories := d.Get(trapDestinationPrefix + ".enet_trap_categories").(*schema.Set).List()
-	// 	enetTrapCategories := make([]string, len(rawEnetTrapCategories))
-	// 	for i, raw := range rawEnetTrapCategories {
-	// 		enetTrapCategories[i] = raw.(string)
-	// 	}
-
-	// 	rawFcTrapCategories := d.Get(trapDestinationPrefix + ".fc_trap_categories").(*schema.Set).List()
-	// 	fcTrapCategories := make([]string, len(rawFcTrapCategories))
-	// 	for i, raw := range rawFcTrapCategories {
-	// 		fcTrapCategories[i] = raw.(string)
-	// 	}
-
-	// 	rawVcmTrapCategories := d.Get(trapDestinationPrefix + ".vcm_trap_categories").(*schema.Set).List()
-	// 	vcmTrapCategories := make([]string, len(rawVcmTrapCategories))
-	// 	for i, raw := range rawVcmTrapCategories {
-	// 		vcmTrapCategories[i] = raw.(string)
-	// 	}
-
-	// 	rawTrapSeverities := d.Get(trapDestinationPrefix + ".trap_severities").(*schema.Set).List()
-	// 	trapSeverities := make([]string, len(rawTrapSeverities))
-	// 	for i, raw := range rawTrapSeverities {
-	// 		trapSeverities[i] = raw.(string)
-	// 	}
 
 	if val, ok := d.GetOk("snmp_configuration"); ok {
 		rawSnmpConfiguration := val.([]interface{})
@@ -1637,9 +1583,8 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 			enabled := rawsnmpconfItem["enabled"].(bool)
 			snmpConfiguration.Enabled = &enabled
 			snmpConfiguration.Name = rawsnmpconfItem["name"].(string)
-			read_comminunity := rawsnmpconfItem["read_community"].(string)
-			snmpConfiguration.ReadCommunity = &read_comminunity
-			// snmpConfiguration.ReadCommunity = &rawsnmpconfItem["read_community"].(string)
+			readComminunity := rawsnmpconfItem["read_community"].(string)
+			snmpConfiguration.ReadCommunity = &readComminunity
 			snmpConfiguration.State = rawsnmpconfItem["state"].(string)
 			snmpConfiguration.Status = rawsnmpconfItem["status"].(string)
 			snmpConfiguration.SystemContact = rawsnmpconfItem["system_contact"].(string)
@@ -1652,31 +1597,8 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 		}
 
-		file, _ := json.MarshalIndent(snmpConfiguration, "", " ")
-		_ = ioutil.WriteFile("snmp_u.json", file, 0644)
-
 		lig.SnmpConfiguration = &snmpConfiguration
 	}
-
-	// 	trapDestination := ov.TrapDestination{
-	// 		TrapDestination:    d.Get(trapDestinationPrefix + ".trap_destination").(string),
-	// 		CommunityString:    d.Get(trapDestinationPrefix + ".community_string").(string),
-	// 		TrapFormat:         d.Get(trapDestinationPrefix + ".trap_format").(string),
-	// 		EnetTrapCategories: enetTrapCategories,
-	// 		FcTrapCategories:   fcTrapCategories,
-	// 		VcmTrapCategories:  vcmTrapCategories,
-	// 		TrapSeverities:     trapSeverities,
-	// 	}
-	// 	trapDestinations = append(trapDestinations, trapDestination)
-	// }
-	// if trapDestinationCount > 0 {
-	// 	snmpConfiguration.TrapDestinations = trapDestinations
-	// }
-
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".type"); ok {
-	// 	snmpConfiguration.Type = val.(string)
-	// 	lig.SnmpConfiguration = &snmpConfiguration
-	// }
 
 	interconnectSettingsPrefix := fmt.Sprintf("interconnect_settings")
 	if val, ok := d.GetOk(interconnectSettingsPrefix + ".type"); ok {
@@ -1945,8 +1867,6 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		}
 		lig.QosConfiguration = &ovQos
 	}
-	file, _ := json.MarshalIndent(lig, "", " ")
-	_ = ioutil.WriteFile("create.json", file, 0644)
 
 	ligError := config.ovClient.CreateLogicalInterconnectGroup(lig)
 	d.SetId(d.Get("name").(string))
@@ -1961,12 +1881,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	config := meta.(*Config)
 
 	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
-	// time := time.Now()
-
-	// lig_read_main_file := "lig_r_m" + time.String() + ".json"
-	// file, _ := json.MarshalIndent(logicalInterconnectGroup, "", " ")
-	// _ = ioutil.WriteFile(lig_read_main_file, file, 0644)
-
 	if err != nil || logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -2125,17 +2039,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	}
 
 	d.Set("interconnect_map_entry_template", interconnectMapEntryTemplates)
-	//var uplink_name []string
-	// if up_stat, ok := d.GetOk("uplink_set"); ok {
-	// 	uss := up_stat.([]interface{})
-
-	// 	for _, rawUs := range uss {
-	// 		us := rawUs.(map[string]interface{})
-	// 		uplink_name = append(uplink_name, us["name"].(string))
-
-	// 	}
-
-	// }
 
 	//Reading UplinkSets
 	emptyUplinkSets := []ov.UplinkSets{}
@@ -2222,7 +2125,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 				}
 				uplinkSets[i]["logical_port_config"] = logicalPortConfigInfo
 			}
-			// d.Set("uplink_set", uplinkSets)
+
 		}
 	}
 
@@ -2241,32 +2144,21 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 				if currName == uplinkSets[j]["name"] {
 					matchedUplinkSets = append(matchedUplinkSets, uplinkSets[j])
+					uplinkSets[j] = nil
 				}
 			}
 		}
 
 		for k := 0; k < oneviewuplinksetCount; k++ {
 
-			for l := 0; l < uplinksetCount; l++ {
-				currName := (uss[l].(map[string]interface{}))["name"]
-				if uplinkSets[k]["name"] == currName {
-					break
-				}
-				if l == uplinksetCount-1 {
-					unmatchedUplinkSets = append(unmatchedUplinkSets, uplinkSets[k])
-				}
+			if uplinkSets[k] != nil {
+				unmatchedUplinkSets = append(unmatchedUplinkSets, uplinkSets[k])
 
 			}
 
 		}
 
 	}
-
-	// file, _ := json.MarshalIndent(matchedUplinkSets, "", " ")
-	// _ = ioutil.WriteFile("matchedUplinkSets.json", file, 0644)
-
-	// file2, _ := json.MarshalIndent(unmatchedUplinkSets, "", " ")
-	// _ = ioutil.WriteFile("unmatchedUplinkSets.json", file2, 0644)
 
 	fullUplinkSet := append(matchedUplinkSets, unmatchedUplinkSets...)
 
@@ -2516,25 +2408,9 @@ func GetBoolPointer(value bool) *bool {
 	return &value
 }
 
-// func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interface{}) error {
-// 	config := meta.(*Config)
-// 	lig_read, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
-// 	lig_read.Name = d.Get("name").(string)
-
-// 	file1, _ := json.MarshalIndent(lig_read, "", " ")
-// 	_ = ioutil.WriteFile("lig_newu.json", file1, 0644)
-// 	err := config.ovClient.UpdateLogicalInterconnectGroup(lig_read)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	d.SetId(d.Get("name").(string))
-// 	return resourceLogicalInterconnectGroupRead(d, meta)
-// 	//return nil
-// }
-
 func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	lig1, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
+	//lig1, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
 	lig, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
 
 	if val, ok := d.GetOk("name"); ok {
@@ -2637,12 +2513,6 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 					NetworkType:         us["network_type"].(string),
 					Reachability:        us["reachability"].(string),
 				}
-
-				time := time.Now()
-
-				upl_u := "lig_r_m" + time.String() + ".json"
-				file1, _ := json.MarshalIndent(ovUs, "", " ")
-				_ = ioutil.WriteFile(upl_u, file1, 0644)
 
 				if ovUs.NetworkType == "FibreChannel" {
 					if ovUs.LacpTimer != "" {
@@ -2747,14 +2617,6 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 
 				ovUss = append(ovUss, ovUs)
 			}
-			existing_uplink_set := lig1.UplinkSets
-			file, _ := json.MarshalIndent(existing_uplink_set, "", " ")
-			_ = ioutil.WriteFile("existing_ups.json", file, 0644)
-
-			file, _ = json.MarshalIndent(ovUss, "", " ")
-			_ = ioutil.WriteFile("tobeupdate_ups.json", file, 0644)
-
-			//mergo.Merge(&existing_uplink_set, ovUss)
 
 			lig.UplinkSets = ovUss
 		}
@@ -2999,13 +2861,13 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 				for _, raw := range rawTrapDestinationsItem["vcm_trap_categories"].(*schema.Set).List() {
 					vcmTrapCategories = append(vcmTrapCategories, raw.(string))
 				}
-				inform_bool := rawTrapDestinationsItem["inform"].(bool)
+				informBool := rawTrapDestinationsItem["inform"].(bool)
 				trapDestination := ov.TrapDestination{
 					CommunityString:    rawTrapDestinationsItem["community_string"].(string),
 					EnetTrapCategories: enetTrapCategories,
 					EngineId:           rawTrapDestinationsItem["engine_id"].(string),
 					FcTrapCategories:   fcTrapCategories,
-					Inform:             &inform_bool,
+					Inform:             &informBool,
 					Port:               rawTrapDestinationsItem["port"].(int),
 					TrapDestination:    rawTrapDestinationsItem["trap_destination"].(string),
 					TrapSeverities:     trapSeverities,
@@ -3039,89 +2901,8 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 
 		}
 
-		file, _ := json.MarshalIndent(snmpConfiguration, "", " ")
-		_ = ioutil.WriteFile("snmp_u.json", file, 0644)
-
 		lig.SnmpConfiguration = &snmpConfiguration
 	}
-
-	// snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
-	// snmpConfiguration := ov.SnmpConfiguration{}
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
-	// 	snmpConfiguration.Enabled = GetBoolPointer(val.(bool))
-	// }
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".category"); ok {
-	// 	snmpConfiguration.Category = utils.NewNstring(val.(string))
-	// }
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
-	// 	snmpConfiguration.V3Enabled = GetBoolPointer(val.(bool))
-	// }
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
-	// 	snmpConfiguration.ReadCommunity = val.(string)
-	// }
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".system_contact"); ok {
-	// 	snmpConfiguration.SystemContact = val.(string)
-	// }
-	// rawSnmpAccess := d.Get(snmpConfigPrefix + ".snmp_access").(*schema.Set).List()
-	// snmpAccess := make([]string, len(rawSnmpAccess))
-	// for i, raw := range rawSnmpAccess {
-	// 	snmpAccess[i] = raw.(string)
-	// }
-	// // snmpUserCount := d.Get(snmpConfigPrefix + ".snmp_users.#").(int)
-	// // SNMPv3Users := make([]ov.SNMPv3User, 0, snmpUserCount)
-	// // for i := 0; i < snmpUserCount; i++ {
-	// // }
-
-	// trapDestinationCount := d.Get(snmpConfigPrefix + ".trap_destination.#").(int)
-	// trapDestinations := make([]ov.TrapDestination, 0, trapDestinationCount)
-	// for i := 0; i < trapDestinationCount; i++ {
-	// 	trapDestinationPrefix := fmt.Sprintf(snmpConfigPrefix+".trap_destination.%d", i)
-
-	// 	rawEnetTrapCategories := d.Get(trapDestinationPrefix + ".enet_trap_categories").(*schema.Set).List()
-	// 	enetTrapCategories := make([]string, len(rawEnetTrapCategories))
-	// 	for i, raw := range rawEnetTrapCategories {
-	// 		enetTrapCategories[i] = raw.(string)
-	// 	}
-
-	// 	rawFcTrapCategories := d.Get(trapDestinationPrefix + ".fc_trap_categories").(*schema.Set).List()
-	// 	fcTrapCategories := make([]string, len(rawFcTrapCategories))
-	// 	for i, raw := range rawFcTrapCategories {
-	// 		fcTrapCategories[i] = raw.(string)
-	// 	}
-
-	// 	rawVcmTrapCategories := d.Get(trapDestinationPrefix + ".vcm_trap_categories").(*schema.Set).List()
-	// 	vcmTrapCategories := make([]string, len(rawVcmTrapCategories))
-	// 	for i, raw := range rawVcmTrapCategories {
-	// 		vcmTrapCategories[i] = raw.(string)
-	// 	}
-
-	// 	rawTrapSeverities := d.Get(trapDestinationPrefix + ".trap_severities").(*schema.Set).List()
-	// 	trapSeverities := make([]string, len(rawTrapSeverities))
-	// 	for i, raw := range rawTrapSeverities {
-	// 		trapSeverities[i] = raw.(string)
-	// 	}
-
-	// 	trapDestination := ov.TrapDestination{
-	// 		TrapDestination:    d.Get(trapDestinationPrefix + ".trap_destination").(string),
-	// 		CommunityString:    d.Get(trapDestinationPrefix + ".community_string").(string),
-	// 		TrapFormat:         d.Get(trapDestinationPrefix + ".trap_format").(string),
-	// 		EnetTrapCategories: enetTrapCategories,
-	// 		FcTrapCategories:   fcTrapCategories,
-	// 		VcmTrapCategories:  vcmTrapCategories,
-	// 		TrapSeverities:     trapSeverities,
-	// 	}
-	// 	trapDestinations = append(trapDestinations, trapDestination)
-	// }
-	// if trapDestinationCount > 0 {
-	// 	snmpConfiguration.TrapDestinations = trapDestinations
-	// }
-	// file, _ := json.MarshalIndent(snmpConfiguration, "", " ")
-	// _ = ioutil.WriteFile("snmp_u.json", file, 0644)
-	// snmpConfiguration.SnmpAccess = snmpAccess
-	// if val, ok := d.GetOk(snmpConfigPrefix + ".type"); ok {
-	// 	snmpConfiguration.Type = val.(string)
-	// 	lig.SnmpConfiguration = &snmpConfiguration
-	// }
 
 	ligCall, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
 
@@ -3409,8 +3190,6 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		}
 		lig.QosConfiguration = &ovQos
 	}
-	file, _ := json.MarshalIndent(lig, "", " ")
-	_ = ioutil.WriteFile("lig_newu.json", file, 0644)
 
 	err := config.ovClient.UpdateLogicalInterconnectGroup(lig)
 	if err != nil {
