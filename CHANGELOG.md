@@ -1,6 +1,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v7.2.0-13](unreleased)
+### Notes
+- This release supports API4400 minimally where we can use OneView v7.20 with this SDK.
+#### Major Changes
+
+### Bug fixes & Enhancements:
+
+- [#467](https://github.com/HewlettPackard/terraform-provider-oneview/issues/467) Adding/Removing/Updating an uplinkset to a LIG will also modify the whole LIG
+
 # [v7.1.0-13]
 ### Notes
 - This release supports API4200 minimally where we can use OneView v7.10 with this SDK.
