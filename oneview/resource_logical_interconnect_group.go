@@ -16,6 +16,7 @@ import (
 	"log"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -2133,16 +2134,16 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	matchedUplinkSets := make([]map[string]interface{}, 0)
 	unmatchedUplinkSets := make([]map[string]interface{}, 0)
 
-	if val, ok := d.GetOk("uplink_set"); ok {
+	if uplinkSetFromConfigraw, ok := d.GetOk("uplink_set"); ok {
 		oneviewuplinksetCount := len(uplinkSets)
 
-		uss := val.([]interface{})
-		uplinksetCount := len(uss)
-		for i := 0; i < uplinksetCount; i++ {
-			currName := (uss[i].(map[string]interface{}))["name"]
+		uplinkSetFromConfig := uplinkSetFromConfigraw.([]interface{})
+		uplinksetCountFromConfig := len(uplinkSetFromConfig)
+		for i := 0; i < uplinksetCountFromConfig; i++ {
+			currName := (uplinkSetFromConfig[i].(map[string]interface{}))["name"]
 			for j := 0; j < oneviewuplinksetCount; j++ {
 
-				if currName == uplinkSets[j]["name"] {
+				if uplinkSets[j] != nil && strings.EqualFold(currName.(string), (uplinkSets[j]["name"]).(string)) {
 					matchedUplinkSets = append(matchedUplinkSets, uplinkSets[j])
 					uplinkSets[j] = nil
 				}
@@ -2410,7 +2411,6 @@ func GetBoolPointer(value bool) *bool {
 
 func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	//lig1, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
 	lig, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
 
 	if val, ok := d.GetOk("name"); ok {
