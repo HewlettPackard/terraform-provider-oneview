@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - This release supports API4400 minimally where we can use OneView v7.20 with this SDK.
 #### Major Changes
 
+1. Added datasource  to get the relative value for a given portname and interconnect type.
+
 ### Bug fixes & Enhancements:
 
 - [#467](https://github.com/HewlettPackard/terraform-provider-oneview/issues/467) Adding/Removing/Updating an uplinkset to a LIG will also modify the whole LIG
