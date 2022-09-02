@@ -119,8 +119,9 @@ type LogicalLocation struct {
 }
 
 type LocationEntry struct {
-	RelativeValue int    `json:"relativeValue,omitempty"` //"relativeValue": 2,
+	RelativeValue int    `json:"relativeValue,omitempty"` //"relativeValue": 2
 	Type          string `json:"type,omitempty"`          //"type": "StackingMemberId",
+
 }
 type NtpConfiguration struct {
 	RelativeValue       int             `json:"relativeValue,omitempty"`       //"relativeValue": 2,
@@ -615,6 +616,7 @@ func (c *OVClient) CreateLogicalInterconnectGroup(logicalInterconnectGroup Logic
 
 	log.Debugf("REST : %s \n %+v\n", uri, logicalInterconnectGroup)
 	log.Debugf("task -> %+v", t)
+
 	data, err := c.RestAPICall(rest.POST, uri, logicalInterconnectGroup)
 	if err != nil {
 		t.TaskIsDone = true
@@ -635,6 +637,36 @@ func (c *OVClient) CreateLogicalInterconnectGroup(logicalInterconnectGroup Logic
 	}
 
 	return nil
+}
+func (c *OVClient) GetRelativeValue(portname string, interconnectTypeUri utils.Nstring) (int, error) {
+
+	var portnum int
+	interconnectypeInfo, _ := c.GetInterconnectTypeByUri(interconnectTypeUri)
+	portnum, err := filterUplinkPort(interconnectypeInfo, portname)
+	if err != nil {
+		return portnum, err
+	}
+
+	return portnum, nil
+}
+func filterUplinkPort(inType InterconnectType, p string) (int, error) {
+
+	portInfos := inType.PortInfos
+
+	portMap := make(map[string]int)
+	for _, port := range portInfos {
+		if port.UplinkCapable {
+			portName := port.PortName
+			portMap[portName] = port.PortNumber
+		}
+	}
+	if portNum, ok := portMap[p]; ok {
+
+		return portNum, nil
+	} else {
+		return 0, fmt.Errorf("could not find relative value for given port name %s", p)
+	}
+
 }
 
 func (c *OVClient) DeleteLogicalInterconnectGroup(name string) error {
