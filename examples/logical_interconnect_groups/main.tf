@@ -8,18 +8,34 @@ provider "oneview" {
 }
 
 data "oneview_ethernet_network" "eth" {
-	name = "Auto-Ethernet-1"
+  name = "Auto-Ethernet-1"
 }
 
 
 data "oneview_fc_network" "fc" {
-	name = "FC_FA"
+  name = "FC_FA"
 }
 
-# Create Logical Interconnect Group
+data "oneview_fc_network" "fc1" {
+  name = "FC_FA1"
+}
+
+data "oneview_relative_value"  "rv1"{
+  port_name="Q1"
+  interconnect_type_name="Virtual Connect SE 40Gb F8 Module for Synergy"
+}
+data "oneview_relative_value"  "rv2"{
+  port_name="Q2:1"
+  interconnect_type_name="Virtual Connect SE 40Gb F8 Module for Synergy"
+}
+data "oneview_relative_value"  "rv3"{
+  port_name="Q2:2"
+  interconnect_type_name="Virtual Connect SE 40Gb F8 Module for Synergy"
+}
+#Create Logical Interconnect Group
 resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
   type                 = "logical-interconnect-groupV8"
-  name                 = "Auto-LIG-02"
+  name                 = "Auto-LIG-09-1"
   interconnect_bay_set = 3
   enclosure_indexes    = [1, 2, 3]
   redundancy_type      = "HighlyAvailable"
@@ -61,49 +77,52 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
     prevent_flooding           = true
     proxy_reporting            = true
   }
-
+  
+  uplink_set {
+    ethernet_network_type = "Tagged"
+    lacp_timer            = "Short"
+    mode                  = "Auto"
+    name                  = "UplinkSet1"
+    network_type          = "Ethernet"
+    network_uris = [
+      data.oneview_ethernet_network.eth.uri,
+    ]
+    logical_port_config {
+      bay_num          = 3
+      desired_fec_mode = "Auto"
+      desired_speed    = "Auto"
+      enclosure_num    = 1
+      port_num         = data.oneview_relative_value.rv1.port_num
+      primary_port     = false
+    }
+  }
+  
+  
+ 
   uplink_set {
     ethernet_network_type = "NotApplicable"
     mode                  = "Auto"
-    name                  = "UplinkSet2" 
+    name                  = "UplinkSet2"
     network_type          = "FibreChannel"
-    network_uris          = [
-      data.oneview_fc_network.fc.uri, 
+    network_uris = [
+      data.oneview_fc_network.fc.uri,
     ]
-
-# from OV6.3 we have changed the way we provide port_num, instaed of list we have to provide integer value for each logical_port_config
+    # from OV6.3 we have changed the way we provide port_num, instaed of list we have to provide integer value for each logical_port_config
     logical_port_config {
-        bay_num       = 3
-        desired_speed = "Auto"
-        enclosure_num = 1
-        port_num      = 68 
-        primary_port  = false 
-      }
-
+      bay_num          = 3
+      desired_speed    = "Auto"
+      desired_fec_mode = "Auto"
+      enclosure_num    = 1
+      port_num         = data.oneview_relative_value.rv2.port_num
+      primary_port     = false
+    }
     logical_port_config {
-        bay_num       = 3
-        desired_speed = "Auto"
-        enclosure_num = 1
-        port_num      = 67
-        primary_port  = false
-      }
-  }
-  uplink_set {
-     ethernet_network_type = "Tagged"
-     lacp_timer            = "Short" 
-     mode                  = "Auto" 
-     name                  = "UplinkSet1"
-     network_type          = "Ethernet" 
-     network_uris          = [
-	data.oneview_ethernet_network.eth.uri,
-     ] 
-
-     logical_port_config {
-          bay_num       = 3 
-          desired_speed = "Auto"
-          enclosure_num = 1 
-          port_num      = 61
-          primary_port  = false 
-       }
-   }
+      bay_num          = 3
+      desired_speed    = "Auto"
+      desired_fec_mode = "Auto"
+      enclosure_num    = 1
+      port_num         = data.oneview_relative_value.rv3.port_num
+      primary_port     = false
+    }
+  }  
 }
