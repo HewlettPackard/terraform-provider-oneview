@@ -3,10 +3,11 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
-	"strconv"
 )
 
 type LogicalInterconnectGroup struct {
@@ -24,7 +25,7 @@ type LogicalInterconnectGroup struct {
 	InitialScopeUris                       []utils.Nstring          `json:"initialScopeUris,omitempty"`                        // "initialScopeUris":[]
 	InterconnectBaySet                     int                      `json:"interconnectBaySet,omitempty"`                      // "interconnectBaySet": 1,
 	InterconnectMapTemplate                *InterconnectMapTemplate `json:"interconnectMapTemplate"`                           // "interconnectMapTemplate": {...},
-	InternalNetworkUris                    []utils.Nstring          `json:"internalNetworkUris,omitempty"`                     // "internalNetworkUris": []
+	InternalNetworkUris                    []utils.Nstring          `json:"internalNetworkUris"`                               // "internalNetworkUris": []
 	Modified                               string                   `json:"modified,omitempty"`                                // "modified": "20150831T154835.250Z",
 	Name                                   string                   `json:"name"`                                              // "name": "Logical Interconnect Group1",
 	NtpConfiguration                       *NtpConfiguration        `json:"ntpConfiguration,omitempty"`                        // "ntpConfiguration": {},
@@ -93,7 +94,7 @@ type IgmpSettings struct {
 	EnableProxyReporting    *bool         `json:"enableProxyReporting,omitempty"`    // "enableProxyReporting": false,
 	ID                      string        `json:"id,omitempty"`                      // "id": "0c398238-2d35-48eb-9eb5-7560d59f94b3",
 	IgmpIdleTimeoutInterval int           `json:"igmpIdleTimeoutInterval,omitempty"` // "igmpIdleTimeoutInterval": 260,
-	IgmpSnoopingVlanIds     string        `json:"igmpSnoopingVlanIds,omitempty"`     // "igmpSnoopingVlanIds": "",
+	IgmpSnoopingVlanIds     *string       `json:"igmpSnoopingVlanIds,omitempty"`     // "igmpSnoopingVlanIds": "",
 	Modified                string        `json:"modified,omitempty"`                // "modified": "20150831T154835.250Z",
 	Name                    string        `json:"name,omitempty"`                    // "name": "IgmpSettings 1",
 	State                   string        `json:"state,omitempty"`                   // "state": "Normal",
@@ -118,8 +119,9 @@ type LogicalLocation struct {
 }
 
 type LocationEntry struct {
-	RelativeValue int    `json:"relativeValue,omitempty"` //"relativeValue": 2,
+	RelativeValue int    `json:"relativeValue,omitempty"` //"relativeValue": 2
 	Type          string `json:"type,omitempty"`          //"type": "StackingMemberId",
+
 }
 type NtpConfiguration struct {
 	RelativeValue       int             `json:"relativeValue,omitempty"`       //"relativeValue": 2,
@@ -249,7 +251,7 @@ type QosTrafficClassifier struct {
 
 type QosClassificationMapping struct {
 	Dot1pClassMapping []int    `json:"dot1pClassMapping,omitempty"` // "dot1pClassMapping": [3],
-	DscpClassMapping  []string `json:"dscpClassMapping,omitempty"`  // "dscpClassMapping": [],
+	DscpClassMapping  []string `json:"dscpClassMapping"`            // "dscpClassMapping": [],
 }
 
 type QosTrafficClass struct {
@@ -257,7 +259,7 @@ type QosTrafficClass struct {
 	ClassName         string              `json:"className,omitempty"`         // "className": "FCoE lossless",
 	DcbxConfiguration *DcbxConfigurations `json:"dcbxConfiguration,omitempty"` // "dcbxConfiguration": {...},
 	EgressDot1pValue  *int                `json:"egressDot1pValue,omitempty"`  // "egressDot1pValue": 3,
-	Enabled           *bool               `json:"enabled,omitempty,omitempty"` // "enabled": true,
+	Enabled           *bool               `json:"enabled,omitempty"`           // "enabled": true,
 	MaxBandwidth      int                 `json:"maxBandwidth,omitempty"`      // "maxBandwidth": 100,
 	RealTime          *bool               `json:"realTime,omitempty"`          // "realTime": true,
 	Roce              *bool               `json:"roce,omitempty"`              // "roce": true
@@ -304,23 +306,24 @@ type PortFlapProtection struct {
 
 //TODO SNMPConfiguration
 type SnmpConfiguration struct {
-	Category         utils.Nstring     `json:"category,omitempty"`         // "category": "snmp-configuration",
-	Created          string            `json:"created,omitempty"`          // "created": "20150831T154835.250Z",
-	Description      utils.Nstring     `json:"description,omitempty"`      // "description": null,
-	ETAG             string            `json:"eTag,omitempty"`             // "eTag": "1441036118675/8",
-	Enabled          *bool             `json:"enabled,omitempty"`          // "enabled": true,
-	Modified         string            `json:"modified,omitempty"`         // "modified": "20150831T154835.250Z",
-	Name             string            `json:"name,omitempty"`             // "name": "Snmp Config",
-	ReadCommunity    string            `json:"readCommunity,omitempty"`    // "readCommunity": "public",
-	SnmpAccess       []string          `json:"snmpAccess,omitempty"`       // "snmpAccess": [],
-	SnmpUsers        []Snmpv3User      `json:"snmpUsers,omitempty"`        // "snmpUsers": []
-	State            string            `json:"state,omitempty"`            // "state": "Normal",
-	Status           string            `json:"status,omitempty"`           // "status": "Critical",
-	SystemContact    string            `json:"systemContact,omitempty"`    // "systemContact": "",
-	TrapDestinations []TrapDestination `json:"trapDestinations,omitempty"` // "trapDestinations": {...}
-	Type             string            `json:"type,omitempty"`             // "type": "snmp-configuration",
-	URI              utils.Nstring     `json:"uri,omitempty"`              // "uri": null,
-	V3Enabled        *bool             `json:"v3Enabled,omitempty"`        // "v3Enabled": true
+	Category            utils.Nstring     `json:"category,omitempty"`            // "category": "snmp-configuration",
+	ConsistencyChecking string            `json:"consistencyChecking,omitempty"` // "created": "20150831T154835.250Z",
+	Created             string            `json:"created,omitempty"`             // "created": "20150831T154835.250Z",
+	Description         utils.Nstring     `json:"description,omitempty"`         // "description": null,
+	ETAG                string            `json:"eTag,omitempty"`                // "eTag": "1441036118675/8",
+	Enabled             *bool             `json:"enabled,omitempty"`             // "enabled": true,
+	Modified            string            `json:"modified,omitempty"`            // "modified": "20150831T154835.250Z",
+	Name                string            `json:"name,omitempty"`                // "name": "Snmp Config",
+	ReadCommunity       *string           `json:"readCommunity,omitempty"`       // "readCommunity": "public",
+	SnmpAccess          []string          `json:"snmpAccess"`                    // "snmpAccess": [],
+	SnmpUsers           []Snmpv3User      `json:"snmpUsers"`                     // "snmpUsers": []
+	State               string            `json:"state,omitempty"`               // "state": "Normal",
+	Status              string            `json:"status,omitempty"`              // "status": "Critical",
+	SystemContact       string            `json:"systemContact,omitempty"`       // "systemContact": "",
+	TrapDestinations    []TrapDestination `json:"trapDestinations"`              // "trapDestinations": {...}
+	Type                string            `json:"type,omitempty"`                // "type": "snmp-configuration",
+	URI                 utils.Nstring     `json:"uri,omitempty"`                 // "uri": null,
+	V3Enabled           *bool             `json:"v3Enabled,omitempty"`           // "v3Enabled": true
 }
 
 type Snmpv3User struct {
@@ -340,10 +343,14 @@ type ExtentedProperty struct {
 type TrapDestination struct {
 	CommunityString    string   `json:"communityString,omitempty"`    //"communityString": "public",
 	EnetTrapCategories []string `json:"enetTrapCategories,omitempty"` //"enetTrapCategories": ["PortStatus", "Other"],
+	EngineId           string   `json:"engineId,omitempty"`           //"engineId": "",
 	FcTrapCategories   []string `json:"fcTrapCategories,omitempty"`   //"fcTrapCategories": ["PortStatus", "Other"]
+	Inform             *bool    `json:"inform,omitempty"`             // "inform": true
+	Port               int      `json:"port,omitempty"`               // "port": 12
 	TrapDestination    string   `json:"trapDestination,omitempty"`    //"trapDestination": "127.0.0.1",
 	TrapFormat         string   `json:"trapFormat,omitempty"`         //"trapFormat", "SNMPv1",
 	TrapSeverities     []string `json:"trapSeverities,omitempty"`     //"trapSeverities": "Info",
+	UserName           string   `json:"userName,omitempty"`           //"userName", "",
 	VcmTrapCategories  []string `json:"vcmTrapCategories,omitempty"`  // "vcmTrapCategories": ["Legacy"],
 }
 
@@ -421,6 +428,8 @@ type SflowConfigurationMode struct {
 	configurationMode string `json:"configurationMode,omitempty"` // "configurationMode": "SflowConfigurationMode",
 }
 type UplinkSets struct {
+	ConsistencyChecking    string                  `json:"consistencyChecking,omitempty"` // "ethernetNetworkType": "Tagged",
+	DcbxOverride           *DcbxOverride           `json:"dcbxOverride"`                  // "dcbxOverride": {...},
 	EthernetNetworkType    string                  `json:"ethernetNetworkType,omitempty"` // "ethernetNetworkType": "Tagged",
 	LacpTimer              string                  `json:"lacpTimer,omitempty"`           // "lacpTimer": "Long",
 	LogicalPortConfigInfos []LogicalPortConfigInfo `json:"logicalPortConfigInfos"`        // "logicalPortConfigInfos": {...},
@@ -432,8 +441,9 @@ type UplinkSets struct {
 	NetworkType            string                  `json:"networkType,omitempty"`         // "networkType": "Ethernet",
 	NetworkUris            []utils.Nstring         `json:"networkUris"`                   // "networkUris": ["/rest/ethernet-networks/f1e38895-721b-4204-8395-ae0caba5e163"]
 	PrimaryPort            *LogicalLocation        `json:"primaryPort,omitempty"`         // "primaryPort": {...},
-	PrivateVlanDomains     []PrivateVlanDomain     `json:"privateVlanDomains,omitempty"`  // "privateVlanDomains": {...}
+	PrivateVlanDomains     []PrivateVlanDomain     `json:"privateVlanDomains"`            // "privateVlanDomains": {...}
 	Reachability           string                  `json:"reachability,omitempty"`        // "reachability": "Reachable",
+
 }
 
 type PrivateVlanDomain struct {
@@ -449,6 +459,12 @@ type LogicalPortConfigInfo struct {
 	DesiredSpeed    string          `json:"desiredSpeed,omitempty"`    // "desiredSpeed": "Auto",
 	DesiredFecMode  string          `json:"desiredFecMode,omitempty"`  // "desiredFecMode": "Auto",
 	LogicalLocation LogicalLocation `json:"logicalLocation,omitempty"` // "logicalLocation": {...},
+}
+type DcbxOverride struct {
+	Enabled bool `json:"enabled"` // "enabled": false,
+	Rocev1  bool `json:"rocev1"`  // "rocev1": false,
+	Rocev2  bool `json:"rocev2"`  // "rocev2": false,
+
 }
 
 type LogicalInterconnectGroupList struct {
@@ -600,6 +616,7 @@ func (c *OVClient) CreateLogicalInterconnectGroup(logicalInterconnectGroup Logic
 
 	log.Debugf("REST : %s \n %+v\n", uri, logicalInterconnectGroup)
 	log.Debugf("task -> %+v", t)
+
 	data, err := c.RestAPICall(rest.POST, uri, logicalInterconnectGroup)
 	if err != nil {
 		t.TaskIsDone = true
@@ -620,6 +637,36 @@ func (c *OVClient) CreateLogicalInterconnectGroup(logicalInterconnectGroup Logic
 	}
 
 	return nil
+}
+func (c *OVClient) GetRelativeValue(portname string, interconnectTypeUri utils.Nstring) (int, error) {
+
+	var portnum int
+	interconnectypeInfo, _ := c.GetInterconnectTypeByUri(interconnectTypeUri)
+	portnum, err := filterUplinkPort(interconnectypeInfo, portname)
+	if err != nil {
+		return portnum, err
+	}
+
+	return portnum, nil
+}
+func filterUplinkPort(inType InterconnectType, p string) (int, error) {
+
+	portInfos := inType.PortInfos
+
+	portMap := make(map[string]int)
+	for _, port := range portInfos {
+		if port.UplinkCapable {
+			portName := port.PortName
+			portMap[portName] = port.PortNumber
+		}
+	}
+	if portNum, ok := portMap[p]; ok {
+
+		return portNum, nil
+	} else {
+		return 0, fmt.Errorf("could not find relative value for given port name %s", p)
+	}
+
 }
 
 func (c *OVClient) DeleteLogicalInterconnectGroup(name string) error {

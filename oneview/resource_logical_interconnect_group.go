@@ -13,12 +13,14 @@ package oneview
 
 import (
 	"fmt"
-	"github.com/HewlettPackard/oneview-golang/ov"
-	"github.com/HewlettPackard/oneview-golang/utils"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"log"
 	"reflect"
 	"strconv"
+	"strings"
+
+	"github.com/HewlettPackard/oneview-golang/ov"
+	"github.com/HewlettPackard/oneview-golang/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceLogicalInterconnectGroup() *schema.Resource {
@@ -42,6 +44,10 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 			},
 			"interconnect_bay_set": {
 				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"consistency_checking_for_internal_networks": {
+				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"redundancy_type": {
@@ -80,27 +86,57 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Optional: true,
 							Default:  1,
 						},
+						"logical_downlink_uri": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 					},
 				},
 			},
 			"uplink_set": {
 				Optional: true,
-				Type:     schema.TypeSet,
+				Computed: true,
+				Type:     schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"network_type": {
+						"consistency_checking": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "Ethernet",
+							Computed: true,
+						},
+						"dcbx_override": {
+							Optional: true,
+							Computed: true,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Computed: true,
+									},
+									"rocev1": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Computed: true,
+									},
+									"rocev2": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										Computed: true,
+									},
+								},
+							},
 						},
 						"ethernet_network_type": {
 							Type:     schema.TypeString,
 							Optional: true,
 							Computed: true,
 						},
-						"name": {
+						"lacp_timer": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
+							Computed: true,
 						},
 						"logical_port_config": {
 							Type:     schema.TypeSet,
@@ -142,17 +178,36 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Optional: true,
 							Default:  "Auto",
 						},
+						"fc_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"load_balancing_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"native_network_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"network_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "Ethernet",
+						},
 						"network_uris": {
 							Type:     schema.TypeSet,
 							Optional: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
 						},
-						"lacp_timer": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"native_network_uri": {
+						"reachability": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -200,35 +255,108 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+							//Default:  "snmp-configuration",
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Optional: true,
+							//Default:  "ExactMatch",
+						},
+						"created": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+							//Default:  "test",
+						},
+						"etag": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"enabled": {
 							Type:     schema.TypeBool,
 							Optional: true,
-							Default:  true,
+							//Default:  true,
 						},
-						"v3_enabled": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
-						},
-						"type": {
+						"modified": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "snmp-configuration",
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"read_community": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "public",
-						},
-						"system_contact": {
-							Type:     schema.TypeString,
-							Optional: true,
+							//Default:  "public",
 						},
 						"snmp_access": {
 							Type:     schema.TypeSet,
 							Optional: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 							Set:      schema.HashString,
+						},
+						"snmp_users": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"snmp_v3_user_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"user_credentials": {
+										Type:     schema.TypeList,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"property_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"value": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"value_format": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"value_type": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+									"v3_auth_protocol": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"v3_privacy_protocol": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"system_contact": {
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 						"trap_destination": {
 							Type:     schema.TypeList,
@@ -245,17 +373,23 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
+									"engine_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 									"fc_trap_categories": {
 										Type:     schema.TypeSet,
 										Optional: true,
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
-									"vcm_trap_categories": {
-										Type:     schema.TypeSet,
+									"inform": {
+										Type:     schema.TypeBool,
 										Optional: true,
-										Elem:     &schema.Schema{Type: schema.TypeString},
-										Set:      schema.HashString,
+									},
+									"port": {
+										Type:     schema.TypeInt,
+										Optional: true,
 									},
 									"trap_destination": {
 										Type:     schema.TypeString,
@@ -272,8 +406,32 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 										Elem:     &schema.Schema{Type: schema.TypeString},
 										Set:      schema.HashString,
 									},
+									"user_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"vcm_trap_categories": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										Elem:     &schema.Schema{Type: schema.TypeString},
+										Set:      schema.HashString,
+									},
 								},
 							},
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							//Default:  "snmp-configuration",
+						},
+						"uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"v3_enabled": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							//Default:  false,
 						},
 					},
 				},
@@ -441,40 +599,117 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"category": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"consistency_checking": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"dependent_resource_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"domain_name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"enable_cut_through": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"enable_ddns": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"enable_fast_mac_cache_failover": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"enable_interconnect_utilization_alert": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"enable_network_loop_protection": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"enable_pause_flood_protection": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"enable_rich_tlv": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"enable_storm_control": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"enable_tagged_lldp": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"interconnect_type": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"lldp_ip_address_mode": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"lldp_ipv4_address": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"lldp_ipv6_address": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"mac_refresh_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"state": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"status": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"storm_control_polling_interval": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"storm_control_threshold": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
 						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
 							Default:  "EthernetInterconnectSettingsV3",
 						},
-						"fast_mac_cache_failover": {
-							Type:     schema.TypeBool,
+						"uri": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Default:  true,
-						},
-						"interconnect_utilization_alert": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
-						},
-						"network_loop_protection": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  true,
-						},
-						"pause_flood_protection": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  true,
-						},
-						"rich_tlv": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  false,
-						},
-						"mac_refresh_interval": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Default:  5,
 						},
 					},
 				},
@@ -1003,6 +1238,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 			LogicalLocation:              logicalLocation,
 			EnclosureIndex:               interconnectMapEntryTemplate["enclosure_index"].(int),
 			PermittedInterconnectTypeUri: interconnectType.URI,
+			LogicalDownlinkUri:           utils.NewNstring(interconnectMapEntryTemplate["logical_downlink_uri"].(string)),
 		})
 	}
 	interconnectMapTemplate := ov.InterconnectMapTemplate{
@@ -1012,7 +1248,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 
 	//Creating uplinkSets
 	if val, ok := d.GetOk("uplink_set"); ok {
-		uss := val.(*schema.Set).List()
+		uss := val.([]interface{})
 		ovUss := []ov.UplinkSets{}
 		for _, rawUs := range uss {
 			us := rawUs.(map[string]interface{})
@@ -1259,73 +1495,109 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		lig.TelemetryConfiguration = &telemetryConfiguration
 	}
 
-	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
-	snmpConfiguration := ov.SnmpConfiguration{}
-	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
-		snmpConfiguration.Enabled = GetBoolPointer(val.(bool))
-	}
-	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
-		snmpConfiguration.V3Enabled = GetBoolPointer(val.(bool))
-	}
-	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
-		snmpConfiguration.ReadCommunity = val.(string)
-	}
-	if val, ok := d.GetOk(snmpConfigPrefix + ".system_contact"); ok {
-		snmpConfiguration.SystemContact = val.(string)
-	}
-	rawSnmpAccess := d.Get(snmpConfigPrefix + ".snmp_access").(*schema.Set).List()
-	snmpAccess := make([]string, len(rawSnmpAccess))
-	for i, raw := range rawSnmpAccess {
-		snmpAccess[i] = raw.(string)
-	}
-	snmpConfiguration.SnmpAccess = snmpAccess
+	if val, ok := d.GetOk("snmp_configuration"); ok {
+		rawSnmpConfiguration := val.([]interface{})
 
-	trapDestinationCount := d.Get(snmpConfigPrefix + ".trap_destination.#").(int)
-	trapDestinations := make([]ov.TrapDestination, 0, trapDestinationCount)
-	for i := 0; i < trapDestinationCount; i++ {
-		trapDestinationPrefix := fmt.Sprintf(snmpConfigPrefix+".trap_destination.%d", i)
+		snmpConfiguration := ov.SnmpConfiguration{}
+		for _, rawsnmpconf := range rawSnmpConfiguration {
+			rawsnmpconfItem := rawsnmpconf.(map[string]interface{})
 
-		rawEnetTrapCategories := d.Get(trapDestinationPrefix + ".enet_trap_categories").(*schema.Set).List()
-		enetTrapCategories := make([]string, len(rawEnetTrapCategories))
-		for i, raw := range rawEnetTrapCategories {
-			enetTrapCategories[i] = raw.(string)
+			//snmpAccess
+			snmpAccess := make([]string, 0)
+			for _, raw := range rawsnmpconfItem["snmp_access"].(*schema.Set).List() {
+				snmpAccess = append(snmpAccess, raw.(string))
+			}
+
+			//snmpuser
+			rawSnmpUsers := rawsnmpconfItem["snmp_users"].([]interface{})
+			snmpUsers := make([]ov.Snmpv3User, 0)
+			for _, raw2 := range rawSnmpUsers {
+				rawSnmpUsersItem := raw2.(map[string]interface{})
+				rawuserCredentials := rawSnmpUsersItem["user_credentials"].([]interface{})
+				userCredentials := make([]ov.ExtentedProperty, 0)
+				for _, rawuserCredential := range rawuserCredentials {
+					rawuserCredentialsItem := rawuserCredential.(map[string]interface{})
+					userCredential := ov.ExtentedProperty{
+						PropertyName: rawuserCredentialsItem["property_name"].(string),
+						Value:        rawuserCredentialsItem["value"].(string),
+						ValueFormat:  rawuserCredentialsItem["value_format"].(string),
+						ValueType:    rawuserCredentialsItem["value_type"].(string),
+					}
+					userCredentials = append(userCredentials, userCredential)
+				}
+
+				snmpUser := ov.Snmpv3User{
+					SnmpV3UserName:    rawSnmpUsersItem["snmp_v3_user_name"].(string),
+					UserCredentials:   userCredentials,
+					V3AuthProtocol:    rawSnmpUsersItem["v3_auth_protocol"].(string),
+					V3PrivacyProtocol: rawSnmpUsersItem["v3_privacy_protocol"].(string),
+				}
+				snmpUsers = append(snmpUsers, snmpUser)
+
+			}
+			//trap destination
+			rawTrapDestinations := rawsnmpconfItem["trap_destination"].([]interface{})
+			trapDestinations := make([]ov.TrapDestination, 0)
+			for _, raw2 := range rawTrapDestinations {
+				rawTrapDestinationsItem := raw2.(map[string]interface{})
+				enetTrapCategories := make([]string, 0)
+				for _, raw := range rawTrapDestinationsItem["enet_trap_categories"].(*schema.Set).List() {
+					enetTrapCategories = append(enetTrapCategories, raw.(string))
+				}
+				fcTrapCategories := make([]string, 0)
+				for _, raw := range rawTrapDestinationsItem["fc_trap_categories"].(*schema.Set).List() {
+					fcTrapCategories = append(fcTrapCategories, raw.(string))
+				}
+
+				trapSeverities := make([]string, 0)
+				for _, raw := range rawTrapDestinationsItem["trap_severities"].(*schema.Set).List() {
+					trapSeverities = append(trapSeverities, raw.(string))
+				}
+
+				vcmTrapCategories := make([]string, 0)
+				for _, raw := range rawTrapDestinationsItem["vcm_trap_categories"].(*schema.Set).List() {
+					vcmTrapCategories = append(vcmTrapCategories, raw.(string))
+				}
+				inform_bool := rawTrapDestinationsItem["inform"].(bool)
+				trapDestination := ov.TrapDestination{
+					CommunityString:    rawTrapDestinationsItem["community_string"].(string),
+					EnetTrapCategories: enetTrapCategories,
+					EngineId:           rawTrapDestinationsItem["engine_id"].(string),
+					FcTrapCategories:   fcTrapCategories,
+					Inform:             &inform_bool,
+					Port:               rawTrapDestinationsItem["port"].(int),
+					TrapDestination:    rawTrapDestinationsItem["trap_destination"].(string),
+					TrapSeverities:     trapSeverities,
+					TrapFormat:         rawTrapDestinationsItem["trap_format"].(string),
+					UserName:           rawTrapDestinationsItem["user_name"].(string),
+					VcmTrapCategories:  vcmTrapCategories,
+				}
+				trapDestinations = append(trapDestinations, trapDestination)
+
+			}
+
+			//rest of the item
+
+			snmpConfiguration.Category = utils.NewNstring(rawsnmpconfItem["category"].(string))
+			snmpConfiguration.ConsistencyChecking = rawsnmpconfItem["consistency_checking"].(string)
+			snmpConfiguration.Description = utils.NewNstring(rawsnmpconfItem["description"].(string))
+			enabled := rawsnmpconfItem["enabled"].(bool)
+			snmpConfiguration.Enabled = &enabled
+			snmpConfiguration.Name = rawsnmpconfItem["name"].(string)
+			readComminunity := rawsnmpconfItem["read_community"].(string)
+			snmpConfiguration.ReadCommunity = &readComminunity
+			snmpConfiguration.State = rawsnmpconfItem["state"].(string)
+			snmpConfiguration.Status = rawsnmpconfItem["status"].(string)
+			snmpConfiguration.SystemContact = rawsnmpconfItem["system_contact"].(string)
+			v3enabled := rawsnmpconfItem["v3_enabled"].(bool)
+			snmpConfiguration.SnmpAccess = snmpAccess
+			snmpConfiguration.SnmpUsers = snmpUsers
+			snmpConfiguration.TrapDestinations = trapDestinations
+			snmpConfiguration.Type = rawsnmpconfItem["type"].(string)
+			snmpConfiguration.V3Enabled = &v3enabled
+
 		}
 
-		rawFcTrapCategories := d.Get(trapDestinationPrefix + ".fc_trap_categories").(*schema.Set).List()
-		fcTrapCategories := make([]string, len(rawFcTrapCategories))
-		for i, raw := range rawFcTrapCategories {
-			fcTrapCategories[i] = raw.(string)
-		}
-
-		rawVcmTrapCategories := d.Get(trapDestinationPrefix + ".vcm_trap_categories").(*schema.Set).List()
-		vcmTrapCategories := make([]string, len(rawVcmTrapCategories))
-		for i, raw := range rawVcmTrapCategories {
-			vcmTrapCategories[i] = raw.(string)
-		}
-
-		rawTrapSeverities := d.Get(trapDestinationPrefix + ".trap_severities").(*schema.Set).List()
-		trapSeverities := make([]string, len(rawTrapSeverities))
-		for i, raw := range rawTrapSeverities {
-			trapSeverities[i] = raw.(string)
-		}
-
-		trapDestination := ov.TrapDestination{
-			TrapDestination:    d.Get(trapDestinationPrefix + ".trap_destination").(string),
-			CommunityString:    d.Get(trapDestinationPrefix + ".community_string").(string),
-			TrapFormat:         d.Get(trapDestinationPrefix + ".trap_format").(string),
-			EnetTrapCategories: enetTrapCategories,
-			FcTrapCategories:   fcTrapCategories,
-			VcmTrapCategories:  vcmTrapCategories,
-			TrapSeverities:     trapSeverities,
-		}
-		trapDestinations = append(trapDestinations, trapDestination)
-	}
-	if trapDestinationCount > 0 {
-		snmpConfiguration.TrapDestinations = trapDestinations
-	}
-
-	if val, ok := d.GetOk(snmpConfigPrefix + ".type"); ok {
-		snmpConfiguration.Type = val.(string)
 		lig.SnmpConfiguration = &snmpConfiguration
 	}
 
@@ -1333,21 +1605,63 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	if val, ok := d.GetOk(interconnectSettingsPrefix + ".type"); ok {
 		interconnectSettings := ov.EthernetSettings{}
 
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".category"); ok {
+			interconnectSettings.Category = utils.NewNstring(val1.(string))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".consistency_checking"); ok {
+			interconnectSettings.ConsistencyChecking = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".dependent_resource_uri"); ok {
+			interconnectSettings.Description = utils.NewNstring(val1.(string))
+		}
+
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".description"); ok {
+			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
+		}
+		domainName := d.Get(interconnectSettingsPrefix + ".domain_name").(string)
+		interconnectSettings.DomainName = &domainName
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_cut_through"); ok {
+			interconnectSettings.EnableCutThrough = GetBoolPointer(val1.(bool))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_ddns"); ok {
+			interconnectSettings.EnableDdns = GetBoolPointer(val1.(bool))
+		}
 		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".fast_mac_cache_failover").(bool)
 		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
-
-		networkLoopProtectionEnabled := d.Get(interconnectSettingsPrefix + ".network_loop_protection").(bool)
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
+			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
+		}
+		networkLoopProtectionEnabled := d.Get(interconnectSettingsPrefix + ".enable_network_loop_protection").(bool)
 		interconnectSettings.EnableNetworkLoopProtection = &networkLoopProtectionEnabled
 
-		pauseFloodProtectionEnabled := d.Get(interconnectSettingsPrefix + ".pause_flood_protection").(bool)
+		pauseFloodProtectionEnabled := d.Get(interconnectSettingsPrefix + ".enable_pause_flood_protection").(bool)
 		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
+
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_rich_tlv"); ok {
+			interconnectSettings.EnableRichTLV = GetBoolPointer(val1.(bool))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_storm_control"); ok {
+			interconnectSettings.EnableStormControl = GetBoolPointer(val1.(bool))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_tagged_lldp"); ok {
+			interconnectSettings.EnableTaggedLldp = GetBoolPointer(val1.(bool))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".id"); ok {
+			interconnectSettings.ID = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
+			interconnectSettings.MacRefreshInterval = val1.(int)
+		}
+
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".lldp_ipv6_address"); ok {
+			interconnectSettings.LldpIpv6Address = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".lldp_ip_address_mode"); ok {
+			interconnectSettings.LldpIpAddressMode = val1.(string)
+		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
 			interconnectSettings.EnableRichTLV = GetBoolPointer(val1.(bool))
-		}
-
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
-			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
@@ -1374,7 +1688,8 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		igmpSetting.EnableProxyReporting = GetBoolPointer(rawlval["proxy_reporting"].(bool))
 		igmpSetting.ID = rawlval["id"].(string)
 		igmpSetting.IgmpIdleTimeoutInterval = rawlval["igmp_idle_timeout_interval"].(int)
-		igmpSetting.IgmpSnoopingVlanIds = rawlval["igmp_snooping_vlan_ids"].(string)
+		igmpsnoopingvlandid := rawlval["igmp_snooping_vlan_ids"].(string)
+		igmpSetting.IgmpSnoopingVlanIds = &igmpsnoopingvlandid
 		igmpSetting.Modified = rawlval["modified"].(string)
 		igmpSetting.Name = rawlval["name"].(string)
 		igmpSetting.State = rawlval["state"].(string)
@@ -1567,7 +1882,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	config := meta.(*Config)
 
 	logicalInterconnectGroup, err := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
-
 	if err != nil || logicalInterconnectGroup.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -1721,6 +2035,7 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 			"interconnect_type_name": interconnectType.Name,
 			"bay_number":             bayNum,
 			"enclosure_index":        enclosureIndex,
+			"logical_downlink_uri":   interconnectMapEntryTemplate.LogicalDownlinkUri,
 		})
 	}
 
@@ -1728,21 +2043,36 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	//Reading UplinkSets
 	emptyUplinkSets := []ov.UplinkSets{}
+	uplinkSets := make([]map[string]interface{}, 0)
 	if !reflect.DeepEqual(logicalInterconnectGroup.UplinkSets, emptyUplinkSets) {
-		uplinkSets := make([]map[string]interface{}, 0)
+
 		if len(logicalInterconnectGroup.UplinkSets) != 0 {
 			for i, uplinkSet := range logicalInterconnectGroup.UplinkSets {
 
 				uplinkSets = append(uplinkSets, map[string]interface{}{
+					"consistency_checking":  uplinkSet.ConsistencyChecking,
 					"network_type":          uplinkSet.NetworkType,
 					"ethernet_network_type": uplinkSet.EthernetNetworkType,
 					"name":                  uplinkSet.Name,
 					"mode":                  uplinkSet.Mode,
 					"lacp_timer":            uplinkSet.LacpTimer,
+					"fc_mode":               uplinkSet.FcMode,
+					"load_balancing_mode":   uplinkSet.LoadBalancingMode,
+					"reachability":          uplinkSet.Reachability,
 				})
 
 				if uplinkSet.NativeNetworkUri.String() != "null" {
 					uplinkSets[i]["native_network_uri"] = uplinkSet.NativeNetworkUri.String()
+				}
+
+				if uplinkSet.DcbxOverride != nil {
+					dcbxOverride := make([]map[string]interface{}, 0, 1)
+					dcbxOverride = append(dcbxOverride, map[string]interface{}{
+						"enabled": uplinkSet.DcbxOverride.Enabled,
+						"rocev1":  uplinkSet.DcbxOverride.Rocev1,
+						"rocev2":  uplinkSet.DcbxOverride.Rocev2,
+					})
+					uplinkSets[i]["dcbx_override"] = dcbxOverride
 				}
 
 				// Collecting primary location details
@@ -1796,9 +2126,44 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 				}
 				uplinkSets[i]["logical_port_config"] = logicalPortConfigInfo
 			}
-			d.Set("uplink_set", uplinkSets)
+
 		}
 	}
+
+	//Oneview send the uplink set in unordered way so ordering it.
+	matchedUplinkSets := make([]map[string]interface{}, 0)
+	unmatchedUplinkSets := make([]map[string]interface{}, 0)
+
+	if uplinkSetFromConfigraw, ok := d.GetOk("uplink_set"); ok {
+		oneviewuplinksetCount := len(uplinkSets)
+
+		uplinkSetFromConfig := uplinkSetFromConfigraw.([]interface{})
+		uplinksetCountFromConfig := len(uplinkSetFromConfig)
+		for i := 0; i < uplinksetCountFromConfig; i++ {
+			currName := (uplinkSetFromConfig[i].(map[string]interface{}))["name"]
+			for j := 0; j < oneviewuplinksetCount; j++ {
+
+				if uplinkSets[j] != nil && strings.EqualFold(currName.(string), (uplinkSets[j]["name"]).(string)) {
+					matchedUplinkSets = append(matchedUplinkSets, uplinkSets[j])
+					uplinkSets[j] = nil
+				}
+			}
+		}
+
+		for k := 0; k < oneviewuplinksetCount; k++ {
+
+			if uplinkSets[k] != nil {
+				unmatchedUplinkSets = append(unmatchedUplinkSets, uplinkSets[k])
+
+			}
+
+		}
+
+	}
+
+	fullUplinkSet := append(matchedUplinkSets, unmatchedUplinkSets...)
+
+	d.Set("uplink_set", fullUplinkSet)
 
 	internalNetworkUris := make([]interface{}, len(logicalInterconnectGroup.InternalNetworkUris))
 	for i, internalNetworkUri := range logicalInterconnectGroup.InternalNetworkUris {
@@ -1932,17 +2297,30 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	for i, snmpAccessIP := range logicalInterconnectGroup.SnmpConfiguration.SnmpAccess {
 		snmpAccess[i] = snmpAccessIP
 	}
+	// snmpUsers := make([]interface{}, len(logicalInterconnectGroup.SnmpConfiguration.SnmpUsers))
+	// for _, snmpUsersIP := range logicalInterconnectGroup.SnmpConfiguration.SnmpUsers {
+	// 	snmpUsers = append(snmpUsers, map[string]interface{}{
+	// 		"snmp_v3_user_name": snmpUsersIP.SnmpV3UserName,
+	// 		// userCredentials
+	// 		"v3_auth_protocol":    snmpUsersIP.V3AuthProtocol,
+	// 		"v3_privacy_protocol": snmpUsersIP.V3PrivacyProtocol,
+	// 	})
+	// }
 
 	snmpConfiguration := make([]map[string]interface{}, 0, 1)
 	snmpConfiguration = append(snmpConfiguration, map[string]interface{}{
-		"enabled":          *logicalInterconnectGroup.SnmpConfiguration.Enabled,
-		"v3_enabled":       *logicalInterconnectGroup.SnmpConfiguration.V3Enabled,
-		"read_community":   logicalInterconnectGroup.SnmpConfiguration.ReadCommunity,
-		"snmp_access":      schema.NewSet(schema.HashString, snmpAccess),
+		"category":             logicalInterconnectGroup.SnmpConfiguration.Category,
+		"consistency_checking": logicalInterconnectGroup.SnmpConfiguration.ConsistencyChecking,
+		"enabled":              *logicalInterconnectGroup.SnmpConfiguration.Enabled,
+		"v3_enabled":           *logicalInterconnectGroup.SnmpConfiguration.V3Enabled,
+		"read_community":       *logicalInterconnectGroup.SnmpConfiguration.ReadCommunity,
+		"snmp_access":          schema.NewSet(schema.HashString, snmpAccess),
+		//"snmp_users":       snmpUsers,
 		"system_contact":   logicalInterconnectGroup.SnmpConfiguration.SystemContact,
 		"type":             logicalInterconnectGroup.SnmpConfiguration.Type,
 		"trap_destination": trapDestinations,
 	})
+
 	d.Set("snmp_configuration", snmpConfiguration)
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
@@ -2033,11 +2411,14 @@ func GetBoolPointer(value bool) *bool {
 
 func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+	lig, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
 
-	lig := ov.LogicalInterconnectGroup{
-		Name: d.Get("name").(string),
-		Type: d.Get("type").(string),
-		URI:  utils.NewNstring(d.Get("uri").(string)),
+	if val, ok := d.GetOk("name"); ok {
+		lig.Name = val.(string)
+	}
+
+	if val, ok := d.GetOk("type"); ok {
+		lig.Type = val.(string)
 	}
 
 	if val, ok := d.GetOk("downlink_speed_mode"); ok {
@@ -2102,6 +2483,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			LogicalLocation:              logicalLocation,
 			EnclosureIndex:               interconnectMapEntryTemplate["enclosure_index"].(int),
 			PermittedInterconnectTypeUri: interconnectType.URI,
+			LogicalDownlinkUri:           utils.NewNstring(interconnectMapEntryTemplate["logical_downlink_uri"].(string)),
 		})
 	}
 
@@ -2111,18 +2493,25 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	lig.InterconnectMapTemplate = &interconnectMapTemplate
 
 	if ok := d.HasChange("uplink_set"); ok {
+
 		if val, ok := d.GetOk("uplink_set"); ok {
-			uss := val.(*schema.Set).List()
+
+			uss := val.([]interface{}) //(*schema.Set).List()
+
 			ovUss := []ov.UplinkSets{}
 			for _, rawUs := range uss {
 				us := rawUs.(map[string]interface{})
 				ovUs := ov.UplinkSets{
+					ConsistencyChecking: us["consistency_checking"].(string),
 					EthernetNetworkType: us["ethernet_network_type"].(string),
 					LacpTimer:           us["lacp_timer"].(string),
 					Mode:                us["mode"].(string),
+					FcMode:              us["fc_mode"].(string),
+					LoadBalancingMode:   us["load_balancing_mode"].(string),
 					Name:                us["name"].(string),
 					NativeNetworkUri:    utils.Nstring(us["native_network_uri"].(string)),
 					NetworkType:         us["network_type"].(string),
+					Reachability:        us["reachability"].(string),
 				}
 
 				if ovUs.NetworkType == "FibreChannel" {
@@ -2182,8 +2571,53 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 					ovLogicalPortConfigs = append(ovLogicalPortConfigs, logicalPort)
 				}
 				ovUs.LogicalPortConfigInfos = ovLogicalPortConfigs
+				privateVlanDom := ov.PrivateVlanDomain{}
+				//PrivateVlanDomains
+				ovPrivateVlanDomains := make([]ov.PrivateVlanDomain, 0)
+				if us["private_vlan_domains"] != nil {
+					rawPrivateVlanDomains := us["private_vlan_domains"].(*schema.Set).List()
+
+					for _, rawPrivateVlanDomain := range rawPrivateVlanDomains {
+						privateVlanDomain := rawPrivateVlanDomain.(map[string]interface{})
+
+						NetworkLite := ov.NetworkLite{
+							Name:   privateVlanDomain["name"].(string),
+							URI:    utils.NewNstring(privateVlanDomain["uri"].(string)),
+							VlanId: privateVlanDomain["vlan_id"].(int),
+						}
+
+						privateVlanDom.IsolatedNetwork = &NetworkLite
+						privateVlanDom.PrimaryNetwork = &NetworkLite
+					}
+					ovPrivateVlanDomains = append(ovPrivateVlanDomains, privateVlanDom)
+				}
+
+				ovUs.PrivateVlanDomains = ovPrivateVlanDomains
+
+				//dcbxoverride
+				dcbxoverride := ov.DcbxOverride{}
+				if us["dcbx_override"] != nil {
+					val := us["dcbx_override"]
+					rawDcbxOverride := val.(*schema.Set).List()
+
+					for _, rawdcbxover := range rawDcbxOverride {
+						rawdcbxoverrideItem := rawdcbxover.(map[string]interface{})
+
+						enabled := rawdcbxoverrideItem["enabled"].(bool)
+						rocev1 := rawdcbxoverrideItem["rocev1"].(bool)
+						rocev2 := rawdcbxoverrideItem["rocev2"].(bool)
+						dcbxoverride.Enabled = enabled
+						dcbxoverride.Rocev1 = rocev1
+						dcbxoverride.Rocev2 = rocev2
+
+					}
+
+				}
+				ovUs.DcbxOverride = &dcbxoverride
+
 				ovUss = append(ovUss, ovUs)
 			}
+
 			lig.UplinkSets = ovUss
 		}
 	}
@@ -2194,6 +2628,9 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		internalNetUris[i] = utils.NewNstring(raw.(string))
 	}
 	lig.InternalNetworkUris = internalNetUris
+	if val, ok := d.GetOk("consistency_checking_for_internal_networks"); ok {
+		lig.ConsistencyCheckingForInternalNetworks = val.(string)
+	}
 
 	telemetryConfigPrefix := fmt.Sprintf("telemetry_configuration.0")
 	telemetryConfiguration := ov.TelemetryConfiguration{}
@@ -2360,104 +2797,200 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		lig.SflowConfiguration = &sflowConfiguration
 	}
 
-	snmpConfigPrefix := fmt.Sprintf("snmp_configuration.0")
-	snmpConfiguration := ov.SnmpConfiguration{}
-	if val, ok := d.GetOk(snmpConfigPrefix + ".enabled"); ok {
-		snmpConfiguration.Enabled = GetBoolPointer(val.(bool))
-	}
-	if val, ok := d.GetOk(snmpConfigPrefix + ".v3_enabled"); ok {
-		snmpConfiguration.V3Enabled = GetBoolPointer(val.(bool))
-	}
-	if val, ok := d.GetOk(snmpConfigPrefix + ".read_community"); ok {
-		snmpConfiguration.ReadCommunity = val.(string)
-	}
-	if val, ok := d.GetOk(snmpConfigPrefix + ".system_contact"); ok {
-		snmpConfiguration.SystemContact = val.(string)
-	}
-	rawSnmpAccess := d.Get(snmpConfigPrefix + ".snmp_access").(*schema.Set).List()
-	snmpAccess := make([]string, len(rawSnmpAccess))
-	for i, raw := range rawSnmpAccess {
-		snmpAccess[i] = raw.(string)
-	}
+	if d.HasChange("snmp_configuration") {
+		val := d.Get("snmp_configuration")
+		rawSnmpConfiguration := val.([]interface{})
 
-	trapDestinationCount := d.Get(snmpConfigPrefix + ".trap_destination.#").(int)
-	trapDestinations := make([]ov.TrapDestination, 0, trapDestinationCount)
-	for i := 0; i < trapDestinationCount; i++ {
-		trapDestinationPrefix := fmt.Sprintf(snmpConfigPrefix+".trap_destination.%d", i)
+		snmpConfiguration := ov.SnmpConfiguration{}
+		for _, rawsnmpconf := range rawSnmpConfiguration {
+			rawsnmpconfItem := rawsnmpconf.(map[string]interface{})
 
-		rawEnetTrapCategories := d.Get(trapDestinationPrefix + ".enet_trap_categories").(*schema.Set).List()
-		enetTrapCategories := make([]string, len(rawEnetTrapCategories))
-		for i, raw := range rawEnetTrapCategories {
-			enetTrapCategories[i] = raw.(string)
+			//snmpAccess
+			snmpAccess := make([]string, 0)
+			for _, raw := range rawsnmpconfItem["snmp_access"].(*schema.Set).List() {
+				snmpAccess = append(snmpAccess, raw.(string))
+			}
+
+			//snmpuser
+			rawSnmpUsers := rawsnmpconfItem["snmp_users"].([]interface{})
+			snmpUsers := make([]ov.Snmpv3User, 0)
+			for _, raw2 := range rawSnmpUsers {
+				rawSnmpUsersItem := raw2.(map[string]interface{})
+				rawuserCredentials := rawSnmpUsersItem["user_credentials"].([]interface{})
+				userCredentials := make([]ov.ExtentedProperty, 0)
+				for _, rawuserCredential := range rawuserCredentials {
+					rawuserCredentialsItem := rawuserCredential.(map[string]interface{})
+					userCredential := ov.ExtentedProperty{
+						PropertyName: rawuserCredentialsItem["property_name"].(string),
+						Value:        rawuserCredentialsItem["value"].(string),
+						ValueFormat:  rawuserCredentialsItem["value_format"].(string),
+						ValueType:    rawuserCredentialsItem["value_type"].(string),
+					}
+					userCredentials = append(userCredentials, userCredential)
+				}
+
+				snmpUser := ov.Snmpv3User{
+					SnmpV3UserName:    rawSnmpUsersItem["snmp_v3_user_name"].(string),
+					UserCredentials:   userCredentials,
+					V3AuthProtocol:    rawSnmpUsersItem["v3_auth_protocol"].(string),
+					V3PrivacyProtocol: rawSnmpUsersItem["v3_privacy_protocol"].(string),
+				}
+				snmpUsers = append(snmpUsers, snmpUser)
+
+			}
+			//trap destination
+			rawTrapDestinations := rawsnmpconfItem["trap_destination"].([]interface{})
+			trapDestinations := make([]ov.TrapDestination, 0)
+			for _, raw2 := range rawTrapDestinations {
+				rawTrapDestinationsItem := raw2.(map[string]interface{})
+				enetTrapCategories := make([]string, 0)
+				for _, raw := range rawTrapDestinationsItem["enet_trap_categories"].(*schema.Set).List() {
+					enetTrapCategories = append(enetTrapCategories, raw.(string))
+				}
+				fcTrapCategories := make([]string, 0)
+				for _, raw := range rawTrapDestinationsItem["fc_trap_categories"].(*schema.Set).List() {
+					fcTrapCategories = append(fcTrapCategories, raw.(string))
+				}
+
+				trapSeverities := make([]string, 0)
+				for _, raw := range rawTrapDestinationsItem["trap_severities"].(*schema.Set).List() {
+					trapSeverities = append(trapSeverities, raw.(string))
+				}
+
+				vcmTrapCategories := make([]string, 0)
+				for _, raw := range rawTrapDestinationsItem["vcm_trap_categories"].(*schema.Set).List() {
+					vcmTrapCategories = append(vcmTrapCategories, raw.(string))
+				}
+				informBool := rawTrapDestinationsItem["inform"].(bool)
+				trapDestination := ov.TrapDestination{
+					CommunityString:    rawTrapDestinationsItem["community_string"].(string),
+					EnetTrapCategories: enetTrapCategories,
+					EngineId:           rawTrapDestinationsItem["engine_id"].(string),
+					FcTrapCategories:   fcTrapCategories,
+					Inform:             &informBool,
+					Port:               rawTrapDestinationsItem["port"].(int),
+					TrapDestination:    rawTrapDestinationsItem["trap_destination"].(string),
+					TrapSeverities:     trapSeverities,
+					TrapFormat:         rawTrapDestinationsItem["trap_format"].(string),
+					UserName:           rawTrapDestinationsItem["user_name"].(string),
+					VcmTrapCategories:  vcmTrapCategories,
+				}
+				trapDestinations = append(trapDestinations, trapDestination)
+
+			}
+
+			//rest of the item
+
+			snmpConfiguration.Category = utils.NewNstring(rawsnmpconfItem["category"].(string))
+			snmpConfiguration.ConsistencyChecking = rawsnmpconfItem["consistency_checking"].(string)
+			snmpConfiguration.Description = utils.NewNstring(rawsnmpconfItem["description"].(string))
+			enabled := rawsnmpconfItem["enabled"].(bool)
+			snmpConfiguration.Enabled = &enabled
+			snmpConfiguration.Name = rawsnmpconfItem["name"].(string)
+			readcommunity := rawsnmpconfItem["read_community"].(string)
+			snmpConfiguration.ReadCommunity = &readcommunity
+			snmpConfiguration.State = rawsnmpconfItem["state"].(string)
+			snmpConfiguration.Status = rawsnmpconfItem["status"].(string)
+			snmpConfiguration.SystemContact = rawsnmpconfItem["system_contact"].(string)
+			v3enabled := rawsnmpconfItem["v3_enabled"].(bool)
+			snmpConfiguration.SnmpAccess = snmpAccess
+			snmpConfiguration.SnmpUsers = snmpUsers
+			snmpConfiguration.TrapDestinations = trapDestinations
+			snmpConfiguration.Type = rawsnmpconfItem["type"].(string)
+			snmpConfiguration.V3Enabled = &v3enabled
+
 		}
 
-		rawFcTrapCategories := d.Get(trapDestinationPrefix + ".fc_trap_categories").(*schema.Set).List()
-		fcTrapCategories := make([]string, len(rawFcTrapCategories))
-		for i, raw := range rawFcTrapCategories {
-			fcTrapCategories[i] = raw.(string)
-		}
-
-		rawVcmTrapCategories := d.Get(trapDestinationPrefix + ".vcm_trap_categories").(*schema.Set).List()
-		vcmTrapCategories := make([]string, len(rawVcmTrapCategories))
-		for i, raw := range rawVcmTrapCategories {
-			vcmTrapCategories[i] = raw.(string)
-		}
-
-		rawTrapSeverities := d.Get(trapDestinationPrefix + ".trap_severities").(*schema.Set).List()
-		trapSeverities := make([]string, len(rawTrapSeverities))
-		for i, raw := range rawTrapSeverities {
-			trapSeverities[i] = raw.(string)
-		}
-
-		trapDestination := ov.TrapDestination{
-			TrapDestination:    d.Get(trapDestinationPrefix + ".trap_destination").(string),
-			CommunityString:    d.Get(trapDestinationPrefix + ".community_string").(string),
-			TrapFormat:         d.Get(trapDestinationPrefix + ".trap_format").(string),
-			EnetTrapCategories: enetTrapCategories,
-			FcTrapCategories:   fcTrapCategories,
-			VcmTrapCategories:  vcmTrapCategories,
-			TrapSeverities:     trapSeverities,
-		}
-		trapDestinations = append(trapDestinations, trapDestination)
-	}
-	if trapDestinationCount > 0 {
-		snmpConfiguration.TrapDestinations = trapDestinations
-	}
-
-	snmpConfiguration.SnmpAccess = snmpAccess
-	if val, ok := d.GetOk(snmpConfigPrefix + ".type"); ok {
-		snmpConfiguration.Type = val.(string)
 		lig.SnmpConfiguration = &snmpConfiguration
 	}
 
-	ligCall, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Get("name").(string))
+	ligCall, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
 
 	interconnectSettingsPrefix := fmt.Sprintf("interconnect_settings.0")
 	if val, ok := d.GetOk(interconnectSettingsPrefix + ".type"); ok {
 		interconnectSettings := ov.EthernetSettings{}
 
-		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".fast_mac_cache_failover").(bool)
-		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
-
-		networkLoopProtectionEnabled := d.Get(interconnectSettingsPrefix + ".network_loop_protection").(bool)
-		interconnectSettings.EnableNetworkLoopProtection = &networkLoopProtectionEnabled
-
-		pauseFloodProtectionEnabled := d.Get(interconnectSettingsPrefix + ".pause_flood_protection").(bool)
-		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
-
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".rich_tlv"); ok {
-			interconnectSettings.EnableRichTLV = GetBoolPointer(val1.(bool))
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".category"); ok {
+			interconnectSettings.Category = utils.NewNstring(val1.(string))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".consistency_checking"); ok {
+			interconnectSettings.ConsistencyChecking = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".dependent_resource_uri"); ok {
+			interconnectSettings.Description = utils.NewNstring(val1.(string))
 		}
 
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".description"); ok {
+			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
+		}
+		domainName := d.Get(interconnectSettingsPrefix + ".domain_name").(string)
+		interconnectSettings.DomainName = &domainName
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_cut_through"); ok {
+			interconnectSettings.EnableCutThrough = GetBoolPointer(val1.(bool))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_ddns"); ok {
+			interconnectSettings.EnableDdns = GetBoolPointer(val1.(bool))
+		}
+		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".fast_mac_cache_failover").(bool)
+		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
 			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
 		}
+		networkLoopProtectionEnabled := d.Get(interconnectSettingsPrefix + ".enable_network_loop_protection").(bool)
+		interconnectSettings.EnableNetworkLoopProtection = &networkLoopProtectionEnabled
 
+		pauseFloodProtectionEnabled := d.Get(interconnectSettingsPrefix + ".enable_pause_flood_protection").(bool)
+		interconnectSettings.EnablePauseFloodProtection = &pauseFloodProtectionEnabled
+
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_rich_tlv"); ok {
+			interconnectSettings.EnableRichTLV = GetBoolPointer(val1.(bool))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_storm_control"); ok {
+			interconnectSettings.EnableStormControl = GetBoolPointer(val1.(bool))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_tagged_lldp"); ok {
+			interconnectSettings.EnableTaggedLldp = GetBoolPointer(val1.(bool))
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".id"); ok {
+			interconnectSettings.ID = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_type"); ok {
+			interconnectSettings.InterconnectType = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".lldp_ip_address_mode"); ok {
+			interconnectSettings.LldpIpAddressMode = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".lldp_ipv4_address"); ok {
+			interconnectSettings.LldpIpv4Address = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".lldp_ipv6_address"); ok {
+			interconnectSettings.LldpIpv6Address = val1.(string)
+		}
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".mac_refresh_interval"); ok {
 			interconnectSettings.MacRefreshInterval = val1.(int)
 		}
-		interconnectSettings.DependentResourceUri = ligCall.EthernetSettings.DependentResourceUri
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".name"); ok {
+			interconnectSettings.Name = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".state"); ok {
+			interconnectSettings.State = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".status"); ok {
+			interconnectSettings.Status = val1.(string)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".storm_control_polling_interval"); ok {
+			interconnectSettings.StormControlPollingInterval = val1.(int)
+		}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".storm_control_threshold"); ok {
+			interconnectSettings.StormControlThreshold = val1.(int)
+		}
+		// if val1, ok := d.GetOk(interconnectSettingsPrefix + ".type"); ok {
 		interconnectSettings.Type = val.(string)
+		//}
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".uri"); ok {
+			interconnectSettings.URI = utils.NewNstring(val1.(string))
+		}
+
 		lig.EthernetSettings = &interconnectSettings
 	}
 
@@ -2479,7 +3012,8 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		igmpSetting.EnableProxyReporting = GetBoolPointer(rawlval["proxy_reporting"].(bool))
 		igmpSetting.ID = rawlval["id"].(string)
 		igmpSetting.IgmpIdleTimeoutInterval = rawlval["igmp_idle_timeout_interval"].(int)
-		igmpSetting.IgmpSnoopingVlanIds = rawlval["igmp_snooping_vlan_ids"].(string)
+		igmpsnoopingvlandid := rawlval["igmp_snooping_vlan_ids"].(string)
+		igmpSetting.IgmpSnoopingVlanIds = &igmpsnoopingvlandid
 		igmpSetting.Modified = rawlval["modified"].(string)
 		igmpSetting.Name = rawlval["name"].(string)
 		igmpSetting.State = rawlval["state"].(string)
@@ -2656,6 +3190,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		}
 		lig.QosConfiguration = &ovQos
 	}
+
 	err := config.ovClient.UpdateLogicalInterconnectGroup(lig)
 	if err != nil {
 		return err

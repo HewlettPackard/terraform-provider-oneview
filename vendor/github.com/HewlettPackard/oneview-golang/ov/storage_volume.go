@@ -3,6 +3,7 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
 	"github.com/docker/machine/libmachine/log"
@@ -108,7 +109,7 @@ type DeviceSpecificAttributes struct {
 	Iqn                           string        `json:"iqn,omitempty"`
 	NumberOfReplicas              int           `json:"numberOfReplicas,omitempty"`
 	DataProtectionLevel           string        `json:"dataProtectionLevel,omitempty"`
-	Id                            int           `json:"id,omitempty"`
+	Id                            string        `json:"id,omitempty"`
 	Uri                           utils.Nstring `json:"uri,omitempty"`
 	CopyState                     string        `json:"copyState,omitempty"`
 	SnapshotPoolUri               utils.Nstring `json:"snapshotPoolUri,omitempty"`
