@@ -39,21 +39,21 @@ func dataSourceRelativeValue() *schema.Resource {
 func dataSourceRelativeValueRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	port_name := d.Get("port_name").(string)
-	interrconnect_type_name := d.Get("interconnect_type_name").(string)
-	interrconnect_type, _ := config.ovClient.GetInterconnectTypeByName(interrconnect_type_name)
-	port_num, err := config.ovClient.GetRelativeValue(port_name, interrconnect_type.URI)
+	portName := d.Get("port_name").(string)
+	interconnectTypeName := d.Get("interconnect_type_name").(string)
+	interconnectType, _ := config.ovClient.GetInterconnectTypeByName(interconnectTypeName)
+	portNum, err := config.ovClient.GetRelativeValue(portName, interconnectType.URI)
 
 	if err != nil {
 		d.SetId("")
 		return err
 	}
 
-	d.SetId(port_name)
+	d.SetId(portName)
 
-	d.Set("port_name", port_name)
-	d.Set("port_num", port_num)
-	d.Set("interrconnect_type", interrconnect_type)
+	d.Set("port_name", portName)
+	d.Set("port_num", portNum)
+	d.Set("interrconnect_type", interconnectType)
 
 	return nil
 }
