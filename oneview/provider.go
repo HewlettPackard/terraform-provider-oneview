@@ -106,6 +106,7 @@ func Provider() *schema.Provider {
 			"oneview_uplink_set":                          dataSourceUplinkSet(),
 			"oneview_volume":                              dataSourceVolume(),
 			"oneview_version":                             dataSourceVersion(),
+			"oneview_relative_value":                      dataSourceRelativeValue(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{

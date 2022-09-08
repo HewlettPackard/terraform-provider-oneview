@@ -246,7 +246,7 @@ In addition to the arguments listed above, the following computed attributes are
 	* `firmware_baseline_uri` - Identifies the firmware baseline to be applied to the server hardware.
 	* `firmware_activation_type` - Specifies when the applied Service Pack for ProLiant (SPP) will be activated.
 	* `manage_firmware` - Indicates that the server firmware should be configured on the server profiles created from the template. Value can be 'true' or 'false'.
-	* `firmware_install_type` - Force installation of firmware even if same or newer version is installed. Value can be 'true' or 'false'.
+	* `firmware_install_type` -  Specifies the way a firmware baseline is installed. This field is used if the 'manageFirmware' field is true. Options are FirmwareAndOSDrivers, FirmwareOnly and FirmwareOnlyOfflineMode
 	* `firmwareScheduleDateTime` -  Identifies the date and time the Service Pack for Proliant (SPP) will be activated.
 	* `reapply_state` - Current reapply state of the firmware component.
 * `management_processor` - Server management processor settings.
