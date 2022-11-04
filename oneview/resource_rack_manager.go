@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"errors"
 	"log"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
@@ -23,7 +24,7 @@ func resourceRackManager() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceRackManagerCreate,
 		Read:   resourceRackManagerRead,
-		//Update: resourceRackManagerUpdate,
+		Update: resourceRackManagerUpdate,
 		Delete: resourceRackManagerDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -50,7 +51,7 @@ func resourceRackManager() *schema.Resource {
 			"hostname": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
+				Computed: true,
 			},
 			"id": {
 				Type:     schema.TypeString,
@@ -96,7 +97,7 @@ func resourceRackManager() *schema.Resource {
 			"password": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
+				Computed: true,
 			},
 			"scopes_uri": {
 				Type:     schema.TypeString,
@@ -108,7 +109,6 @@ func resourceRackManager() *schema.Resource {
 			},
 			"initial_scope_uris": {
 				Optional: true,
-				ForceNew: true,
 				Type:     schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -151,7 +151,7 @@ func resourceRackManager() *schema.Resource {
 			"username": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
+				Computed: true,
 			},
 		},
 	}
@@ -175,12 +175,17 @@ func resourceRackManagerCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 		rm.InitialScopeUris = initialScopeUris
 	}
-	rmId, rmtError := config.ovClient.AddRackManager(rm)
-	d.SetId(rmId)
+	rmID, rmtError := config.ovClient.AddRackManager(rm)
+
 	if rmtError != nil {
 		d.SetId("")
 		return rmtError
 	}
+	rmAdded, errorAdded := config.ovClient.GetRackManagerById(rmID)
+	if errorAdded != nil {
+		return errorAdded
+	}
+	d.SetId(rmAdded.Name)
 
 	return resourceRackManagerRead(d, meta)
 }
@@ -188,7 +193,7 @@ func resourceRackManagerCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceRackManagerRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	rm, err := config.ovClient.GetRackManagerById(d.Id())
+	rm, err := config.ovClient.GetRackManagerByName(d.Id())
 	if err != nil || rm.URI.IsNil() {
 		d.SetId("")
 		return nil
@@ -196,7 +201,7 @@ func resourceRackManagerRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("category", rm.Category)
 	d.Set("created", rm.Created)
 	d.Set("etag", rm.ETAG)
-	d.Set("hostname", rm.Hostname)
+	d.Set("hostname", d.Get("hostname").(string))
 	d.Set("licensing_intent", rm.LicensingIntent)
 	d.Set("location", rm.Location)
 	d.Set("model", rm.Model)
@@ -205,7 +210,7 @@ func resourceRackManagerRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("part_number", rm.PartNumber)
 	d.Set("refresh_state", rm.RefreshState)
 	d.Set("remote_support_uri", rm.RemoteSupportUri)
-	d.Set("password", rm.Password)
+	d.Set("password", d.Get("password").(string))
 	d.Set("scopes_uri", rm.ScopesUri)
 	d.Set("serial_number", rm.SerialNumber)
 	d.Set("state", rm.State)
@@ -215,7 +220,7 @@ func resourceRackManagerRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("support_data_collections_uri", rm.SupportDataCollectionsUri)
 	d.Set("type", rm.Type)
 	d.Set("uri", rm.URI.String())
-	d.Set("username", rm.UserName)
+	d.Set("username", d.Get("username").(string))
 
 	// reads scopes from rack manager
 	scopes, err := config.ovClient.GetScopeFromResource(rm.URI.String())
@@ -236,4 +241,9 @@ func resourceRackManagerDelete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func resourceRackManagerUpdate(d *schema.ResourceData, meta interface{}) error {
+	return errors.New("update is not permitted for rack manager")
+
 }
