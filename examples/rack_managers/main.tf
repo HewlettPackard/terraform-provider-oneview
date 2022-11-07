@@ -18,3 +18,10 @@ resource "oneview_rack_manager" "RM" {
   initial_scope_uris = [data.oneview_scope.scope_obj.uri]
   
 }
+
+// Uncomment below  to import an existing rack manager
+// Run 'terraform improt oneview_rack_manager.import_rm <rack-manager-name>'
+
+# resource "oneview_rack_manager" "import_rm"{
+# }
+

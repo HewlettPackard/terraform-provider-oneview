@@ -1,5 +1,5 @@
 /*
-(c) Copyright [2021] Hewlett Packard Enterprise Development LP
+(c) Copyright [2022] Hewlett Packard Enterprise Development LP
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package ov
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/HewlettPackard/oneview-golang/rest"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -174,11 +173,11 @@ func (c *OVClient) GetRackManagerList(start string, count string, filter string,
 // Add rack manager- Add  new rack manager
 func (c *OVClient) AddRackManager(rm RackManager) (resourceId string, err error) {
 
-	log.Infof("Initializing adding of RackManager %s.", rm.Hostname)
+	log.Debugf("Initializing adding of RackManager %s.", rm.Hostname)
 	var (
-		uri  = "/rest/rack-managers"
-		rmId = ""
-		t    *Task
+		uri   = "/rest/rack-managers"
+		rmUri = ""
+		t     *Task
 	)
 
 	// refresh login
@@ -193,23 +192,23 @@ func (c *OVClient) AddRackManager(rm RackManager) (resourceId string, err error)
 	if err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error submitting new add RackManager request: %s", err)
-		return rmId, err
+		return rmUri, err
 	}
 
 	log.Debugf("Response New RackrManager %s", data)
 	if err := json.Unmarshal([]byte(data), &t); err != nil {
 		t.TaskIsDone = true
 		log.Errorf("Error with task un-marshal: %s", err)
-		return rmId, err
+		return rmUri, err
 	}
 
 	err = t.Wait()
 	if err != nil {
-		return rmId, err
+		return rmUri, err
 	}
-	rmUri := string(t.AssociatedRes.ResourceURI)
-	rmId = path.Base(rmUri)
-	return rmId, nil
+	rmUri = string(t.AssociatedRes.ResourceURI)
+
+	return rmUri, nil
 }
 
 // delete a profile, assign the server and remove the profile from the system

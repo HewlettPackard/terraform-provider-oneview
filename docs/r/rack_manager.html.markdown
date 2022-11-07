@@ -8,7 +8,7 @@ description: |-
 
 # oneview\_rack\_manager
 
-Adds a rack manager.
+Adds a rack manager. Returns the rack manager URI on successful addition.
 
 ## Example Usage
 

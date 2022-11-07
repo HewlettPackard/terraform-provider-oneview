@@ -175,29 +175,37 @@ func resourceRackManagerCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 		rm.InitialScopeUris = initialScopeUris
 	}
-	rmID, rmtError := config.ovClient.AddRackManager(rm)
+	rmURI, rmtError := config.ovClient.AddRackManager(rm)
 
 	if rmtError != nil {
 		d.SetId("")
 		return rmtError
 	}
-	rmAdded, errorAdded := config.ovClient.GetRackManagerById(rmID)
-	if errorAdded != nil {
-		return errorAdded
-	}
-	d.SetId(rmAdded.Name)
+	d.Set("uri", rmURI)
 
 	return resourceRackManagerRead(d, meta)
 }
 
 func resourceRackManagerRead(d *schema.ResourceData, meta interface{}) error {
+	var (
+		rm  ov.RackManager
+		err error
+	)
 	config := meta.(*Config)
+	if _, ok := d.GetOk("uri"); ok {
 
-	rm, err := config.ovClient.GetRackManagerByName(d.Id())
+		rm, err = config.ovClient.GetRackManagerById(d.Get("id").(string))
+	} else {
+
+		// for importing by name
+		rm, err = config.ovClient.GetRackManagerByName(d.Id())
+	}
 	if err != nil || rm.URI.IsNil() {
 		d.SetId("")
 		return nil
 	}
+	// setting ID as resource Id
+	d.SetId(rm.Id)
 	d.Set("category", rm.Category)
 	d.Set("created", rm.Created)
 	d.Set("etag", rm.ETAG)
