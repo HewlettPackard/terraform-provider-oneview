@@ -1,6 +1,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v8.0.0-13]
+### Notes
+- This release supports API4600 minimally where we can use OneView v8.00 with this SDK.
+#### Major Changes
+
+1. Added Rack Manager support.
+
 # [v7.2.0-13]
 ### Notes
 - This release supports API4400 minimally where we can use OneView v7.20 with this SDK.
