@@ -438,7 +438,7 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile) (err error) {
 		return errors.New("Server Hardware must be powered off to assign to the server profile")
 	}
 
-	serverHardwareType, err := c.GetServerHardwareTypeByUri(p.ServerHardwareTypeURI)
+	serverHardwareType, err := c.GetServerHardwareTypeByUri(server.ServerHardwareTypeURI)
 	if err != nil {
 		log.Warnf("Error getting server hardware type %s", err)
 	}
