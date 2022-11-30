@@ -723,7 +723,7 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 
 	for _, rawht := range rawHypervisorHostProfileTemplate {
 		rawHostProfileTemplateItem := rawht.(map[string]interface{})
-		/******************* deployment plan end********************/
+
 		rawDataStore := rawHostProfileTemplateItem["data_store_name_sync"].(bool)
 		hypervisorProfileTemplate = ov.HypervisorHostProfileTemplate{
 
@@ -1120,9 +1120,8 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 		rawHostProfileTemplateItem := rawht.(map[string]interface{})
 		rawDataStore := rawHostProfileTemplateItem["data_store_name_sync"].(bool)
 		hypervisorProfileTemplate = ov.HypervisorHostProfileTemplate{
-			DataStoreNameSync:     &rawDataStore,
-			DeploymentManagerType: rawHostProfileTemplateItem["deployment_manager_type"].(string),
-			//DeploymentPlan:            &deploymentPlan,
+			DataStoreNameSync:         &rawDataStore,
+			DeploymentManagerType:     rawHostProfileTemplateItem["deployment_manager_type"].(string),
 			Hostprefix:                rawHostProfileTemplateItem["host_prefix"].(string),
 			ServerProfileTemplateUri:  utils.Nstring(rawHostProfileTemplateItem["server_profile_template_uri"].(string)),
 			VirtualSwitchConfigPolicy: &virtualSwitchConfigPolicy,
