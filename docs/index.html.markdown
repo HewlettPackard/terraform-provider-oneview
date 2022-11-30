@@ -57,6 +57,3 @@ The following keys can be used to configure the provider.
 
 * `ov_ifmatch` - (Optional) This is the if-Match(ETag) request header to use for the oneview system.
     It can be provided or sourced from ONEVIEW_OV_IF_MATCH environment variable.
-
-* `i3s_endpoint` - (Optional) This is the endpoint to connect to an image streamer instance
-  It can be provided or sourced from ONEVIEW_I3S_ENDPOINT environment variable.

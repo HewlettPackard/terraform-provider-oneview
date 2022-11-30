@@ -12,13 +12,6 @@ variable "hm_endpoint" {
   description = "Hypervisor Manager IP"
   default     = "<Hypervisor-Manager-IP>"
 }
-
-variable "deployment_plan_password" {
-  type        = string
-  description = "Deployement Plan Server Password"
-  default     = "<password>"
-}
-
 data "oneview_hypervisor_manager" "hm" {
   name = var.hm_endpoint
 }
@@ -45,10 +38,8 @@ resource "oneview_hypervisor_cluster_profile" "HypervisorClusterProfile" {
     server_profile_template_uri = data.oneview_server_profile_template.spt.uri
     host_prefix                 = "Cluster"
     data_store_name_sync 	= true
-    deployment_plan {
-      deployment_plan_uri = "/rest/os-deployment-plans/7d680ff7-0302-470d-8c6e-68c70092efeb"
-      server_password     = var.deployment_plan_password
-    }
+    deployment_manager_type = "UserManaged"
+   
   }
 }
 

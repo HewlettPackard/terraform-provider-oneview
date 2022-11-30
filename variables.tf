@@ -11,9 +11,7 @@
         ------------------------------------------------------------------------------------
         |  4  | TF_VAR_ssl_enabled                          | <false>                      |
         ------------------------------------------------------------------------------------
-        |  5  | TF_VAR_i3s_endpoint                         | <image_streamer_ip>          |
-        ------------------------------------------------------------------------------------
-        |  6  | TF_VAR_api_version                          | <api_version>                |
+        |  5  | TF_VAR_api_version                          | <api_version>                |
         ------------------------------------------------------------------------------------
 */
 
@@ -42,7 +40,3 @@ variable "ssl_enabled" {
  description = "SSL Enabled"
 }
 
-variable "i3s_endpoint" {
- default = false
- description = "Image Streamer IP Address"
-}

@@ -12,7 +12,7 @@ Note: v6.6.0-13 onwards supports Terraform version from 0.13.xx to 1.x.x
 
 HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud infrastructure. HPE OneView can help you transform your data center to software-defined, and it supports HPE’s broad portfolio of servers, storage, and networking solutions, ensuring the simple and automated management of your hybrid infrastructure. Software-defined intelligence enables a template-driven approach for deploying, provisioning, updating, and integrating compute, storage, and networking infrastructure.
 
-The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView and HPE Image Streamer.
+The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView.
 
 You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v8.0.0-13)
 
@@ -134,33 +134,6 @@ provider "oneview" {
 	ov_ifmatch = "*"
 }
 
-```
-
-:lock: Tip: Check the file permissions because the password is stored in clear-text as Environment Variable.
-
-### Image Streamer Client Configuration: 
-
-The Image Streamer (I3S) client is very much similar to the OneView client. 
-Following extra environment variables should be set for testing:
-
-```bash
-# Required
-$ export TF_VAR_i3s_endpoint=<i3s_endpoint>
-```
-Here we create the Image Streamer(I3S) client.
-
-```terraform
-# Create I3s Client
-provider "oneview" {
-	ov_username      = "${var.username}"
-	ov_password      = "${var.password}"
-	ov_endpoint      = "${var.endpoint}"
-	ov_i3s_endpoint  = "${var.i3s_endpoint}"
-	ov_sslverify     = "${var.ssl_enabled}"
-	ov_domain        = "${var.ov_domain}"
-	ov_apiversion    = <i3s_apiversion>
-	ov_ifmatch = "*"
-}
 ```
 
 :lock: Tip: Check the file permissions because the password is stored in clear-text as Environment Variable.

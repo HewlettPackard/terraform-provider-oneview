@@ -126,10 +126,7 @@
 | <sub>/rest/network-sets</sub>                    |  POST  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|
 | <sub>/rest/network-sets/{id}</sub>                  |  PUT   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|
 | <sub>/rest/network-sets/{id}</sub>                  | DELETE | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|
-| **OS Deployment Plans**                       |
-| <sub>/rest/os-deployment-plans</sub>                 |  POST  | :heavy_multiplication_x: | :heavy_multiplication_x: |:heavy_multiplication_x:|:heavy_multiplication_x:|
-| <sub>/rest/os-deployment-plans</sub>                 | DELETE | :heavy_multiplication_x: | :heavy_multiplication_x: |:heavy_multiplication_x::| :heavy_multiplication_x:|
-| <sub>/rest/os-deployment-plans</sub>                 |  PUT   | :heavy_multiplication_x: | :heavy_multiplication_x: |:heavy_multiplication_x:| :heavy_multiplication_x:|
+
 | **Rack Managers**                           |
 | <sub>/rest/rack-managers/{id}</sub>                  |  GET   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|
 | <sub>/rest/rack-managers</sub>                    |  POST  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|
@@ -190,12 +187,3 @@
 | <sub>/rest/uplink-sets/{id}</sub>                  |  PUT   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|
 | **Version Sets**                           |
 | <sub>/rest/version</sub>                       |  GET   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|
-## HPE Synergy Image Streamer
-
-| Endpoints                         | Verb   |       V1000        |       V1020        |       V1600        |       V2000        |       V2010        |       V2020        |
-| --------------------------------- | ------ | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: |
-| **Deployment Plans**              |
-| <sub>/rest/deployment-plans</sub> | GET    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| <sub>/rest/deployment-plans</sub> | POST   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| <sub>/rest/deployment-plans</sub> | DELETE | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| <sub>/rest/deployment-plans</sub> | PUT    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |

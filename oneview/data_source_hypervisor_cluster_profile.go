@@ -102,31 +102,31 @@ func dataSourceHypervisorClusterProfile() *schema.Resource {
 						"deployment_manager_type": {
 							Type:     schema.TypeString,
 							Computed: true},
-						"deployment_plan": {
-							Type:     schema.TypeList,
-							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"deployment_custom_args": {
-										Type:     schema.TypeList,
-										Computed: true,
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
-										},
-									},
-									"deployment_plan_description": {
-										Type:     schema.TypeString,
-										Computed: true},
-									"deployment_plan_uri": {
-										Type:     schema.TypeString,
-										Computed: true},
-									"name": {
-										Type:     schema.TypeString,
-										Computed: true},
-									"server_password": {
-										Type:     schema.TypeString,
-										Computed: true},
-								}}},
+						// "deployment_plan": {
+						// 	Type:     schema.TypeList,
+						// 	Computed: true,
+						// 	Elem: &schema.Resource{
+						// 		Schema: map[string]*schema.Schema{
+						// 			"deployment_custom_args": {
+						// 				Type:     schema.TypeList,
+						// 				Computed: true,
+						// 				Elem: &schema.Schema{
+						// 					Type: schema.TypeString,
+						// 				},
+						// 			},
+						// 			"deployment_plan_description": {
+						// 				Type:     schema.TypeString,
+						// 				Computed: true},
+						// 			"deployment_plan_uri": {
+						// 				Type:     schema.TypeString,
+						// 				Computed: true},
+						// 			"name": {
+						// 				Type:     schema.TypeString,
+						// 				Computed: true},
+						// 			"server_password": {
+						// 				Type:     schema.TypeString,
+						// 				Computed: true},
+						// 		}}},
 						"host_config_policy": {
 							Type:     schema.TypeList,
 							Computed: true,
@@ -461,19 +461,19 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 	d.Set("hypervisor_cluster_settings", hypCPCSList)
 
 	d.Set("hypervisor_cluster_uri", hypCP.HypervisorClusterUri)
-	deploymentCustomArgs := make([]interface{}, len(hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentCustomArgs))
-	for i, deploymentCustomArg := range hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentCustomArgs {
-		deploymentCustomArgs[i] = deploymentCustomArg.String()
-	}
-	dplist := make([]map[string]interface{}, 0, 1)
-	dplist = append(dplist, map[string]interface{}{
+	// deploymentCustomArgs := make([]interface{}, len(hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentCustomArgs))
+	// for i, deploymentCustomArg := range hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentCustomArgs {
+	// 	deploymentCustomArgs[i] = deploymentCustomArg.String()
+	// }
+	// dplist := make([]map[string]interface{}, 0, 1)
+	// dplist = append(dplist, map[string]interface{}{
 
-		"deployment_custom_args":      deploymentCustomArgs,
-		"deployment_plan_description": hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentPlanDescription,
-		"deployment_plan_uri":         hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentPlanUri.String(),
-		"name":                        hypCP.HypervisorHostProfileTemplate.DeploymentPlan.Name,
-		"server_password":             hypCP.HypervisorHostProfileTemplate.DeploymentPlan.ServerPassword,
-	})
+	// 	"deployment_custom_args":      deploymentCustomArgs,
+	// 	"deployment_plan_description": hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentPlanDescription,
+	// 	"deployment_plan_uri":         hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentPlanUri.String(),
+	// 	"name":                        hypCP.HypervisorHostProfileTemplate.DeploymentPlan.Name,
+	// 	"server_password":             hypCP.HypervisorHostProfileTemplate.DeploymentPlan.ServerPassword,
+	// })
 	hostConfigPolicylist := make([]map[string]interface{}, 0, 1)
 	hostConfigPolicylist = append(hostConfigPolicylist, map[string]interface{}{
 		"leave_host_in_maintenance":   hypCP.HypervisorHostProfileTemplate.HostConfigPolicy.LeaveHostInMaintenance,
@@ -564,8 +564,8 @@ func datasourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interfa
 
 	hypCPHHPTList := make([]map[string]interface{}, 0, 1)
 	hypCPHHPTList = append(hypCPHHPTList, map[string]interface{}{
-		"deployment_manager_type":      hypCP.HypervisorHostProfileTemplate.DeploymentManagerType,
-		"deployment_plan":              dplist,
+		"deployment_manager_type": hypCP.HypervisorHostProfileTemplate.DeploymentManagerType,
+		//"deployment_plan":              dplist,
 		"host_config_policy":           hostConfigPolicylist,
 		"host_prefix":                  hypCP.HypervisorHostProfileTemplate.Hostprefix,
 		"server_profile_template_uri":  hypCP.HypervisorHostProfileTemplate.ServerProfileTemplateUri.String(),
