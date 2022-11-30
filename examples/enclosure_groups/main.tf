@@ -30,12 +30,7 @@ resource "oneview_enclosure_group" "eg_inst" {
   ip_addressing_mode = "External"
   enclosure_count    = 3
   initial_scope_uris = [var.scope_name_1]
-  os_deployment_settings {
-    manage_os_deployment=true
-    deployment_mode_settings {
-      deployment_mode="Internal"      
-    }
-  }
+ 
   interconnect_bay_mappings {
     interconnect_bay               = 3
     logical_interconnect_group_name = "${var.LIG_name}"
