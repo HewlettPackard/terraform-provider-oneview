@@ -102,31 +102,6 @@ func dataSourceHypervisorClusterProfile() *schema.Resource {
 						"deployment_manager_type": {
 							Type:     schema.TypeString,
 							Computed: true},
-						// "deployment_plan": {
-						// 	Type:     schema.TypeList,
-						// 	Computed: true,
-						// 	Elem: &schema.Resource{
-						// 		Schema: map[string]*schema.Schema{
-						// 			"deployment_custom_args": {
-						// 				Type:     schema.TypeList,
-						// 				Computed: true,
-						// 				Elem: &schema.Schema{
-						// 					Type: schema.TypeString,
-						// 				},
-						// 			},
-						// 			"deployment_plan_description": {
-						// 				Type:     schema.TypeString,
-						// 				Computed: true},
-						// 			"deployment_plan_uri": {
-						// 				Type:     schema.TypeString,
-						// 				Computed: true},
-						// 			"name": {
-						// 				Type:     schema.TypeString,
-						// 				Computed: true},
-						// 			"server_password": {
-						// 				Type:     schema.TypeString,
-						// 				Computed: true},
-						// 		}}},
 						"host_config_policy": {
 							Type:     schema.TypeList,
 							Computed: true,
