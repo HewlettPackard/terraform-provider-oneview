@@ -16,11 +16,14 @@ type Configuration struct {
 	IdPoolsIpv4SubnetRange      *IdPoolsIpv4SubnetRange      `json:"id_pools_ipv4_range,omitempty"`
 	ServerProfileConfig         *ServerProfileConfig         `json:"server_profile,omitempty"`
 	ServerProfileTemplateConfig *ServerProfileTemplateConfig `json:"server_profile_template,omitempty"`
+	HypervisorManagerConfig     *HypervisorManagerConfig     `json:"hypervisor_manager,omitempty"`
+	StorageSystemConfig         *StorageSystemConfig         `json:"storage_system,omitempty"`
 	LigName                     string                       `json:"ligName"`
 	EgName                      string                       `json:"egName"`
-	MgmtNetworkName             string                       `json:"mgmtName"`
+	MgmtNetworkName             string                       `json:"mgmtNetworkName"`
 	IscsiNetworkName            string                       `json:"iscsiNetworkName"`
 	FcNetworkName               string                       `json:"fcNetworkName"`
+	ServerCertificateIp         string                       `json:"serverCertificateIp"`
 }
 type OVCred struct {
 	UserName   string `json:"username"`
@@ -67,6 +70,18 @@ type ServerProfileTemplateConfig struct {
 	ServerHardwareTypeName     string `json:"server_hardware_type_name"`
 	EnclosureGroupName         string `json:"enclosure_group_name"`
 }
+type HypervisorManagerConfig struct {
+	Username  string `json:"hypervisor_manager_username"`
+	Password  string `json:"hypervisor_manager_password"`
+	IpAddress string `json:"hypervisor_manager_ip"`
+}
+type StorageSystemConfig struct {
+	Username   string `json:"storage_username"`
+	Password   string `json:"storage_password"`
+	IpAddress  string `json:"storage_IP"`
+	IpAddress2 string `json:"storage_IP2"`
+	Family     string `json:"storage_family"`
+}
 
 type ServerProfileConfig struct {
 	InventoryHostName        string `json:"connection_network_name"`
@@ -90,10 +105,12 @@ func LoadConfigFile(configFile string) (Configuration, error) {
 		return config, err
 	}
 	jsonParser := json.NewDecoder(configF)
+
 	err_unmarshal := jsonParser.Decode(&config)
 	if err_unmarshal != nil {
 		fmt.Println("error unmarshaling json file")
 		fmt.Println(err_unmarshal)
+
 	}
 
 	return config, nil

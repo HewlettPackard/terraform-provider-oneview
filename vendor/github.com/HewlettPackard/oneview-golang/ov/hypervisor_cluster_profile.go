@@ -74,21 +74,12 @@ type HypervisorClusterSettings struct {
 
 type HypervisorHostProfileTemplate struct {
 	DataStoreNameSync         *bool                      `json:"dataStoreNameSync,omitempty"`         //"dataStoreNameSync"
-	DeploymentManagerType     string                     `json:"deploymentManagerType,omitempty"`     //"deploymentManagerType":"I3S"
-	DeploymentPlan            *DeploymentPlan            `json:"deploymentPlan,omitempty"`            //"deploymentPlan":""
+	DeploymentManagerType     string                     `json:"deploymentManagerType,omitempty"`     //"deploymentManagerType":"UserManaged"
 	HostConfigPolicy          *HostConfigPolicy          `json:"hostConfigPolicy,omitempty"`          //"hostConfigPolicy":""
 	Hostprefix                string                     `json:"hostprefix,omitempty"`                //"hostprefix":"HCP"
 	ServerProfileTemplateUri  utils.Nstring              `json:"serverProfileTemplateUri,omitempty"`  //"serverProfileTemplateUri":"/rest/server-profile-templates/278cadfb-2e86-4a05-8932-972553518259"
 	VirtualSwitchConfigPolicy *VirtualSwitchConfigPolicy `json:"virtualSwitchConfigPolicy,omitempty"` //"virtualSwitchConfigPolicy":""
 	VirtualSwitches           []VirtualSwitches          `json:"virtualSwitches,omitempty"`           //"virtualSwitches":""
-}
-
-type DeploymentPlan struct {
-	DeploymentCustomArgs      []utils.Nstring `json:"deploymentCustomArgs,omitempty"`      //"deploymentCustomArgs":"[]"
-	DeploymentPlanDescription string          `json:"deploymentPlanDescription,omitempty"` //"deploymentPlanDescription":"null"
-	DeploymentPlanUri         utils.Nstring   `json:"deploymentPlanUri,omitempty"`         //"deploymentPlanUri":"null"
-	Name                      string          `json:"name,omitempty"`                      //"name":"null"
-	ServerPassword            string          `json:"serverPassword,omitempty"`            //"serverPassword":"null"
 }
 
 type HostConfigPolicy struct {
