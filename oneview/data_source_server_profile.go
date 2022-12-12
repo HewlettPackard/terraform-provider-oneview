@@ -1333,7 +1333,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 			if connection.Boot != nil {
 				connectionBoot = append(connectionBoot, map[string]interface{}{
 					"priority":           connection.Boot.Priority,
-					"boot_vlan_id":       connection.Boot.BootOptionV3.BootVlanId,
+					"boot_vlan_id":       connection.Boot.BootVlanId,
 					"ethernet_boot_type": connection.Boot.EthernetBootType,
 					"boot_volume_source": connection.Boot.BootVolumeSource,
 					"iscsi":              iscsi,

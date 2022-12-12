@@ -1153,7 +1153,7 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 			if spt.ConnectionSettings.Connections[i].Boot != nil {
 				connectionBoot = append(connectionBoot, map[string]interface{}{
 					"priority":           spt.ConnectionSettings.Connections[i].Boot.Priority,
-					"boot_vlan_id":       spt.ConnectionSettings.Connections[i].Boot.BootOptionV3.BootVlanId,
+					"boot_vlan_id":       spt.ConnectionSettings.Connections[i].Boot.BootVlanId,
 					"ethernet_boot_type": spt.ConnectionSettings.Connections[i].Boot.EthernetBootType,
 					"boot_volume_source": spt.ConnectionSettings.Connections[i].Boot.BootVolumeSource,
 					"iscsi":              iscsi,

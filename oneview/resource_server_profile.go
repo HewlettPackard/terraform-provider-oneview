@@ -1625,12 +1625,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 							}
 						}
 
-						bootOptionV3 := ov.BootOptionV3{
-							BootVlanId: bootItem["boot_vlan_id"].(int),
-						}
 						bootOptions = ov.BootOption{
 							Priority:         bootItem["priority"].(string),
-							BootOptionV3:     bootOptionV3,
+							BootVlanId:       bootItem["boot_vlan_id"].(int),
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
@@ -2412,7 +2409,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				}
 				connectionBoot = append(connectionBoot, map[string]interface{}{
 					"priority":           connection.Boot.Priority,
-					"boot_vlan_id":       connection.Boot.BootOptionV3.BootVlanId,
+					"boot_vlan_id":       connection.Boot.BootVlanId,
 					"ethernet_boot_type": connection.Boot.EthernetBootType,
 					"boot_volume_source": connection.Boot.BootVolumeSource,
 					"iscsi":              iscsi,
@@ -3069,12 +3066,10 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 									}
 								}
 							}
-							bootOptionV3 := ov.BootOptionV3{
-								BootVlanId: bootItem["boot_vlan_id"].(int),
-							}
+
 							bootOptions = ov.BootOption{
 								Priority:         bootItem["priority"].(string),
-								BootOptionV3:     bootOptionV3,
+								BootVlanId:       bootItem["boot_vlan_id"].(int),
 								EthernetBootType: bootItem["ethernet_boot_type"].(string),
 								BootVolumeSource: bootItem["boot_volume_source"].(string),
 								Iscsi:            &iscsi,

@@ -1370,23 +1370,17 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 								}
 							}
 						}
-
+						val, err := strconv.Atoi(bootItem["boot_vlan_id"].(string))
+						if err != nil {
+							return fmt.Errorf("invalid boot_vlan_id: %s", err)
+						}
 						bootOptions = ov.BootOption{
 							Priority:         bootItem["priority"].(string),
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
 							Targets:          bootTargets,
-						}
-						if bootItem["boot_vlan_id"].(string) != "" {
-							val, err := strconv.Atoi(bootItem["boot_vlan_id"].(string))
-							if err != nil {
-								return fmt.Errorf("invalid boot_vlan_id: %s", err)
-							}
-							bootOptionV3 := ov.BootOptionV3{
-								BootVlanId: val,
-							}
-							bootOptions.BootOptionV3 = bootOptionV3
+							BootVlanId:       val,
 						}
 
 					}
@@ -2190,8 +2184,8 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 					"iscsi":              iscsi,
 					"boot_target":        bootTargets,
 				})
-				if connection.Boot.BootOptionV3.BootVlanId != 0 {
-					connectionBoot[0]["boot_vlan_id"] = strconv.Itoa(connection.Boot.BootOptionV3.BootVlanId)
+				if connection.Boot.BootVlanId != 0 {
+					connectionBoot[0]["boot_vlan_id"] = strconv.Itoa(connection.Boot.BootVlanId)
 				}
 			}
 			// Get IPV4 Settings for Connection
@@ -2666,24 +2660,19 @@ func resourceServerProfileTemplateUpdate(d *schema.ResourceData, meta interface{
 								}
 							}
 						}
+						val, err := strconv.Atoi(bootItem["boot_vlan_id"].(string))
+						if err != nil {
+							return fmt.Errorf("invalid boot_vlan_id: %s", err)
+						}
 						bootOptions = ov.BootOption{
 							Priority:         bootItem["priority"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							Iscsi:            &iscsi,
 							Targets:          bootTargets,
+							BootVlanId:       val,
 						}
 
-						if bootItem["boot_vlan_id"].(string) != "" {
-							val, err := strconv.Atoi(bootItem["boot_vlan_id"].(string))
-							if err != nil {
-								return fmt.Errorf("invalid boot_vlan_id: %s", err)
-							}
-							bootOptionV3 := ov.BootOptionV3{
-								BootVlanId: val,
-							}
-							bootOptions.BootOptionV3 = bootOptionV3
-						}
 					}
 				}
 
