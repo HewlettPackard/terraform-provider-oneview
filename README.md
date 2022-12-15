@@ -138,6 +138,10 @@ provider "oneview" {
 
 :lock: Tip: Check the file permissions because the password is stored in clear-text as Environment Variable.
 
+### HPE Synergy Image Streamer
+
+From Release 8.1, Image streamer is no longer supported.
+
 ### Testing the Terraform Resources: 
 
 In the home directory of project(terraform-provider-oneview) user needs to create (or) copy  the file that is to be executed. 
