@@ -60,11 +60,6 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_OV_IF_MATCH", "*"),
 			},
-			"i3s_endpoint": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ONEVIEW_I3S_ENDPOINT", ""),
-			},
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -74,7 +69,6 @@ func Provider() *schema.Provider {
 			"oneview_appliance_ssh_access":                dataSourceSSHAccess(),
 			"oneview_appliance_time_and_locale":           dataSourceTimeAndLocale(),
 			"oneview_connection_templates":                dataSourceConnectionTemplates(),
-			"oneview_deployment_plan":                     dataSourceDeploymentPlan(),
 			"oneview_enclosure":                           dataSourceEnclosure(),
 			"oneview_enclosure_group":                     dataSourceEnclosureGroup(),
 			"oneview_ethernet_network":                    dataSourceEthernetNetwork(),
@@ -117,7 +111,6 @@ func Provider() *schema.Provider {
 			"oneview_appliance_ssh_access":                resourceSSHAccess(),
 			"oneview_appliance_time_and_locale":           resourceTimeAndLocale(),
 			"oneview_connection_templates":                resourceConnectionTemplates(),
-			"oneview_deployment_plan":                     resourceDeploymentPlan(),
 			"oneview_enclosure":                           resourceEnclosure(),
 			"oneview_enclosure_group":                     resourceEnclosureGroup(),
 			"oneview_ethernet_network":                    resourceEthernetNetwork(),
@@ -128,7 +121,6 @@ func Provider() *schema.Provider {
 			"oneview_hypervisor_manager":                  resourceHypervisorManager(),
 			"oneview_id_pools_ipv4_subnets":               resourceIPv4Subnets(),
 			"oneview_ipv4_range":                          resourceIPv4Ranges(),
-			"oneview_i3s_plan":                            resourceI3SPlan(),
 			"oneview_label":                               resourceLabel(),
 			"oneview_logical_enclosure":                   resourceLogicalEnclosure(),
 			"oneview_logical_interconnect_group":          resourceLogicalInterconnectGroup(),
@@ -166,13 +158,5 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	if err := config.loadAndValidate(); err != nil {
 		return nil, err
 	}
-
-	if val, ok := d.GetOk("i3s_endpoint"); ok {
-		config.I3SEndpoint = val.(string)
-		if err := config.loadAndValidateI3S(); err != nil {
-			return nil, err
-		}
-	}
-
 	return &config, nil
 }

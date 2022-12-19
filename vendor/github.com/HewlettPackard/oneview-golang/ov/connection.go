@@ -52,18 +52,37 @@ type BootIscsi struct {
 
 // BootOption -
 type BootOption struct {
-	BootOptionV3
-	Priority         string       `json:"priority,omitempty"` // priority(const_string), indicates the boot priority for this device. PXE and Fibre Channel connections are treated separately; an Ethernet connection and a Fibre Channel connection can both be marked as Primary. The 'order' attribute controls ordering among the different device types.
-	Targets          []BootTarget `json:"targets,omitempty"`  // targets {BootTarget}
-	EthernetBootType string       `json:"ethernetBootType,omitempty"`
-	BootVolumeSource string       `json:"bootVolumeSource,omitempty"`
-	Iscsi            *BootIscsi   `json:"iscsi,omitempty"`
+	BootTargetLun        string       `json:"bootTargetLun,omitempty"`        // "bootTargetLun": "0",
+	BootTargetName       string       `json:"bootTargetName,omitempty"`       // "bootTargetName": "iqn.2015-02.com.hpe:iscsi.target",
+	BootVlanId           int          `json:"bootVlanId,omitempty"`           //The virtual LAN ID of the boot connection.
+	BootVolumeSource     string       `json:"bootVolumeSource,omitempty"`     // "bootVolumeSource": "",
+	ChapLevel            string       `json:"chapLevel,omitempty"`            // "chapLevel": "None",
+	ChapName             string       `json:"chapName,omitempty"`             // "chapName": "chap name",
+	ChapSecret           string       `json:"chapSecret,omitempty"`           // "chapSecret": "super secret chap secret",
+	FirstBootTargetIp    string       `json:"firstBootTargetIp,omitempty"`    // "firtBootTargetIp": "10.0.0.50",
+	FirstBootTargetPort  string       `json:"firstBootTargetPort,omitempty"`  // "firstBootTargetPort": "8080",
+	InitiatorGateway     string       `json:"initiatorGateway,omitempty"`     // "initiatorGateway": "3260",
+	InitiatorIp          string       `json:"initiatorIp,omitempty"`          // "initiatorIp": "192.168.6.21",
+	InitiatorName        string       `json:"initiatorName,omitempty"`        // "initiatorName": "iqn.2015-02.com.hpe:oneview-vcgs02t012",
+	InitiatorNameSource  string       `json:"initiatorNameSource,omitempty"`  // "initiatorNameSource": "UserDefined"
+	InitiatorSubnetMask  string       `json:"initiatorSubnetMask,omitempty"`  // "initiatorSubnetMask": "255.255.240.0",
+	InitiatorVlanId      int          `json:"initiatorVlanId,omitempty"`      // "initiatorVlanId": 77,
+	MutualChapName       string       `json:"mutualChapName,omitempty"`       // "mutualChapName": "name of mutual chap",
+	MutualChapSecret     string       `json:"mutualChapSecret,omitempty"`     // "mutualChapSecret": "secret of mutual chap",
+	SecondBootTargetIp   string       `json:"secondBootTargetIp,omitempty"`   // "secondBootTargetIp": "10.0.0.51",
+	SecondBootTargetPort string       `json:"secondBootTargetPort,omitempty"` // "secondBootTargetPort": "78"
+	Priority             string       `json:"priority,omitempty"`             // priority(const_string), indicates the boot priority for this device. PXE and Fibre Channel connections are treated separately; an Ethernet connection and a Fibre Channel connection can both be marked as Primary. The 'order' attribute controls ordering among the different device types.
+	Targets              []BootTarget `json:"targets,omitempty"`              // targets {BootTarget}
+	EthernetBootType     string       `json:"ethernetBootType,omitempty"`
+
+	Iscsi *BootIscsi `json:"iscsi,omitempty"`
 }
 
 // Connection server profile object for ov
 type Connection struct {
 	Connectionv200
 	AllocatedMbps       int           `json:"allocatedMbps,omitempty"`       // allocatedMbps(int:read), The transmit throughput (mbps) currently allocated to this connection. When Fibre Channel connections are set to Auto for requested bandwidth, the value can be set to -2000 to indicate that the actual value is unknown until OneView is able to negotiate the actual speed.
+	AllocatedVFs        int           `json:"allocatedVFs,omitempty"`        // allocatedVFs The number of virtual functions allocated to this connection. This value will be null. integer read only
 	Boot                *BootOption   `json:"boot,omitempty"`                // boot {}
 	DeploymentStatus    string        `json:"deploymentStatus,omitempty"`    // deploymentStatus(const_string:read), The deployment status of the connection. The value can be 'Undefined', 'Reserved', or 'Deployed'.
 	FunctionType        string        `json:"functionType,omitempty"`        // functionType(const_string),  Type of function required for the connection. functionType cannot be modified after the connection is created. 'Ethernet', 'FibreChannel'
@@ -83,6 +102,7 @@ type Connection struct {
 	PortID              string        `json:"portId,omitempty"`              // portId(string), Identifies the port (FlexNIC) used for this connection, for example 'Flb 1:1-a'. The port can be automatically selected by specifying 'Auto', 'None', or a physical port when creating or editing the connection. If 'Auto' is specified, a port that provides access to the selected network (networkUri) will be selected. A physical port (e.g. 'Flb 1:2') can be specified if the choice of a specific FlexNIC on the physical port is not important. If 'None' is specified, the connection will not be configured on the server hardware. When omitted, portId defaults to 'Auto'. Use /rest/server-profiles/profile-ports to retrieve the list of available ports.
 	PrivateVlanPortType string        `json:"privateVlanPortType,omitempty"` //Private Vlan port type.
 	RequestedMbps       string        `json:"requestedMbps,omitempty"`       // requestedMbps(string), The transmit throughput (mbps) that should be allocated to this connection. For FlexFabric connections, this value must not exceed the maximum bandwidth of the selected network (networkUri). If omitted, this value defaults to the typical bandwidth value of the selected network. The sum of the requestedBW values for the connections (FlexNICs) on an adapter port cannot exceed the capacity of the network link. For Virtual Connect Fibre Channel connections, the available discrete values are based on the adapter and the Fibre Channel interconnect module. Use GET /rest/server-profiles/profile-ports to retrieve the list of available ports and the acceptable bandwidth values for the ports.
+	RequestedVFs        string        `json:"requestedVFs,omitempty"`        // requestedVFs This value can be "Auto" or 0. string
 	State               string        `json:"state,omitempty"`               //The state of a connection.
 	Status              string        `json:"status,omitempty"`              //The status of a connection.
 	WWNN                utils.Nstring `json:"wwnn,omitempty"`                // wwnn(Nstring), The node WWN address that is currently programmed on the FlexNic. The value can be a virtual WWNN, user defined WWNN or physical WWNN read from the device. It cannot be modified after the connection is created.

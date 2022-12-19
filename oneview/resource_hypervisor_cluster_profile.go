@@ -117,42 +117,6 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 							Optional: true,
 							Computed: true,
 						},
-						"deployment_plan": {
-							Type:     schema.TypeList,
-							Optional: true,
-							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"deployment_custom_args": {
-										Type:     schema.TypeList,
-										Optional: true,
-										Computed: true,
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
-										},
-									},
-									"deployment_plan_description": {
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
-									"deployment_plan_uri": {
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
-									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
-									"server_password": {
-										Type:      schema.TypeString,
-										Optional:  true,
-										Sensitive: true,
-										Computed:  true,
-									},
-								}}},
 
 						"host_prefix": {
 							Type:     schema.TypeString,
@@ -274,6 +238,7 @@ func resourceHypervisorClusterProfile() *schema.Resource {
 						"virtual_switch_port_groups": {
 							Type:     schema.TypeList,
 							Optional: true,
+
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"action": {
@@ -758,36 +723,12 @@ func resourceHypervisorClusterProfileCreate(d *schema.ResourceData, meta interfa
 
 	for _, rawht := range rawHypervisorHostProfileTemplate {
 		rawHostProfileTemplateItem := rawht.(map[string]interface{})
-		deploymentPlan := ov.DeploymentPlan{}
 
-		/******************* deployment plan start********************/
-		rawDeploymentPlan := rawHostProfileTemplateItem["deployment_plan"].([]interface{})
-
-		for _, rawdp := range rawDeploymentPlan {
-			rawDeploymentPlanItem := rawdp.(map[string]interface{})
-			if val, ok := rawDeploymentPlanItem["deployment_custom_args"]; ok {
-				dpCustomArgsOrder := val.([]interface{})
-				dpCustomArgs := make([]utils.Nstring, len(dpCustomArgsOrder))
-				for i, rawCustomArgs := range dpCustomArgsOrder {
-					dpCustomArgs[i] = utils.Nstring(rawCustomArgs.(string))
-				}
-
-				deploymentPlan.DeploymentCustomArgs = dpCustomArgs
-			}
-			deploymentPlan = ov.DeploymentPlan{
-				DeploymentPlanDescription: rawDeploymentPlanItem["deployment_plan_description"].(string),
-				DeploymentPlanUri:         utils.Nstring(rawDeploymentPlanItem["deployment_plan_uri"].(string)),
-				Name:                      rawDeploymentPlanItem["name"].(string),
-				ServerPassword:            rawDeploymentPlanItem["server_password"].(string),
-			}
-		}
-		/******************* deployment plan end********************/
 		rawDataStore := rawHostProfileTemplateItem["data_store_name_sync"].(bool)
 		hypervisorProfileTemplate = ov.HypervisorHostProfileTemplate{
 
 			DataStoreNameSync:         &rawDataStore,
 			DeploymentManagerType:     rawHostProfileTemplateItem["deployment_manager_type"].(string),
-			DeploymentPlan:            &deploymentPlan,
 			Hostprefix:                rawHostProfileTemplateItem["host_prefix"].(string),
 			ServerProfileTemplateUri:  utils.Nstring(rawHostProfileTemplateItem["server_profile_template_uri"].(string)),
 			VirtualSwitchConfigPolicy: &virtualSwitchConfigPolicy,
@@ -842,21 +783,6 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 	d.Set("hypervisor_cluster_settings", hypCPCSList)
 
 	d.Set("hypervisor_cluster_uri", hypCP.HypervisorClusterUri)
-	deploymentCustomArgs := make([]interface{}, len(hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentCustomArgs))
-	dplist := make([]map[string]interface{}, 0, 1)
-	if hypCP.HypervisorHostProfileTemplate.DeploymentPlan != nil {
-		for i, deploymentCustomArg := range hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentCustomArgs {
-			deploymentCustomArgs[i] = deploymentCustomArg
-		}
-		dplist = append(dplist, map[string]interface{}{
-
-			"deployment_custom_args":      deploymentCustomArgs,
-			"deployment_plan_description": hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentPlanDescription,
-			"deployment_plan_uri":         hypCP.HypervisorHostProfileTemplate.DeploymentPlan.DeploymentPlanUri.String(),
-			"name":                        hypCP.HypervisorHostProfileTemplate.DeploymentPlan.Name,
-			"server_password":             hypCP.HypervisorHostProfileTemplate.DeploymentPlan.ServerPassword,
-		})
-	}
 	hostConfigPolicylist := make([]map[string]interface{}, 0, 1)
 	hostConfigPolicylist = append(hostConfigPolicylist, map[string]interface{}{
 		"leave_host_in_maintenance":   hypCP.HypervisorHostProfileTemplate.HostConfigPolicy.LeaveHostInMaintenance,
@@ -877,7 +803,6 @@ func resourceHypervisorClusterProfileRead(d *schema.ResourceData, meta interface
 	hypCPHHPTList = append(hypCPHHPTList, map[string]interface{}{
 		"data_store_name_sync":        hypCP.HypervisorHostProfileTemplate.DataStoreNameSync,
 		"deployment_manager_type":     hypCP.HypervisorHostProfileTemplate.DeploymentManagerType,
-		"deployment_plan":             dplist,
 		"host_prefix":                 hypCP.HypervisorHostProfileTemplate.Hostprefix,
 		"server_profile_template_uri": hypCP.HypervisorHostProfileTemplate.ServerProfileTemplateUri.String(),
 	})
@@ -1193,35 +1118,10 @@ func resourceHypervisorClusterProfileUpdate(d *schema.ResourceData, meta interfa
 
 	for _, rawht := range rawHypervisorHostProfileTemplate {
 		rawHostProfileTemplateItem := rawht.(map[string]interface{})
-		deploymentPlan := ov.DeploymentPlan{}
-
-		/******************* deployment plan start********************/
-		rawDeploymentPlan := rawHostProfileTemplateItem["deployment_plan"].([]interface{})
-
-		for _, rawdp := range rawDeploymentPlan {
-			rawDeploymentPlanItem := rawdp.(map[string]interface{})
-			if val, ok := rawDeploymentPlanItem["deployment_custom_args"]; ok {
-				dpCustomArgsOrder := val.([]interface{})
-				dpCustomArgs := make([]utils.Nstring, len(dpCustomArgsOrder))
-				for i, rawCustomArgs := range dpCustomArgsOrder {
-					dpCustomArgs[i] = utils.Nstring(rawCustomArgs.(string))
-				}
-
-				deploymentPlan.DeploymentCustomArgs = dpCustomArgs
-			}
-			deploymentPlan = ov.DeploymentPlan{
-				DeploymentPlanDescription: rawDeploymentPlanItem["deployment_plan_description"].(string),
-				DeploymentPlanUri:         utils.Nstring(rawDeploymentPlanItem["deployment_plan_uri"].(string)),
-				Name:                      rawDeploymentPlanItem["name"].(string),
-				ServerPassword:            rawDeploymentPlanItem["server_password"].(string),
-			}
-		}
-		/******************* deployment plan end********************/
 		rawDataStore := rawHostProfileTemplateItem["data_store_name_sync"].(bool)
 		hypervisorProfileTemplate = ov.HypervisorHostProfileTemplate{
 			DataStoreNameSync:         &rawDataStore,
 			DeploymentManagerType:     rawHostProfileTemplateItem["deployment_manager_type"].(string),
-			DeploymentPlan:            &deploymentPlan,
 			Hostprefix:                rawHostProfileTemplateItem["host_prefix"].(string),
 			ServerProfileTemplateUri:  utils.Nstring(rawHostProfileTemplateItem["server_profile_template_uri"].(string)),
 			VirtualSwitchConfigPolicy: &virtualSwitchConfigPolicy,

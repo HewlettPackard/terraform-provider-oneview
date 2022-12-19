@@ -14,7 +14,7 @@ package oneview
 import (
 	"errors"
 	"fmt"
-	"github.com/HewlettPackard/oneview-golang/i3s"
+
 	"github.com/HewlettPackard/oneview-golang/ov"
 )
 
@@ -27,10 +27,7 @@ type Config struct {
 	OVAPIVersion int
 	OVIfMatch    string
 
-	I3SEndpoint string
-
-	ovClient  *ov.OVClient
-	i3sClient *i3s.I3SClient
+	ovClient *ov.OVClient
 }
 
 var ErrConfigNotInitialized = errors.New("config not initialized!")
@@ -62,18 +59,6 @@ func (c *Config) loadAndValidate() error {
 	}
 
 	c.ovClient.APIKey = session.ID
-
-	return nil
-}
-
-func (c *Config) loadAndValidateI3S() error {
-	if c == nil {
-		return ErrConfigNotInitialized
-	}
-
-	client := (&i3s.I3SClient{}).NewI3SClient(c.I3SEndpoint, c.OVSSLVerify, c.OVAPIVersion, c.ovClient.APIKey)
-
-	c.i3sClient = client
 
 	return nil
 }

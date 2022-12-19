@@ -155,8 +155,6 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `hardware_uri` - The URI of the hardware the server is provisioned on.
 
-* `os_deployment_settings` - (Optional) OS Deployment settings applicable when deployment is invoked through a server profile.
-
 * `boot_order` - Defines the order in which boot will be attempted on the available devices.
 
 * `boot_mode` -  Boot mode settings to be configured on the server.

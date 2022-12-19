@@ -223,7 +223,6 @@ type ServerProfile struct {
 	ManagementProcessor        IntManagementProcessor `json:"managementProcessor,omitempty"`        //
 	Modified                   string                 `json:"modified,omitempty"`                   // "modified": "20150902T175611.657Z",
 	Name                       string                 `json:"name,omitempty"`                       // "name": "Server_Profile_scs79",
-	OSDeploymentSettings       OSDeploymentSettings   `json:"osDeploymentSettings,omitempty"`       // "osDeploymentSettings": {...},
 	ProfileUUID                utils.Nstring          `json:"profileUUID,omitempty"`                //The automatically generated 36-byte Universally Unique ID of the server profile.
 	RefreshState               string                 `json:"refreshState,omitempty"`               //Current refresh State of this Server Profile
 	SanStorage                 SanStorageOptions      `json:"sanStorage,omitempty"`                 // "sanStorage": {},
@@ -530,7 +529,6 @@ func (c *OVClient) Cleanup(template *ServerProfile) {
 	template.Firmware.ComplianceControl = ""
 	template.LocalStorage.ComplianceControl = ""
 	template.ManagementProcessor.ComplianceControl = ""
-	template.OSDeploymentSettings.ComplianceControl = ""
 	template.SanStorage.ComplianceControl = ""
 
 }

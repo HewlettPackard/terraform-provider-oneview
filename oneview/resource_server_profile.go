@@ -956,75 +956,6 @@ func resourceServerProfile() *schema.Resource {
 				Default:  "put",
 				Optional: true,
 			},
-			"os_deployment_settings": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Computed: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"deploy_method": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"deployment_mac": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"deployment_port_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"force_os_deployment": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
-						},
-						"os_custom_attributes": {
-							Computed: true,
-							Optional: true,
-							Type:     schema.TypeSet,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"constraints": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"type": {
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-									"value": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-								},
-							},
-						},
-						"os_deployment_plan_name": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"os_deployment_plan_uri": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"os_volume": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"reapply_state": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Computed: true,
-						},
-					},
-				},
-			},
 			"associated_server": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -1694,12 +1625,9 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 							}
 						}
 
-						bootOptionV3 := ov.BootOptionV3{
-							BootVlanId: bootItem["boot_vlan_id"].(int),
-						}
 						bootOptions = ov.BootOption{
 							Priority:         bootItem["priority"].(string),
-							BootOptionV3:     bootOptionV3,
+							BootVlanId:       bootItem["boot_vlan_id"].(int),
 							EthernetBootType: bootItem["ethernet_boot_type"].(string),
 							BootVolumeSource: bootItem["boot_volume_source"].(string),
 							Iscsi:            &iscsi,
@@ -2031,49 +1959,6 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 		}
 		serverProfile.SanStorage.VolumeAttachments = volumeAttachments
-	}
-
-	if val, ok := d.GetOk("os_deployment_settings"); ok {
-		rawOsDeploySetting := val.(*schema.Set).List()
-		osDeploySetting := ov.OSDeploymentSettings{}
-		for _, raw := range rawOsDeploySetting {
-			osDeploySettingItem := raw.(map[string]interface{})
-			osdp := ""
-			if osDeploySettingItem["os_deployment_plan_uri"] != "" {
-				osdp = osDeploySettingItem["os_deployment_plan_uri"].(string)
-			} else if osDeploySettingItem["os_deployment_plan_name"] != "" {
-				osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
-				if err != nil {
-					return err
-				}
-				if osDeploymentPlan.URI == "" {
-					return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
-				}
-				osdp = osDeploymentPlan.URI.String()
-			}
-
-			osCustomAttributes := make([]ov.OSCustomAttribute, 0)
-			if osDeploySettingItem["os_custom_attributes"] != nil {
-				rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
-				for _, rawDeploySetting := range rawOsDeploySettings {
-					rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
-					osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-						Name:  rawOsDeploySetting["name"].(string),
-						Value: rawOsDeploySetting["value"].(string),
-					})
-				}
-			}
-
-			osDeploySetting = ov.OSDeploymentSettings{
-				ForceOsDeployment:   osDeploySettingItem["force_os_deployment"].(bool),
-				DeployMethod:        osDeploySettingItem["deploy_method"].(string),
-				DeploymentMac:       osDeploySettingItem["deployment_mac"].(string),
-				DeploymentPortId:    osDeploySettingItem["deployment_port_id"].(string),
-				OSDeploymentPlanUri: utils.NewNstring(osdp),
-				OSCustomAttributes:  osCustomAttributes,
-			}
-		}
-		serverProfile.OSDeploymentSettings = osDeploySetting
 	}
 	//Cleaning up SP  by removing spt related fields
 	config.ovClient.Cleanup(&serverProfile)
@@ -2524,7 +2409,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				}
 				connectionBoot = append(connectionBoot, map[string]interface{}{
 					"priority":           connection.Boot.Priority,
-					"boot_vlan_id":       connection.Boot.BootOptionV3.BootVlanId,
+					"boot_vlan_id":       connection.Boot.BootVlanId,
 					"ethernet_boot_type": connection.Boot.EthernetBootType,
 					"boot_volume_source": connection.Boot.BootVolumeSource,
 					"iscsi":              iscsi,
@@ -2719,38 +2604,6 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		})
 		d.Set("local_storage", localStorage)
 
-	}
-
-	if serverProfile.OSDeploymentSettings.OSDeploymentPlanUri != "" {
-		osCustomAttributes := make([]map[string]interface{}, 0, len(serverProfile.OSDeploymentSettings.OSCustomAttributes))
-		for i := 0; i < len(serverProfile.OSDeploymentSettings.OSCustomAttributes); i++ {
-			osCustomAttributes = append(osCustomAttributes, map[string]interface{}{
-				"name":        serverProfile.OSDeploymentSettings.OSCustomAttributes[i].Name,
-				"type":        serverProfile.OSDeploymentSettings.OSCustomAttributes[i].Type,
-				"value":       serverProfile.OSDeploymentSettings.OSCustomAttributes[i].Value,
-				"constraints": serverProfile.OSDeploymentSettings.OSCustomAttributes[i].Constraints,
-			})
-		}
-
-		osdp, err := config.ovClient.GetOSDeploymentPlan(serverProfile.OSDeploymentSettings.OSDeploymentPlanUri)
-		if err != nil {
-			return err
-		}
-		osDeploymentPlanName := osdp.Name
-
-		osDeploymentSettingslist := make([]map[string]interface{}, 0, 1)
-		osDeploymentSettingslist = append(osDeploymentSettingslist, map[string]interface{}{
-			"deploy_method":           serverProfile.OSDeploymentSettings.DeployMethod,
-			"deployment_mac":          serverProfile.OSDeploymentSettings.DeploymentMac,
-			"deployment_port_id":      serverProfile.OSDeploymentSettings.DeploymentPortId,
-			"force_os_deployment":     serverProfile.OSDeploymentSettings.ForceOsDeployment,
-			"os_custom_attributes":    osCustomAttributes,
-			"os_deployment_plan_name": osDeploymentPlanName,
-			"os_deployment_plan_uri":  serverProfile.OSDeploymentSettings.OSDeploymentPlanUri.String(),
-			"os_volume":               serverProfile.OSDeploymentSettings.OSVolumeUri.String(),
-			"reapply_state":           serverProfile.OSDeploymentSettings.ReapplyState,
-		})
-		d.Set("os_deployment_settings", osDeploymentSettingslist)
 	}
 
 	sanSystemCredentials := make([]interface{}, 0)
@@ -3213,12 +3066,10 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 									}
 								}
 							}
-							bootOptionV3 := ov.BootOptionV3{
-								BootVlanId: bootItem["boot_vlan_id"].(int),
-							}
+
 							bootOptions = ov.BootOption{
 								Priority:         bootItem["priority"].(string),
-								BootOptionV3:     bootOptionV3,
+								BootVlanId:       bootItem["boot_vlan_id"].(int),
 								EthernetBootType: bootItem["ethernet_boot_type"].(string),
 								BootVolumeSource: bootItem["boot_volume_source"].(string),
 								Iscsi:            &iscsi,
@@ -3558,50 +3409,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 
 			}
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments
-		}
-
-		if d.HasChange("os_deployment_settings") {
-			val := d.Get("os_deployment_settings")
-			rawOsDeploySetting := val.(*schema.Set).List()
-			osDeploySetting := ov.OSDeploymentSettings{}
-			for _, raw := range rawOsDeploySetting {
-				osDeploySettingItem := raw.(map[string]interface{})
-				osdp := ""
-				if osDeploySettingItem["os_deployment_plan_uri"] != "" {
-					osdp = osDeploySettingItem["os_deployment_plan_uri"].(string)
-				} else if osDeploySettingItem["os_deployment_plan_name"] != "" {
-					osDeploymentPlan, err := config.ovClient.GetOSDeploymentPlanByName(osDeploySettingItem["os_deployment_plan_name"].(string))
-					if err != nil {
-						return err
-					}
-					if osDeploymentPlan.URI == "" {
-						return fmt.Errorf("Could not find deployment plan by name: %s", osDeploySettingItem["os_deployment_plan_name"].(string))
-					}
-					osdp = osDeploymentPlan.URI.String()
-				}
-
-				osCustomAttributes := make([]ov.OSCustomAttribute, 0)
-				if osDeploySettingItem["os_custom_attributes"] != nil {
-					rawOsDeploySettings := osDeploySettingItem["os_custom_attributes"].(*schema.Set).List()
-					for _, rawDeploySetting := range rawOsDeploySettings {
-						rawOsDeploySetting := rawDeploySetting.(map[string]interface{})
-						osCustomAttributes = append(osCustomAttributes, ov.OSCustomAttribute{
-							Name:  rawOsDeploySetting["name"].(string),
-							Value: rawOsDeploySetting["value"].(string),
-						})
-					}
-				}
-
-				osDeploySetting = ov.OSDeploymentSettings{
-					ForceOsDeployment:   osDeploySettingItem["force_os_deployment"].(bool),
-					DeployMethod:        osDeploySettingItem["deploy_method"].(string),
-					DeploymentMac:       osDeploySettingItem["deployment_mac"].(string),
-					DeploymentPortId:    osDeploySettingItem["deployment_port_id"].(string),
-					OSDeploymentPlanUri: utils.NewNstring(osdp),
-					OSCustomAttributes:  osCustomAttributes,
-				}
-			}
-			serverProfile.OSDeploymentSettings = osDeploySetting
 		}
 
 		err = config.ovClient.UpdateServerProfile(serverProfile)
