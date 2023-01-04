@@ -1745,9 +1745,16 @@ func resourceServerProfileTemplateCreate(d *schema.ResourceData, meta interface{
 func flattenMp(d *schema.ResourceData) map[string]interface{} {
 	if val, ok := d.GetOk("management_processor"); ok {
 		valn := val.([]interface{})
-		vall := valn[0].(map[string]interface{})
-		valmp := vall["mp_settings"].([]interface{})
-		return valmp[0].(map[string]interface{})
+		if len(valn) != 0 {
+			vall := valn[0].(map[string]interface{})
+			if len(vall) != 0 {
+				valmp := vall["mp_settings"].([]interface{})
+				if len(valmp) != 0 {
+					return valmp[0].(map[string]interface{})
+				}
+			}
+		}
+
 	}
 	return nil
 }
