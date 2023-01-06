@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 #### Major Changes
 
 1. Removed Image Streamer support.
+
+### Bug fixes & Enhancements:
+
+- [#509](https://github.com/HewlettPackard/terraform-provider-oneview/issues/509) ilo settings updated not being commited into state
+
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
 - Appliance SNMPv3 Trap Destinations

@@ -2047,10 +2047,10 @@ func resourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{})
 								if lp, ok := w["loginPriv"]; ok {
 									la["login_priv"] = lp
 								}
-								if hbcp, ok := w["hostBiosConfigPriv"]; ok {
+								if hbcp, ok := w["hostBIOSConfigPriv"]; ok {
 									la["host_bios_config_priv"] = hbcp
 								}
-								if hncp, ok := w["hostNicConfigPriv"]; ok {
+								if hncp, ok := w["hostNICConfigPriv"]; ok {
 									la["host_nic_config_priv"] = hncp
 								}
 								if hscp, ok := w["hostStorageConfigPriv"]; ok {
