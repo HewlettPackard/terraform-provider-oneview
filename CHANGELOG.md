@@ -5,11 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - This release supports API4600 minimally where we can use OneView v8.10 with this SDK.
 #### Major Changes
 
+1. Removed Image Streamer support.
+
 ### Bug fixes & Enhancements:
 
 - [#505](https://github.com/HewlettPackard/terraform-provider-oneview/issues/505) server profile changes for the management processor are not properly being handled
-
-1. Removed Image Streamer support.
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
 - Appliance SNMPv3 Trap Destinations
