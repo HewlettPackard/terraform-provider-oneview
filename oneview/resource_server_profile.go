@@ -2120,6 +2120,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 						}
 					}
 					// extracts MpSettings to re-set password
+
 					valmpp := flattenMp(d)
 					if valmpp != nil {
 						vals := valmpp["administrator_account"].([]interface{})
@@ -2377,7 +2378,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 		for _, connection := range serverProfile.ConnectionSettings.Connections {
 			iscsi := make([]map[string]interface{}, 0, 1)
 			connectionBoot := make([]map[string]interface{}, 0, 1)
-			bootTargets := make([]map[string]interface{}, 0, len(connection.Boot.Targets))
+			bootTargets := make([]map[string]interface{}, 0, 1)
 			// Gets Boot Settings
 			if connection.Boot != nil {
 

@@ -1127,24 +1127,28 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 		for i := 0; i < len(spt.ConnectionSettings.Connections); i++ {
 			// Gets Boot for Connection
 			iscsi := make([]map[string]interface{}, 0, 1)
-			if spt.ConnectionSettings.Connections[i].Boot.Iscsi != nil {
-				iscsi = append(iscsi, map[string]interface{}{
-					"chap_level":              spt.ConnectionSettings.Connections[i].Boot.Iscsi.Chaplevel,
-					"initiator_name_source":   spt.ConnectionSettings.Connections[i].Boot.Iscsi.InitiatorNameSource,
-					"first_boot_target_ip":    spt.ConnectionSettings.Connections[i].Boot.Iscsi.FirstBootTargetIp,
-					"first_boot_target_port":  spt.ConnectionSettings.Connections[i].Boot.Iscsi.FirstBootTargetPort,
-					"second_boot_target_ip":   spt.ConnectionSettings.Connections[i].Boot.Iscsi.SecondBootTargetIp,
-					"second_boot_target_port": spt.ConnectionSettings.Connections[i].Boot.Iscsi.SecondBootTargetPort,
-				})
-			}
-			// Get Boot targets list
 			targets := make([]map[string]interface{}, 0)
-			if len(spt.ConnectionSettings.Connections[i].Boot.Targets) != 0 {
-				for j := 0; j < len(spt.ConnectionSettings.Connections[i].Boot.Targets); j++ {
-					targets = append(targets, map[string]interface{}{
-						"array_wwpn": spt.ConnectionSettings.Connections[i].Boot.Targets[j].ArrayWWPN,
-						"lun":        spt.ConnectionSettings.Connections[i].Boot.Targets[j].LUN,
+			if spt.ConnectionSettings.Connections[i].Boot != nil {
+				if spt.ConnectionSettings.Connections[i].Boot.Iscsi != nil {
+					iscsi = append(iscsi, map[string]interface{}{
+						"chap_level":              spt.ConnectionSettings.Connections[i].Boot.Iscsi.Chaplevel,
+						"initiator_name_source":   spt.ConnectionSettings.Connections[i].Boot.Iscsi.InitiatorNameSource,
+						"first_boot_target_ip":    spt.ConnectionSettings.Connections[i].Boot.Iscsi.FirstBootTargetIp,
+						"first_boot_target_port":  spt.ConnectionSettings.Connections[i].Boot.Iscsi.FirstBootTargetPort,
+						"second_boot_target_ip":   spt.ConnectionSettings.Connections[i].Boot.Iscsi.SecondBootTargetIp,
+						"second_boot_target_port": spt.ConnectionSettings.Connections[i].Boot.Iscsi.SecondBootTargetPort,
 					})
+				}
+
+				// Get Boot targets list
+
+				if len(spt.ConnectionSettings.Connections[i].Boot.Targets) != 0 {
+					for j := 0; j < len(spt.ConnectionSettings.Connections[i].Boot.Targets); j++ {
+						targets = append(targets, map[string]interface{}{
+							"array_wwpn": spt.ConnectionSettings.Connections[i].Boot.Targets[j].ArrayWWPN,
+							"lun":        spt.ConnectionSettings.Connections[i].Boot.Targets[j].LUN,
+						})
+					}
 				}
 			}
 
