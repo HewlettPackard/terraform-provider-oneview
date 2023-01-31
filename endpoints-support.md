@@ -12,7 +12,7 @@
 
 * If an endpoint is marked as implemented in a previous version of the API, it will likely already be working for newer API versions, however in these cases it is important to:
 1. Specify the 'type' of the resource when using an untested API, as it will not get set by default
-2. If an example is not working, verify the [HPE OneView REST API Documentation](http://h17007.www1.hpe.com/docs/enterprise/servers/oneview4.2/cic-api/en/index.html) for the respective API version being used, since the expected attributes for that resource might have changed.
+2. If an example is not working, verify the [HPE OneView REST API Documentation](https://techlibrary.hpe.com/docs/enterprise/servers/oneview8.1/cicf-api/en/index.html) for the respective API version being used, since the expected attributes for that resource might have changed.
 
 <br />
 
@@ -118,7 +118,7 @@
 | <sub>/rest/logical-interconnect-groups/{id}</sub>          |  PUT   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|:white_check_mark:|
 | <sub>/rest/logical-interconnect-groups/{id}</sub>          | DELETE | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|:white_check_mark:|
 | **Logical Switch Groups**                      |
-| <sub>/rest/logical-switch-groups</sub>                |  POST  | :heavy_multiplication_x: |:heavy_multiplication_x::| :heavy_multiplication_x:|:heavy_multiplication_x:|
+| <sub>/rest/logical-switch-groups</sub>                |  POST  | :heavy_multiplication_x: |:heavy_multiplication_x:| :heavy_multiplication_x:|:heavy_multiplication_x:|
 | <sub>/rest/logical-switch-groups/{id}</sub>             |  PUT   | :heavy_multiplication_x: |:heavy_multiplication_x:| :heavy_multiplication_x:|:heavy_multiplication_x:|
 | <sub>/rest/logical-switch-groups/{id}</sub>             | DELETE | :heavy_multiplication_x: |:heavy_multiplication_x:| :heavy_multiplication_x:|:heavy_multiplication_x:|
 | **Network Sets**                           |
