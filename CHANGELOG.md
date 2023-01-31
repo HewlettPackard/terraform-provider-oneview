@@ -1,6 +1,54 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [v8.1.0-13]
+### Notes
+- This release supports API4600 minimally where we can use OneView v8.10 with this SDK.
+#### Major Changes
+
+1. Removed Image Streamer support.
+
+### Bug fixes & Enhancements:
+
+- [#507](https://github.com/HewlettPackard/terraform-provider-oneview/issues/507) Updates for OneView 6.6 LTS release?
+
+### Oneview Features supported
+- Appliance SNMPv1 Trap Destinations
+- Appliance SNMPv3 Trap Destinations
+- Appliance SSH Access
+- Appliance Time and Locale Configuration
+- Connection Template
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Firmware Drivers
+- Hypervisor Manager
+- Hypervisor Cluster Profile
+- Id Pools Ipv4 Range
+- Id Pools IPv4 Subnets
+- Labels
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups
+- Network Set
+- Rack Manager
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
+
 # [v8.0.0-13]
 ### Notes
 - This release supports API4600 minimally where we can use OneView v8.00 with this SDK.

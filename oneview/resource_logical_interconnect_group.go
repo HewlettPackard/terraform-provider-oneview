@@ -52,7 +52,8 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 			},
 			"redundancy_type": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Default:  nil,
 			},
 			"enclosure_indexes": {
 				Type:     schema.TypeSet,
@@ -1720,7 +1721,11 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		portFlapSettingStructure.Description = utils.Nstring(portFlapSettingRawData["description"].(string))
 		portFlapSettingStructure.State = portFlapSettingRawData["state"].(string)
 		portFlapSettingStructure.Status = portFlapSettingRawData["status"].(string)
-		lig.PortFlapProtection = &portFlapSettingStructure
+		// if all of the values in the struct are empty, leave lig.PortFlapProtection nil
+		if portFlapSettingStructure != (ov.PortFlapProtection{}) {
+			lig.PortFlapProtection = &portFlapSettingStructure
+		}
+
 	}
 
 	if val, ok := d.GetOk("quality_of_service"); ok {
@@ -1868,7 +1873,6 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		}
 		lig.QosConfiguration = &ovQos
 	}
-
 	ligError := config.ovClient.CreateLogicalInterconnectGroup(lig)
 	d.SetId(d.Get("name").(string))
 	if ligError != nil {
@@ -3044,7 +3048,10 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		PortFlapSetting.State = rawlval["state"].(string)
 		PortFlapSetting.Status = rawlval["status"].(string)
 	}
-	lig.PortFlapProtection = &PortFlapSetting
+
+	if PortFlapSetting != (ov.PortFlapProtection{}) {
+		lig.PortFlapProtection = &PortFlapSetting
+	}
 	if val, ok := d.GetOk("quality_of_service"); ok {
 		rawQoss := val.([]interface{})
 		ovQos := ov.QosConfiguration{}
