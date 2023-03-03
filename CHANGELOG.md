@@ -1,5 +1,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
+# [v8.2.0-13](unreleased)
+#### Major Changes
+
+1. Added support for darwin_arm64.
+
 # [v8.1.0-13]
 ### Notes
 - This release supports API4800 minimally where we can use OneView v8.10 with this SDK.
