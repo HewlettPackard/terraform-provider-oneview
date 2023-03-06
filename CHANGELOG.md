@@ -1,5 +1,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
+# [v8.2.0-13](unreleased)
+### Notes
+- This release supports API5000 minimally where we can use OneView v8.20 with this SDK.
+### Bug fixes & Enhancements:
+- [#518](https://github.com/HewlettPackard/terraform-provider-oneview/issues/518 )Logical Interconnect Group crash
+ 
+
 # [v8.1.0-13]
 ### Notes
 - This release supports API4800 minimally where we can use OneView v8.10 with this SDK.

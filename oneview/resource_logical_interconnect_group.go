@@ -1627,7 +1627,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_ddns"); ok {
 			interconnectSettings.EnableDdns = GetBoolPointer(val1.(bool))
 		}
-		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".fast_mac_cache_failover").(bool)
+		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".enable_fast_mac_cache_failover").(bool)
 		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
 			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
@@ -2329,12 +2329,12 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSetting := map[string]interface{}{
-		"type":                    logicalInterconnectGroup.EthernetSettings.Type,
-		"fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
-		"network_loop_protection": *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
-		"pause_flood_protection":  *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
-		"rich_tlv":                *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
-		"mac_refresh_interval":    logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
+		"type":                           logicalInterconnectGroup.EthernetSettings.Type,
+		"enable_fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
+		"network_loop_protection":        *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
+		"pause_flood_protection":         *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
+		"rich_tlv":                       *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
+		"mac_refresh_interval":           logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
 	}
 
 	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
@@ -2935,7 +2935,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_ddns"); ok {
 			interconnectSettings.EnableDdns = GetBoolPointer(val1.(bool))
 		}
-		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".fast_mac_cache_failover").(bool)
+		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".enable_fast_mac_cache_failover").(bool)
 		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
 			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
