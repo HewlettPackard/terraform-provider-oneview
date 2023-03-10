@@ -1,9 +1,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 # [v8.2.0-13](unreleased)
-#### Major Changes
 
+#### Major Changes
 1. Added support for darwin_arm64.
+
+### Notes
+- This release supports API5000 minimally where we can use OneView v8.20 with this SDK.
+### Bug fixes & Enhancements:
+- [#517](https://github.com/HewlettPackard/terraform-provider-oneview/issues/517 )Logical Interconnect Group crash
+- [#518](https://github.com/HewlettPackard/terraform-provider-oneview/issues/518 ) Support darwin_arm64
+ 
 
 # [v8.1.0-13]
 ### Notes
