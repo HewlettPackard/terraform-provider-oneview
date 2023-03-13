@@ -2136,6 +2136,10 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 					// initializing 0th location...
 					directoryy := map[string]interface{}{}
 
+					if da, ok := val.Args["directoryAuthentication"]; ok {
+						directoryy["directory_authentication"] = da
+					}
+
 					// adding attributes if they exists...
 					if dgl, ok := val.Args["directoryGenericLDAP"]; ok {
 						directoryy["directory_generic_ldap"] = dgl
