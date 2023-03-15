@@ -400,6 +400,7 @@ resource "oneview_server_profile" "SP" {
       }
 
       directory {
+        directory_authentication     = "defaultSchema"
         directory_generic_ldap       = false
         directory_server_address     = "ldap.example.com"
         directory_server_port        = 636
