@@ -154,7 +154,7 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}, qu
 		if err != nil {
 			return nil, err
 		}
-		log.Debugf("*** options => %+v", bytes.NewBuffer(OptionsJSON))
+
 		req, err = http.NewRequest(method.String(), reqUrl.String(), bytes.NewBuffer(OptionsJSON))
 	} else {
 		req, err = http.NewRequest(method.String(), reqUrl.String(), nil)
