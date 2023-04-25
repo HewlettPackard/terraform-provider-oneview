@@ -9,7 +9,7 @@ provider "oneview" {
 
 variable "hostname" {
   type    = string
-  default = "<storage_system_ip>"
+  default = "<storage_system_ip_2>"
 }
 
 variable "ss_username" {
@@ -52,4 +52,3 @@ resource "oneview_storage_system" "ss_inst" {
   description = "TestStorageSystem"
   uri         = data.oneview_storage_system.ss_inst.uri
 }
-
