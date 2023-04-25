@@ -16,7 +16,7 @@ variable "LE_name" {
 variable "EG_name" {
   type        = string
   description = "Enclosure Group Name"
-  default     = "Auto-EG"
+  default     = "<EG_default_name>"
 }
 
 # Fetching Enclosure Group
@@ -35,6 +35,6 @@ output "oneview_logical_enclosure_value" {
 }
 
 # Import an Exisiting Logical Enclosure
-# terraform import oneview_logical_enclosure.LogicalEnclosure <LE_Name>
+# terraform import oneview_logical_enclosure.LogicalEnclosure LE_Name
 #resource "oneview_logical_enclosure" "LogicalEnclosure" {
 #}
