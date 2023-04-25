@@ -14,33 +14,27 @@ provider "oneview" {
  description = "Enclosure IP Address"
   default = "https://x.x.x.x"
 }
-
 variable "enc_username" {
  type = "string"
  description = "Enclosure Username"
  default = "username"
 }
-
 variable "enc_password" {
  type = "string"
  description = "Enclosure Password"
  default = "password"
 }
-
 variable "enc_name" {
  type = "string"
  description = "Enclosure name"
  default = "Enc-1"
 }
-
 data "oneview_enclosure_group" "enclosure_group" {
         name = "TestEnclosureGroup_Renamed"
 }
-
 data "oneview_scope" "scope" {
         name = "test"
 }
-
 resource "oneview_enclosure" "enclosure_inst" {
 	enclosure_group_uri = "${data.oneview_enclosure_group.enclosure_group.uri}"
 	host_name = "${var.en_hostname}"
@@ -53,8 +47,7 @@ resource "oneview_enclosure" "enclosure_inst" {
 */
 
 #Importing Existing Enclosure 
-#terraform import oneview_enclosure.enclosure_inst <your_enclosure_name>
+#terraform import oneview_enclosure.enclosure_inst your_enclosure_name
 
 resource "oneview_enclosure" "import_enc" {
 }
-
