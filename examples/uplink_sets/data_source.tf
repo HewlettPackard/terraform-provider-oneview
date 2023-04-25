@@ -7,15 +7,26 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-# Example for data source
-data "oneview_uplink_set" "uplink_set" {
-  name = "Auto-UplinkSet-Updated"
+# Fetching Logical Interconnect
+data "oneview_logical_interconnect" "logical_interconnect" {
+  name = "LE-LIG"
 }
 
-output "oneview_uplink_set_value" {
-  value = data.oneview_uplink_set.uplink_set.uri
+# Fetching Network
+data "oneview_ethernet_network" "ethernetnetwork" {
+  name = "Auto_Ethernet_1"
 }
 
-#Importing Existing resource
-#resource "oneview_uplink_set" "import_us"{
-#}
+# Updates Uplink Set
+resource "oneview_uplink_set" "UplinkSet" {
+  name                              = "Auto-UplinkSetup-Updated"
+  type                              = "uplink-setV7"
+  logical_interconnect_uri          = data.oneview_logical_interconnect.logical_interconnect.uri
+  network_uris                      = [data.oneview_ethernet_network.ethernetnetwork.uri]
+  fc_network_uris                   = []
+  fcoe_network_uris                 = []
+  manual_login_redistribution_state = "NotSupported"
+  connection_mode                   = "Auto"
+  network_type                      = "Ethernet"
+  ethernet_network_type             = "Tagged"
+}
