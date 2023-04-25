@@ -7,12 +7,9 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-# Testing data source with subnet_id or network_id
-# subnet_id = "<subnet_id>"
-# network_id = "<network_id>"
 
 data "oneview_id_pools_ipv4_subnets" "ipv4_subnets" {
-  network_id = "<network_id>"
+  network_id = "10.1.0.0"
 }
 
 output "oneview_id_pools_ipv4_subnets_value" {
