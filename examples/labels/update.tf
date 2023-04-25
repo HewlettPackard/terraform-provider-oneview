@@ -10,19 +10,20 @@ provider "oneview" {
 
 # Fetching Network Resource Uri
 data "oneview_ethernet_network" "ethernetnetworks" {
-  name = "Auto-Ethernet-1"
+  name = "<network_name>"
 }
 
 # Updates created labels after running main.tf 
 resource "oneview_label" "anyName" {
         resource_uri = data.oneview_ethernet_network.ethernetnetworks.uri
         labels {
-                name = "NewLabel"
+                name = "<label_rename_1>"
         }
         labels{
-                name = "NewLabele2UpdatedwithoutUri"
+                name = "<label_rename_2>"
         }
       	labels {
-           name = "NewLabelsUpdate" 
+           name = "<label_name_3>" 
 	}	
 }
+
