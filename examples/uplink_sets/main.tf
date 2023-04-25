@@ -9,12 +9,12 @@ provider "oneview" {
 
 # Fetching Logical Interconnect
 data "oneview_logical_interconnect" "logical_interconnect" {
-  name = "Auto-LE-Auto-LIG"
+  name = "LE-LIG"
 }
 
 # Fetching Network
 data "oneview_ethernet_network" "ethernetnetwork" {
-  name = "Auto-Ethernet-1"
+  name = "Auto_Ethernet_1"
 }
 
 # Creating Uplink Set
@@ -33,7 +33,7 @@ resource "oneview_uplink_set" "UplinkSet" {
 
 # Example for data source
 data "oneview_uplink_set" "uplink_set" {
-  name = "test" //"Auto-UplinkSet"
+  name = "Auto-UplinkSet"
 }
 
 output "oneview_uplink_set_value" {
