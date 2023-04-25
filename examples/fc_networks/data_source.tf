@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Testing data source
 data "oneview_fc_network" "fc_network" {
-  name = "TestFCNetwork_Renamed"
+  name = "<fcn_rename>"
 }
 
 output "oneview_fc_network_value" {
