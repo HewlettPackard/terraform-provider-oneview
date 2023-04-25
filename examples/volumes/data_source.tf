@@ -9,10 +9,9 @@ provider "oneview" {
 
 # Datasource for Volume
 data "oneview_volume" "volume" {
-  name = "testvol"
+  name = "<re_name>"
 }
 
 output "oneview_volume_value" {
   value = data.oneview_volume.volume.uri
 }
-
