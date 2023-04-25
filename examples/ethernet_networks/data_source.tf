@@ -9,23 +9,19 @@ provider "oneview" {
 
 # Testing data source
 data "oneview_ethernet_network" "ethernetnetworks" {
-  name = "TestEthNetwork_terraform_Rename"
+  name = "<ethernet_rename>"
 }
 
 resource "oneview_ethernet_network" "ethernetnetwork_1" {
-  name    = "Auto-Ethernet-1"
-  ethernet_network_type = "Tagged"
-  type    = "ethernet-networkV4"
-  vlan_id = 101
+  name    = "<data_source_terraform1>"
+  ethernet_network_type = "<ethernet_network_type>"
+  type    = "<type>"
+  vlan_id = 200
 }
 
 resource "oneview_ethernet_network" "ethernetnetwork_2" {
-  name    = "Auto-Ethernet-2"
-  ethernet_network_type = "Tagged"
-  type    = "ethernet-networkV4"
-  vlan_id = 102
+  name    = "<data_source_terraform2>"
+  ethernet_network_type = "<ethernet_network_type>"
+  type    = "<type>"
+  vlan_id = 2001
 }
-
-#Importing Existing resource
-#resource "oneview_ethernet_network" "import_eth"{
-#}
