@@ -14,7 +14,7 @@ data "oneview_scope" "scope_obj" {
 
 # Extracting Storage Pool
 data "oneview_storage_pool" "st_pool" {
-  name = "CPG-SSD-AO"
+  name = "<storage_pool>"
 }
 
 # Creating a storage volume template
@@ -134,4 +134,3 @@ resource "oneview_storage_volume_template" "svt" {
   //       	type = "boolean"
   //	}]
 }
-
