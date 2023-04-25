@@ -9,10 +9,10 @@ provider "oneview" {
 
 # Updates Subnet Name
 resource "oneview_id_pools_ipv4_subnets" "ipv4_subnets" {
-  name = "RenamedSF"
-  network_id="<network_id>"
-  subnet_mask="<subnet_mask>"
-  gateway="<gateway>"
+  name          = "RenamedSF"
+  network_id    = "10.1.0.0"
+  subnet_mask   = "255.255.192.0"
+  gateway       = "10.1.0.1"
 }
 
 # Below resources are prerequisite for update_resource_allocator.tf
@@ -20,7 +20,7 @@ resource "oneview_id_pools_ipv4_subnets" "ipv4_subnets" {
 
 # Gets subnet details using network id
 data "oneview_id_pools_ipv4_subnets" "ipv4_subnets_data" {
-  network_id = "<network_id>"
+  network_id = "10.1.0.0"
 }
 
 # Creates Range of Ip Addresses for the subnet 
@@ -29,15 +29,17 @@ resource "oneview_ipv4_range" "ipv4range" {
   name = "IpRange"
   subnet_uri = data.oneview_id_pools_ipv4_subnets.ipv4_subnets_data.uri
   start_stop_fragments {
-    start_address = "<startAddress>"
-    end_address = "<endAddress>"
+    start_address = "10.1.19.56"
+    end_address = "10.1.19.61"
   }
 }
 
 # Associate Ethernet Resource with subnet
 resource "oneview_ethernet_network" "ethernetnetwork" {
-  name    = "SubnetEthernet"
-  type    = "ethernet-networkV4"
-  vlan_id = 157
+  name                  = "SubnetEthernet"
+  type                  = "ethernet-networkV4"
+  ethernet_network_type = "Tagged"
+  vlan_id               = 215
   subnet_uri = data.oneview_id_pools_ipv4_subnets.ipv4_subnets_data.uri
 }
+
