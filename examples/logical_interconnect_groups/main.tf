@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 data "oneview_ethernet_network" "eth" {
-  name = "Auto-Ethernet-1"
+  name = "<network_name>"
 }
 
 
