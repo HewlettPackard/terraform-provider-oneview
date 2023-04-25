@@ -40,4 +40,3 @@ resource "oneview_enclosure_group" "eg_inst" {
     logical_interconnect_group_name = "${var.LIG_name}"
   }
 }
-
