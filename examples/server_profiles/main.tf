@@ -9,24 +9,25 @@ provider "oneview" {
 
 # Testing data source
 data "oneview_ethernet_network" "ethernetnetworks1" {
-  name = "TestNetwork_1"
+  name = "<network_name_1>"
 }
 
 data "oneview_ethernet_network" "ethernetnetworks2" {
-  name = "iscsi_nw"
+  name = "<network_name_2>"
 }
 
 data "oneview_scope" "scope" {
-  name = "Auto-Scope"
+  name = "<scope>"
 }
 
 # Create Server Profile with local storage
 resource "oneview_server_profile" "SPWithLocalStorage" {
-  name               = "TestSP_with_local_storage"
-  hardware_name      = "0000A66101, bay 5"
-  type               = "ServerProfileV12"
-  enclosure_group    = "Auto-EG"
-  initial_scope_uris = [data.oneview_scope.scope.uri]
+  name                  = "TestSP_with_local_storage"
+  hardware_name         = "<server_hardware_name>"
+  type                  = "ServerProfileV12"
+  server_hardware_type  = "<server_hardware_type_terraform>"
+  enclosure_group       = "<enclosure_group_name>"
+  initial_scope_uris    = [data.oneview_scope.scope.uri]
   bios_option {
     manage_bios = true
     overridden_settings {
@@ -66,7 +67,7 @@ resource "oneview_server_profile" "SPWithLocalStorage" {
       id             = 1
       name           = "Management-01"
       isolated_trunk = false
-      managed        = true
+      # managed        = true
       function_type  = "Ethernet"
       network_uri    = data.oneview_ethernet_network.ethernetnetworks1.uri
       port_id        = "Auto"
@@ -277,7 +278,7 @@ resource "oneview_server_profile" "SP" {
 # Enclosure group and affinity are not supported for DL server
 resource "oneview_server_profile" "SPWithDL" {
   name                 = "TestSP_DL_Server"
-  hardware_name        = "<ilo_ip>"  
+  hardware_name        = "{ilo_ip}"  
   boot_mode {
     manage_mode     = true
     mode            = "UEFIOptimized"
