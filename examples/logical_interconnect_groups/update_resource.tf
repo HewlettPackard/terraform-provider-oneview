@@ -9,7 +9,7 @@ provider "oneview" {
 
 # GET THE ETHERNET NETWORK TO GET THE URI TO ASSIGN TO UPLINKSET
 data "oneview_ethernet_network" "eth_net" {
-  name = "Auto-Ethernet-1"
+  name = "<network_name>"
 }
 
 # UPDATING LOGICAL INTERCONNECT GROUP
@@ -77,4 +77,3 @@ resource "oneview_logical_interconnect_group" "logical_interconnect_group" {
     consistency_checking             = "ExactMatch"
   }
 }
-
