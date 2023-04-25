@@ -18,8 +18,8 @@ resource "oneview_ipv4_range" "ipv4range" {
   name = "IpRange-renamed"
   subnet_uri = data.oneview_id_pools_ipv4_subnets.ipv4_subnets_data.uri
   start_stop_fragments {
-    start_address = "<start_address>"
-    end_address = "<end_address>"
+    start_address = "<start_address_2>"
+    end_address = "<end_address_4>"
   }
 }
 
