@@ -11,5 +11,5 @@ provider "oneview" {
 resource "oneview_appliance_time_and_locale" "timelocale" {
     locale = "en_US.UTF-8"
     timezone = "UTC"
-    ntp_servers = ["16.110.135.123", "16.85.40.52"]
+    ntp_servers = [ "<ntp_server>" , "<ntp_server2>" ]
 }
