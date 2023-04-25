@@ -14,16 +14,16 @@ data "oneview_scope" "scope_obj" {
 
 // Adds Rack server to the appliance
 // Licensing can be OneView or OneviewNoiLO for Managed
-resource "oneview_server_hardware" "sh" {
-  configuration_state = "Managed"
-  hostname            = "<serverIp>"
-  username            = "dcs"
-  password            = "dcs"
-  licensing_intent    = "OneView"
-  initial_scope_uris  = [data.oneview_scope.scope_obj.uri]
-}
+# resource "oneview_server_hardware" "sh" {
+#   configuration_state = "Managed"
+#   hostname            = "#serverIp#"
+#   username            = "dcs"
+#   password            = "dcs"
+#   licensing_intent    = "OneView"
+#   initial_scope_uris  = [data.oneview_scope.scope_obj.uri]
+# }
 
 // To import server hardware you can use server hardware name. 
-// For below example run terraform import oneview_server_hardware.sh <name-of-the-server>
-// resource "oneview_server_hardware" "sh" {
-// }
+// For below example run terraform import oneview_server_hardware.sh #name-of-the-server#
+resource "oneview_server_hardware" "sh" {
+}
