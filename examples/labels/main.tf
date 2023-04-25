@@ -7,22 +7,22 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-
-# Fetching Network Resource Uri
+# Fetching Newtork Resource URI
 data "oneview_ethernet_network" "ethernetnetworks" {
   name = "<network_name>"
 }
 
-# Updates created labels after running main.tf 
+# Create Labels for the Ethernet Network
 resource "oneview_label" "anyName" {
-        resource_uri = data.oneview_ethernet_network.ethernetnetworks.uri
+	resource_uri = data.oneview_ethernet_network.ethernetnetworks.uri
         labels {
-                name = "<label_rename_1>"
+          	name = "<label_name_1>"
         }
-        labels{
-                name = "<label_rename_2>"
-        }
-      	labels {
-           name = "<label_name_3>" 
-	}	
+	labels{
+		name = "<label_name_2>"
+	}
 }
+/* Importing Existing resource
+resource "oneview_label" "anyName" {
+}
+*/
