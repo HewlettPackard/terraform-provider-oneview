@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Updates the imported resource from main.tf
 resource "oneview_storage_pool" "storage_pool" {
-  name       = "CPG-SSD-AO"
+  name       = "<storage_pool_terraform>"
   is_managed = true
 }
 
