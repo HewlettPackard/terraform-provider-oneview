@@ -18,8 +18,8 @@
 
 ## HPE OneView
 
-|                              Endpoints                              |  Verb  |       V3400        | v3600              | v3800              | v4000              |       v4200        |         v4400        |        v4600                | v4800    |v5000|
-| :-----------------------------------------------------------------: | :----: | :----------------: | :-----------------: | :-----------------: | :-----------------: | :-----------------:| :-----------------:|:--------------------|:--------------------|:-----------------:|
+|                              Endpoints                              |  Verb  |       V3400        | v3600              | v3800              | v4000              |       v4200        |         v4400        |        v4600                | v4800    |v5000|v5000|
+| :-----------------------------------------------------------------: | :----: | :----------------: | :-----------------: | :-----------------: | :-----------------: | :-----------------:| :-----------------:|:--------------------|:--------------------|:-----------------:|:-----------------:|
 | **Appliance SNMPv1 Trap Destinations**                |
 | <sub>/rest/appliance/trap-destinations</sub>             |  POST  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|:white_check_mark:|:white_check_mark:|
 | <sub>/rest/appliance/trap-destinations/{id}}</sub>          |  GET   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:| :white_check_mark:|:white_check_mark:|:white_check_mark:|:white_check_mark:|
