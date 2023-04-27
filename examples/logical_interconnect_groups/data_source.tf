@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Test for data source  
 data "oneview_logical_interconnect_group" "logical_interconnect_group" {
-  name = "TestLIG5"
+  name = "Auto-LIG"
 }
 
 output "lig_value" {
@@ -17,6 +17,7 @@ output "lig_value" {
 }
 
 # Importing an existing resource from appliance
-resource "oneview_logical_interconnect_group" "import_lig" {
-}
 
+# Commenting for now -----------
+# resource "oneview_logical_interconnect_group" "import_lig" {
+# }

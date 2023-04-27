@@ -8,15 +8,15 @@ provider "oneview" {
 }
 
 resource "oneview_scope" "scope" {
-  name        = "Auto-Scope"
+  name        = "test-scope"
   description = "Testing creation of scope"
-  type        = "ScopeV3"
+  type        = "<type>"
 }
 
 # Updates the resource created from main.tf
 resource "oneview_scope" "scope_inst" {
-  type               = "ScopeV3"
-  name               = "TestScope_Renamed"
+  type               = "<type>"
+  name               = "<scope_rename>"
   description        = "Rename the Scope"
   initial_scope_uris = [oneview_scope.scope.uri]
   depends_on         = [oneview_scope.scope]

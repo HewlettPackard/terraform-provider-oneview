@@ -15,4 +15,3 @@ data "oneview_enclosure" "enclosure" {
 output "oneview_enclosure_value" {
   value = data.oneview_enclosure.enclosure.uuid
 }
-

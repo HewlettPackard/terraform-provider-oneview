@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Reads Storage Pool resource
 data "oneview_storage_pool" "storage_pool" {
-  name = "CPG-SSD-AO"
+  name = "<storage_pool_terraform>"
 }
 
 output "oneview_storage_pool_value" {

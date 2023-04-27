@@ -16,7 +16,7 @@ variable "LE_name" {
 variable "EG_name" {
   type        = string
   description = "Enclosure Group Name"
-  default     = "Auto-EG"
+  default     = "<EG_default_name>"
 }
 
 # Fetching Enclosure Group
@@ -31,4 +31,3 @@ resource "oneview_logical_enclosure" "LogicalEnclosure" {
   enclosure_group_uri = data.oneview_enclosure_group.enclosure_group.uri
   update_type         = "updateByGroup"
 }
-

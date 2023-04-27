@@ -21,4 +21,3 @@ data "oneview_enclosure_group" "enclosure_group" {
 output "oneview_enclosure_group_value" {
   value = data.oneview_enclosure_group.enclosure_group.uri
 }
-

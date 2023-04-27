@@ -12,7 +12,7 @@ provider "oneview" {
 
 data "oneview_server_certificate" "sc" {
   #        alias_name = "hm_cert"
-  remote_ip = "<Server_IP>"
+  remote_ip = "<remote_server_terra>"
 }
 
 output "oneview_server_certificate_value" {
@@ -29,4 +29,3 @@ resource "oneview_server_certificate" "ServerCertificate" {
     alias_name  = "TestServerCertificate"
   }
 }
-

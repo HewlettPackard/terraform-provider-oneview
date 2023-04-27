@@ -18,7 +18,7 @@ You can find the latest supported HPE OneView Terraform Provider SDK [here](http
 
 ## What's New
 
-HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 5000 (OneView v8.2)
+HPE OneView Terraform SDK library extends support of the SDK to OneView REST API version 5200 (OneView v8.3)
 
 Please refer to [notes](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/CHANGELOG.md) for more information on the changes , features supported and issues fixed in this version
 ### Migration to HPE OneView 7.0 from HPE OneView 6.x ( Non-Synergy appliance )
@@ -30,7 +30,7 @@ With server hardware migration , corresponding server profile will also get migr
 Post migration do run terraform refresh to sync with migrated resources.
 
     Steps: 
-    -  Point your <TF_VAR_endpoint> to HPE OneView 8.2.
+    -  Point your <TF_VAR_endpoint> to HPE OneView 8.3.
     -  Run `terraform refresh` to sync with  migrated resource 
   
 2. Idempotency issue in server profile after migration.
@@ -52,10 +52,10 @@ The light weight containerized version of the HPE OneView SDK for Terraform is a
 
 ```bash
 # Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
-$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v8.2.0-13-OV8.2
+$ docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v8.3.0-13-OV8.3
 # Run docker commands below given, which  will in turn create a sh session 
 # where you can create files, issue commands and execute the examples.
-$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v8.2.0-13-OV8.2 /bin/sh
+$ docker run -it docker pull hewlettpackardenterprise/hpe-oneview-sdk-for-terraform:v8.3.0-13-OV8.3 /bin/sh
 ```
 
 ### Local Setup
@@ -156,7 +156,7 @@ $ terraform apply
 ```
 Note: Only a single terraform file (example file) should exist in the home folder to execute the above mentioned three commands. Once the resource is tested move that file to examples folder. 
 
-Note: Currently this SDK supports OneView API 5000 minimally, where we can test OneView API 5000 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
+Note: Currently this SDK supports OneView API 5200 minimally, where we can test OneView API 5200 version with this SDK. If API version used is not supported then error will be thrown. If API version is not provided then appliance's maximum supported API version will be used. 
 
 ## API Implementation
 
@@ -200,7 +200,7 @@ This feedback is important for us to deliver a useful product.
 
 [HPE OneView Firmware Management White Paper](http://hpe.com/info/OneView/docs)
 
-Note: Currently this SDK supports OneView API 5000 minimally where we can test OneView API 5000 version with this SDK. No new fields have been added/deleted to support API5000 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
+Note: Currently this SDK supports OneView API 5200 minimally where we can test OneView API 5200 version with this SDK. No new fields have been added/deleted to support API5200 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ### HPE OneView Community
 

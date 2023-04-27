@@ -9,12 +9,12 @@ provider "oneview" {
 
 # Fetching Network Resource URI
 data "oneview_ethernet_network" "ethernetnetworks" {
-  name = "Auto-Ethernet-1"
+  name = "<network_name>"
 }
 
 # Testing data source
 data "oneview_label" "lablesDataSource" {
-  resource_uri = data.oneview_ethernet_network.uri
+  resource_uri = data.oneview_ethernet_network.ethernetnetworks.uri
 }
 
 output "oneview_label_value" {

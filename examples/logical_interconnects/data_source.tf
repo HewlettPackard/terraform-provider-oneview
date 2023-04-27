@@ -15,4 +15,3 @@ data "oneview_logical_interconnect" "logical_interconnect" {
 output "oneview_logical_interconnect_value" {
   value = data.oneview_logical_interconnect.logical_interconnect.uri
 }
-

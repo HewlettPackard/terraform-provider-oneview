@@ -15,4 +15,3 @@ resource "oneview_server_certificate" "ServerCertificate" {
     alias_name  = "TestServerCertificate"
   }
 }
-
