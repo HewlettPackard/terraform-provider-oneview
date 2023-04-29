@@ -9,12 +9,12 @@ provider "oneview" {
 
 # Fetching Logical Interconnect
 data "oneview_logical_interconnect" "logical_interconnect" {
-  name = "Auto-LE-Auto-LIG"
+  name = "LE-LIG"
 }
 
 # Fetching Network
 data "oneview_ethernet_network" "ethernetnetwork" {
-  name = "Auto-Ethernet-1"
+  name = "Auto_Ethernet_1"
 }
 
 # Updates Uplink Set

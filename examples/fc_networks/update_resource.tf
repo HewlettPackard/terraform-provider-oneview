@@ -8,14 +8,13 @@ provider "oneview" {
 }
 
 data "oneview_scope" "scope_obj" {
-  name = "Auto-Scope"
+  name = "<scope>"
 }
 
 # Updates the created resource with local name FCNetwork and scopes
 resource "oneview_fc_network" "FCNetwork" {
-  name               = "TestFCNetwork_Renamed"
-  fabric_type        = "FabricAttach"
-  type               = "fc-networkV4"
+  name               =  "<fcn_rename>"
+  fabric_type        =  "<fabric_type>"
+  type               =  "<type>"
   initial_scope_uris = [data.oneview_scope.scope_obj.uri]
 }
-

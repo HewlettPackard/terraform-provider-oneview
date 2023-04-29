@@ -8,16 +8,16 @@ provider "oneview" {
 }
 
 data "oneview_scope" "scope" {
-  name = "Scope Test"
+  name = "<scope>"
 }
 
 # Updates initial scope uris and name of the resource created from main.tf
 resource "oneview_ethernet_network" "ethernetnetwork" {
-  name                  = "TestEthNetwork_terraform_Rename"
-  ethernet_network_type = "Tagged"
+  name                  = "<ethernet_rename>"
+  ethernet_network_type = "<ethernet_network_type>"
   initial_scope_uris    = [data.oneview_scope.scope.uri]
-  type                  = "ethernet-networkV4"
-  vlan_id               = 100
+  type                  = "<type>"
+  vlan_id               = 200
 }
 /*
 resource "oneview_ethernet_network" "ethernetnetwork_1" {
@@ -34,3 +34,4 @@ resource "oneview_ethernet_network" "ethernetnetwork_2" {
   vlan_id = 102
 }
 */
+

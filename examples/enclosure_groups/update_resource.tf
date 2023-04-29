@@ -45,8 +45,7 @@ resource "oneview_enclosure_group" "eg_inst" {
     interconnect_bay               = 6
     logical_interconnect_group_name = "${var.LIG_name}"
   }
-  interconnect_bay_mapping_count = 2
-  type                           = "EnclosureGroupV8"
+  # interconnect_bay_mapping_count = 2
+  # type                           = "EnclosureGroupV8"
   stacking_mode                  = "Enclosure"
 }
-

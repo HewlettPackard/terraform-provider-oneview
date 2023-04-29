@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Testing data source
 data "oneview_fcoe_network" "fcoe_network_obj" {
-  name = "TestFCoENetwork_Terraform_Renamed"
+  name = "<network_rename>"
 }
 
 output "oneview_fcoe_network" {

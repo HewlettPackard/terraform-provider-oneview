@@ -16,7 +16,7 @@ variable "LE_name" {
 variable "EG_name" {
   type        = string
   description = "Enclosure Group Name"
-  default     = "Auto-EG"
+  default     = "<EG_default_name>"
 }
 
 # Fetching Enclosure Group

@@ -7,7 +7,7 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 data  "oneview_appliance_snmpv3_user" "snmpv3user" {
-  user_name="user"    
+  user_name = "<user_name_terra>"    
 }
 output "oneview_appliance_snmpv3_user_uri" {
   value = data.oneview_appliance_snmpv3_user.snmpv3user.uri

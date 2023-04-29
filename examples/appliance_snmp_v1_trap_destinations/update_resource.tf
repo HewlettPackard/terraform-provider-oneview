@@ -9,8 +9,8 @@ provider "oneview" {
 
 # Updates port to 172 and Community String to "Test5"
 resource "oneview_appliance_snmp_v1_trap_destinations" "snmp_v1" {
-    destination_id = "81"
-    community_string = "Test5"
-    destination = "192.0.16.4"
+    destination_id = "<destination_id>"
+    community_string = "<community_string_rename>"
+    destination = "<destination_address>"
     port = 172
 }

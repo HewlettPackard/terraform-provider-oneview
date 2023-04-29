@@ -8,27 +8,28 @@ provider "oneview" {
 }
 
 data "oneview_ethernet_network" "ethernetNetwork" {
-  name = "mgmt_untagged"
+  name = "<network_1>"
 }
 
 data "oneview_ethernet_network" "ethernetnetworks2" {
-  name = "iscsi_nw"
+  name = "<network_2>"
 }
 
 data "oneview_fc_network" "fcNetwork" {
-  name = "FC_FA"
+  name = "<fc_network>"
 }
 
 data "oneview_scope" "scope" {
-  name = "test"
+  name = "<scope>"
 }
 
+/*
 # Creates server profile template with connections
 resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections" {
   name                 = "TestServerProfileTemplate_with_connections"
   type                 = "ServerProfileTemplateV8"
-  enclosure_group      = "EG"
-  server_hardware_type = "SY 480 Gen10 1"
+  enclosure_group      = "Auto-EG Renamed"
+  server_hardware_type = "SY 480 Gen9 1"
   initial_scope_uris   = [data.oneview_scope.scope.uri]
 
   bios_option {
@@ -103,7 +104,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
       function_type  = "iSCSI"
       id             = 137
       isolated_trunk = false
-      managed        = true
+      # managed        = true
       network_uri    = "/rest/ethernet-networks/3d82cdf2-622f-459e-9742-3669d4d55867"
       port_id        = "Mezz 3:2-b"
       requested_mbps = "2500"
@@ -129,15 +130,15 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
 
   }
 }
+*/
 
 
-/*
 # Creates server profile template with local storage
 resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorage" {
-  name                 = "TestServerProfileTemplate_with_local_storage"
-  type                 = "ServerProfileTemplateV8"
-  enclosure_group      = "EG"
-  server_hardware_type = "SY 480 Gen9 1"
+  name                 = "<server_profile_template_name>"
+  type                 = "<type_terraform>"
+  enclosure_group      = "<enclosure_group_name_terraform>"
+  server_hardware_type = "<server_hardware_type_name_terraform>"
   initial_scope_uris   = [data.oneview_scope.scope.uri]
   bios_option {
     manage_bios = true
@@ -161,7 +162,7 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
       drive_write_cache        = "Unmanaged"
       initialize               = true
       import_configuration     = false
-      mode                     = "Mixed"
+      mode                     = "RAID"
       predictive_spare_rebuild = "Unmanaged"
       logical_drives {
         accelerator         = "Unmanaged"
@@ -175,6 +176,9 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithLocalStorag
   }
 }
 
+
+
+/*
 
 # Creates server profile template with san storage
 resource "oneview_server_profile_template" "ServerProfileTemplateWithSanStorage" {

@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Datasource for server profile template
 data "oneview_server_profile_template" "server_profile_template" {
-  name = "TestServerProfileTemplateRenamed"
+  name = "<spt_rename>"
 }
 
 output "oneiew_server_hardware_type_value" {

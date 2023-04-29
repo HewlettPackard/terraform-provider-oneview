@@ -15,7 +15,6 @@ resource "oneview_enclosure" "import_enc" {
   op                  = "replace"
   path                = "/name"
   value               = "0000A66101 Renamed"
-  name                = "0000A66101"
+  name                = "0000A66101 Renamed"
   enclosure_group_uri = data.oneview_enclosure.enclosure.enclosure_group_uri
 }
-
