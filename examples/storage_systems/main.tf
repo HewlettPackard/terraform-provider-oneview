@@ -37,7 +37,7 @@ resource "oneview_server_certificate" "ServerCertificate" {
   certificate_details {
     base64_data = element(tolist(data.oneview_server_certificate.sc.certificate_details[*].base64_data), 0)
     type        = "CertificateDetailV2"
-    alias_name  = "TestServerCertificate"
+    alias_name  = "TestServerCertificate_storage_system"
   }
 }
 
