@@ -16,7 +16,7 @@ variable "LIG_name" {
 variable "enc_grp" {
   type        = string
   description = "Name of the Enclosure Group"
-  default     = "EG"
+  default     = "Auto-EG"
 }
 
 variable "scope_name_1" {

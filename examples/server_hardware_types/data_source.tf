@@ -8,7 +8,8 @@ provider "oneview" {
 }
 
 data "oneview_server_hardware_type" "server_hardware_type" {
-  name = "<server_hardware_type_name_terraform>"
+  name = "SY 480 Gen9 1"
+  platform = "oneview"
 }
 
 output "oneiew_server_hardware_type_value" {
