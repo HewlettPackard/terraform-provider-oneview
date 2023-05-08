@@ -9,7 +9,8 @@ provider "oneview" {
 
 # Testing data source
 data "oneview_firmware_drivers" "drivers" {
-  id = "HPE Synergy Service Pack,SY-2021.11.01"
+  name = "Gen10 Service Pack for ProLiant"
+  version="2022.09.01.00"
 }
 
 output "firmware_drivers_value" {

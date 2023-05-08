@@ -20,10 +20,7 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 		Read: dataSourceFirmwareDriversRead,
 
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
+
 			"category": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -46,7 +43,7 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 			},
 			"name": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"state": {
 				Type:     schema.TypeString,
@@ -224,7 +221,7 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 			},
 			"version": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"xml_key_name": {
 				Type:     schema.TypeString,
@@ -236,8 +233,10 @@ func dataSourceFirmwareDrivers() *schema.Resource {
 
 func dataSourceFirmwareDriversRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	id := d.Get("id").(string)
-	firmware, err := config.ovClient.GetFirmwareBaselineByNameandVersion(id)
+	name := d.Get("name").(string)
+	version := d.Get("version").(string)
+	id := name + version
+	firmware, err := config.ovClient.GetFirmwareBaselineByNameandVersion(name, version)
 
 	if err != nil {
 		d.SetId("")
