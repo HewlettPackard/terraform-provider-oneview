@@ -1,6 +1,6 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
-# [v.8.0-13]
+# [v.8.3.0-13]
 
 ### Notes
 - This release supports API5200 minimally where we can use OneView v8.30 with this SDK.

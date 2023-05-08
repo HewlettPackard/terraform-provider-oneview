@@ -14,7 +14,7 @@ HPE OneView makes it simple to deploy and manage today’s complex hybrid cloud 
 
 The HPE OneView Terraform SDK enables developers to easily build integrations and scalable solutions with HPE OneView.
 
-You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v8.0.0-13)
+You can find the latest supported HPE OneView Terraform Provider SDK [here](https://github.com/HewlettPackard/terraform-provider-oneview/releases/tag/v8.3.0-13)
 
 ## What's New
 
@@ -48,7 +48,7 @@ In HPE OneView 7.0 the server hardware type field is not compatible with HPE One
 HPE OneView SDK for Terraform can be installed from Source or Docker container installation methods. You can either use a docker container which will have the HPE OneView SDK for terraform installed or perform local installation manually.
 
 ### Docker Setup
-The light weight containerized version of the HPE OneView SDK for Terraform is available in the [Docker Store](https://store.docker.com/community/images/hewlettpackardenterprise/hewlettpackardenterprise/hpe-oneview-sdk-for-terraform). The Docker Store image tag consist of two sections: <sdk_version-OV_version>
+The light weight containerized version of the HPE OneView SDK for Terraform is available in the [Docker Store](https://hub.docker.com/repository/docker/hewlettpackardenterprise/hpe-oneview-sdk-for-terraform/general). The Docker Store image tag consist of two sections: <sdk_version-OV_version>
 
 ```bash
 # Download and store a local copy of oneview-sdk-for-terraform and use it as a Docker Image.
