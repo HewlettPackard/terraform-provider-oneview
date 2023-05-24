@@ -7,7 +7,7 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-# Creation of Server Profile without template
+#Creation of Server Profile without template
 resource "oneview_server_profile" "SP" {
   name            = "Test-SP"
   hardware_name   = "0000A66102, bay 3"
@@ -82,20 +82,28 @@ resource "oneview_server_profile" "SP" {
   }
 }
 
-/*
+
 # Patch request - Server profile Refresh
-resource "oneview_server_profile" "SP" {
-        update_type = "patch"
-        options = [
-        {
-          op = "replace"
-          path = "/refreshState"
-          value = "RefreshPending"
+/*
+resource "oneview_server_profile" "SP" {        
+ 
+  name = "SP"
+  type = "ServerProfileV12"        
+  enclosure_group = "EG"
+  hardware_name = "0000A66101, bay 3"
+
+ operation_type {
+          name = "reapply_SAN_storagesdsd"        
+          
         }
-        ]
-        name = "TestSP_Renamed"
-        type = "ServerProfileV12"        
-        enclosure_group = "EG-Synergy-Local"
-        hardware_name = "Synergy-Encl-2, bay 8"
+  operation_type {
+          name = "reapply_local_storage"        
+          
+        }       
+        
 }
 */
+
+
+
+

@@ -931,30 +931,21 @@ func resourceServerProfile() *schema.Resource {
 					return
 				},
 			},
-			"options": {
-				Optional: true,
+			"operation_type": {
 				Type:     schema.TypeSet,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"op": {
-							Required: true,
-							Type:     schema.TypeString,
-						},
-						"path": {
-							Required: true,
+						"name": {
+							Optional: true,
 							Type:     schema.TypeString,
 						},
 						"value": {
-							Required: true,
+							Optional: true,
 							Type:     schema.TypeString,
 						},
 					},
 				},
-			},
-			"update_type": {
-				Type:     schema.TypeString,
-				Default:  "put",
-				Optional: true,
 			},
 			"associated_server": {
 				Type:     schema.TypeString,
@@ -2719,23 +2710,47 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	updateType := d.Get("update_type").(string)
+	patchOperation := map[string][]string{
 
-	if updateType == "patch" {
+		"update_from_template":          {"replace", "/templateCompliance", "Compliant"},
+		"update_from_template_stage":    {"replace", "/templateCompliance", "PendingCompliance"},
+		"cancel_update_from_template":   {"replace", "/templateCompliance", "PendingComplianceCancelled"},
+		"refresh":                       {"replace", "/refreshState", "RefreshPending"},
+		"reapply_firmware":              {"replace", "/firmware/reapplyState", "ApplyPending"},
+		"reapply_adpater_boot_settings": {"replace", "/serverHardwareReapplyState", "ApplyPending"},
+		"rename_logical_drive":          {"replace", "/localStorage/controllers/{deviceSlot}/logicalDrives/{currentLogicalDriveName}/name"},
+		"reapply_local_storage":         {"replace", "/localStorage/reapplyState", "ApplyPending"},
+		"reapply_SAN_storage":           {"replace", "/sanStorage/reapplyState", "ApplyPending"},
+		"reapply_bios_settings":         {"replace", "/bios/reapplyStatee", "ApplyPending"},
+		"regenerate_CHAP_secrets":       {"replace", "/templateCompliance"},
+		"reapply_connection":            {"replace", "/sanstorage/regenerateChapSecrets", "Compliant"},
+		"reapply_ilo_settings":          {"replace", "/managementProcessor/reapplyState", "ApplyPending"},
+	}
+
+	if val, ok := d.GetOk("operation_type"); ok {
 		serverProfile := ov.ServerProfile{
 			Name: d.Get("name").(string),
 			Type: d.Get("type").(string),
 			URI:  utils.NewNstring(d.Get("uri").(string)),
 		}
 
-		rawOptions := d.Get("options").(*schema.Set).List()
+		rawOptions := val.(*schema.Set).List()
 		options := make([]ov.Options, len(rawOptions))
 		for i, rawData := range rawOptions {
 			option := rawData.(map[string]interface{})
-			options[i] = ov.Options{
-				Op:    option["op"].(string),
-				Path:  option["path"].(string),
-				Value: option["value"].(string)}
+			if patchOp, ok := patchOperation[option["name"].(string)]; ok {
+				if option["name"] == "" {
+					log.Printf("operation not found %s", option["name"].(string))
+					return nil
+				}
+
+				options[i] = ov.Options{
+
+					Op:    patchOp[0],
+					Path:  patchOp[1],
+					Value: patchOp[2],
+				}
+			}
 		}
 
 		error := config.ovClient.PatchServerProfile(serverProfile, options)
@@ -2744,9 +2759,8 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			d.SetId("")
 			return error
 		}
-	}
 
-	if updateType == "put" {
+	} else {
 		serverProfile, err := config.ovClient.GetProfileByName(d.Id())
 
 		var serverHardware ov.ServerHardware
