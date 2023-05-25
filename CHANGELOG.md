@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Bug fixes & Enhancements:
 - [#523](https://github.com/HewlettPackard/terraform-provider-oneview/issues/523 )oneview_firmware_drivers data source is broken
 - [#524](https://github.com/HewlettPackard/terraform-provider-oneview/issues/524 ) Data object retrieval for firmware_drivers bug
+- [#535](https://github.com/HewlettPackard/terraform-provider-oneview/issues/535 ) Crash in logical interconnect group
 
 # [v.8.3.0-13]
 
