@@ -18,6 +18,7 @@ import (
 	"log"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -940,9 +941,25 @@ func resourceServerProfile() *schema.Resource {
 							Optional: true,
 							Type:     schema.TypeString,
 						},
-						"value": {
+						"logical_drive_value": {
 							Optional: true,
-							Type:     schema.TypeString,
+							Type:     schema.TypeSet,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"device_slot_name": {
+										Optional: true,
+										Type:     schema.TypeString,
+									},
+									"current_logical_drive_name": {
+										Optional: true,
+										Type:     schema.TypeString,
+									},
+									"new_logical_drive_name": {
+										Optional: true,
+										Type:     schema.TypeString,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -2717,33 +2734,53 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		"cancel_update_from_template":   {"replace", "/templateCompliance", "PendingComplianceCancelled"},
 		"refresh":                       {"replace", "/refreshState", "RefreshPending"},
 		"reapply_firmware":              {"replace", "/firmware/reapplyState", "ApplyPending"},
+		"reapply_connection":            {"replace", "/connectionSettings/reapplyState", "ApplyPending"},
 		"reapply_adpater_boot_settings": {"replace", "/serverHardwareReapplyState", "ApplyPending"},
-		"rename_logical_drive":          {"replace", "/localStorage/controllers/{deviceSlot}/logicalDrives/{currentLogicalDriveName}/name"},
+		"rename_logical_drive":          {"replace", "/localStorage/controllers/{deviceSlot}/logicalDrives/{currentLogicalDriveName}/name", "newLogicalDriveName"},
 		"reapply_local_storage":         {"replace", "/localStorage/reapplyState", "ApplyPending"},
 		"reapply_SAN_storage":           {"replace", "/sanStorage/reapplyState", "ApplyPending"},
 		"reapply_bios_settings":         {"replace", "/bios/reapplyStatee", "ApplyPending"},
-		"regenerate_CHAP_secrets":       {"replace", "/templateCompliance"},
-		"reapply_connection":            {"replace", "/sanstorage/regenerateChapSecrets", "Compliant"},
+		"regenerate_CHAP_secrets":       {"replace", "/sanstorage/regenerateChapSecrets", ""},
 		"reapply_ilo_settings":          {"replace", "/managementProcessor/reapplyState", "ApplyPending"},
 	}
-
+	// Check for patch operation
 	if val, ok := d.GetOk("operation_type"); ok {
+		deviceSlotName := ""
+		currentLogicalDriveName := ""
+		newLogicalDriveName := ""
+
 		serverProfile := ov.ServerProfile{
 			Name: d.Get("name").(string),
 			Type: d.Get("type").(string),
 			URI:  utils.NewNstring(d.Get("uri").(string)),
 		}
-
 		rawOptions := val.(*schema.Set).List()
 		options := make([]ov.Options, len(rawOptions))
 		for i, rawData := range rawOptions {
 			option := rawData.(map[string]interface{})
+			// Check if rename of logical drive operation is there
+			if logicalDriveValue, ok := option["logical_drive_value"]; ok {
+				logicalDriveValueList := logicalDriveValue.(*schema.Set).List()
+				for _, raw := range logicalDriveValueList {
+					rawlgdValue := raw.(map[string]interface{})
+					deviceSlotName = rawlgdValue["device_slot_name"].(string)
+					currentLogicalDriveName = rawlgdValue["current_logical_drive_name"].(string)
+					newLogicalDriveName = rawlgdValue["new_logical_drive_name"].(string)
+				}
+			}
 			if patchOp, ok := patchOperation[option["name"].(string)]; ok {
 				if option["name"] == "" {
 					log.Printf("operation not found %s", option["name"].(string))
 					return nil
 				}
+				//If operation is rename of logical drive replace the device slot , logical drive name from the path
+				if option["name"] == "rename_logical_drive" {
+					myString := patchOp[1]
+					replacer := strings.NewReplacer("{deviceSlot}", deviceSlotName, "{currentLogicalDriveName}", currentLogicalDriveName)
+					patchOp[1] = replacer.Replace(myString)
+					patchOp[2] = strings.Replace(patchOp[2], "newLogicalDriveName", newLogicalDriveName, 1)
 
+				}
 				options[i] = ov.Options{
 
 					Op:    patchOp[0],
@@ -2752,14 +2789,13 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 				}
 			}
 		}
-
 		error := config.ovClient.PatchServerProfile(serverProfile, options)
 		d.SetId(d.Get("name").(string))
 		if error != nil {
 			d.SetId("")
 			return error
 		}
-
+		// Put operation is asked and not patch operation
 	} else {
 		serverProfile, err := config.ovClient.GetProfileByName(d.Id())
 

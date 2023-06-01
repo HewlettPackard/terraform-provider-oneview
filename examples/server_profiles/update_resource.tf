@@ -83,7 +83,7 @@ resource "oneview_server_profile" "SP" {
 }
 
 
-# Patch request - Server profile Refresh
+# Patch request 
 /*
 resource "oneview_server_profile" "SP" {        
  
@@ -93,14 +93,22 @@ resource "oneview_server_profile" "SP" {
   hardware_name = "0000A66101, bay 3"
 
  operation_type {
-          name = "reapply_SAN_storagesdsd"        
+          name = "reapply_SAN_storage"        
           
         }
   operation_type {
           name = "reapply_local_storage"        
           
-        }       
-        
+        }  
+  operation_type {
+          name = "rename_logical_drive"
+          logical_drive_value{
+            device_slot_name="Embedded"
+            current_logical_drive_name="ld2"
+            new_logical_drive_name="ld3"
+          }        
+          
+        }         
 }
 */
 
