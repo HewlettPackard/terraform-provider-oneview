@@ -1,13 +1,20 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+<<<<<<< HEAD
 # [v.8.4.0-13]  (unreleased)
+
+### Notes
+- This release supports API5400 minimally where we can use OneView v8.40 with this SDK.
 #### Major Changes
 
 1. Modified the patch operation for server profile. Please check the docs https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/server_profile.html.markdown
 
-### Notes
-- This release supports API5400 minimally where we can use OneView v8.40 with this SDK.
+
+### Bug fixes & Enhancements:
+- [#523](https://github.com/HewlettPackard/terraform-provider-oneview/issues/523 )oneview_firmware_drivers data source is broken
+- [#524](https://github.com/HewlettPackard/terraform-provider-oneview/issues/524 ) Data object retrieval for firmware_drivers bug
+
 
 # [v.8.3.0-13]
 

@@ -2739,7 +2739,7 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 		"rename_logical_drive":          {"replace", "/localStorage/controllers/{deviceSlot}/logicalDrives/{currentLogicalDriveName}/name", "newLogicalDriveName"},
 		"reapply_local_storage":         {"replace", "/localStorage/reapplyState", "ApplyPending"},
 		"reapply_SAN_storage":           {"replace", "/sanStorage/reapplyState", "ApplyPending"},
-		"reapply_bios_settings":         {"replace", "/bios/reapplyStatee", "ApplyPending"},
+		"reapply_bios_settings":         {"replace", "/bios/reapplyState", "ApplyPending"},
 		"regenerate_CHAP_secrets":       {"replace", "/sanstorage/regenerateChapSecrets", ""},
 		"reapply_ilo_settings":          {"replace", "/managementProcessor/reapplyState", "ApplyPending"},
 	}

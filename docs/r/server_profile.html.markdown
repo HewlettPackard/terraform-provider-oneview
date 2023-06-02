@@ -87,7 +87,7 @@ resource "oneview_server_profile" "default" {
   template = "${oneview_server_profile_template.test.name}"
 }
 ```
-Patch request for server profile
+Update request for server profile
 ```hcl
 resource "oneview_server_profile" "default" {
        operation_type {
@@ -102,7 +102,7 @@ resource "oneview_server_profile" "default" {
 }
 ```
 
-Patch request for renaming  logical drive name
+Update request for renaming  logical drive name
 ```hcl
 resource "oneview_server_profile" "default" {
       operation_type {
@@ -121,17 +121,7 @@ resource "oneview_server_profile" "default" {
         hardware_name = "SYN03_Frame3, bay 1"
 }
 ```
-
-## Argument Reference
-
-The following arguments are supported: 
-
-* `name` - (Required) A unique name for the resource.
-
-* `template` - (Optional) The name of the template you will use for the server profile. 
-
-* `Operation_type` - (Optional) patch operation can be performed by giving the update string for given type of update. 
-
+Following update operation can be performed by giving the update string for given type of update.
 | NO          | Type of Update | Update String |
  | ----------- | -------------- | ------------- |
  | 1           | `Update the server profile from the server profile template.`       | 'update_from_template'         |
@@ -148,7 +138,15 @@ The following arguments are supported:
  | 12           | `Regenerate CHAP Secrets`        | 'regenerate_CHAP_secrets' |
  | 13           | `Reapply the server iLO settings`        | 'reapply_ilo_settings' |
 
+## Argument Reference
 - - -
+The following arguments are supported: 
+
+* `name` - (Required) A unique name for the resource.
+
+* `template` - (Optional) The name of the template you will use for the server profile. 
+
+* `Operation_type` - (Optional) patch operation can be performed by giving the update string for given type of update. 
 
 - - -
 
