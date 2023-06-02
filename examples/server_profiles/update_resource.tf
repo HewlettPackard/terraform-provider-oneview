@@ -83,7 +83,7 @@ resource "oneview_server_profile" "SP" {
 }
 
 
-# Patch request 
+# Patch request to reapply  the server profile's SAN storage,  local storage and rename the logical drive
 /*
 resource "oneview_server_profile" "SP" {        
  
