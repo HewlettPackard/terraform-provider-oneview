@@ -938,7 +938,7 @@ func resourceServerProfile() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Optional: true,
+							Required: true,
 							Type:     schema.TypeString,
 						},
 						"logical_drive_value": {
