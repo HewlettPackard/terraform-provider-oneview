@@ -2,7 +2,6 @@ package ov
 
 import (
 	"encoding/json"
-	"errors"
 	"strings"
 
 	"github.com/HewlettPackard/oneview-golang/rest"
@@ -147,20 +146,7 @@ func (c *OVClient) GetFirmwareBaselineById(id string) (FirmwareDrivers, error) {
 	return firmwareId, nil
 }
 
-func (c *OVClient) GetFirmwareBaselineByNameandVersion(name string) (FirmwareDrivers, error) {
-	var fwname, version string
-	fwNameVersion := strings.Split(name, ",")
-	if len(fwNameVersion) == 0 {
-		return FirmwareDrivers{}, errors.New("firmware name not provided")
-	}
-	if len(fwNameVersion) == 2 {
-		fwname, version = strings.TrimSpace(fwNameVersion[0]), strings.TrimSpace(fwNameVersion[1])
-		if fwname == "" {
-			return FirmwareDrivers{}, errors.New("firmware name not found in the name")
-		}
-	} else {
-		fwname = fwNameVersion[0]
-	}
+func (c *OVClient) GetFirmwareBaselineByNameandVersion(name, version string) (FirmwareDrivers, error) {
 
 	firmwareList, err := c.GetFirmwareBaselineList("", "", "")
 
@@ -168,13 +154,13 @@ func (c *OVClient) GetFirmwareBaselineByNameandVersion(name string) (FirmwareDri
 
 		for i := range firmwareList.Members {
 			if version != "" {
-				if strings.EqualFold(firmwareList.Members[i].Name, fwname) &&
-					strings.EqualFold(firmwareList.Members[i].Version, version) {
+				if strings.EqualFold(strings.TrimSpace(firmwareList.Members[i].Name), strings.TrimSpace(name)) &&
+					strings.EqualFold(strings.TrimSpace(firmwareList.Members[i].Version), strings.TrimSpace(version)) {
 					return firmwareList.Members[i], err
 				}
 
 			} else {
-				if strings.EqualFold(firmwareList.Members[i].Name, fwname) {
+				if strings.EqualFold(strings.TrimSpace(firmwareList.Members[i].Name), strings.TrimSpace(name)) {
 					return firmwareList.Members[i], err
 
 				}

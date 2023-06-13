@@ -1,6 +1,55 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
-# [v8.2.0-13](unreleased)
+
+# [v8.4.0-13](unreleased)
+
+### Bug fixes & Enhancements:
+- [#523](https://github.com/HewlettPackard/terraform-provider-oneview/issues/523 )oneview_firmware_drivers data source is broken
+- [#524](https://github.com/HewlettPackard/terraform-provider-oneview/issues/524 ) Data object retrieval for firmware_drivers bug
+
+# [v.8.3.0-13]
+
+### Notes
+- This release supports API5200 minimally where we can use OneView v8.30 with this SDK.
+
+### Oneview Features supported
+- Appliance SNMPv1 Trap Destinations
+- Appliance SNMPv3 Trap Destinations
+- Appliance SSH Access
+- Appliance Time and Locale Configuration
+- Connection Template
+- Ethernet Network
+- Enclosure
+- Enclosure Group
+- FC Network
+- FCOE Network
+- Firmware Drivers
+- Hypervisor Manager
+- Hypervisor Cluster Profile
+- Id Pools Ipv4 Range
+- Id Pools IPv4 Subnets
+- Labels
+- Interconnects
+- Interconnect Types
+- Logical Enclosure
+- Logical Interconnects
+- Logical Interconnect Groups
+- Network Set
+- Rack Manager
+- Scope
+- Server Certificate
+- Server Hardware
+- Server Hardware Type
+- Server Profile
+- Server Profile Template
+- Storage Pool
+- Storage Volume
+- Storage Volume Attachments
+- Storage Volume Template
+- Storage System
+- Uplink Set
+
+# [v8.2.0-13]
 
 #### Major Changes
 1. Added support for darwin_arm64.

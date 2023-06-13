@@ -8,11 +8,14 @@ provider "oneview" {
   }
 
 data "oneview_firmware_drivers" "spp" {
-  id = "Synergy_Custom_SPP_2021.02.01_Z7550-97110"
+
+  name = "Service Pack for Synergy"
+  version="SY-2021.02.01"
 }
 
 data "oneview_firmware_drivers" "hotfix" {
-  id = "HPE ProLiant Gen10 and Gen10 Plus Smart Array Controller Driver for VMware vSphere 6.5 (Driver Component)."
+  name = "HPE ProLiant Gen10 and Gen10 Plus Smart Array Controller Driver for VMware vSphere 6.5 (Driver Component)."
+  version="2021.04.01"
 }
 
 data "oneview_scope" "scope" {

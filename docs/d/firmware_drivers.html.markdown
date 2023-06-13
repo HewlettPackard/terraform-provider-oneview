@@ -14,7 +14,8 @@ Use this data source to access the attributes of a firmware baseline.
 
 ```hcl
 data "oneview_firmware_drivers" "test" {
- id = "HPE Synergy Service Pack,SY-2021.11.01"
+ name= "HPE Synergy Service Pack"
+ version="SY-2021.11.01"
 }
 
 output "oneview_firmware_drivers_value" {
@@ -24,7 +25,8 @@ output "oneview_firmware_drivers_value" {
 
 ## Argument Reference
 
-* `id` - (Required) The name of firmware and version separated by comma. Or you can use jsut name also. For E.g. "HPE Synergy Service Pack,SY-2021.11.01"
+* `name` - (Required) Display name for the resource. for e.g. "HPE Synergy Service Pack"
+* `version` - (Required) The version of the firmware bundle. For e.g. "SY-2021.11.01"
 
 ## Attributes Reference
 
@@ -69,8 +71,6 @@ output "oneview_firmware_drivers_value" {
 * `locations` - List of locations where the baseline exists. Contains ServicePack mirrors information.
 
 * `mirrorlist` -  The list of ServicePack mirrors on the corresponding repositories present on the appliance.
-
-* `name` - Display name for the resource.
 
 * `parent_bundle` - Details of the firmware baseline from which the current custom baseline is created. This is empty for ServicePack and hotfixes. Only Custom bundles will have this value.
 
