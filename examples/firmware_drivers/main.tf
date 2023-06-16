@@ -8,6 +8,7 @@ provider "oneview" {
   }
 
 data "oneview_firmware_drivers" "spp" {
+
   name = "Service Pack for Synergy"
   version="SY-2021.02.01"
 }
@@ -18,12 +19,12 @@ data "oneview_firmware_drivers" "hotfix" {
 }
 
 data "oneview_scope" "scope" {
-  name = "ScopeTest"
+  name = "Auto-Scope"
 }
 
 # Creating Custom Firmware Service Pack
 resource "oneview_firmware_drivers" "drivers" {
-  baseline_uri = data.oneview_firmware_drivers.spp.uri
+  baseline_uri = "data.oneview_firmware_drivers.spp.uri"
   hotfix_uris = [data.oneview_firmware_drivers.hotfix.uri]
   custom_baseline_name = "Terraform_SPP"
   initial_scope_uris = [data.oneview_scope.scope.uri]

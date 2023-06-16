@@ -12,10 +12,10 @@ provider "oneview" {
    Import the existing the resource from appliance into the terraform instance.
    Create a empty resource and execute the following command.
 
-        terraform import oneview_logical_interconnect.<instance> <resource_id>
+        terraform import oneview_logical_interconnect. instance> resource_id>
         instance - instance name declared in the empty resource declared.
         resource_id - id of the logical interconnect as per the appliance.
-	terraform import <resource>.<instance_name> <resource_id>
+	terraform import resource>.instance_name> resource_id>
 
         Example: terraform import oneview_logical_interconnect.li d4468f89-4442-4324-9c01-624c7382db2d
 */

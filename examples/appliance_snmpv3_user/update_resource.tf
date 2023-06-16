@@ -8,10 +8,10 @@ provider "oneview" {
 }
 # Update SNMPv3 User
 resource "oneview_appliance_snmpv3_user" "snmpvuser" {
-  user_name                 = "user"
-  security_level            = "Authentication and privacy"
-  authentication_protocol   = "SHA1"
-  authentication_passphrase = "authPas121s"
+  user_name                 = "<user_name_terra>"
+  security_level            = "<security_level_terra>"
+  authentication_protocol   = "<authentication_protocol_terra>"
+  authentication_passphrase = "<authentication_passphrase_terra2>"
   privacy_protocol          = "AES-128"
   privacy_passphrase        = "1234567812345600"
 }

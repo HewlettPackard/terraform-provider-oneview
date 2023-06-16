@@ -8,10 +8,10 @@ provider "oneview" {
 }
 
 data "oneview_server_hardware_type" "server_hardware_type" {
-  name = "SY 480 Gen9 2"
+  name = "SY 480 Gen9 1"
+  platform = "oneview"
 }
 
 output "oneiew_server_hardware_type_value" {
   value = data.oneview_server_hardware_type.server_hardware_type.uri
 }
-

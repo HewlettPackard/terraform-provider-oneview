@@ -10,7 +10,7 @@ provider "oneview" {
 # Data source for server profile
 
 data "oneview_server_profile" "sp" {
-  name = "TestSP_Renamed"
+  name = "TestSP_with_local_storage_renamed"
 }
 
 output "oneview_server_profile_value" {
@@ -20,7 +20,7 @@ output "oneview_server_profile_value" {
 /*
 # To import an existing server profile to terraform, use the below code and run the following command:
 
-# terraform import <resource>.<instance_name> <resource_name>
+# terraform import resource.instance_name resource_name
 # Eg: terraform import oneview_server_profile.serverProfile Test
 
 resource "oneview_server_profile" "serverProfile" {

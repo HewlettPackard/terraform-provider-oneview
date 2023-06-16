@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 // Resource updation. Make sure the storage pool to be updated is first imported in terraform before performing the update
-// Use `terraform import oneview_storage_pool.<instance name> <name of the resource>
+// Use `terraform import oneview_storage_pool.#instance name# #name of the resource#
 // Eg. terraform import oneview_storage_pool.storage_pool CPG-SSD-AO
 
 resource "oneview_storage_pool" "storage_pool" {

@@ -9,17 +9,17 @@ provider "oneview" {
 
 # Fetching Newtork Resource URI
 data "oneview_ethernet_network" "ethernetnetworks" {
-  name = "Auto-Ethernet-1"
+  name = "<network_name>"
 }
 
 # Create Labels for the Ethernet Network
 resource "oneview_label" "anyName" {
 	resource_uri = data.oneview_ethernet_network.ethernetnetworks.uri
         labels {
-          	name = "NewLabel"
+          	name = "<label_name_1>"
         }
 	labels{
-		name = "NewLabele2UpdatedwithoutUri"
+		name = "<label_name_2>"
 	}
 }
 /* Importing Existing resource

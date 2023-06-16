@@ -8,22 +8,22 @@ provider "oneview" {
 }
 
 data "oneview_ethernet_network" "eth1" {
-  name = "Auto-Ethernet-1"
+  name = "<ethernet1_name>"
 }
 
 data "oneview_ethernet_network" "eth2" {
-  name = "Auto-Ethernet-2"
+  name = "<ethernet2_name>"
 }
 
 data "oneview_scope" "scope_obj" {
-  name = "Auto-Scope"
+  name = "<scope>"
 }
 
 # Updates the Resource
 resource "oneview_network_set" "NetworkSet" {
-  name               = "TestNetworkSet_update"
+  name               = "<network_rename>"
   native_network_uri = ""
-  type               = "network-setV5"
+  type               = "<type>"
   network_uris       = [data.oneview_ethernet_network.eth1.uri, data.oneview_ethernet_network.eth2.uri]
   initial_scope_uris = [data.oneview_scope.scope_obj.uri]
 }

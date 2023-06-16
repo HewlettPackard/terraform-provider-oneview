@@ -131,4 +131,3 @@ resource "oneview_storage_volume_template" "svt" {
   //       	type = "boolean"
   //       }]
 }
-

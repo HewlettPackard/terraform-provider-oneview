@@ -9,10 +9,9 @@ provider "oneview" {
 
 //Get attachment by id
 data "oneview_storage_attachment" "storage_attach" {
-  name = "<name>" //Give attachment id here
+  name = "name" //Give attachment id here
 }
 
 output "oneview_storage_attachment" {
   value = data.oneview_storage_attachment.storage_attach.uri
 }
-

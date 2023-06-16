@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 data "oneview_appliance_snmp_v1_trap_destinations" "snmp_v1" {
-        destination_id = "4"
+        destination_id = "<destination_id>"
 }
 
 output "oneview_snmp_v1_trap_destinations_value" {

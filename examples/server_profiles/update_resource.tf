@@ -7,13 +7,22 @@ provider "oneview" {
   ov_ifmatch    = "*"
 }
 
-#Creation of Server Profile without template
-resource "oneview_server_profile" "SP" {
-  name            = "Test-SP"
-  hardware_name   = "0000A66102, bay 3"
-  type            = "ServerProfileV12"
-  enclosure_group = "EG"
-  update_type     = "put"
+
+data "oneview_ethernet_network" "ethernetnetworks1" {
+  name = "Server_profile_network"
+}
+
+data "oneview_scope" "scope" {
+  name = "Auto-Scope"
+}
+# Creation of Server Profile without template
+resource "oneview_server_profile" "SPWithLocalStorage" {
+  name                  = "TestSP_with_local_storage_renamed"
+  hardware_name         = "<server_hardware_name_terra>"
+  type                  = "ServerProfileV12"
+  enclosure_group       = "<enclosure_group_name>"
+  update_type           = "put"
+  initial_scope_uris    = [data.oneview_scope.scope.uri]
   bios_option {
     manage_bios = true
     overridden_settings {
@@ -34,22 +43,14 @@ resource "oneview_server_profile" "SP" {
     controller {
       device_slot              = "Embedded"
       drive_write_cache        = "Unmanaged"
-      initialize               = false
+      initialize               = true
       import_configuration     = false
       mode                     = "RAID"
       predictive_spare_rebuild = "Unmanaged"
-
-      /* To remove first logical drive we are kepping logical_drives as an empty block.
-   Note: Do not remove the block, you will need to keep it as empty in order to delete it from the Oneview. */
-
-      logical_drives {
-      }
-
       logical_drives {
         accelerator         = "Unmanaged"
-        bootable            = false
+        bootable            = true
         drive_technology    = "SasHdd"
-        drive_number        = 2
         name                = "TestLd"
         num_physical_drives = 2
         raid_level          = "RAID1"
@@ -61,24 +62,16 @@ resource "oneview_server_profile" "SP" {
       id             = 1
       name           = "Management-01"
       isolated_trunk = false
-      mac_type       = "Virtual"
+      # managed        = true
       function_type  = "Ethernet"
-      network_uri    = "/rest/ethernet-networks/1aa324ee-5e86-4428-a1cd-97ed26020d9d"
-      port_id        = "Mezz 3:1-a"
+      network_uri    = data.oneview_ethernet_network.ethernetnetworks1.uri
+      port_id        = "Auto"
       requested_mbps = "2500"
       boot {
-        boot_vlan_id       = 0
         priority           = "Primary"
         ethernet_boot_type = "PXE"
       }
     }
-
-    /* To remove second connection we are kepping connection as an empty block.
-   Note: Do not omit the block, you will need to keep it as empty in order to delete it from the Oneview. */
-
-    connections {
-    }
-
   }
 }
 

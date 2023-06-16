@@ -9,7 +9,7 @@ provider "oneview" {
 
 variable "hostname" {
   type    = string
-  default = "<storage_system_ip>"
+  default = "<storage_system_ip_2>"
 }
 
 variable "ss_username" {
@@ -37,7 +37,7 @@ resource "oneview_server_certificate" "ServerCertificate" {
   certificate_details {
     base64_data = element(tolist(data.oneview_server_certificate.sc.certificate_details[*].base64_data), 0)
     type        = "CertificateDetailV2"
-    alias_name  = "TestServerCertificate"
+    alias_name  = "TestServerCertificate_storage_system"
   }
 }
 

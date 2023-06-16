@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Extracting Storage System
 data "oneview_storage_system" "ss_inst" {
-  name = "ThreePAR-2"
+  name = "<storage_system_name2>"
 }
 
 output "oneview_storage_system_value" {

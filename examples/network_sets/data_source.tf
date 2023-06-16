@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Example for data source
 data "oneview_network_set" "network_set" {
-  name = "TestNetworkSet_update"
+  name = "<network_rename>"
 }
 
 output "oneview_network_set_value" {

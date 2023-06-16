@@ -9,7 +9,7 @@ provider "oneview" {
 
 # Testing Data Source
 data "oneview_scope" "scope" {
-  name = "Auto-Scope"
+  name = "<scope_rename>"
 }
 
 #Importing Existing resource
