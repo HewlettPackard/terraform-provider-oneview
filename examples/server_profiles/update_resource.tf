@@ -15,15 +15,13 @@ data "oneview_ethernet_network" "ethernetnetworks1" {
 data "oneview_scope" "scope" {
   name = "Auto-Scope"
 }
-
-
 # Creation of Server Profile without template
 resource "oneview_server_profile" "SPWithLocalStorage" {
   name                  = "TestSP_with_local_storage_renamed"
   hardware_name         = "<server_hardware_name_terra>"
   type                  = "ServerProfileV12"
-  server_hardware_type  = "<server_hardware_type_terraform>"
   enclosure_group       = "<enclosure_group_name>"
+  update_type           = "put"
   initial_scope_uris    = [data.oneview_scope.scope.uri]
   bios_option {
     manage_bios = true
@@ -77,20 +75,36 @@ resource "oneview_server_profile" "SPWithLocalStorage" {
   }
 }
 
+
+# Patch request to reapply  the server profile's SAN storage,  local storage and rename the logical drive
 /*
-# Patch request - Server profile Refresh
-resource "oneview_server_profile" "SP" {
-        update_type = "patch"
-        options = [
-        {
-          op = "replace"
-          path = "/refreshState"
-          value = "RefreshPending"
+resource "oneview_server_profile" "SP" {        
+ 
+  name = "SP"
+  type = "ServerProfileV12"        
+  enclosure_group = "EG"
+  hardware_name = "0000A66101, bay 3"
+
+ operation_type {
+          name = "reapply_SAN_storage"        
+          
         }
-        ]
-        name = "TestSP_Renamed"
-        type = "ServerProfileV12"        
-        enclosure_group = "EG-Synergy-Local"
-        hardware_name = "Synergy-Encl-2, bay 8"
+  operation_type {
+          name = "reapply_local_storage"        
+          
+        }  
+  operation_type {
+          name = "rename_logical_drive"
+          logical_drive_value{
+            device_slot_name="Embedded"
+            current_logical_drive_name="ld2"
+            new_logical_drive_name="ld3"
+          }        
+          
+        }         
 }
 */
+
+
+
+

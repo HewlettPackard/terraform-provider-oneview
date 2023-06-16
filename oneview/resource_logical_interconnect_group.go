@@ -637,7 +637,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 							Optional: true,
 						},
 						"enable_network_loop_protection": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeBool,
 							Optional: true,
 						},
 						"enable_pause_flood_protection": {
