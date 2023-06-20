@@ -1,0 +1,39 @@
+name: Raise a Pull Request
+
+on:
+  push:
+    branches:
+      - "OV*_Validation"  # Match branches that start with "OV" and end with "_Validation"
+
+jobs:
+  pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Debug information
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "GitHub Token: ${{ secrets.GITHUB_TOKEN }}"
+          echo "Source Branch: ${{ github.ref }}"
+          echo "Destination Branch: master"
+
+      - name: Determine branch name
+        id: branch
+        run: |
+          branch_name=$(echo "${{ github.ref }}" | sed -n 's/refs\/heads\/OV\(.*\)_Validation/\1/p')
+          echo "::set-output name=branch_name::$branch_name"
+
+      - name: Raise pull request
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: "${{ github.ref }}"                                 # If blank, default: triggered branch
+          destination_branch: "master" # If blank, default: master
+          pr_label: "automation" 
+          pr_title: "OV${{ steps.branch.outputs.branch_name }} Validation"  # Construct the pull request title without "refs/heads/" and only using the extracted branch name
+          pr_body: ":crown: *An automated PR*"              # Full markdown support, requires pr_title to be set
+          pr_reviewer: "nabhajit-ray,AvijitOS"
+          pr_template: ".github/pull_request_template.md"   # Path to pull request template, requires pr_title to be set, excludes pr_body                         
+          pr_allow_empty: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
