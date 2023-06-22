@@ -21,7 +21,7 @@ resource "oneview_server_profile" "SPWithLocalStorage" {
   hardware_name         = "<server_hardware_name_terra>"
   type                  = "ServerProfileV12"
   enclosure_group       = "<enclosure_group_name>"
-  update_type           = "put"
+  # update_type           = "put"
   initial_scope_uris    = [data.oneview_scope.scope.uri]
   bios_option {
     manage_bios = true
