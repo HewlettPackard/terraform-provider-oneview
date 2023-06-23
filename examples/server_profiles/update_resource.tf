@@ -13,7 +13,7 @@ resource "oneview_server_profile" "SP" {
   hardware_name   = "0000A66102, bay 3"
   type            = "ServerProfileV12"
   enclosure_group = "EG"
-  update_type     = "put"
+  # update_type     = "put"
   bios_option {
     manage_bios = true
     overridden_settings {
