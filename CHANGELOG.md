@@ -1,14 +1,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-=======
+# [v.8.5.0-13]  (unreleased) 
+### Notes 
+- This release supports API5600 minimally where we can use OneView v8.5 with this SDK.
 
-# [v.8.4.0-13]  (unreleased)
+# [v.8.4.0-13] 
 
 ### Notes
 - This release supports API5400 minimally where we can use OneView v8.40 with this SDK.
 
-=======
 
 #### Major Changes
 
@@ -19,6 +20,43 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#523](https://github.com/HewlettPackard/terraform-provider-oneview/issues/523 )oneview_firmware_drivers data source is broken
 - [#524](https://github.com/HewlettPackard/terraform-provider-oneview/issues/524 ) Data object retrieval for firmware_drivers bug
 - [#535](https://github.com/HewlettPackard/terraform-provider-oneview/issues/535 ) Crash in logical interconnect group
+### OneView Features Supported
+
+- Uplink Set
+- Storage System
+- Storage Volume Template
+- Storage Volume Attachments
+- Storage Volume
+- Storage Pool
+- Server Profile Template
+- Server Profile
+- Server Hardware Type
+- Server Hardware
+- Server Certificate
+- Scope
+- Rack Manager
+- Network Set
+- Logical Interconnect Groups
+- Logical Interconnects
+- Logical Enclosure
+- Interconnect Types
+- Interconnects
+- Labels
+- Id Pools IPv4 Subnets
+- Id Pools Ipv4 Range
+- Hypervisor Cluster Profile
+- Hypervisor Manager
+- Firmware Drivers
+- FCOE Network
+- FC Network
+- Enclosure Group
+- Enclosure
+- Ethernet Network
+- Connection Template
+- Appliance Time and Locale Configuration
+- Appliance SSH Access
+- Appliance SNMPv3 Trap Destinations
+- Appliance SNMPv1 Trap Destinations
 
 
 # [v.8.3.0-13]
