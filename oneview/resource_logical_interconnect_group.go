@@ -2953,11 +2953,11 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			interconnectSettings.ConsistencyChecking = val1.(string)
 		}
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".dependent_resource_uri"); ok {
-			interconnectSettings.Description = utils.NewNstring(val1.(string))
+			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".description"); ok {
-			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
+			interconnectSettings.Description = utils.NewNstring(val1.(string))
 		}
 		domainName := d.Get(interconnectSettingsPrefix + ".domain_name").(string)
 		interconnectSettings.DomainName = &domainName
