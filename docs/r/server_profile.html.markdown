@@ -149,6 +149,7 @@ The following arguments are supported:
 * `Operation_type` - (Optional) patch operation can be performed by giving the update string for given type of update. 
 
 - - -
+* `force_flags` - (Optional) a list of supported force flags, ignoring certain warnings when creating the server profile. 
 
 * `public_connection` - (Optional) The name of the network that is going out to the public.
 

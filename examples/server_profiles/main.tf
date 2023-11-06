@@ -26,6 +26,9 @@ resource "oneview_server_profile" "SPWithLocalStorage" {
   hardware_name      = "0000A66101, bay 5"
   type               = "ServerProfileV12"
   enclosure_group    = "Auto-EG"
+
+  force_flags = ["ignoreServerHealth"] // supported: ignoreSANWarnings, ignoreServerHealth, ignoreLSWarnings, all; default: none
+
   initial_scope_uris = [data.oneview_scope.scope.uri]
   bios_option {
     manage_bios = true

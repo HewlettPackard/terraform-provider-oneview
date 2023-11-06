@@ -13,6 +13,9 @@ resource "oneview_server_profile" "SP" {
   hardware_name   = "0000A66102, bay 3"
   type            = "ServerProfileV12"
   enclosure_group = "EG"
+
+  force_flags = ["ignoreServerHealth"] // supported: ignoreSANWarnings, ignoreServerHealth, ignoreLSWarnings, all; default: none
+
   bios_option {
     manage_bios = true
     overridden_settings {
