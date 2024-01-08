@@ -34,14 +34,10 @@ cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/HewlettPackard/oneview-golang v8.3.1-0.20230529095956-f6039fe84f3f+incompatible h1:8COeVoPlFSy1Bo79TazBKGLhj2L1gLcLHHAh/BnFuuc=
-github.com/HewlettPackard/oneview-golang v8.3.1-0.20230529095956-f6039fe84f3f+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
-github.com/HewlettPackard/oneview-golang v8.4.0+incompatible h1:IR44tRzdZrPmp0Mm1+Adk+z9eDWV+LA2FU23JYKSJOI=
-github.com/HewlettPackard/oneview-golang v8.4.0+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
-github.com/HewlettPackard/oneview-golang v8.5.0+incompatible h1:Fy7Ce1PUcLk7iuuof494D5cfoSwj/nIWpBkAWnZ4rZY=
-github.com/HewlettPackard/oneview-golang v8.5.0+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/HewlettPackard/oneview-golang v8.6.0+incompatible h1:5/s9xGTGiVyISxWaxT/QlVYx/bIQvCyQo4UA9VgX0Ek=
 github.com/HewlettPackard/oneview-golang v8.6.0+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
+github.com/HewlettPackard/oneview-golang v8.6.1-0.20231109094213-30a3fb89caf6+incompatible h1:wldabw1+dMd4Pa2ByJ3iV18uFC8pFMxPZO5Q4D3dnq0=
+github.com/HewlettPackard/oneview-golang v8.6.1-0.20231109094213-30a3fb89caf6+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
 github.com/agext/levenshtein v1.2.2 h1:0S/Yg6LYmFJ5stwQeRp6EeOcCbj7xiqQSdNelsXvaqE=
 github.com/agext/levenshtein v1.2.2/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
