@@ -38,6 +38,8 @@ github.com/HewlettPackard/oneview-golang v8.6.0+incompatible h1:5/s9xGTGiVyISxWa
 github.com/HewlettPackard/oneview-golang v8.6.0+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/HewlettPackard/oneview-golang v8.6.1-0.20231109094213-30a3fb89caf6+incompatible h1:wldabw1+dMd4Pa2ByJ3iV18uFC8pFMxPZO5Q4D3dnq0=
 github.com/HewlettPackard/oneview-golang v8.6.1-0.20231109094213-30a3fb89caf6+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
+github.com/HewlettPackard/oneview-golang v8.7.0+incompatible h1:qOVzKT1euEpjZDVPLUfaOS0GlrO4IlKMEF2uEeFMSbQ=
+github.com/HewlettPackard/oneview-golang v8.7.0+incompatible/go.mod h1:GJcjWgNHrKtt2lUl4xcaV3NRiuBlG138DNrFygXj4JE=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
 github.com/agext/levenshtein v1.2.2 h1:0S/Yg6LYmFJ5stwQeRp6EeOcCbj7xiqQSdNelsXvaqE=
 github.com/agext/levenshtein v1.2.2/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
