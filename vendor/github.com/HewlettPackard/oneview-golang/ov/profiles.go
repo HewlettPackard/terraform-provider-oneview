@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"reflect"
 	"strings"
 
@@ -447,19 +446,9 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile, ignoreFlags ...ForceFlag) (
 	log.Debugf("REST : %s \n %+v\n", uri, p)
 	log.Debugf("task -> %+v", t)
 
-	// Get available server hardwares to assign it to SP
-	if p.ServerHardwareURI != "" {
-
-		isHardwareAvailable, err := c.GetAvailableServers(p.ServerHardwareURI.String())
-		if err != nil || isHardwareAvailable == false {
-			log.Errorf("Error getting available Hardware: %s", p.ServerHardwareURI.String())
-			if err != nil {
-				log.Warnf("Error: %s", err)
-			}
-			os.Exit(1)
-		}
-
-		server, err = c.GetServerHardwareByUri(p.ServerHardwareURI)
+	// Check if server hardware already has server profile assigned
+	if server.ServerProfileURI.String() != "null" {
+		return fmt.Errorf("hardware %s already has server profile assigned", server.Name)
 	}
 
 	server, err = c.GetServerHardwareByUri(p.ServerHardwareURI)
