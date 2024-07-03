@@ -200,7 +200,7 @@ This feedback is important for us to deliver a useful product.
 
 [HPE OneView Firmware Management White Paper](http://hpe.com/info/OneView/docs)
 
-Note: Currently this SDK supports OneView API 6600 minimally where we can test OneView API 6600 version with this SDK. No new fields have been added/deleted to support API6400 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
+Note: Currently this SDK supports OneView API 6600 minimally where we can test OneView API 6600 version with this SDK. No new fields have been added/deleted to support API6600 version. Complete support will be done in next releases.If  API version is not provided then appliance's API version will be used. If API version used is not supported then error will be thrown.
 
 ### HPE OneView Community
 
