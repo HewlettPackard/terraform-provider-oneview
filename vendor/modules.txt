@@ -9,6 +9,7 @@ cloud.google.com/go/internal/version
 # cloud.google.com/go/storage v1.10.0
 cloud.google.com/go/storage
 # github.com/HewlettPackard/oneview-golang v9.1.0+incompatible
+## explicit
 github.com/HewlettPackard/oneview-golang/liboneview
 github.com/HewlettPackard/oneview-golang/ov
 github.com/HewlettPackard/oneview-golang/rest
@@ -60,6 +61,7 @@ github.com/bgentry/go-netrc/netrc
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
 # github.com/docker/machine v0.16.2
+## explicit
 github.com/docker/machine/libmachine/log
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
@@ -84,6 +86,7 @@ github.com/google/go-cmp/cmp/internal/value
 # github.com/googleapis/gax-go/v2 v2.0.5
 github.com/googleapis/gax-go/v2
 # github.com/hashicorp/errwrap v1.1.0
+## explicit
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-checkpoint v0.5.0
 github.com/hashicorp/go-checkpoint
@@ -97,11 +100,13 @@ github.com/hashicorp/go-cty/cty/json
 github.com/hashicorp/go-cty/cty/msgpack
 github.com/hashicorp/go-cty/cty/set
 # github.com/hashicorp/go-getter v1.6.2
+## explicit
 github.com/hashicorp/go-getter
 github.com/hashicorp/go-getter/helper/url
 # github.com/hashicorp/go-hclog v0.15.0
 github.com/hashicorp/go-hclog
 # github.com/hashicorp/go-multierror v1.1.0
+## explicit
 github.com/hashicorp/go-multierror
 # github.com/hashicorp/go-plugin v1.4.0
 github.com/hashicorp/go-plugin
@@ -109,6 +114,7 @@ github.com/hashicorp/go-plugin/internal/plugin
 # github.com/hashicorp/go-safetemp v1.0.0
 github.com/hashicorp/go-safetemp
 # github.com/hashicorp/go-uuid v1.0.2
+## explicit
 github.com/hashicorp/go-uuid
 # github.com/hashicorp/go-version v1.2.1
 github.com/hashicorp/go-version
@@ -132,6 +138,7 @@ github.com/hashicorp/terraform-plugin-go/tfprotov5/internal/toproto
 github.com/hashicorp/terraform-plugin-go/tfprotov5/server
 github.com/hashicorp/terraform-plugin-go/tfprotov5/tftypes
 # github.com/hashicorp/terraform-plugin-sdk/v2 v2.4.3
+## explicit
 github.com/hashicorp/terraform-plugin-sdk/v2/diag
 github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging
 github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource
@@ -166,6 +173,7 @@ github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.10
 github.com/mattn/go-isatty
 # github.com/mitchellh/copystructure v1.1.1
+## explicit
 github.com/mitchellh/copystructure
 # github.com/mitchellh/go-homedir v1.1.0
 github.com/mitchellh/go-homedir
@@ -174,11 +182,14 @@ github.com/mitchellh/go-testing-interface
 # github.com/mitchellh/go-wordwrap v1.0.0
 github.com/mitchellh/go-wordwrap
 # github.com/mitchellh/mapstructure v1.4.1
+## explicit
 github.com/mitchellh/mapstructure
 # github.com/mitchellh/reflectwalk v1.0.1
 github.com/mitchellh/reflectwalk
 # github.com/oklog/run v1.0.0
 github.com/oklog/run
+# github.com/stretchr/testify v1.7.0
+## explicit
 # github.com/ulikunitz/xz v0.5.8
 github.com/ulikunitz/xz
 github.com/ulikunitz/xz/internal/hash
@@ -213,6 +224,7 @@ go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
 # golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
+## explicit
 golang.org/x/crypto/cast5
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/openpgp/armor
@@ -379,3 +391,5 @@ google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/emptypb
 google.golang.org/protobuf/types/known/timestamppb
 google.golang.org/protobuf/types/pluginpb
+# gopkg.in/yaml.v2 v2.2.8
+## explicit
