@@ -93,10 +93,9 @@ type ServerProfileConfig struct {
 	OvTemplatestring         string `json:"ov_template"`
 }
 
-func LoadConfigFile(configFile string) (Configuration, error) {
-	_, filename, _, _ := runtime.Caller(1)
-	configFilePath := filepath.Join(filepath.Dir(filename), configFile)
+func LoadConfigFilePath(configFilePath string) (Configuration, error) {
 	configF, err := os.Open(configFilePath)
+
 	var config Configuration
 	defer configF.Close()
 	if err != nil {
@@ -114,4 +113,12 @@ func LoadConfigFile(configFile string) (Configuration, error) {
 	}
 
 	return config, nil
+
+}
+
+func LoadConfigFile(configFile string) (Configuration, error) {
+	_, filename, _, _ := runtime.Caller(1)
+	configFilePath := filepath.Join(filepath.Dir(filename), configFile)
+
+	return LoadConfigFilePath(configFilePath)
 }
