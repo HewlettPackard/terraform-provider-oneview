@@ -2488,6 +2488,7 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 				"isolated_trunk":         connection.IsolatedTrunk,
 				"lag_name":               connection.LagName,
 				"mac_type":               connection.MacType,
+				"mac":                    connection.MAC,
 				"managed":                connection.Managed,
 				"network_name":           connection.NetworkName,
 				"boot":                   connectionBoot,
