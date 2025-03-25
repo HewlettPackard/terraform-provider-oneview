@@ -17,7 +17,7 @@ jobs:
         env:
           GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-          CUSTOM_TAG: "v9.3.0-13"
+          CUSTOM_TAG: "v9.4.0-13"
       - name: Display
         run: echo ${{ steps.tag_and_prepare_release.outputs.new_tag }}
       - uses: actions/checkout@v2
