@@ -1361,6 +1361,7 @@ func dataSourceServerProfileRead(d *schema.ResourceData, meta interface{}) error
 				"name":           connection.Name,
 				"isolated_trunk": connection.IsolatedTrunk,
 				"lag_name":       connection.LagName,
+				"mac":            connection.MAC,
 				"mac_type":       connection.MacType,
 				"managed":        connection.Managed,
 				"network_name":   connection.NetworkName,
