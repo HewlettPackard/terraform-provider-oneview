@@ -19,7 +19,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"io/ioutil"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -3521,8 +3520,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			}
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments
 		}
-		file, _ := json.MarshalIndent(serverProfile, "", " ")
-           _ = ioutil.WriteFile("test.json", file, 0644)
 
 
 		err = config.ovClient.UpdateServerProfile(serverProfile)
