@@ -1022,7 +1022,7 @@ func resourceServerProfile() *schema.Resource {
 			"host_nvme_qualified_name": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,		
+				Computed: true,
 			},
 			"management_processor": {
 				Type:     schema.TypeList,

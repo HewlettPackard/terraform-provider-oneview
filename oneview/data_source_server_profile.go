@@ -38,7 +38,7 @@ func dataSourceServerProfile() *schema.Resource {
 			},
 			"host_nvme_qualified_name": {
 				Type:     schema.TypeString,
-				Computed: true,				
+				Computed: true,
 			},
 			"bios_option": {
 				Type:     schema.TypeSet,
