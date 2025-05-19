@@ -19,6 +19,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"io/ioutil"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -1014,6 +1015,16 @@ func resourceServerProfile() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+			"host_nvme_qualified_name_type": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
+			"host_nvme_qualified_name": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,		
+			},
 			"management_processor": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -1366,6 +1377,8 @@ func resourceServerProfileCreate(d *schema.ResourceData, meta interface{}) error
 
 	serverProfile.Type = d.Get("type").(string)
 	serverProfile.Name = d.Get("name").(string)
+	serverProfile.HostNVMeQualifiedNameType = d.Get("host_nvme_qualified_name_type").(string)
+	serverProfile.HostNVMeQualifiedName = d.Get("host_nvme_qualified_name").(string)
 
 	var serverHardware ov.ServerHardware
 	if val, ok := d.GetOk("hardware_name"); ok {
@@ -2080,6 +2093,8 @@ func resourceServerProfileRead(d *schema.ResourceData, meta interface{}) error {
 
 	d.Set("server_hardware_type", serverHardwareType.Name)
 	d.Set("affinity", serverProfile.Affinity)
+	d.Set("host_nvme_qualified_name_type", serverProfile.HostNVMeQualifiedNameType)
+	d.Set("host_nvme_qualified_name", serverProfile.HostNVMeQualifiedName)
 	d.Set("serial_number_type", serverProfile.SerialNumberType)
 	d.Set("wwn_type", serverProfile.WWNType)
 	d.Set("mac_type", serverProfile.MACType)
@@ -2874,6 +2889,16 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.SerialNumberType = val.(string)
 		}
 
+		if d.HasChange("host_nvme_qualified_name_type") {
+			val := d.Get("host_nvme_qualified_name_type").(string)
+			serverProfile.HostNVMeQualifiedNameType = val
+		}
+
+		if d.HasChange("host_nvme_qualified_name") {
+			val := d.Get("host_nvme_qualified_name")
+			serverProfile.HostNVMeQualifiedName = val.(string)
+		}
+
 		if d.HasChange("wwn_type") {
 			val := d.Get("wwn_type")
 			serverProfile.WWNType = val.(string)
@@ -3496,6 +3521,9 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			}
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments
 		}
+		file, _ := json.MarshalIndent(serverProfile, "", " ")
+           _ = ioutil.WriteFile("test.json", file, 0644)
+
 
 		err = config.ovClient.UpdateServerProfile(serverProfile)
 
