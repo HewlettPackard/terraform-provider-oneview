@@ -3521,7 +3521,6 @@ func resourceServerProfileUpdate(d *schema.ResourceData, meta interface{}) error
 			serverProfile.SanStorage.VolumeAttachments = volumeAttachments
 		}
 
-
 		err = config.ovClient.UpdateServerProfile(serverProfile)
 
 		if err != nil {
