@@ -103,7 +103,7 @@ resource "oneview_server_profile" "SPWithLocalStorage" {
 #Create a Server Profile using a Server profile template and user defined host nvme qualified name
 
 # data "oneview_server_hardware" "sh" {
-#   name = "172.18.31.4"
+#   name = "Test_server_hardware"
 # }
 
 # data "oneview_server_profile_template" "spt" {
