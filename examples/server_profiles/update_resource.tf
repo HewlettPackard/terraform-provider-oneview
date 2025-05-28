@@ -114,6 +114,28 @@ resource "oneview_server_profile" "SP" {
 }
 */
 
+# Edit a Server Profile using a Server profile template and user defined host nvme qualified name
+
+# data "oneview_server_hardware" "sh" {
+#   name = "Test_server_hardware"
+# }
+
+# data "oneview_server_profile_template" "spt" {
+#   name = "spt"
+# }
+
+
+# resource "oneview_server_profile" "sp_from_spt" {
+#   name                          = "sp_from_spt"
+#   hardware_name                 = data.oneview_server_hardware.sh.name
+#   server_hardware_type          = data.oneview_server_profile_template.spt.server_hardware_type
+#   template                      = data.oneview_server_profile_template.spt.name
+#   host_nvme_qualified_name_type = "UserDefined"
+#   host_nvme_qualified_name      = "nqn.2021-11.com.hpe:oneview-vcgouvd010"
+#   scopes_uri                    = data.oneview_scope.scope.uri
+# }
+
+
 
 
 

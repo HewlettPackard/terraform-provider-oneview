@@ -149,13 +149,6 @@ func resourceFirmwareDrivers() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"mirror_list": {
-				Computed: true,
-				Type:     schema.TypeMap,
-				Elem: &schema.Schema{
-					Type: schema.TypeList,
-				},
-			},
 			"locations": {
 				Computed: true,
 				Type:     schema.TypeMap,
@@ -373,7 +366,6 @@ func resourceFirmwareDriversRead(d *schema.ResourceData, meta interface{}) error
 			d.Set("parent_bundle", parentBundle)
 
 			d.Set("locations", firmware.Locations)
-			d.Set("mirror_list", firmware.Mirrorlist)
 			id := strings.Split(firmware.Uri.String(), "/")[3]
 
 			d.SetId(id)
