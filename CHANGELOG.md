@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Notes
 - This release supports API7600 minimally where we can use OneView v10.00 with this SDK.
 
+### Bug fixes & Enhancements:
+- [#570](https://github.com/HewlettPackard/terraform-provider-oneview/issues/570 )Retrieving a data object for a firmware component does not return the URI path if the firmware object is being retrieved from a external repository 
+
 ### OneView Features Supported
 
 - Uplink Set
