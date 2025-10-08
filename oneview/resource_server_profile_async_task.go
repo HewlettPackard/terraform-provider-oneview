@@ -2027,8 +2027,6 @@ func resourceServerProfileCreateAsync(d *schema.ResourceData, meta interface{}) 
 	log.Printf("[INFO] Server profile creation submitted asynchronously: %s", task.URI.String())
 	return nil
 
-	d.SetId(d.Get("name").(string))
-
 	if err != nil {
 		d.SetId("")
 		return err
