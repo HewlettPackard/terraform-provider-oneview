@@ -168,7 +168,7 @@ func dataSourceServerProfileAsyncTaskRead(d *schema.ResourceData, meta interface
 			return fmt.Errorf("Invalid task URI format: %s", taskURI)
 		}
 		extractedTaskID := parts[len(parts)-1]
-		
+
 		// Direct task lookup by extracted ID
 		task, err = config.ovClient.GetTasksById("", "", "", "", extractedTaskID)
 		if err != nil {

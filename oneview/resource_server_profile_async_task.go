@@ -14,10 +14,10 @@ package oneview
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
-	"path/filepath"
 
 	"github.com/HewlettPackard/oneview-golang/ov"
 	"github.com/HewlettPackard/oneview-golang/utils"
@@ -2011,26 +2011,21 @@ func resourceServerProfileCreateAsync(d *schema.ResourceData, meta interface{}) 
 	}
 
 	var (
-    task *ov.Task
-    err  error
-)
+		task *ov.Task
+		err  error
+	)
 
+	task, err = config.ovClient.SubmitNewProfileAsync(serverProfile, forceFlags...)
+	if err != nil {
+		return fmt.Errorf("async creation failed: %w", err)
+	}
 
+	d.Set("task_uri", task.URI.String())
+	asyncID := fmt.Sprintf("Async task URI -  %s", filepath.Base(task.URI.String()))
+	d.SetId(asyncID)
 
-		task, err = config.ovClient.SubmitNewProfileAsync(serverProfile, forceFlags...)
-		if err != nil {
-			return fmt.Errorf("async creation failed: %w", err)
-		}
-
-		d.Set("task_uri", task.URI.String())
-		asyncID := fmt.Sprintf("Async task URI -  %s", filepath.Base(task.URI.String()))
-    	d.SetId(asyncID)
-
-		log.Printf("[INFO] Server profile creation submitted asynchronously: %s", task.URI.String())
-		return nil
-	
-
-
+	log.Printf("[INFO] Server profile creation submitted asynchronously: %s", task.URI.String())
+	return nil
 
 	d.SetId(d.Get("name").(string))
 
