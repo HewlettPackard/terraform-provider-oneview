@@ -141,7 +141,7 @@ type KeyManager struct {
 	PrimaryServerAddress   string `json:"-"`
 	PrimaryServerPort      int    `json:"-"`
 	SecondaryServerAddress string `json:"-"`
-	SecondaryServerPort    int    `json:"-"`
+	SecondaryServerPort    *int   `json:"-"`
 	RedundancyRequired     *bool  `json:"-"`
 	GroupName              string `json:"-"`
 	CertificateName        string `json:"-"`
@@ -507,6 +507,86 @@ func (c *OVClient) SubmitNewProfile(p ServerProfile, ignoreFlags ...ForceFlag) (
 	}
 
 	return nil
+}
+
+// SubmitNewProfileAsync - submit new profile template
+func (c *OVClient) SubmitNewProfileAsync(
+	p ServerProfile,
+	ignoreFlags ...ForceFlag,
+) (*Task, error) {
+	var err error
+	log.Infof("Initializing creation of server profile for %s.", p.Name)
+	var (
+		uri    = "/rest/server-profiles"
+		server ServerHardware
+		t      *Task
+		// if no warning flags has been provided, use default value:
+		forceFlags = map[string]interface{}{
+			"force": ForceIgnoreNone,
+		}
+	)
+	// refresh login
+	c.RefreshLogin()
+	c.SetAuthHeaderOptions(c.GetAuthHeaderMap())
+
+	t = t.NewProfileTask(c)
+	t.ResetTask()
+	log.Debugf("REST : %s \n %+v\n", uri, p)
+	log.Debugf("task -> %+v", t)
+
+	// Check if server hardware already has server profile assigned
+	if server.ServerProfileURI.String() != "null" {
+		return nil, fmt.Errorf("hardware %s already has server profile assigned", server.Name)
+	}
+
+	server, err = c.GetServerHardwareByUri(p.ServerHardwareURI)
+
+	if err != nil {
+		log.Warnf("Problem getting server hardware, %s", err)
+	}
+
+	// power off the server so that we can add to SP
+	if server.Name != "" && server.PowerState == "on" {
+		return nil, errors.New("Server Hardware must be powered off to assign to the server profile")
+	}
+
+	serverHardwareType, err := c.GetServerHardwareTypeByUri(server.ServerHardwareTypeURI)
+	if err != nil {
+		log.Warnf("Error getting server hardware type %s", err)
+	}
+	serverHarwdareTypeGen := serverHardwareType.Generation
+
+	var emptyMgmtProcessorsStruct ManagementProcessors
+	if !reflect.DeepEqual(p.ManagementProcessors, emptyMgmtProcessorsStruct) {
+		mp := SetMp(serverHarwdareTypeGen, p.ManagementProcessors)
+		p.ManagementProcessor = mp
+	}
+
+	// append force flags comma separated
+	if len(ignoreFlags) > 0 {
+		var flags []string
+
+		for _, i := range ignoreFlags {
+			flags = append(flags, i.String())
+		}
+
+		forceFlags["force"] = strings.Join(flags, ",")
+	}
+
+	data, err := c.RestAPICall(rest.POST, uri, p, forceFlags)
+	if err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error submitting new profile request: %s", err)
+		return nil, err
+	}
+
+	log.Debugf("Response New Profile %s", data)
+	if err := json.Unmarshal([]byte(data), &t); err != nil {
+		t.TaskIsDone = true
+		log.Errorf("Error with task un-marshal: %s", err)
+		return nil, err
+	}
+	return t, nil
 }
 
 // create profile from template

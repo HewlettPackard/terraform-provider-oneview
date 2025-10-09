@@ -2413,6 +2413,14 @@ func GetBoolPointer(value bool) *bool {
 	return &value
 }
 
+// GetOptionalIntPointer returns pointer of integer value if non-zero, otherwise nil
+func GetOptionalIntPointer(value int) *int {
+	if value != 0 {
+		return GetIntPointer(value)
+	}
+	return nil
+}
+
 func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	lig, _ := config.ovClient.GetLogicalInterconnectGroupByName(d.Id())
