@@ -141,7 +141,7 @@ type KeyManager struct {
 	PrimaryServerAddress   string `json:"-"`
 	PrimaryServerPort      int    `json:"-"`
 	SecondaryServerAddress string `json:"-"`
-	SecondaryServerPort    int    `json:"-"`
+	SecondaryServerPort    *int   `json:"-"`
 	RedundancyRequired     *bool  `json:"-"`
 	GroupName              string `json:"-"`
 	CertificateName        string `json:"-"`
