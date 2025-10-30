@@ -473,16 +473,12 @@ resource "oneview_server_profile" "SP" {
 }
 
 
-# Create a Server Profile using a Server profile template
-
-data "oneview_ethernet_network" "ethernetnetworks2" {
-  name = "iscsi_nw"
-}
-
-data "oneview_scope" "scope" {
-  name = "Auto-Scope"
-}
-
+# This Terraform section automates the creation of multiple HPE OneView Server Profiles simultaneously using a 
+# predefined Server Profile Template (SPT). By leveraging Terraform’s inherent parallelism, it provisions several 
+# profiles across different server bays at once, ensuring consistent configuration and faster deployment. Each profile 
+# inherits the hardware, network, and BIOS settings from the SPT, while being individually mapped to its respective 
+# physical server. This enables scalable, template-driven provisioning without manual intervention, effectively achieving 
+# asynchronous and parallel profile creation.
 
 # Define your list of servers
 locals {
