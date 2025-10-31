@@ -471,4 +471,59 @@ resource "oneview_server_profile" "SP" {
     }
   }
 }
+
+
+# This Terraform section automates the creation of multiple HPE OneView Server Profiles simultaneously using a 
+# predefined Server Profile Template (SPT). By leveraging Terraform’s inherent parallelism, it provisions several 
+# profiles across different server bays at once, ensuring consistent configuration and faster deployment. Each profile 
+# inherits the hardware, network, and BIOS settings from the SPT, while being individually mapped to its respective 
+# physical server. This enables scalable, template-driven provisioning without manual intervention, effectively achieving 
+# asynchronous and parallel profile creation.
+
+# Define your list of servers
+locals {
+  servers = {
+    "server1" = {
+      hardware_name = " 0000A66101, bay 1"
+      profile_name  = "sp_from_spt_1"
+    }
+    "server2" = {
+      hardware_name = " 0000A66101, bay 2"
+      profile_name  = "sp_from_spt_2"
+    }
+    "server3" = {
+      hardware_name = " 0000A66101, bay 3"
+      profile_name  = "sp_from_spt_3"
+    }
+    "server4" = {
+      hardware_name = " 0000A66101, bay 3"
+      profile_name  = "sp_from_spt_4"
+    }
+    "server5" = {
+      hardware_name = " 0000A66101, bay 5"
+      profile_name  = "sp_from_spt_5"
+    }
+  }
+}
+
+data "oneview_server_hardware" "sh" {
+  for_each = local.servers
+  name     = each.value.hardware_name
+}
+
+data "oneview_server_profile_template" "spt" {
+  name = "Test-SP"
+}
+
+
+resource "oneview_server_profile" "sp_from_spt" {
+  for_each             = local.servers
+  name                 = each.value.profile_name
+  hardware_name        = data.oneview_server_hardware.sh[each.key].name
+  server_hardware_type = data.oneview_server_profile_template.spt.server_hardware_type
+  template             = data.oneview_server_profile_template.spt.name
+  scopes_uri           = data.oneview_scope.scope.uri
+  force_flags          = ["ignoreServerHealth"]
+}
+
 */
