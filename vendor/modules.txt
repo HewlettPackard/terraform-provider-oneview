@@ -8,7 +8,7 @@ cloud.google.com/go/internal/trace
 cloud.google.com/go/internal/version
 # cloud.google.com/go/storage v1.10.0
 cloud.google.com/go/storage
-# github.com/HewlettPackard/oneview-golang v10.2.1-0.20251009090514-65df7962a117+incompatible
+# github.com/HewlettPackard/oneview-golang v11.0.0+incompatible
 ## explicit
 github.com/HewlettPackard/oneview-golang/liboneview
 github.com/HewlettPackard/oneview-golang/ov
