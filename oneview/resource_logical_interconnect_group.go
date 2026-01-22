@@ -602,15 +602,16 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"category": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"consistency_checking": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "ExactMatch",
 						},
 						"dependent_resource_uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"description": {
 							Type:     schema.TypeString,
@@ -623,22 +624,27 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"enable_cut_through": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Default:  false,
 						},
 						"enable_ddns": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Default:  false,
 						},
 						"enable_fast_mac_cache_failover": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Default:  true,
 						},
 						"enable_interconnect_utilization_alert": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Default:  false,
 						},
 						"enable_network_loop_protection": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Default:  true,
 						},
 						"enable_pause_flood_protection": {
 							Type:     schema.TypeBool,
@@ -647,28 +653,31 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"enable_rich_tlv": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Default:  false,
 						},
 						"enable_storm_control": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Default:  false,
 						},
 						"enable_tagged_lldp": {
 							Type:     schema.TypeBool,
 							Optional: true,
+							Default:  false,
 						},
 						"id": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"interconnect_type": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"lldp_ip_address_mode": {
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "IPV4",
 						},
-
 						"lldp_ipv4_address": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -680,10 +689,11 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"mac_refresh_interval": {
 							Type:     schema.TypeInt,
 							Optional: true,
+							Default:  5,
 						},
 						"name": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 						"state": {
 							Type:     schema.TypeString,
@@ -697,12 +707,13 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						"storm_control_polling_interval": {
 							Type:     schema.TypeInt,
 							Optional: true,
+							Default:  10,
 						},
 						"storm_control_threshold": {
 							Type:     schema.TypeInt,
 							Optional: true,
+							Default:  0,
 						},
-
 						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -710,7 +721,7 @@ func resourceLogicalInterconnectGroup() *schema.Resource {
 						},
 						"uri": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -1613,11 +1624,11 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 			interconnectSettings.ConsistencyChecking = val1.(string)
 		}
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".dependent_resource_uri"); ok {
-			interconnectSettings.Description = utils.NewNstring(val1.(string))
+			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".description"); ok {
-			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
+			interconnectSettings.Description = utils.NewNstring(val1.(string))
 		}
 		domainName := d.Get(interconnectSettingsPrefix + ".domain_name").(string)
 		interconnectSettings.DomainName = &domainName
@@ -1629,7 +1640,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 		}
 		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".enable_fast_mac_cache_failover").(bool)
 		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_interconnect_utilization_alert"); ok {
 			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
 		}
 		networkLoopProtectionEnabled := d.Get(interconnectSettingsPrefix + ".enable_network_loop_protection").(bool)
@@ -1902,7 +1913,6 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	d.Set("fabric_uri", logicalInterconnectGroup.FabricUri.String())
 	d.Set("etag", logicalInterconnectGroup.ETAG)
 	d.Set("description", logicalInterconnectGroup.Description)
-	d.Set("interconnect_settings.0.interconnect_utilization_alert", logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert)
 	d.Set("interconnect_bay_set", logicalInterconnectGroup.InterconnectBaySet)
 	d.Set("redundancy_type", logicalInterconnectGroup.RedundancyType)
 	d.Set("downlink_speed_mode", logicalInterconnectGroup.DownlinkSpeedMode.String())
@@ -2137,9 +2147,9 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 	//Oneview send the uplink set in unordered way so ordering it.
 	matchedUplinkSets := make([]map[string]interface{}, 0)
 	unmatchedUplinkSets := make([]map[string]interface{}, 0)
+	oneviewuplinksetCount := len(uplinkSets)
 
 	if uplinkSetFromConfigraw, ok := d.GetOk("uplink_set"); ok {
-		oneviewuplinksetCount := len(uplinkSets)
 
 		uplinkSetFromConfig := uplinkSetFromConfigraw.([]interface{})
 		uplinksetCountFromConfig := len(uplinkSetFromConfig)
@@ -2154,12 +2164,14 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 			}
 		}
 
-		for k := 0; k < oneviewuplinksetCount; k++ {
+	}
 
-			if uplinkSets[k] != nil {
-				unmatchedUplinkSets = append(unmatchedUplinkSets, uplinkSets[k])
+	//There could be no uplink sets in the config (or we are doing an import)
+	//So we need to check these regardless
+	for k := 0; k < oneviewuplinksetCount; k++ {
 
-			}
+		if uplinkSets[k] != nil {
+			unmatchedUplinkSets = append(unmatchedUplinkSets, uplinkSets[k])
 
 		}
 
@@ -2329,15 +2341,35 @@ func resourceLogicalInterconnectGroupRead(d *schema.ResourceData, meta interface
 
 	interconnectSettings := make([]map[string]interface{}, 0, 1)
 	interconnectSetting := map[string]interface{}{
-		"type":                           logicalInterconnectGroup.EthernetSettings.Type,
-		"enable_fast_mac_cache_failover": *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
-		"network_loop_protection":        *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
-		"pause_flood_protection":         *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
-		"rich_tlv":                       *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
-		"mac_refresh_interval":           logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
+		"category":                              logicalInterconnectGroup.EthernetSettings.Category,
+		"consistency_checking":                  logicalInterconnectGroup.EthernetSettings.ConsistencyChecking,
+		"dependent_resource_uri":                logicalInterconnectGroup.EthernetSettings.DependentResourceUri,
+		"description":                           logicalInterconnectGroup.EthernetSettings.Description,
+		"domain_name":                           logicalInterconnectGroup.EthernetSettings.DomainName,
+		"enable_cut_through":                    *logicalInterconnectGroup.EthernetSettings.EnableCutThrough,
+		"enable_ddns":                           *logicalInterconnectGroup.EthernetSettings.EnableDdns,
+		"enable_fast_mac_cache_failover":        *logicalInterconnectGroup.EthernetSettings.EnableFastMacCacheFailover,
+		"enable_interconnect_utilization_alert": *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert,
+		"enable_network_loop_protection":        *logicalInterconnectGroup.EthernetSettings.EnableNetworkLoopProtection,
+		"enable_pause_flood_protection":         *logicalInterconnectGroup.EthernetSettings.EnablePauseFloodProtection,
+		"enable_rich_tlv":                       *logicalInterconnectGroup.EthernetSettings.EnableRichTLV,
+		"enable_storm_control":                  *logicalInterconnectGroup.EthernetSettings.EnableStormControl,
+		"enable_tagged_lldp":                    *logicalInterconnectGroup.EthernetSettings.EnableTaggedLldp,
+		"id":                                    logicalInterconnectGroup.EthernetSettings.ID,
+		"interconnect_type":                     logicalInterconnectGroup.EthernetSettings.InterconnectType,
+		"lldp_ip_address_mode":                  logicalInterconnectGroup.EthernetSettings.LldpIpAddressMode,
+		"lldp_ipv4_address":                     logicalInterconnectGroup.EthernetSettings.LldpIpv4Address,
+		"lldp_ipv6_address":                     logicalInterconnectGroup.EthernetSettings.LldpIpv6Address,
+		"mac_refresh_interval":                  logicalInterconnectGroup.EthernetSettings.MacRefreshInterval,
+		"name":                                  logicalInterconnectGroup.EthernetSettings.Name,
+		"state":                                 logicalInterconnectGroup.EthernetSettings.State,
+		"status":                                logicalInterconnectGroup.EthernetSettings.Status,
+		"storm_control_polling_interval":        logicalInterconnectGroup.EthernetSettings.StormControlPollingInterval,
+		"storm_control_threshold":               logicalInterconnectGroup.EthernetSettings.StormControlThreshold,
+		"type":                                  logicalInterconnectGroup.EthernetSettings.Type,
+		"uri":                                   logicalInterconnectGroup.EthernetSettings.URI,
 	}
 
-	interconnectSetting["interconnect_utilization_alert"] = *logicalInterconnectGroup.EthernetSettings.EnableInterconnectUtilizationAlert
 	interconnectSettings = append(interconnectSettings, interconnectSetting)
 	d.Set("interconnect_settings", interconnectSettings)
 
@@ -2929,11 +2961,11 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 			interconnectSettings.ConsistencyChecking = val1.(string)
 		}
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".dependent_resource_uri"); ok {
-			interconnectSettings.Description = utils.NewNstring(val1.(string))
+			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
 		}
 
 		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".description"); ok {
-			interconnectSettings.DependentResourceUri = utils.NewNstring(val1.(string))
+			interconnectSettings.Description = utils.NewNstring(val1.(string))
 		}
 		domainName := d.Get(interconnectSettingsPrefix + ".domain_name").(string)
 		interconnectSettings.DomainName = &domainName
@@ -2945,7 +2977,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 		}
 		macFailoverEnabled := d.Get(interconnectSettingsPrefix + ".enable_fast_mac_cache_failover").(bool)
 		interconnectSettings.EnableFastMacCacheFailover = &macFailoverEnabled
-		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".interconnect_utilization_alert"); ok {
+		if val1, ok := d.GetOk(interconnectSettingsPrefix + ".enable_interconnect_utilization_alert"); ok {
 			interconnectSettings.EnableInterconnectUtilizationAlert = GetBoolPointer(val1.(bool))
 		}
 		networkLoopProtectionEnabled := d.Get(interconnectSettingsPrefix + ".enable_network_loop_protection").(bool)
