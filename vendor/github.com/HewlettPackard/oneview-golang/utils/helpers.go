@@ -20,3 +20,11 @@ func IsEmpty(s string) bool {
 func GetBoolPointer(value bool) *bool {
 	return &value
 }
+
+// GetOptionalIntPointer  returns pointer value
+func GetOptionalIntPointer(value int) *int {
+	if value == 0 {
+		return nil
+	}
+	return &value
+}
