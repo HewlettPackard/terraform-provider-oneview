@@ -1,10 +1,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
-# [v.11.2.0-13] 
+# [v.11.3.0-13]
 
 ### Notes
-- This release supports API8200 minimally where we can use OneView v11.20 with this SDK.
+- This release supports API8600 minimally where we can use OneView v11.30 with this SDK.
 
 ### OneView Features Supported
 
@@ -44,7 +44,50 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.11.0.0-13] 
+# [v.11.2.0-13]
+
+### Notes
+- This release supports API8400 minimally where we can use OneView v11.20 with this SDK.
+
+### OneView Features Supported
+
+- Uplink Set
+- Storage System
+- Storage Volume Template
+- Storage Volume Attachments
+- Storage Volume
+- Storage Pool
+- Server Profile Template
+- Server Profile
+- Server Hardware Type
+- Server Hardware
+- Server Certificate
+- Scope
+- Rack Manager
+- Network Set
+- Logical Interconnect Groups
+- Logical Interconnects
+- Logical Enclosure
+- Interconnect Types
+- Interconnects
+- Labels
+- Id Pools IPv4 Subnets
+- Id Pools Ipv4 Range
+- Hypervisor Cluster Profile
+- Hypervisor Manager
+- Firmware Drivers
+- FCOE Network
+- FC Network
+- Enclosure Group
+- Enclosure
+- Ethernet Network
+- Connection Template
+- Appliance Time and Locale Configuration
+- Appliance SSH Access
+- Appliance SNMPv3 Trap Destinations
+- Appliance SNMPv1 Trap Destinations
+
+# [v.11.0.0-13]
 
 ### Notes
 - This release supports API8200 minimally where we can use OneView v11.00 with this SDK.
@@ -87,13 +130,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.10.2.0-13] 
+# [v.10.2.0-13]
 
 ### Notes
 - This release supports API8000 minimally where we can use OneView v10.20 with this SDK.
 
 ### Bug fixes & Enhancements:
-- [#570](https://github.com/HewlettPackard/terraform-provider-oneview/issues/570 )Retrieving a data object for a firmware component does not return the URI path if the firmware object is being retrieved from a external repository 
+- [#570](https://github.com/HewlettPackard/terraform-provider-oneview/issues/570 )Retrieving a data object for a firmware component does not return the URI path if the firmware object is being retrieved from a external repository
 
 ### OneView Features Supported
 
@@ -134,13 +177,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv1 Trap Destinations
 
 
-# [v.10.1.0-13] 
+# [v.10.1.0-13]
 
 ### Notes
 - This release supports API7800 minimally where we can use OneView v10.10 with this SDK.
 
 ### Bug fixes & Enhancements:
-- [#570](https://github.com/HewlettPackard/terraform-provider-oneview/issues/570 )Retrieving a data object for a firmware component does not return the URI path if the firmware object is being retrieved from a external repository 
+- [#570](https://github.com/HewlettPackard/terraform-provider-oneview/issues/570 )Retrieving a data object for a firmware component does not return the URI path if the firmware object is being retrieved from a external repository
 
 ### OneView Features Supported
 
@@ -181,13 +224,13 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv1 Trap Destinations
 
 
-# [v.10.0.0-13] 
+# [v.10.0.0-13]
 
 ### Notes
 - This release supports API7600 minimally where we can use OneView v10.00 with this SDK.
 
 ### Bug fixes & Enhancements:
-- [#570](https://github.com/HewlettPackard/terraform-provider-oneview/issues/570 )Retrieving a data object for a firmware component does not return the URI path if the firmware object is being retrieved from a external repository 
+- [#570](https://github.com/HewlettPackard/terraform-provider-oneview/issues/570 )Retrieving a data object for a firmware component does not return the URI path if the firmware object is being retrieved from a external repository
 
 ### OneView Features Supported
 
@@ -227,7 +270,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.9.4.0-13] 
+# [v.9.4.0-13]
 
 ### Notes
 - This release supports API7400 minimally where we can use OneView v9.40 with this SDK.
@@ -270,7 +313,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.9.3.0-13] 
+# [v.9.3.0-13]
 
 ### Notes
 - This release supports API7200 minimally where we can use OneView v9.30 with this SDK.
@@ -313,7 +356,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.9.2.0-13] 
+# [v.9.2.0-13]
 
 ### Notes
 - This release supports API7000 minimally where we can use OneView v9.20 with this SDK.
@@ -356,7 +399,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.9.1.0-13] 
+# [v.9.1.0-13]
 
 ### Notes
 - This release supports API6800 minimally where we can use OneView v9.10 with this SDK.
@@ -400,7 +443,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv1 Trap Destinations
 
 
-# [v.9.0.0-13] 
+# [v.9.0.0-13]
 
 ### Notes
 - This release supports API6600 minimally where we can use OneView v9.00 with this SDK.
@@ -444,7 +487,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv1 Trap Destinations
 
 
-# [v.8.9.0-13] 
+# [v.8.9.0-13]
 
 ### Notes
 - This release supports API6400 minimally where we can use OneView v8.90 with this SDK.
@@ -487,7 +530,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.8.8.0-13] 
+# [v.8.8.0-13]
 
 ### Notes
 - This release supports API6200 minimally where we can use OneView v8.80 with this SDK.
@@ -531,7 +574,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv1 Trap Destinations
 
 
-# [v.8.7.0-13] 
+# [v.8.7.0-13]
 
 ### Notes
 - This release supports API6000 minimally where we can use OneView v8.70 with this SDK.
@@ -575,7 +618,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv1 Trap Destinations
 
 
-# [v.8.6.0-13] 
+# [v.8.6.0-13]
 
 ### Notes
 - This release supports API5800 minimally where we can use OneView v8.60 with this SDK.
@@ -618,7 +661,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.8.5.0-13] 
+# [v.8.5.0-13]
 
 ### Notes
 - This release supports API5600 minimally where we can use OneView v8.50 with this SDK.
@@ -661,7 +704,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Appliance SNMPv3 Trap Destinations
 - Appliance SNMPv1 Trap Destinations
 
-# [v.8.4.0-13] 
+# [v.8.4.0-13]
 
 ### Notes
 - This release supports API5400 minimally where we can use OneView v8.40 with this SDK.
@@ -767,7 +810,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 ### Bug fixes & Enhancements:
 - [#517](https://github.com/HewlettPackard/terraform-provider-oneview/issues/517 )Logical Interconnect Group crash
 - [#518](https://github.com/HewlettPackard/terraform-provider-oneview/issues/518 ) Support darwin_arm64
- 
+
 
 # [v8.1.0-13]
 ### Notes
@@ -1003,7 +1046,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Storage Volume Template
 - Storage System
 - Uplink Set
-  
+
 # [v6.6.0-13]
 ### Notes
 - This release supports API3800 minimally where we can use OneView v6.60 with this SDK.
@@ -1016,7 +1059,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - [#453](https://github.com/HewlettPackard/terraform-provider-oneview/issues/453) Server profile creation with iLO configuration is throwing error after creation
 - [#447](https://github.com/HewlettPackard/terraform-provider-oneview/issues/447) Cannot set all account privileges for newer ILOs
 - [#459](https://github.com/HewlettPackard/terraform-provider-oneview/issues/459) Cannot import Server Profile Template, provider crashes
-  
+
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
 - Appliance SNMPv3 Trap Destinations
@@ -1058,12 +1101,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - This release supports API3600 minimally where we can use OneView v6.50 with this SDK.
 
 #### Major Changes
-Upgraded the plugin sdk from version 1 to version 2. 
+Upgraded the plugin sdk from version 1 to version 2.
 
 ### Bug fixes & Enhancements:
 
 - [#412](https://github.com/HewlettPackard/terraform-provider-oneview/issues/412) Use firmware baseline name instead of uri - enhancement needed
-  
+
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
 - Appliance SNMPv3 Trap Destinations
@@ -1107,13 +1150,13 @@ Upgraded the plugin sdk from version 1 to version 2.
 
 #### Major Changes
 1. Added new endpoint for Logical Enclosure resource.
-  - PATCH /rest/logical-enclosure/{id}
- 
+- PATCH /rest/logical-enclosure/{id}
+
 
 ### Bug fixes & Enhancements:
 - [#404](https://github.com/HewlettPackard/terraform-provider-oneview/issues/404) Creating Server profile for DLs fails
-- [#416](https://github.com/HewlettPackard/terraform-provider-oneview/issues/416) server hardware resource is not idempotent 
-- [#414](https://github.com/HewlettPackard/terraform-provider-oneview/issues/414) Adding DLs servers in OneView fails 
+- [#416](https://github.com/HewlettPackard/terraform-provider-oneview/issues/416) server hardware resource is not idempotent
+- [#414](https://github.com/HewlettPackard/terraform-provider-oneview/issues/414) Adding DLs servers in OneView fails
 
 ### Oneview Features supported
 - Appliance SNMPv1 Trap Destinations
@@ -1160,9 +1203,9 @@ Upgraded the plugin sdk from version 1 to version 2.
 1. Extended support to Server Profile resource on DL Server.
 2. Extended support to Server Profile Template resource on DL Server.
 3. Extended support to Server Hardware resource for DL Server.
-   - POST   /rest/server-hardware
-   - PATCH  /rest/server-hardware/{id}
-   - DELETE /rest/server-hardware/{id}
+- POST   /rest/server-hardware
+- PATCH  /rest/server-hardware/{id}
+- DELETE /rest/server-hardware/{id}
 4. logical_interconnect_group: Changed the implementation for providing port_num attribute. Instead of mentioning all ports in a list, we have to provide each logical_port_config block with with a specific port_num inside a uplink_set block. Please refer [example files](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/examples/logical_interconnect_groups/main.tf) and [docs](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/logical_interconnect_group.html.markdown) for more details.
 
 ### Bug fixes & Enhancements:
@@ -1172,8 +1215,8 @@ Upgraded the plugin sdk from version 1 to version 2.
 - [#366](https://github.com/HewlettPackard/terraform-provider-oneview/issues/366) Server Profiles - Terraform doesn't wait for deletion to complete
 - [#369](https://github.com/HewlettPackard/terraform-provider-oneview/issues/369) Server Profile Template and Server Profile description are not set
 - [#370](https://github.com/HewlettPackard/terraform-provider-oneview/issues/370) Create Server Profile from Template
-- [#371](https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed 
-- [#387](https://github.com/HewlettPackard/terraform-provider-oneview/issues/387) Unable to import server hardware 
+- [#371](https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed
+- [#387](https://github.com/HewlettPackard/terraform-provider-oneview/issues/387) Unable to import server hardware
 
 
 ### Oneview Features supported
@@ -1221,9 +1264,9 @@ Upgraded the plugin sdk from version 1 to version 2.
 1. Extended support to Server Profile resource on DL Server.
 2. Extended support to Server Profile Template resource on DL Server.
 3. Extended support to Server Hardware resource for DL Server.
-   - POST   /rest/server-hardware
-   - PATCH  /rest/server-hardware/{id}
-   - DELETE /rest/server-hardware/{id}
+- POST   /rest/server-hardware
+- PATCH  /rest/server-hardware/{id}
+- DELETE /rest/server-hardware/{id}
 4. logical_interconnect_group: Changed the implementation for providing port_num attribute. Instead of mentioning all ports in a list, we have to provide each logical_port_config block with with a specific port_num inside a uplink_set block. Please refer [example files](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/examples/logical_interconnect_groups/main.tf) and [docs](https://github.com/HewlettPackard/terraform-provider-oneview/blob/master/docs/r/logical_interconnect_group.html.markdown) for more details.
 
 ### Bug fixes & Enhancements:
@@ -1233,8 +1276,8 @@ Upgraded the plugin sdk from version 1 to version 2.
 - [#366](https://github.com/HewlettPackard/terraform-provider-oneview/issues/366) Server Profiles - Terraform doesn't wait for deletion to complete
 - [#369](https://github.com/HewlettPackard/terraform-provider-oneview/issues/369) Server Profile Template and Server Profile description are not set
 - [#370](https://github.com/HewlettPackard/terraform-provider-oneview/issues/370) Create Server Profile from Template
-- [#371](https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed 
-- [#387](https://github.com/HewlettPackard/terraform-provider-oneview/issues/387) Unable to import server hardware 
+- [#371](https://github.com/HewlettPackard/terraform-provider-oneview/issues/371) LIG - Need to set "desiredFecMode", improvement needed
+- [#387](https://github.com/HewlettPackard/terraform-provider-oneview/issues/387) Unable to import server hardware
 
 
 ### Oneview Features supported
@@ -1280,52 +1323,52 @@ Upgraded the plugin sdk from version 1 to version 2.
 
 #### Major Changes
 1. Added support to Appliance SNMPv3 Trap Destinations
-   - GET /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
-   - POST /rest/appliance/snmpv3-trap-forwarding/destinations
-   - PUT /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
-   - DELETE /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+- GET /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+- POST /rest/appliance/snmpv3-trap-forwarding/destinations
+- PUT /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
+- DELETE /rest/appliance/snmpv3-trap-forwarding/destinations/{id}
 2. Added support to Appliance Time and Locale Configuration.
-   - GET  /rest/appliance/configuration/time-locale
-   - POST /rest/appliance/configuration/time-locale
-3. Added support to Label Resource. 
-   - GET /rest/labels/resources/**
-   - PUT /rest/labels/resources/**
-   - DELETE /rest/labels/resources/**
-   - POST /rest/labels/resources
+- GET  /rest/appliance/configuration/time-locale
+- POST /rest/appliance/configuration/time-locale
+3. Added support to Label Resource.
+- GET /rest/labels/resources/**
+- PUT /rest/labels/resources/**
+- DELETE /rest/labels/resources/**
+- POST /rest/labels/resources
 4. Added support to Appliance SNMPv1 Trap Destinations
-   - GET     /rest/appliance/trap-destinations/{id}
-   - POST    /rest/appliance/trap-destinations/{id}
-   - PUT     /rest/appliance/trap-destinations/{id}
-   - DELETE  /rest/appliance/trap-destinations/{id}
+- GET     /rest/appliance/trap-destinations/{id}
+- POST    /rest/appliance/trap-destinations/{id}
+- PUT     /rest/appliance/trap-destinations/{id}
+- DELETE  /rest/appliance/trap-destinations/{id}
 5. Added support to support to retreive the appliance supported version.
-   - GET /rest/version
+- GET /rest/version
 6. Added support to Appliance SSH Access Resource.
-   - GET  /rest/appliance/ssh-access
-   - PUT /rest/appliance/ssh-access
+- GET  /rest/appliance/ssh-access
+- PUT /rest/appliance/ssh-access
 7. Added support to Firmware Drivers Resource.
-   - GET    /rest/firmware-drivers/{id}
-   - POST   /rest/firmware-drivers
-   - DELETE /rest/firmware-drivers/{id}
+- GET    /rest/firmware-drivers/{id}
+- POST   /rest/firmware-drivers
+- DELETE /rest/firmware-drivers/{id}
 8. Added support to Connection Templates Resource.
-   - GET /rest/connection-templates/{id}
-   - PUT /rest/connection-templates/{id}
+- GET /rest/connection-templates/{id}
+- PUT /rest/connection-templates/{id}
 9. Added support to Id Pools Ipv4 Range
-   - GET     /rest/id-pools/ipv4/ranges/{id}
-   - POST    /rest/id-pools/ipv4/ranges
-   - PUT     /rest/id-pools/ipv4/ranges/{id}
-   - DELETE  /rest/id-pools/ipv4/ranges/{id}
+- GET     /rest/id-pools/ipv4/ranges/{id}
+- POST    /rest/id-pools/ipv4/ranges
+- PUT     /rest/id-pools/ipv4/ranges/{id}
+- DELETE  /rest/id-pools/ipv4/ranges/{id}
 10. Added support to Id Pools IPv4 Subnets
-   - GET      /rest/id-pools/ipv4/subnets/{id}
-   - POST     /rest/id-pools/ipv4/subnets
-   - PUT      /rest/id-pools/ipv4/subnets/{id}
-   - PUT      /rest/id-pools/ipv4/subnets/{id}/allocator
-   - PUT      /rest/id-pools/ipv4/subnets/{id}/collector
-   - DELETE   /rest/id-pools/ipv4/subnets/{id}
+- GET      /rest/id-pools/ipv4/subnets/{id}
+- POST     /rest/id-pools/ipv4/subnets
+- PUT      /rest/id-pools/ipv4/subnets/{id}
+- PUT      /rest/id-pools/ipv4/subnets/{id}/allocator
+- PUT      /rest/id-pools/ipv4/subnets/{id}/collector
+- DELETE   /rest/id-pools/ipv4/subnets/{id}
 11. Added support to SNMPv3 User
-   - GET      /rest/appliance/snmpv3-trap-forwarding/users/{id}
-   - POST     /rest/appliance/snmpv3-trap-forwarding/users
-   - PUT      /rest/appliance/snmpv3-trap-forwarding/users/{id}   
-   - DELETE   /rest/appliance/snmpv3-trap-forwarding/users/{id}
+- GET      /rest/appliance/snmpv3-trap-forwarding/users/{id}
+- POST     /rest/appliance/snmpv3-trap-forwarding/users
+- PUT      /rest/appliance/snmpv3-trap-forwarding/users/{id}
+- DELETE   /rest/appliance/snmpv3-trap-forwarding/users/{id}
 
 
 ### Notes
@@ -1352,7 +1395,7 @@ Upgraded the plugin sdk from version 1 to version 2.
 - Interconnect Types
 - Logical Enclosure
 - Logical Interconnects
-- Logical Interconnect Groups 
+- Logical Interconnect Groups
 - Network Set
 - Scope
 - Server Certificate
@@ -1371,14 +1414,14 @@ Upgraded the plugin sdk from version 1 to version 2.
 - [#289] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/289) Terraform crashes for Logical Interconnect Group Read
 - [#300] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/300) Can't create resource oneview_server_profile_template
 - [#301] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/301) Can't create resource oneview_server_profile
-- [#336] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/336) Terraform crash creating Server Profile Template 
+- [#336] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/336) Terraform crash creating Server Profile Template
 - [#334] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/338) volume creation is not derived from volume template
 - [#343] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/343) Creating Server Profile produces an Error 404
 
-# [v6.1.0-13] 
+# [v6.1.0-13]
 
 ### Notes
-- This release supports API2800 minimally where we can use OneView v6.10 with this SDK. 
+- This release supports API2800 minimally where we can use OneView v6.10 with this SDK.
 - Migration Support document is added to help the user migrate from older  sdk supporting Terraform 0.11.
 
 ### Bug fixes & Enhancements:
@@ -1399,7 +1442,7 @@ Upgraded the plugin sdk from version 1 to version 2.
 - Interconnect Types
 - Logical Enclosure
 - Logical Interconnects
-- Logical Interconnect Groups 
+- Logical Interconnect Groups
 - Network Set
 - Scope
 - Server Certificate
@@ -1423,7 +1466,7 @@ Upgraded the plugin sdk from version 1 to version 2.
 
 ### Bug fixes & Enhancements:
 - [#277] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/277) SPT Import configuration issue
-- [#285] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/285) Terraform crashes for Logical Interconnect Group Read. 
+- [#285] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/285) Terraform crashes for Logical Interconnect Group Read.
 
 ### Oneview Features supported
 - Ethernet Network
@@ -1437,7 +1480,7 @@ Upgraded the plugin sdk from version 1 to version 2.
 - Interconnect Types
 - Logical Enclosure
 - Logical Interconnects
-- Logical Interconnect Groups 
+- Logical Interconnect Groups
 - Network Set
 - Scope
 - Server Certificate
@@ -1454,7 +1497,7 @@ Upgraded the plugin sdk from version 1 to version 2.
 
 # [v6.0.0-12]
 ### Notes
-- This release supports API2600 minimally where we can use OneView v6.00 with this SDK. 
+- This release supports API2600 minimally where we can use OneView v6.00 with this SDK.
 
 ### Oneview Features supported
 - Ethernet Network
@@ -1468,7 +1511,7 @@ Upgraded the plugin sdk from version 1 to version 2.
 - Interconnect Types
 - Logical Enclosure
 - Logical Interconnects
-- Logical Interconnect Groups 
+- Logical Interconnect Groups
 - Network Set
 - Scope
 - Server Certificate
@@ -1489,15 +1532,15 @@ Upgraded the plugin sdk from version 1 to version 2.
 ### Bug fixes & Enhancements:
 - [#238] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/238) server profile connection settings
 - [#267] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/267) local_storage not working as expected.
-- [#268] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/268) local storage issue ( defined in server profile template). 
+- [#268] (https://github.com/HewlettPackard/terraform-provider-oneview/issues/268) local storage issue ( defined in server profile template).
 
 # [v1.7.0-12]
 ### Notes
-- This release supports API2400 minimally where we can use OneView v5.60 with this SDK. 
+- This release supports API2400 minimally where we can use OneView v5.60 with this SDK.
 
 #### Major changes
 1. Added support for new endpoints in logical interconnect resource, logical interconnect data source and logical interconnect group data source.
-   - PUT /rest/logical-interconnects/{id}/portFlapSettings
+- PUT /rest/logical-interconnects/{id}/portFlapSettings
 
 ### Oneview Features supported
 - Ethernet Network
@@ -1511,7 +1554,7 @@ Upgraded the plugin sdk from version 1 to version 2.
 - Interconnect Types
 - Logical Enclosure
 - Logical Interconnects
-- Logical Interconnect Groups 
+- Logical Interconnect Groups
 - Network Set
 - Scope
 - Server Certificate
@@ -1533,9 +1576,9 @@ Upgraded the plugin sdk from version 1 to version 2.
 
 # [v1.6.0]
 ### Notes
-- This release supports API2200 minimally where we can use OneView API2200 with this SDK and ImageStreamer REST API version 2000 (I3S v5.40).  
-- This release adds variable.tf file to provide easy access for adding Appliance Credentials through environment variables or during runtime. 
-- No new fields are added/deleted to support API2200. 
+- This release supports API2200 minimally where we can use OneView API2200 with this SDK and ImageStreamer REST API version 2000 (I3S v5.40).
+- This release adds variable.tf file to provide easy access for adding Appliance Credentials through environment variables or during runtime.
+- No new fields are added/deleted to support API2200.
 
 ### Oneview Features supported
 - Enclosure
@@ -1563,7 +1606,7 @@ Upgraded the plugin sdk from version 1 to version 2.
 - Storage Volume Attachment
 - Storage Volume Template
 - Uplink Set
- 
+
 ### Image Streamer resources supported:
 - Deployment Plans
 
@@ -1746,11 +1789,11 @@ This version supports OneView appliances with version 4.2 using the OneView REST
 
 # [v1.0.0]
 ### Notes
-  This is the first release of the OneView modules in Terraform and it adds support to core features listed below.
-  This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800.
+This is the first release of the OneView modules in Terraform and it adds support to core features listed below.
+This version of the module supports OneView appliances with version 4.10, using the OneView REST API version 800.
 
 ### Major changes:
-- Support for Go 1.11  
+- Support for Go 1.11
 - Added example files for the resources for improved readability and usability.
 - Added CHANGELOG to track versions, issues and improvements.
 - Officially adopted Semantic Versioning for the SDK
