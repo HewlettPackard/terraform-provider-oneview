@@ -33,6 +33,12 @@ resource "oneview_ethernet_network" {
 
 The Oneview provider supports static credentials and environment variables.
 
+## PQC and TLS Notes
+
+- Go 1.26 or later is required to use the PQC-capable TLS stack used by the provider dependency chain.
+- OneView API calls use TLS 1.3 minimum.
+- PQC hybrid key exchange negotiation is handled by Go runtime defaults.
+
 ## Configuration Reference
 
 The following keys can be used to configure the provider.
@@ -46,7 +52,9 @@ The following keys can be used to configure the provider.
 * `ov_endpoint` - (Optional) This is the OneView URL.
   It must be provided or sourced from ONEVIEW_OV_ENDPOINT environment variable.
 
-* `ov_sslverify` - (Optional) This is a boolean value for whether ssl is enabled.
+* `ov_sslverify` - (Optional) Controls certificate verification for OneView HTTPS connections.
+  `true` validates server certificate chain and hostname.
+  `false` skips certificate verification.
   It must be provided or sourced from ONEVIEW_OV_SSLVERIFY environment variable.
 
 * `ov_apiversion` - (Optional) This specifies what API version to use.

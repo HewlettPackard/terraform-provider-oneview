@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -25,14 +25,6 @@ var (
 		http.StatusConflict:            false,
 		http.StatusInternalServerError: false,
 	}
-
-	// TODO: this should have a real cert
-	tr = &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-
-	// get a client
-	client = &http.Client{Transport: tr}
 )
 
 // Options for REST call
@@ -58,6 +50,32 @@ type Client struct {
 // NewClient - get a new network client
 func (c *Client) NewClient(user, key, endpoint string) *Client {
 	return &Client{User: user, APIKey: key, Endpoint: endpoint, Option: Options{}}
+}
+
+// newHTTPClient - create a new per-client HTTP client with PQC-enabled TLS configuration
+// This method replaces the global transport singleton to enable per-client TLS settings.
+//
+// TLS Configuration (PQC Enablement):
+//   - MinVersion: TLS 1.3 (required for PQC hybrid key exchange X25519MLKEM768)
+//   - InsecureSkipVerify: Controlled by c.SSLVerify flag for backward compatibility
+//   - CurveIDs: Left as nil so Go 1.26+ automatically negotiates finalized X25519MLKEM768 (FIPS 203)
+//     Do NOT set CurvePreferences (deprecated in Go 1.26)
+//   - Proxy: Configured per-client from environment instead of global mutation
+func (c *Client) newHTTPClient() *http.Client {
+	// Create TLS configuration with PQC support (Go 1.26+)
+	tlsConfig := &tls.Config{
+		MinVersion:         tls.VersionTLS13, // Enforce TLS 1.3 for PQC hybrid key exchange
+		InsecureSkipVerify: !c.SSLVerify,     // Honor c.SSLVerify flag: true=verify, false=skip
+		// CurveIDs is left as nil (default), allowing Go 1.26+ to automatically negotiate
+		// the finalized X25519MLKEM768 PQC hybrid key exchange (FIPS 203 standard).
+		// CurvePreferences is deprecated in Go 1.26 and must NOT be used.
+	}
+
+	transport := &http.Transport{
+		TLSClientConfig: tlsConfig,
+	}
+
+	return &http.Client{Transport: transport}
 }
 
 // isOkStatus - check the return status of the response
@@ -164,17 +182,22 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}, qu
 		return nil, fmt.Errorf("Error with request: %v - %q", Url, err)
 	}
 
-	// setup proxy
+	// Create per-client HTTP transport with proxy support
+	// This replaces global transport mutation with per-client configuration
+	httpClient := c.newHTTPClient()
+
+	// Setup proxy from environment per-request
 	proxyUrl, err := http.ProxyFromEnvironment(req)
 	if err != nil {
 		return nil, fmt.Errorf("Error with proxy: %v - %q", proxyUrl, err)
 	}
 	if proxyUrl != nil {
-		tr.Proxy = http.ProxyURL(proxyUrl)
-		log.Debugf("*** proxy => %+v", tr.Proxy)
+		transport := httpClient.Transport.(*http.Transport)
+		transport.Proxy = http.ProxyURL(proxyUrl)
+		log.Debugf("*** proxy => %+v", transport.Proxy)
 	}
 
-	// build the auth headerU
+	// build the auth headers
 	for k, v := range c.Option.Headers {
 		log.Debugf("Headers -> %s -> %+v\n", k, v)
 		req.Header.Add(k, v)
@@ -183,7 +206,8 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}, qu
 	// req.SetBasicAuth(c.User, c.APIKey)
 	req.Method = fmt.Sprintf("%s", method.String())
 
-	resp, err := client.Do(req)
+	// Use per-client HTTP client instead of global singleton
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +225,7 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}, qu
 	// RESET QUERY PARAMETERS AFTER EVERY CALL
 	c.SetQueryString(nil)
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if !c.isOkStatus(resp.StatusCode) {
 		type apiErr struct {
 			Message string `json:"message"`

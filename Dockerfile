@@ -1,4 +1,4 @@
-FROM golang:alpine
+FROM golang:1.26-alpine
 MAINTAINER "Priyanka Sood <priyanka.sood@hpe.com>" 
 
 ENV TERRAFORM_VERSION=0.13.6

@@ -283,7 +283,7 @@ type DcbxEtsPort struct {
 	PortName       string `json:"portName,omitempty"`       // "portName": "",
 }
 
-//portFlapProtection added in OV 2400
+// portFlapProtection added in OV 2400
 type PortFlapProtection struct {
 	Category                     utils.Nstring `json:"category,omitempty"`                     // "category": "snmp-configuration",
 	ConsistencyChecking          string        `json:"consistencyChecking,omitempty"`          // "consistencyChecking":"ExactMatch"
@@ -304,7 +304,7 @@ type PortFlapProtection struct {
 
 }
 
-//TODO SNMPConfiguration
+// TODO SNMPConfiguration
 type SnmpConfiguration struct {
 	Category            utils.Nstring     `json:"category,omitempty"`            // "category": "snmp-configuration",
 	ConsistencyChecking string            `json:"consistencyChecking,omitempty"` // "created": "20150831T154835.250Z",
