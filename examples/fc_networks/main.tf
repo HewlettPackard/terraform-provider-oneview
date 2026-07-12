@@ -8,7 +8,7 @@ provider "oneview" {
 }
 
 data "oneview_scope" "scope_obj" {
-  name = "testing"
+  name = "Auto-Scope"
 }
 
 # Creates the fc network with name TestFCNetwork and local name FCNetwork.
