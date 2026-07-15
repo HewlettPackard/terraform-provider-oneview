@@ -77,7 +77,6 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
       isolated_trunk = false
       requested_mbps = "2500"
       port_id        = "Auto"
-      requested_vfs  = ""
       boot {
         priority           = "Primary"
         boot_volume_source = "UserDefined"
@@ -90,7 +89,6 @@ resource "oneview_server_profile_template" "ServerProfileTemplateWithConnections
       function_type  = "Ethernet"
       network_uri    = data.oneview_ethernet_network.ethernetNetwork.uri
       isolated_trunk = false
-      lag_name       = ""
       port_id        = "Mezz 3:2-a"
       requested_mbps = "2500"
       boot {

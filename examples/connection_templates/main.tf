@@ -22,4 +22,8 @@ output "connection_template_uri" {
 # Then just update the update_resource.tf with your desired values and execute it.
 
 resource "oneview_connection_templates" "connectionTemplates" {
+  bandwidth {
+    maximum_bandwidth = 10000
+    typical_bandwidth = 2000
+  }
 }

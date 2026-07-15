@@ -73,12 +73,6 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
         ethernet_boot_type = "PXE"
       }
     }
-    /* To remove second connection we are kepping connection as an empty block.
-   Note: Do not omit the block, you will need to keep it as empty in order to delete it from the Oneview. */
-
-    connections {
-    }
-
   }
 }
 
