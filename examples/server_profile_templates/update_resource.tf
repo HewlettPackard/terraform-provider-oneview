@@ -11,6 +11,10 @@ data "oneview_scope" "scope" {
   name = "Auto-Scope"
 }
 
+data "oneview_ethernet_network" "ethernetnetworks1" {
+  name = "Auto-Ethernet-1"
+}
+
 # Updates server profile template from main.tf
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
   name                 = "TestServerProfileTemplateRenamed"

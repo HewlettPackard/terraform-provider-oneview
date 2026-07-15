@@ -10,8 +10,8 @@ provider "oneview" {
 # Creates ipv4 subnet with the networkId, subnetMask and gateway
 resource "oneview_id_pools_ipv4_subnets" "ipv4_subnets" {
   name="SubnetTF"
-  network_id="<networkId>"
-  subnet_mask="<subnetMask>"
+  network_id="<network_id>"
+  subnet_mask="<subnetmask>"
   gateway="<gateway>"
   domain= "Terraform.com"
 }
