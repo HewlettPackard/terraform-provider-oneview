@@ -3,6 +3,9 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 # [Unreleased]
 
+### Notes
+- This release supports API8600 minimally where we can use OneView <ov_version> with this SDK.
+
 ### Bug fixes & Enhancements:
 - Updated module/toolchain baseline to Go 1.26.
 - Updated GitHub Actions workflows to Go 1.26 (`test.yml`, `release.yml`).
@@ -10,6 +13,44 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Updated `github.com/HewlettPackard/oneview-golang` dependency to PQC-enabled commit including TLS 1.3 minimum enforcement.
 - Clarified provider documentation for `ov_sslverify` certificate validation behavior.
 - Fixed provider compile issues surfaced by Go 1.26 in logical interconnect group sFlow network prefix handling.
+
+### OneView Features Supported
+
+- Uplink Set
+- Storage System
+- Storage Volume Template
+- Storage Volume Attachments
+- Storage Volume
+- Storage Pool
+- Server Profile Template
+- Server Profile
+- Server Hardware Type
+- Server Hardware
+- Server Certificate
+- Scope
+- Rack Manager
+- Network Set
+- Logical Interconnect Groups
+- Logical Interconnects
+- Logical Enclosure
+- Interconnect Types
+- Interconnects
+- Labels
+- Id Pools IPv4 Subnets
+- Id Pools Ipv4 Range
+- Hypervisor Cluster Profile
+- Hypervisor Manager
+- Firmware Drivers
+- FCOE Network
+- FC Network
+- Enclosure Group
+- Enclosure
+- Ethernet Network
+- Connection Template
+- Appliance Time and Locale Configuration
+- Appliance SSH Access
+- Appliance SNMPv3 Trap Destinations
+- Appliance SNMPv1 Trap Destinations
 
 # [v.11.3.0-13]
 
