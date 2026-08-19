@@ -1399,7 +1399,7 @@ func resourceLogicalInterconnectGroupCreate(d *schema.ResourceData, meta interfa
 	}
 	sflowConfiguration.SflowCollectors = sflowCollectors
 
-	sflowNetworkPrefix := fmt.Sprintf(sflowConfigurationPrefix + ".sflow_network.0")
+	sflowNetworkPrefix := sflowConfigurationPrefix + ".sflow_network.0"
 	sflowNetwork := ov.SflowNetwork{}
 
 	if val, ok := d.GetOk(sflowNetworkPrefix + ".vlan_id"); ok {
@@ -2735,7 +2735,7 @@ func resourceLogicalInterconnectGroupUpdate(d *schema.ResourceData, meta interfa
 	}
 	sflowConfiguration.SflowCollectors = sflowCollectors
 
-	sflowNetworkPrefix := fmt.Sprintf(sflowConfigurationPrefix + ".sflow_network.0")
+	sflowNetworkPrefix := sflowConfigurationPrefix + ".sflow_network.0"
 	sflowNetwork := ov.SflowNetwork{}
 
 	if val, ok := d.GetOk(sflowNetworkPrefix + ".vlan_id"); ok {

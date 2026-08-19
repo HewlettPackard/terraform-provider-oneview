@@ -11,6 +11,10 @@ data "oneview_scope" "scope" {
   name = "Auto-Scope"
 }
 
+data "oneview_ethernet_network" "ethernetnetworks1" {
+  name = "Auto-Ethernet-1"
+}
+
 # Updates server profile template from main.tf
 resource "oneview_server_profile_template" "ServerProfileTemplate" {
   name                 = "TestServerProfileTemplateRenamed"
@@ -69,12 +73,6 @@ resource "oneview_server_profile_template" "ServerProfileTemplate" {
         ethernet_boot_type = "PXE"
       }
     }
-    /* To remove second connection we are kepping connection as an empty block.
-   Note: Do not omit the block, you will need to keep it as empty in order to delete it from the Oneview. */
-
-    connections {
-    }
-
   }
 }
 

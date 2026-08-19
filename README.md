@@ -47,6 +47,15 @@ In HPE OneView 7.0 the server hardware type field is not compatible with HPE One
 
 HPE OneView SDK for Terraform can be installed from Source or Docker container installation methods. You can either use a docker container which will have the HPE OneView SDK for terraform installed or perform local installation manually.
 
+### PQC and TLS Requirements
+
+- Go 1.26 or later is required.
+- The provider inherits TLS behavior from `oneview-golang` and now enforces TLS 1.3 minimum for OneView API connections.
+- PQC hybrid key exchange support is handled by Go 1.26+ `crypto/tls` defaults.
+- `ov_sslverify` controls certificate validation:
+  - `true`: certificate chain and hostname are validated.
+  - `false`: certificate validation is skipped (use only for lab/testing environments).
+
 ### Docker Setup
 The light weight containerized version of the HPE OneView SDK for Terraform is available in the [Docker Store](https://hub.docker.com/repository/docker/hewlettpackardenterprise/hpe-oneview-sdk-for-terraform/general). The Docker Store image tag consist of two sections: <sdk_version-OV_version>
 
@@ -64,10 +73,10 @@ Local installation requires
 - Installing Go
 ```bash 
 $ apt-get install build-essential git wget
-$ wget https://golang.org/dl/go1.15.7.linux-amd64.tar.gz
+$ wget https://go.dev/dl/go1.26.5.linux-amd64.tar.gz
 
 #unzip and untar the file 
-$ tar -zxvf go1.15.7.linux-amd64.tar.gz
+$ tar -zxvf go1.26.5.linux-amd64.tar.gz
 
 # move it to /usr/local/ and create directory for Go.
 $ mv go/ /usr/local/ 
@@ -135,6 +144,10 @@ provider "oneview" {
 }
 
 ```
+
+`ov_sslverify` behavior:
+- `true` verifies OneView certificate chain and hostname.
+- `false` skips certificate verification.
 
 :lock: Tip: Check the file permissions because the password is stored in clear-text as Environment Variable.
 

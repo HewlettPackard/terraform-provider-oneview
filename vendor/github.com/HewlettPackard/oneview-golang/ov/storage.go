@@ -39,8 +39,8 @@ type LocalStorageOptions struct { // "localStorage": {
 }
 
 // StoragePath storage path host-to-target paths
-//Use GET /rest/storage-systems/{arrayid}/managedPorts?query="expectedNetworkUri EQ '/rest/fc-networks/{netowrk-id}'"
-//to retrieve the storage targets for the associated network.
+// Use GET /rest/storage-systems/{arrayid}/managedPorts?query="expectedNetworkUri EQ '/rest/fc-networks/{netowrk-id}'"
+// to retrieve the storage targets for the associated network.
 type StoragePath struct {
 	ConnectionID   int           `json:"connectionId,omitempty"` // connectionId (required), The ID of the connection associated with this storage path. Use GET /rest/server-profiles/available-networks to retrieve the list of available networks.
 	IsEnabled      bool          `json:"isEnabled"`              // isEnabled (required), Identifies whether the storage path is enabled.
@@ -117,10 +117,11 @@ type SanSystemCredential struct {
 
 // SanStorageOptions specify san storage
 // No San
-// 		"sanStorage": {
-// 				"volumeAttachments": [],
-// 				"manageSanStorage": false
-// 		},
+//
+//	"sanStorage": {
+//			"volumeAttachments": [],
+//			"manageSanStorage": false
+//	},
 type SanStorageOptions struct { // sanStorage
 	ComplianceControl          string                `json:"complianceControl,omitempty"`          // complianceControl
 	HostOSType                 string                `json:"hostOSType,omitempty"`                 // hostOSType(required),  The operating system type of the host. To retrieve the list of supported host OS types, issue a REST Get request using the /rest/storage-systems/host-types API.

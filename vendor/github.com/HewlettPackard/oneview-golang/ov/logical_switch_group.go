@@ -8,7 +8,7 @@ import (
 	"github.com/docker/machine/libmachine/log"
 )
 
-//TODO change this struct to hold the variables from the GET API response body variables
+// TODO change this struct to hold the variables from the GET API response body variables
 type LogicalSwitchGroup struct {
 	Category          string            `json:"category,omitempty"`    // "category": "logical-switch-groups",
 	Created           string            `json:"created,omitempty"`     // "created": "20150831T154835.250Z",

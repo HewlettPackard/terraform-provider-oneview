@@ -18,7 +18,8 @@ func StringRemoveJSON(s string) string {
 }
 
 // StringGetJSON - just get the JSON from the string
-//                 should only find the first json
+//
+//	should only find the first json
 func StringGetJSON(s string) string {
 	a := reGetJSON.FindStringSubmatch(s)
 	if len(a) > 2 {

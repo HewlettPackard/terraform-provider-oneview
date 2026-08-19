@@ -1,6 +1,19 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
+# [Unreleased]
+
+### Notes
+- This release supports API8600 minimally where we can use OneView <ov_version> with this SDK.
+
+### Bug fixes & Enhancements:
+- Updated module/toolchain baseline to Go 1.26.
+- Updated GitHub Actions workflows to Go 1.26 (`test.yml`, `release.yml`).
+- Updated Docker build image to `golang:1.26-alpine`.
+- Updated `github.com/HewlettPackard/oneview-golang` dependency to PQC-enabled commit including TLS 1.3 minimum enforcement.
+- Clarified provider documentation for `ov_sslverify` certificate validation behavior.
+- Fixed provider compile issues surfaced by Go 1.26 in logical interconnect group sFlow network prefix handling.
+
 # [v.11.4.0-13]
 
 ### Notes
