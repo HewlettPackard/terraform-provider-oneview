@@ -14,6 +14,11 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 - Clarified provider documentation for `ov_sslverify` certificate validation behavior.
 - Fixed provider compile issues surfaced by Go 1.26 in logical interconnect group sFlow network prefix handling.
 
+# [v.11.4.0-13]
+
+### Notes
+- This release supports API8800 minimally where we can use OneView v11.40 with this SDK.
+
 ### OneView Features Supported
 
 - Uplink Set
