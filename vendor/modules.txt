@@ -223,7 +223,7 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
-# golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
+# golang.org/x/crypto v0.1.0
 ## explicit
 golang.org/x/crypto/cast5
 golang.org/x/crypto/openpgp
@@ -235,10 +235,11 @@ golang.org/x/crypto/openpgp/s2k
 # golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 golang.org/x/lint
 golang.org/x/lint/golint
-# golang.org/x/mod v0.3.0
+# golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4
+golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.0.0-20200707034311-ab3426394381
+# golang.org/x/net v0.1.0
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/http/httpguts
@@ -253,19 +254,20 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sys v0.0.0-20220517195934-5e4e11fc645e
-golang.org/x/sys/internal/unsafeheader
+# golang.org/x/sys v0.1.0
+golang.org/x/sys/execabs
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.3
+# golang.org/x/text v0.4.0
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/tools v0.0.0-20200713011307-fd294ab11aed
+# golang.org/x/tools v0.1.12
 golang.org/x/tools/cmd/goimports
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/go/gcexportdata
 golang.org/x/tools/go/internal/gcimporter
+golang.org/x/tools/go/internal/pkgbits
 golang.org/x/tools/internal/event
 golang.org/x/tools/internal/event/core
 golang.org/x/tools/internal/event/keys
@@ -274,9 +276,7 @@ golang.org/x/tools/internal/fastwalk
 golang.org/x/tools/internal/gocommand
 golang.org/x/tools/internal/gopathwalk
 golang.org/x/tools/internal/imports
-# golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
-golang.org/x/xerrors
-golang.org/x/xerrors/internal
+golang.org/x/tools/internal/typeparams
 # google.golang.org/api v0.29.0
 google.golang.org/api/googleapi
 google.golang.org/api/googleapi/transport
