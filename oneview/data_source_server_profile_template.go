@@ -12,6 +12,7 @@
 package oneview
 
 import (
+	"fmt"
 	"log"
 	"reflect"
 
@@ -1068,14 +1069,10 @@ func dataSourceServerProfileTemplateRead(d *schema.ResourceData, meta interface{
 	name := d.Get("name").(string)
 
 	spt, err := config.ovClient.GetProfileTemplateByName(name)
-
-	if err != nil {
-		d.SetId("")
-		return err
-	} else if spt.URI.IsNil() {
-		d.SetId("")
-		return nil
+	if err != nil || spt.URI.IsNil() {
+		return fmt.Errorf("error fetching server profile template: %w", err)
 	}
+
 	d.Set("affinity", spt.Affinity)
 	d.Set("category", spt.Category)
 	d.Set("created", spt.Created)
