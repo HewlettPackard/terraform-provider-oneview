@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 # [v.11.5.0-13]
 
 ### Notes
-- This release supports API9000 minimally where we can use OneView v11.50 with this SDK.
+- This release supports API9200 minimally where we can use OneView v11.50 with this SDK.
 
 ### OneView Features Supported
 
