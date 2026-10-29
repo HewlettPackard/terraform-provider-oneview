@@ -25,14 +25,6 @@ var (
 		http.StatusConflict:            false,
 		http.StatusInternalServerError: false,
 	}
-
-	// TODO: this should have a real cert
-	tr = &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-
-	// get a client
-	client = &http.Client{Transport: tr}
 )
 
 // Options for REST call
@@ -164,16 +156,25 @@ func (c *Client) RestAPICall(method Method, path string, options interface{}, qu
 		return nil, fmt.Errorf("Error with request: %v - %q", Url, err)
 	}
 
+	// Build TLS config from the client settings, honoring SSLVerify.
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: !c.SSLVerify, // true=verify, false=skip
+	}
+	transport := &http.Transport{
+		TLSClientConfig: tlsConfig,
+	}
+
 	// setup proxy
 	proxyUrl, err := http.ProxyFromEnvironment(req)
 	if err != nil {
 		return nil, fmt.Errorf("Error with proxy: %v - %q", proxyUrl, err)
 	}
 	if proxyUrl != nil {
-		tr.Proxy = http.ProxyURL(proxyUrl)
-		log.Debugf("*** proxy => %+v", tr.Proxy)
+		transport.Proxy = http.ProxyURL(proxyUrl)
+		log.Debugf("*** proxy => %+v", transport.Proxy)
 	}
 
+	client := &http.Client{Transport: transport}
 	// build the auth headerU
 	for k, v := range c.Option.Headers {
 		log.Debugf("Headers -> %s -> %+v\n", k, v)
